@@ -31,7 +31,7 @@ Vous devrez saisir un nom. Gardez à l'esprit que vous ne pouvez créer qu'une s
 <br>
 <h2>✨Installation</h2>
 
-`npm install metamobapi`
+`npm install @ix-xs/metamob.api`
 <br>
 <h2>👀Utilisation</h2>
 <h3>1. Créez un nouveau client en fournissant votre clé API Metamob :</h3>
