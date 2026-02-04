@@ -1,0 +1,26 @@
+[
+	{
+		"id": 1,
+		"name": {
+			"fr": "monstre",
+			"en": "monster",
+			"es": "monstruo"
+		}
+	},
+	{
+		"id": 2,
+		"name": {
+			"fr": "boss",
+			"en": "boss",
+			"es": "boss"
+		}
+	},
+	{
+		"id": 3,
+		"name": {
+			"fr": "archimonstre",
+			"en": "archmonster",
+			"es": "archimonstruo"
+		}
+	}
+]

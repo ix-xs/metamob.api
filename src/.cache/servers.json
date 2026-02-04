@@ -1,0 +1,182 @@
+[
+    {
+        "id": 1,
+        "name": "Brial",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 2,
+        "name": "Rafal",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 3,
+        "name": "Salar",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 4,
+        "name": "Kourial",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 5,
+        "name": "Dakal",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 6,
+        "name": "Mikhal",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 7,
+        "name": "Imagiro",
+        "community": "France",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 8,
+        "name": "Hell Mina",
+        "community": "France",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 9,
+        "name": "Tylezia",
+        "community": "France",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 10,
+        "name": "Orukam",
+        "community": "France",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 11,
+        "name": "Tal Kasha",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 12,
+        "name": "Draconiros",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 13,
+        "name": "Ombre",
+        "community": "World",
+        "game_version": {
+            "id": 1,
+            "name": "Dofus (Unity)"
+        }
+    },
+    {
+        "id": 14,
+        "name": "Fallanster",
+        "community": "World",
+        "game_version": {
+            "id": 2,
+            "name": "Dofus Retro (1.29)"
+        }
+    },
+    {
+        "id": 15,
+        "name": "Boune",
+        "community": "World",
+        "game_version": {
+            "id": 2,
+            "name": "Dofus Retro (1.29)"
+        }
+    },
+    {
+        "id": 16,
+        "name": "Allisteria",
+        "community": "World",
+        "game_version": {
+            "id": 2,
+            "name": "Dofus Retro (1.29)"
+        }
+    },
+    {
+        "id": 17,
+        "name": "Blair",
+        "community": "World",
+        "game_version": {
+            "id": 3,
+            "name": "Dofus Touch"
+        }
+    },
+    {
+        "id": 18,
+        "name": "Kelerog",
+        "community": "France",
+        "game_version": {
+            "id": 3,
+            "name": "Dofus Touch"
+        }
+    },
+    {
+        "id": 19,
+        "name": "Talok",
+        "community": "World",
+        "game_version": {
+            "id": 3,
+            "name": "Dofus Touch"
+        }
+    },
+    {
+        "id": 20,
+        "name": "Tiliwan",
+        "community": "France",
+        "game_version": {
+            "id": 3,
+            "name": "Dofus Touch"
+        }
+    }
+]
