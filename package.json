@@ -1,0 +1,27 @@
+{
+	"name": "@ix-xs/metamob.api",
+	"version": "3.0.0",
+	"description": "API Metamob Javascript",
+	"keywords": [
+		"API",
+		"Metamob",
+		"Javascript",
+		"Dofus"
+	],
+	"author": "ix-xs",
+	"main": "src/MetamobAPI.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"homepage": "https://github.com/ix-xs/metamob.api#readme",
+	"bugs": {
+		"url": "https://github.com/ix-xs/metamob.api/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ix-xs/metamob.api.git"
+	},
+	"dependencies": {
+		"@ix-xs/node-comfort": "^1.0.15"
+	}
+}
