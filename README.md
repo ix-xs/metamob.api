@@ -44,6 +44,11 @@
   - [Recherche d'utilisateurs](#recherche-dutilisateurs)
   - [Profils utilisateurs](#profils-utilisateurs)
   - [Quêtes utilisateurs](#quêtes-utilisateurs)
+  - [Détails d'une quête utilisateur](#détails-dune-quête-utilisateur)
+  - [Partenaires d'échange](#partenaires-déchange)
+  - [Modifier les paramètres d'une quête utilisateur](#modifier-les-paramètres-dune-quête-utilisateur)
+  - [Modifier plusieurs monstres d'une quête utilisateur](#modifier-plusieurs-monstres-dune-quête-utilisateur)
+  - [Paramètres de trade manuels d'une quête utilisateur](#paramètres-de-trade-manuels-dune-quête-utilisateur)
 
 ## ✨ Présentation
 
@@ -247,11 +252,11 @@ getGameVersions(options?: { game_name?: string })
 const response = await client.getGameVersions();
 
 if (!response.ok) {
-	return console.error(response.error ?? response.statusText);
+  return console.error(response.error ?? response.statusText);
 }
 
 response.data.forEach((version) => {
-	console.log(`${version.id}: ${version.name}`);
+  console.log(`${version.id}: ${version.name}`);
 });
 // Output:
 // 1: Dofus (Unity)
@@ -263,12 +268,12 @@ response.data.forEach((version) => {
 
 ```javascript
 const response = await client.getGameVersions({
-	game_name: "Dofus (Unity)",
+  game_name: "Dofus (Unity)",
 });
 
 if (response.ok) {
-	console.log(response.data);
-	// { id: 1, name: "Dofus (Unity)" }
+  console.log(response.data);
+  // { id: 1, name: "Dofus (Unity)" }
 }
 ```
 
@@ -329,11 +334,11 @@ getServers(options?: { server_name?: string })
 const response = await client.getServers();
 
 if (response.ok) {
-	response.data.forEach((server) => {
-		console.log(
-			`${server.name} (${server.community}) - ${server.game_version.name}`,
-		);
-	});
+  response.data.forEach((server) => {
+    console.log(
+      `${server.name} (${server.community}) - ${server.game_version.name}`,
+    );
+  });
 }
 ```
 
@@ -341,17 +346,17 @@ if (response.ok) {
 
 ```javascript
 const response = await client.getServers({
-	server_name: "Brial",
+  server_name: "Brial",
 });
 
 if (response.ok) {
-	console.log(response.data);
-	// {
-	//   id: 1,
-	//   name: "Brial",
-	//   community: "France",
-	//   game_version: { id: 1, name: "Dofus (Unity)" }
-	// }
+  console.log(response.data);
+  // {
+  //   id: 1,
+  //   name: "Brial",
+  //   community: "France",
+  //   game_version: { id: 1, name: "Dofus (Unity)" }
+  // }
 }
 ```
 
@@ -361,17 +366,17 @@ if (response.ok) {
 const response = await client.getServers();
 
 if (response.ok) {
-	const byRegion = response.data.reduce((acc, server) => {
-		if (!acc[server.community]) acc[server.community] = [];
-		acc[server.community].push(server.name);
-		return acc;
-	}, {});
+  const byRegion = response.data.reduce((acc, server) => {
+    if (!acc[server.community]) acc[server.community] = [];
+    acc[server.community].push(server.name);
+    return acc;
+  }, {});
 
-	console.log(byRegion);
-	// {
-	//   France: ["Brial", "Rafal", ...],
-	//   World: ["Brial", "Rafal", ...]
-	// }
+  console.log(byRegion);
+  // {
+  //   France: ["Brial", "Rafal", ...],
+  //   World: ["Brial", "Rafal", ...]
+  // }
 }
 ```
 
@@ -416,11 +421,11 @@ getMonsterTypes(options?: { type_name?: string })
 const response = await client.getMonsterTypes();
 
 if (response.ok) {
-	response.data.forEach((type) => {
-		console.log(
-			`FR: ${type.name.fr}, EN: ${type.name.en}, ES: ${type.name.es}`,
-		);
-	});
+  response.data.forEach((type) => {
+    console.log(
+      `FR: ${type.name.fr}, EN: ${type.name.en}, ES: ${type.name.es}`,
+    );
+  });
 }
 ```
 
@@ -428,15 +433,15 @@ if (response.ok) {
 
 ```javascript
 const response = await client.getMonsterTypes({
-	type_name: "boss",
+  type_name: "boss",
 });
 
 if (response.ok) {
-	console.log(response.data);
-	// {
-	//   id: 3,
-	//   name: { fr: "Boss", en: "Boss", es: "Boss" }
-	// }
+  console.log(response.data);
+  // {
+  //   id: 3,
+  //   name: { fr: "Boss", en: "Boss", es: "Boss" }
+  // }
 }
 ```
 
@@ -483,12 +488,12 @@ getQuestTemplates(options?: {
 const response = await client.getQuestTemplates();
 
 if (response.ok) {
-	console.log(`Modèles trouvés: ${response.pagination.total}`);
-	response.data.forEach((template) => {
-		console.log(
-			`${template.game_version.name}: ${template.monster_count} monstres en ${template.step_count} étapes`,
-		);
-	});
+  console.log(`Modèles trouvés: ${response.pagination.total}`);
+  response.data.forEach((template) => {
+    console.log(
+      `${template.game_version.name}: ${template.monster_count} monstres en ${template.step_count} étapes`,
+    );
+  });
 }
 ```
 
@@ -496,16 +501,16 @@ if (response.ok) {
 
 ```javascript
 const response = await client.getQuestTemplates({
-	game_name: "Dofus (Unity)",
-	step: 1,
-	limit: 50,
+  game_name: "Dofus (Unity)",
+  step: 1,
+  limit: 50,
 });
 
 if (response.ok) {
-	console.log(`Étape 1 - Monstres à capturer:`);
-	response.data.monsters.forEach((monster) => {
-		console.log(`- ${monster.name.fr} (étape ${monster.step})`);
-	});
+  console.log(`Étape 1 - Monstres à capturer:`);
+  response.data.monsters.forEach((monster) => {
+    console.log(`- ${monster.name.fr} (étape ${monster.step})`);
+  });
 }
 ```
 
@@ -513,14 +518,14 @@ if (response.ok) {
 
 ```javascript
 const response = await client.getQuestTemplates({
-	game_name: "Dofus (Unity)",
-	step: 1,
-	limit: 10,
-	offset: 20, // Sauter les 20 premiers résultats
+  game_name: "Dofus (Unity)",
+  step: 1,
+  limit: 10,
+  offset: 20, // Sauter les 20 premiers résultats
 });
 
 if (response.ok) {
-	console.log(`Résultats 21-30 sur ${response.pagination.total}`);
+  console.log(`Résultats 21-30 sur ${response.pagination.total}`);
 }
 ```
 
@@ -578,11 +583,11 @@ searchUsers(
 const response = await client.searchUsers("jean");
 
 if (!response.ok) {
-	return console.error(response.error);
+  return console.error(response.error);
 }
 
 response.data.forEach((user) => {
-	console.log(`${user.username} (${user.avatar.name.fr})`);
+  console.log(`${user.username} (${user.avatar.name.fr})`);
 });
 ```
 
@@ -590,16 +595,16 @@ response.data.forEach((user) => {
 
 ```javascript
 const response = await client.searchUsers("jean", {
-	server_name: "Brial",
-	active_within_days: 30, // Actifs dans les 30 derniers jours
-	limit: 10,
+  server_name: "Brial",
+  active_within_days: 30, // Actifs dans les 30 derniers jours
+  limit: 10,
 });
 
 if (response.ok) {
-	console.log(`${response.pagination.total} utilisateurs trouvés`);
-	response.data.forEach((user) => {
-		console.log(`- ${user.username} (dernière activité: ${user.last_active})`);
-	});
+  console.log(`${response.pagination.total} utilisateurs trouvés`);
+  response.data.forEach((user) => {
+    console.log(`- ${user.username} (dernière activité: ${user.last_active})`);
+  });
 }
 ```
 
@@ -607,26 +612,26 @@ if (response.ok) {
 
 ```javascript
 async function searchAllUsers(query, pageSize = 50) {
-	let allResults = [];
-	let offset = 0;
-	let hasMore = true;
+  let allResults = [];
+  let offset = 0;
+  let hasMore = true;
 
-	while (hasMore) {
-		const response = await client.searchUsers(query, {
-			limit: pageSize,
-			offset,
-		});
+  while (hasMore) {
+    const response = await client.searchUsers(query, {
+      limit: pageSize,
+      offset,
+    });
 
-		if (!response.ok) break;
+    if (!response.ok) break;
 
-		allResults.push(...response.data);
-		hasMore =
-			response.pagination.offset + response.pagination.limit <
-			response.pagination.total;
-		offset += pageSize;
-	}
+    allResults.push(...response.data);
+    hasMore =
+      response.pagination.offset + response.pagination.limit <
+      response.pagination.total;
+    offset += pageSize;
+  }
 
-	return allResults;
+  return allResults;
 }
 ```
 
@@ -663,7 +668,7 @@ getUser(username: string)
 const response = await client.getUser("ix-xs");
 
 if (!response.ok) {
-	return console.error(`Utilisateur non trouvé: ${response.error}`);
+  return console.error(`Utilisateur non trouvé: ${response.error}`);
 }
 
 const user = response.data;
@@ -682,12 +687,12 @@ Dernière activité: ${new Date(user.last_active).toLocaleDateString("fr-FR")}
 const response = await client.getUser("jean");
 
 if (response.ok) {
-	const user = response.data;
-	const daysSinceActive = Math.floor(
-		(Date.now() - new Date(user.last_active)) / (1000 * 60 * 60 * 24),
-	);
+  const user = response.data;
+  const daysSinceActive = Math.floor(
+    (Date.now() - new Date(user.last_active)) / (1000 * 60 * 60 * 24),
+  );
 
-	console.log(`${user.username} a été actif il y a ${daysSinceActive} jours`);
+  console.log(`${user.username} a été actif il y a ${daysSinceActive} jours`);
 }
 ```
 
@@ -727,11 +732,11 @@ getUserQuests(username: string)
 const response = await client.getUserQuests("ix-xs");
 
 if (!response.ok) {
-	return console.error(response.error);
+  return console.error(response.error);
 }
 
 response.data.forEach((quest) => {
-	console.log(`
+  console.log(`
 Personnage: ${quest.character_name}
 Serveur: ${quest.server.name}
 Étape: ${quest.current_step}/${quest.quest_template.step_count}
@@ -746,17 +751,17 @@ Recherche: ${quest.wanted_count} / Proposé: ${quest.offered_count}
 const response = await client.getUserQuests("jean");
 
 if (response.ok) {
-	response.data.forEach((quest) => {
-		const progression = Math.floor(
-			(quest.current_step / quest.quest_template.step_count) * 100,
-		);
+  response.data.forEach((quest) => {
+    const progression = Math.floor(
+      (quest.current_step / quest.quest_template.step_count) * 100,
+    );
 
-		console.log(`
+    console.log(`
 ${quest.character_name}: ${progression}% complété
 Étape ${quest.current_step}/${quest.quest_template.step_count}
 Progression: ${"█".repeat(Math.floor(progression / 5))}${"░".repeat(20 - Math.floor(progression / 5))}
 `);
-	});
+  });
 }
 ```
 
@@ -766,13 +771,465 @@ Progression: ${"█".repeat(Math.floor(progression / 5))}${"░".repeat(20 - Mat
 const response = await client.getUserQuests("jean");
 
 if (response.ok) {
-	const providers = response.data.filter((quest) => quest.offered_count > 0);
+  const providers = response.data.filter((quest) => quest.offered_count > 0);
 
-	console.log(
-		`${quest.character_name} propose ${quest.offered_count} monstres`,
-	);
+  console.log(
+    `${quest.character_name} propose ${quest.offered_count} monstres`,
+  );
 }
 ```
+
+---
+
+### Détails d'une quête utilisateur
+
+Récupérer les monstres d'une quête spécifique avec filtres et pagination.
+
+#### Signature
+
+```javascript
+getUserQuestMonsters(
+  username: string,
+  quest_slug: string,
+  options?: {
+    status?: "wanted" | "offered",
+    step?: number,
+    limit?: number,
+    offset?: number
+  }
+)
+```
+
+#### Paramètres
+
+| Paramètre    | Requis | Type   | Description                                   |
+| ------------ | ------ | ------ | --------------------------------------------- |
+| `username`   | ✅     | string | Nom d'utilisateur                             |
+| `quest_slug` | ✅     | string | Identifiant (slug) de la quête                |
+| `status`     | ❌     | string | "wanted" (recherchés) ou "offered" (proposés) |
+| `step`       | ❌     | number | Filtrer par numéro d'étape                    |
+| `limit`      | ❌     | number | Nombre de résultats (défaut: 50, max: 200)    |
+| `offset`     | ❌     | number | Décalage pour pagination (défaut: 0)          |
+
+#### Types
+
+```javascript
+/**
+ * @typedef {Monster & { step: number, owned: number, status: number }} QuestMonster
+ * @property {number} step - Numéro d'étape du monstre
+ * @property {number} owned - Quantité possédée
+ * @property {number} status - Statut (0=neutre, 1=recherché, 2=proposé)
+ */
+```
+
+#### Exemples
+
+**Lister tous les monstres d'une quête**
+
+```javascript
+const response = await client.getUserQuestMonsters("ix-xs", "abcdef");
+
+if (response.ok) {
+  console.log(`${response.pagination.total} monstres dans la quête`);
+  response.data.forEach((monster) => {
+    console.log(
+      `${monster.name.fr} - Étape ${monster.step} - Possédé: ${monster.owned}`,
+    );
+  });
+}
+```
+
+**Filtrer par statut**
+
+```javascript
+// Monstres proposés uniquement
+const response = await client.getUserQuestMonsters("ix-xs", "abcdef", {
+  status: "offered",
+});
+
+if (response.ok) {
+  console.log("Monstres proposés à l'échange:");
+  response.data.forEach((m) => console.log(`- ${m.name.fr} (x${m.owned})`));
+}
+```
+
+**Filtrer par étape**
+
+```javascript
+// Monstres de l'étape 5
+const response = await client.getUserQuestMonsters("ix-xs", "abcdef", {
+  step: 5,
+});
+
+if (response.ok) {
+  console.log(`Monstres de l'étape 5: ${response.pagination.total}`);
+}
+```
+
+---
+
+### Partenaires d'échange
+
+Trouve des utilisateurs avec qui échanger des monstres en analysant les compatibilités entre quêtes.
+
+#### Signature
+
+```javascript
+matchUserQuest(
+  user_api_key: string,
+  quest_slug: string,
+  options?: {
+    direction?: "they_have" | "they_want" | "both",
+    active_within_days?: number,
+    min_parallel_quests?: number,
+    limit?: number,
+    offset?: number
+  }
+)
+```
+
+#### Paramètres
+
+| Paramètre             | Requis | Type   | Description                                             |
+| --------------------- | ------ | ------ | ------------------------------------------------------- |
+| `user_api_key`        | ✅     | string | Clé API de l'utilisateur                                |
+| `quest_slug`          | ✅     | string | Identifiant (slug) de la quête                          |
+| `direction`           | ❌     | string | Type de match (défaut: "both")                          |
+| `active_within_days`  | ❌     | number | Actifs dans les N derniers jours (défaut: 30, max: 365) |
+| `min_parallel_quests` | ❌     | number | Nombre min de quêtes parallèles (défaut: 1, max: 20)    |
+| `limit`               | ❌     | number | Nombre de résultats (défaut: 20, max: 50)               |
+| `offset`              | ❌     | number | Décalage pour pagination (défaut: 0)                    |
+
+#### Types
+
+```javascript
+/**
+ * @typedef {Monster & { available: number, needed: number, covers_need: boolean }} Wanted
+ * @property {number} available - Quantité disponible à l'échange
+ * @property {number} needed - Quantité nécessaire
+ * @property {boolean} covers_need - Si l'offre couvre entièrement le besoin
+ *
+ * @typedef {object} Match
+ * @property {Search} user - Utilisateur correspondant
+ * @property {object} quest - Quête du partenaire
+ * @property {string} quest.slug - Identifiant de la quête
+ * @property {string} quest.character_name - Nom du personnage
+ * @property {number} quest.parallel_quests - Nombre de quêtes parallèles
+ * @property {object} matches - Monstres en commun
+ * @property {Array<Wanted>} matches.they_have_you_want - Ils ont, vous cherchez
+ * @property {Array<Wanted>} matches.you_have_they_want - Vous avez, ils cherchent
+ * @property {number} match_score - Score de compatibilité (total de monstres en commun)
+ */
+```
+
+#### Exemples
+
+**Trouver tous les partenaires**
+
+```javascript
+const response = await client.matchUserQuest("jean_api_key", "abcdef");
+
+if (response.ok) {
+  console.log(`${response.pagination.total} partenaires trouvés`);
+
+  response.data.forEach((match) => {
+    console.log(`\n${match.user.username} (${match.quest.character_name})`);
+    console.log(`Score: ${match.match_score} monstres en commun`);
+    console.log(`Ils ont: ${match.matches.they_have_you_want.length}`);
+    console.log(`Ils cherchent: ${match.matches.you_have_they_want.length}`);
+  });
+}
+```
+
+**Trouver des fournisseurs**
+
+```javascript
+// Utilisateurs proposant des monstres que vous recherchez
+const response = await client.matchUserQuest("jean_api_key", "abcdef", {
+  direction: "they_have",
+});
+
+if (response.ok) {
+  response.data.forEach((match) => {
+    console.log(`\n${match.user.username} peut vous fournir:`);
+    match.matches.they_have_you_want.forEach((m) => {
+      console.log(`- ${m.name.fr} x${m.available} ${m.covers_need ? "✓" : ""}`);
+    });
+  });
+}
+```
+
+**Filtrer les joueurs actifs**
+
+```javascript
+// Utilisateurs actifs dans les 7 derniers jours avec au moins 3 quêtes parallèles
+const response = await client.matchUserQuest("jean_api_key", "abcdef", {
+  active_within_days: 7,
+  min_parallel_quests: 3,
+});
+
+if (response.ok) {
+  console.log(`${response.data.length} joueurs actifs trouvés`);
+}
+```
+
+---
+
+### Modifier les paramètres d'une quête utilisateur
+
+Met à jour la configuration d'une quête (personnage, progression, paramètres d'échange).
+
+#### Signature
+
+```javascript
+updateUserQuest(
+  user_api_key: string,
+  quest_slug: string,
+  options: {
+    character_name?: string,
+    parallel_quests?: number,
+    current_step?: number,
+    show_trades?: boolean,
+    trade_mode?: number,
+    trade_offer_threshold?: number | null,
+    trade_want_threshold?: number | null,
+    never_offer_normal?: boolean,
+    never_want_normal?: boolean,
+    never_offer_boss?: boolean,
+    never_want_boss?: boolean,
+    never_offer_archi?: boolean,
+    never_want_archi?: boolean
+  }
+)
+```
+
+#### Paramètres
+
+| Paramètre               | Type         | Description                                             |
+| ----------------------- | ------------ | ------------------------------------------------------- |
+| `character_name`        | string       | Nom du personnage (max 200 caractères)                  |
+| `parallel_quests`       | number       | Nombre de quêtes en parallèle (1-20)                    |
+| `current_step`          | number       | Étape courante (1-34)                                   |
+| `show_trades`           | boolean      | Visibilité de la quête dans la communauté               |
+| `trade_mode`            | number       | 0 = Automatique, 1 = Mode expert                        |
+| `trade_offer_threshold` | number\|null | Seuil minimal pour proposer en mode expert (0-30)       |
+| `trade_want_threshold`  | number\|null | Seuil maximal pour rechercher en mode expert (0-30)     |
+| `never_offer_normal`    | boolean      | Ne jamais proposer les monstres normaux (étapes 1-16)   |
+| `never_want_normal`     | boolean      | Ne jamais rechercher les monstres normaux (étapes 1-16) |
+| `never_offer_boss`      | boolean      | Ne jamais proposer les boss (étapes 17-19)              |
+| `never_want_boss`       | boolean      | Ne jamais rechercher les boss (étapes 17-19)            |
+| `never_offer_archi`     | boolean      | Ne jamais proposer les archimonstres (étapes 20+)       |
+| `never_want_archi`      | boolean      | Ne jamais rechercher les archimonstres (étapes 20+)     |
+
+#### Exemples
+
+**Mettre à jour les infos de base**
+
+```javascript
+const response = await client.updateUserQuest("jean_api_key", "abcdef", {
+  character_name: "Mon personnage",
+  parallel_quests: 5,
+  current_step: 12,
+  show_trades: true,
+});
+
+if (response.ok) {
+  console.log("Quête mise à jour:", response.data);
+}
+```
+
+**Configurer le mode expert**
+
+```javascript
+const response = await client.updateUserQuest("jean_api_key", "abcdef", {
+  trade_mode: 1,
+  trade_offer_threshold: 6, // Ne proposer que les monstres avec 6+ exemplaires
+  trade_want_threshold: 1, // Rechercher jusqu'à l'étape 1
+});
+
+if (response.ok) {
+  console.log("Mode expert configuré");
+}
+```
+
+**Exclure certains types de monstres**
+
+```javascript
+const response = await client.updateUserQuest("jean_api_key", "abcdef", {
+  never_offer_archi: true, // Ne jamais proposer d'archimonstres
+  never_want_normal: true, // Ne pas rechercher les monstres normaux
+});
+
+if (response.ok) {
+  console.log("Filtres appliqués");
+}
+```
+
+---
+
+### Modifier plusieurs monstres d'une quête utilisateur
+
+Met à jour les quantités possédées pour plusieurs monstres en une seule requête.
+
+#### Signature
+
+```javascript
+updateUserQuestMonsters(
+  user_api_key: string,
+  quest_slug: string,
+  monsters: Array<{ monster_name: MonsterName, quantity: number }>
+)
+```
+
+#### Paramètres
+
+| Paramètre      | Requis | Type   | Description                             |
+| -------------- | ------ | ------ | --------------------------------------- |
+| `user_api_key` | ✅     | string | Clé API de l'utilisateur                |
+| `quest_slug`   | ✅     | string | Identifiant (slug) de la quête          |
+| `monsters`     | ✅     | Array  | Liste des monstres à modifier (max 200) |
+
+#### Contraintes
+
+- `quantity` : entre 0 et 30
+- Maximum 200 monstres par requête
+
+#### Types
+
+```javascript
+/**
+ * @typedef {object} UpdatedMonsters
+ * @property {number} updated_count - Nombre de monstres mis à jour
+ * @property {Array<Monster>} monsters - Monstres mis à jour avec leurs nouvelles valeurs
+ */
+```
+
+#### Exemples
+
+**Mettre à jour plusieurs monstres**
+
+```javascript
+const response = await client.updateUserQuestMonsters(
+  "jean_api_key",
+  "abcdef",
+  [
+    { monster_name: "Aboub", quantity: 5 },
+    { monster_name: "Bouftou", quantity: 3 },
+    { monster_name: "Tofu", quantity: 10 },
+  ],
+);
+
+if (response.ok) {
+  console.log(`${response.data.updated_count} monstres mis à jour`);
+  response.data.monsters.forEach((m) => {
+    console.log(`${m.name.fr}: ${m.quantity} possédés`);
+  });
+}
+```
+
+**Réinitialiser des quantités**
+
+```javascript
+const response = await client.updateUserQuestMonsters(
+  "jean_api_key",
+  "abcdef",
+  [
+    { monster_name: "Aboub", quantity: 0 },
+    { monster_name: "Bouftou", quantity: 0 },
+  ],
+);
+
+if (response.ok) {
+  console.log("Quantités réinitialisées");
+}
+```
+
+---
+
+### Paramètres de trade manuels d'une quête utilisateur
+
+Force les quantités proposées/recherchées pour un monstre spécifique, remplaçant le calcul automatique.
+
+#### Signature
+
+```javascript
+updateUserQuestMonsterTrade(
+  user_api_key: string,
+  quest_slug: string,
+  monster_name: MonsterName,
+  options: {
+    trade_offer?: number | null,
+    trade_want?: number | null
+  }
+)
+```
+
+#### Paramètres
+
+| Paramètre      | Requis | Type         | Description                                                |
+| -------------- | ------ | ------------ | ---------------------------------------------------------- |
+| `user_api_key` | ✅     | string       | Clé API de l'utilisateur                                   |
+| `quest_slug`   | ✅     | string       | Identifiant (slug) de la quête                             |
+| `monster_name` | ✅     | MonsterName  | Nom du monstre                                             |
+| `trade_offer`  | ❌     | number\|null | Quantité à proposer (0 à owned). null = calcul automatique |
+| `trade_want`   | ❌     | number\|null | Quantité recherchée (0 à 30). null = calcul automatique    |
+
+#### Exemples
+
+**Forcer les quantités d'échange**
+
+```javascript
+const response = await client.updateUserQuestMonsterTrade(
+  "jean_api_key",
+  "abcdef",
+  "Aboub",
+  {
+    trade_offer: 1, // Proposer 1 Aboub
+    trade_want: 5, // Rechercher 5 Aboub
+  },
+);
+
+if (response.ok) {
+  console.log(`${response.data.name.fr}:`);
+  console.log(`- Proposé: ${response.data.trade_offer}`);
+  console.log(`- Recherché: ${response.data.trade_want}`);
+}
+```
+
+**Réactiver le calcul automatique**
+
+```javascript
+const response = await client.updateUserQuestMonsterTrade(
+  "jean_api_key",
+  "abcdef",
+  "Aboub",
+  {
+    trade_offer: null, // Calcul automatique
+    trade_want: null, // Calcul automatique
+  },
+);
+
+if (response.ok) {
+  console.log("Calcul automatique réactivé pour Aboub");
+}
+```
+
+**Mode hybride**
+
+```javascript
+// Proposer automatiquement, mais rechercher manuellement
+const response = await client.updateUserQuestMonsterTrade(
+  "jean_api_key",
+  "abcdef",
+  "Bouftou",
+  {
+    trade_offer: null, // Auto
+    trade_want: 2, // Fixe à 2
+  },
+);
+```
+
+<br>
 
 ## 🔗 Ressources
 
@@ -780,7 +1237,7 @@ if (response.ok) {
 - 📖 [Documentation API Officielle](https://beta.metamob.fr/help/api)
 - 📦 [Package NPM](https://www.npmjs.com/package/@ix-xs/metamob.api)
 - 🔧 [GitHub Repository](https://github.com/ix-xs/metamob.api)
-- 💬 [Discord Community](https://discord.gg/SadWCNf2pk)
+- 💬 [Discord Metamob](https://discord.gg/SadWCNf2pk)
 
 ## 🐛 Signaler un bug
 
