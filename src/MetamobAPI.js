@@ -141,6 +141,8 @@ module.exports = class MetamobAPI {
 		}
 
 		this.#api_key = api_key;
+
+		this.cache = cache;
 	}
 
 	/**
