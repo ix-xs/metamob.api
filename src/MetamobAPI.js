@@ -1,5 +1,5 @@
 const nodeComfort = require("@ix-xs/node-comfort");
-const base = "https://beta.metamob.fr/api/v1";
+const base = "https://metamob.fr/api/v1";
 const cache = require("./.cache/$");
 
 function convertIds(data) {
