@@ -844,7 +844,6 @@ module.exports = class MetamobAPI {
 	 * @property {string} username
 	 * @property {string} bio
 	 * @property {UserAvatar} avatar
-	 * @property {string} created_at
 	 * @property {string} last_active
 
 	 * @param {string} username
