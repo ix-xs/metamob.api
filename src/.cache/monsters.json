@@ -34587,7 +34587,7 @@
 		]
 	},
 	{
-		"id": 638,
+		"id": 274,
 		"name": {
 			"fr": "Robot Fléau",
 			"en": "Robo Mace",
@@ -34604,41 +34604,21 @@
 				"es": "monstruo"
 			}
 		},
-		"zones": []
-	},
-	{
-		"id": 274,
-		"name": {
-			"fr": "Robot Fléau",
-			"en": "Robo Mace",
-			"es": "Robot mangual"
-		},
-		"image": "robot_fleau.png",
-		"level_min": 138,
-		"level_max": 138,
-		"type": {
-			"id": 1,
-			"name": {
-				"fr": "monstre",
-				"en": "monster",
-				"es": "monstruo"
-			}
-		},
 		"zones": [
 			{
-				"id": 1,
+				"id": 12,
 				"name": {
-					"fr": "Amakna",
-					"en": "Amakna",
-					"es": "Amakna"
+					"fr": "Plaines de Cania",
+					"en": "Cania Plains",
+					"es": "Llanuras de Cania"
 				},
 				"subzones": [
 					{
-						"id": 160,
+						"id": 158,
 						"name": {
-							"fr": "Territoire souterrain des Porcos",
-							"en": "Underground Porco Territory",
-							"es": "Territorio subterráneo de los porcos"
+							"fr": "Massif de Cania",
+							"en": "Cania Massif",
+							"es": "Sierra de Cania"
 						}
 					}
 				]
