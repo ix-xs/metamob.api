@@ -1,6 +1,6 @@
-# ![Metamob](https://beta.metamob.fr/img/pierre_dame_small.png) [Metamob](https://beta.metamob.fr)
+# ![Metamob](https://metamob.fr/img/pierre_dame_small.png) [Metamob](https://metamob.fr)
 
-<img align=right src="https://beta.metamob.fr/img/ocre.png">
+<img align=right src="https://metamob.fr/img/ocre.png">
 <div>
     <div>
         <h3>Complétez votre quête du Dofus Ocre</h3>
@@ -126,11 +126,18 @@ Toutes les requêtes retournent un objet JSON **normalisé** avec une structure 
   status: 200,
   statusText: "OK",
   data: [
-    { id: 1, name: "Brial", community: "France", ... },
-    { id: 2, name: "Rafal", community: "France", ... },
+    {
+      username: "player1",
+      avatar: {
+        id: 123,
+        name: { fr: "Tofu", en: "Tofu", es: "Tofu" },
+        image: "tofu.png"
+      },
+      last_active: "2026-01-27 14:22:00"
+    }
   ],
   pagination: {
-    total: 20,
+    total: 5,
     limit: 20,
     offset: 0
   }
@@ -303,28 +310,28 @@ getServers(options?: { server_name?: string })
 
 #### Serveurs disponibles
 
-| France     | World      |
-| ---------- | ---------- |
-| Brial      | Brial      |
-| Rafal      | Rafal      |
-| Salar      | Salar      |
-| Kourial    | Kourial    |
-| Dakal      | Dakal      |
-| Mikhal     | Mikhal     |
-| Imagiro    | Imagiro    |
-| Hell Mina  | Hell Mina  |
-| Tylezia    | Tylezia    |
-| Orukam     | Orukam     |
-| Tal Kasha  | Tal Kasha  |
-| Draconiros | Draconiros |
-| Ombre      | Ombre      |
-| Fallanster | Fallanster |
-| Boune      | Boune      |
-| Allisteria | Allisteria |
-| Blair      | Blair      |
-| Kelerog    | Kelerog    |
-| Talok      | Talok      |
-| Tiliwan    | Tiliwan    |
+| Serveur | Communauté | Version |
+| --- | --- | --- |
+| Brial | World | Dofus (Unity) |
+| Rafal | World | Dofus (Unity) |
+| Salar | World | Dofus (Unity) |
+| Kourial | World | Dofus (Unity) |
+| Dakal | World | Dofus (Unity) |
+| Mikhal | World | Dofus (Unity) |
+| Imagiro | France | Dofus (Unity) |
+| Hell Mina | France | Dofus (Unity) |
+| Tylezia | France | Dofus (Unity) |
+| Orukam | France | Dofus (Unity) |
+| Tal Kasha | World | Dofus (Unity) |
+| Draconiros | World | Dofus (Unity) |
+| Ombre | World | Dofus (Unity) |
+| Fallanster | World | Dofus Retro (1.29) |
+| Boune | World | Dofus Retro (1.29)
+| Allisteria | World | Dofus Retro (1.29) |
+| Blair | World | Dofus Touch |
+| Kelerog | France | Dofus Touch
+| Talok | World | Dofus Touch |
+| Tiliwan | France | Dofus Touch |
 
 #### Exemples
 
@@ -356,26 +363,6 @@ if (response.ok) {
   //   name: "Brial",
   //   community: "France",
   //   game_version: { id: 1, name: "Dofus (Unity)" }
-  // }
-}
-```
-
-**Grouper par communauté**
-
-```javascript
-const response = await client.getServers();
-
-if (response.ok) {
-  const byRegion = response.data.reduce((acc, server) => {
-    if (!acc[server.community]) acc[server.community] = [];
-    acc[server.community].push(server.name);
-    return acc;
-  }, {});
-
-  console.log(byRegion);
-  // {
-  //   France: ["Brial", "Rafal", ...],
-  //   World: ["Brial", "Rafal", ...]
   // }
 }
 ```
@@ -655,7 +642,6 @@ getUser(username: string)
  * @property {string} username - Nom d'utilisateur
  * @property {string} bio - Biographie de l'utilisateur
  * @property {UserAvatar} avatar - Avatar utilisateur
- * @property {string} created_at - Date de création du compte (ISO 8601)
  * @property {string} last_active - Dernière activité (ISO 8601)
  */
 ```
@@ -676,7 +662,6 @@ console.log(`
 ${user.username}
 Avatar: ${user.avatar.name.fr}
 Bio: ${user.bio || "Pas de bio"}
-Compte créé: ${new Date(user.created_at).toLocaleDateString("fr-FR")}
 Dernière activité: ${new Date(user.last_active).toLocaleDateString("fr-FR")}
 `);
 ```
