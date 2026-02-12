@@ -999,8 +999,8 @@ module.exports = class MetamobAPI {
 		let path = `${base}/users/${username}/quests/${quest_slug}`;
 		const queries = [];
 
-		if (options?.type) {
-			const type = monsterTypeByName(options.type);
+		if (options?.monster_type) {
+			const type = monsterTypeByName(options.monster_type);
 
 			if (!type) {
 				throw new Error(`monster_type '${options.monster_type}' doesn't exist`);
