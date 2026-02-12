@@ -840,11 +840,20 @@ module.exports = class MetamobAPI {
 	/**
 	 * ### Profil utilisateur
 
+	 * @typedef {object} Quest
+	 * @property {string} slug
+	 * @property {string} character_name
+	 * @property {number} current_step
+	 * @property {number} parallel_quests
+	 * @property {Server} server
+	 * @property {QuestTemplate} quest_template
+
 	 * @typedef {object} User
 	 * @property {string} username
 	 * @property {string} bio
 	 * @property {UserAvatar} avatar
 	 * @property {string} last_active
+	 * @property {Array<Quest>} quests
 
 	 * @param {string} username
  
@@ -884,8 +893,6 @@ module.exports = class MetamobAPI {
 
 			if (result.ok) {
 				data = convertIds(await _.json());
-
-				delete data.data.quests;
 			}
 
 			result = {
@@ -905,17 +912,6 @@ module.exports = class MetamobAPI {
 	/**
 	 * ### Liste des quêtes d'un utilisateur
 	 * Retourne les quêtes publiques avec le nombre de monstres recherchés et proposés.
-
-	 * @typedef {object} Quest
-	 * @property {string} slug
-	 * @property {string} character_name
-	 * @property {number} current_step
-	 * @property {number} parallel_quests
-	 * @property {number} wanted_count
-	 * @property {number} offered_count
-	 * @property {Server} server
-	 * @property {QuestTemplate} quest_template
-
 	 * @param {string} username
  
 	 * @returns {Promise<{
@@ -924,7 +920,7 @@ module.exports = class MetamobAPI {
 	 * statusText: string,
 	 * error?: string,
 	 * retryAfter?: number,
-	 * data?: Array<Quest>,
+	 * data?: Array<Quest & { wanted_count: number, offered_count: number }>,
 	 * }>}
 
 	 * @example
