@@ -973,7 +973,7 @@ module.exports = class MetamobAPI {
 	 * @param {string} username - Nom d'utilisateur
 	 * @param {string} quest_slug - Id (slug) de la quête de l'utilisateur
 	 * @param {object} [options]
-	 * @param {MonsterTypeName} [options.type] - Filtrer par type de monstre
+	 * @param {MonsterTypeName} [options.monster_type] - Filtrer par type de monstre
 	 * @param {"wanted"|"offered"} [options.status] - wanted (recherchés) ou offered (proposés). Par défaut : tous
 	 * @param {number} [options.step] - Filtrer par numéro d'étape
 	 * @param {number} [options.limit] - Nombre de résultats (défaut : 50, max : 200)
@@ -1005,7 +1005,7 @@ module.exports = class MetamobAPI {
 			if (!type) {
 				throw new Error(`monster_type '${options.monster_type}' doesn't exist`);
 			}
-			queries.push(`type=${type.id}`);
+			queries.push(`monster_type=${type.id}`);
 		}
 		if (options?.status) {
 			queries.push(`status=${options.status}`);
