@@ -984,7 +984,7 @@ module.exports = class MetamobAPI {
 	 * statusText: string;
 	 * error?: string,
 	 * retryAfter?: number;
-	 * data?: Array<Monster & { step: number, owned: number, status: number }>;
+	 * data?: Quest & { monsters: Array<Monster & { step: number, want: number, offer: number }> };
 	 * pagination?: Pagination;
 	 * }>}
 
@@ -1041,7 +1041,6 @@ module.exports = class MetamobAPI {
 				}));
 
 				data.pagination = data.data.pagination;
-				data.data = data.data.monsters;
 			}
 
 			result = {
