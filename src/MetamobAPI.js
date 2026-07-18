@@ -470,6 +470,7 @@ module.exports = class MetamobAPI {
    * @property {boolean|0|1} [never_want_boss] - Ne jamais rechercher les boss (étapes 17-19).
    * @property {boolean|0|1} [never_offer_arch] - Ne jamais proposer les archimonstres (étapes 20+).
    * @property {boolean|0|1} [never_want_arch] - Ne jamais rechercher les archimonstres (étapes 20+).
+   * @property {TypeFilters} [type_filters] - Alternative aux flags `never_*` à plat : objet indexé par id de type (ex. `{ "3": { never_want: true } }`).
    */
 
   /**
@@ -500,6 +501,25 @@ module.exports = class MetamobAPI {
    * @property {number|null} [trade_offer_threshold]
    * @property {number|null} [trade_want_threshold]
    * @property {TypeFilters} [type_filters]
+   */
+
+  /**
+   * Réglages complets d'une quête, renvoyés par `getQuest` (réservé à vos propres quêtes).
+   * Contient les champs de configuration de trade que les endpoints publics n'exposent pas.
+   *
+   * @typedef {object} QuestSettings
+   * @property {QuestSlug} slug
+   * @property {string} character_name
+   * @property {MonsterStep} current_step
+   * @property {number} parallel_quests
+   * @property {boolean} show_trades
+   * @property {boolean} is_favorite
+   * @property {0|1} trade_mode - 0 = Automatique, 1 = Mode expert.
+   * @property {number|null} trade_offer_threshold - `null` en mode automatique.
+   * @property {number|null} trade_want_threshold - `null` en mode automatique.
+   * @property {TypeFilters} type_filters
+   * @property {Server|null} server
+   * @property {QuestTemplateRef} quest_template
    */
 
   /**
@@ -1512,6 +1532,31 @@ module.exports = class MetamobAPI {
     }
 
     return await this.#req(`/zones/${zoneId}/subzones/${subzone.id}/monsters`, { apiKey: options.api_key });
+  }
+
+  /**
+   * ### Lire les réglages d'une quête
+   *
+   * Retourne les réglages complets de **votre** quête (`trade_mode`, seuils, `type_filters`,
+   * `show_trades`, `is_favorite`) que les endpoints publics n'exposent pas. C'est le pendant en
+   * lecture du `PATCH` sur la même URL. La liste des monstres n'est pas incluse (utilisez le détail
+   * de quête public ou {@link MetamobAPI#getQuestZones}).
+   *
+   * Réservé à vos propres quêtes : le slug d'un autre utilisateur renvoie `404`.
+   *
+   * @param {QuestSlug} slug - Slug de la quête.
+   * @param {RequestOptions} [options]
+   * @returns {Promise<BaseResult & { data: QuestSettings }>}
+   * @example
+   * const settings = await client.getQuest("a1b2c3d4");
+   * if (settings.ok) console.log(settings.data.trade_mode, settings.data.type_filters);
+   */
+  async getQuest(slug, options = {}) {
+    if (!nodeComfort.isString(slug)) {
+      throw new Error("`slug` parameter must be a non-empty string");
+    }
+
+    return await this.#req(`/quests/${encodeURIComponent(slug)}`, { apiKey: options.api_key });
   }
 
   /**
