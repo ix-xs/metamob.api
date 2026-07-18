@@ -156,6 +156,7 @@ un autre utilisateur que celui du client (voir [Clé API par requête](#clé-api
 
 | Méthode | Endpoint | Description |
 | --- | --- | --- |
+| `getQuest(slug, options?)` | `GET /quests/{slug}` | Lire les réglages complets de **sa propre** quête (trade_mode, seuils, type_filters, is_favorite…) |
 | `updateQuest(slug, changes, options?)` | `PATCH /quests/{slug}` | Modifier les paramètres d'une quête |
 | `updateQuestMonster(slug, monsterIdOrName, quantity, options?)` | `PATCH /quests/{slug}/monsters/{id}` | Modifier la quantité d'un monstre |
 | `updateQuestMonsters(slug, monsters, options?)` | `PATCH /quests/{slug}/monsters` | Modifier plusieurs monstres (max 200) |
@@ -252,7 +253,11 @@ do {
 ```js
 const slug = "a1b2c3d4"; // visible dans l'URL de votre page de quête
 
-// 1) Réglages de la quête
+// 0) Lire les réglages actuels (trade_mode, seuils, type_filters, is_favorite…)
+const settings = await client.getQuest(slug);
+console.log(settings.data.trade_mode, settings.data.type_filters);
+
+// 1) Réglages de la quête (les never_* peuvent aussi être envoyés via `type_filters`)
 await client.updateQuest(slug, { current_step: 12, show_trades: true, trade_mode: 1 });
 
 // 2) Quantité possédée d'un monstre (par id ou par nom)
