@@ -1,0 +1,502 @@
+[
+    {
+        "id": 48,
+        "name": {
+            "fr": "Akadémie des Gobs",
+            "en": "Gob Akademy",
+            "es": "Akademia de los Goblins"
+        },
+        "zone": 1,
+        "monsters": [52,31]
+    },
+    {
+        "id": 131,
+        "name": {
+            "fr": "Antre de Crocabulia",
+            "en": "Crocabulia's Lair",
+            "es": "Antro de Cocabulia"
+        },
+        "zone": 1,
+        "monsters": [343,164,246,247,227]
+    },
+    {
+        "id": 60,
+        "name": {
+            "fr": "Bord de la forêt maléfique",
+            "en": "Edge of the Evil Forest",
+            "es": "Linde del Bosque Maléfico"
+        },
+        "zone": 1,
+        "monsters": [435,436,87,88,89,48,398,437]
+    },
+    {
+        "id": 5,
+        "name": {
+            "fr": "Campagne d'Amakna",
+            "en": "Amakna Countryside",
+            "es": "Campo de Amakna"
+        },
+        "zone": 1,
+        "monsters": [2,354,357,28,360,12]
+    },
+    {
+        "id": 46,
+        "name": {
+            "fr": "Campement des Bworks",
+            "en": "The Bwork Camp",
+            "es": "Campamento de los bworks"
+        },
+        "zone": 1,
+        "monsters": [413,84,85,63,433,414,399,52,31,378]
+    },
+    {
+        "id": 47,
+        "name": {
+            "fr": "Campement des Gobelins",
+            "en": "The Goblin Camp",
+            "es": "Campamento de los goblins"
+        },
+        "zone": 1,
+        "monsters": [399,52,31,378]
+    },
+    {
+        "id": 31,
+        "name": {
+            "fr": "Champ des Ingalsse",
+            "en": "Ingalsses' Fields",
+            "es": "Campo de los Ingals"
+        },
+        "zone": 1,
+        "monsters": [20,369]
+    },
+    {
+        "id": 34,
+        "name": {
+            "fr": "Cimetière",
+            "en": "Cemetery",
+            "es": "Cementerio"
+        },
+        "zone": 1,
+        "monsters": [434,459,107,161,108,86,460,33,380,523,112,446,21,370]
+    },
+    {
+        "id": 16,
+        "name": {
+            "fr": "Clairière de Brouce Boulgoure",
+            "en": "Brouce Boulgoure's Clearing",
+            "es": "Claro de Brus Bulguro"
+        },
+        "zone": 1,
+        "monsters": [360,12,56,407]
+    },
+    {
+        "id": 125,
+        "name": {
+            "fr": "Cloaque d'Amakna",
+            "en": "Amakna Sewers",
+            "es": "Cloaca de Amakna"
+        },
+        "zone": 1,
+        "monsters": [158,510,178,197,549,527]
+    },
+    {
+        "id": 8,
+        "name": {
+            "fr": "Coin des Boos",
+            "en": "Mushd Corner",
+            "es": "Rincón de los Boos"
+        },
+        "zone": 1,
+        "monsters": [47,396,4,5,26]
+    },
+    {
+        "id": 7,
+        "name": {
+            "fr": "Coin des Bouftous",
+            "en": "Gobball Corner",
+            "es": "Rincón de los Jalatós"
+        },
+        "zone": 1,
+        "monsters": [355,375,397,4,5,26,356,49]
+    },
+    {
+        "id": 14,
+        "name": {
+            "fr": "Côte d'Asse",
+            "en": "Asse Coast",
+            "es": "Costa del Rano"
+        },
+        "zone": 1,
+        "monsters": [381,382,11,70,34,35,467,359]
+    },
+    {
+        "id": 30,
+        "name": {
+            "fr": "Cryptes du cimetière",
+            "en": "Cemetery Crypts",
+            "es": "Criptas del cementerio"
+        },
+        "zone": 1,
+        "monsters": [107,142,143,108,144,33,418,71,422,74,112,19,368,21,370,60,410]
+    },
+    {
+        "id": 70,
+        "name": {
+            "fr": "Donjon des Bworks",
+            "en": "Bwork Dungeon",
+            "es": "Mazmorra de los Bworks"
+        },
+        "zone": 1,
+        "monsters": [84,85,63,306]
+    },
+    {
+        "id": 38,
+        "name": {
+            "fr": "Donjon des Forgerons",
+            "en": "Blacksmith Dungeon",
+            "es": "Mazmorra de los Herreros"
+        },
+        "zone": 1,
+        "monsters": [23,27,133,98]
+    },
+    {
+        "id": 171,
+        "name": {
+            "fr": "Donjon des Larves",
+            "en": "Larva Dungeon",
+            "es": "Mazmorra de las Larvas"
+        },
+        "zone": 1,
+        "monsters": [317]
+    },
+    {
+        "id": 95,
+        "name": {
+            "fr": "Donjon des Scarafeuilles",
+            "en": "Scaraleaf Dungeon",
+            "es": "Mazmorra de los Escarahojas"
+        },
+        "zone": 1,
+        "monsters": [316,113,114,115,116]
+    },
+    {
+        "id": 79,
+        "name": {
+            "fr": "Donjon des Squelettes",
+            "en": "Skeleton Dungeon",
+            "es": "Mazmorra de los Esqueletos"
+        },
+        "zone": 1,
+        "monsters": [107,161,108,86,112]
+    },
+    {
+        "id": 32,
+        "name": {
+            "fr": "Donjon des Tofus",
+            "en": "Tofu House",
+            "es": "Mazmorra de los Tofus"
+        },
+        "zone": 1,
+        "monsters": [20]
+    },
+    {
+        "id": 136,
+        "name": {
+            "fr": "Épreuve de Draegnerys",
+            "en": "Draegnerys's Trial",
+            "es": "Prueba de Dragenerys"
+        },
+        "zone": 1,
+        "monsters": [185,186,187,188]
+    },
+    {
+        "id": 42,
+        "name": {
+            "fr": "Forêt d'Amakna",
+            "en": "Amakna Forest",
+            "es": "Bosque de Amakna"
+        },
+        "zone": 1,
+        "monsters": [357,28,405,55,56,407]
+    },
+    {
+        "id": 57,
+        "name": {
+            "fr": "Marécages d'Amakna",
+            "en": "Amakna Swamps",
+            "es": "Pantanos de Amakna"
+        },
+        "zone": 1,
+        "monsters": [47,396,203,110,556,461]
+    },
+    {
+        "id": 4,
+        "name": {
+            "fr": "Milifutaie",
+            "en": "Milicluster",
+            "es": "Mililameda"
+        },
+        "zone": 1,
+        "monsters": [2,354,72,419,13,14,15,405,55]
+    },
+    {
+        "id": 3,
+        "name": {
+            "fr": "Montagne basse des Craqueleurs",
+            "en": "Low Crackler Mountain",
+            "es": "Piedemonte de los crujidores"
+        },
+        "zone": 1,
+        "monsters": [2,413,84,85,63,433,414,399,438,90,576,91,639,439,52,31,378]
+    },
+    {
+        "id": 61,
+        "name": {
+            "fr": "Montagne des Craqueleurs",
+            "en": "Crackler Mountain",
+            "es": "La montaña de los crujidores"
+        },
+        "zone": 1,
+        "monsters": [50,170,171,172,173,518,519,520,521,217]
+    },
+    {
+        "id": 134,
+        "name": {
+            "fr": "Nid du Kwakwa",
+            "en": "The Kwakwa's Nest",
+            "es": "Nido de Kwoknan"
+        },
+        "zone": 1,
+        "monsters": [170,171,172,173]
+    },
+    {
+        "id": 39,
+        "name": {
+            "fr": "Passage vers Brâkmar",
+            "en": "Passage to Brakmar",
+            "es": "Pasaje hacia Brakmar"
+        },
+        "zone": 1,
+        "monsters": [372,24,374,27,481,133,98,421]
+    },
+    {
+        "id": 44,
+        "name": {
+            "fr": "Péninsule des gelées",
+            "en": "Jelly Peninsula",
+            "es": "Península de las gelatinas"
+        },
+        "zone": 1,
+        "monsters": [376,442,29,94,30,377]
+    },
+    {
+        "id": 81,
+        "name": {
+            "fr": "Pitons Rocheux des Craqueleurs",
+            "en": "Crackler's Rocky Peaks",
+            "es": "Picos Rocosos de los Crujidores"
+        },
+        "zone": 1,
+        "monsters": [90,91,145,324]
+    },
+    {
+        "id": 12,
+        "name": {
+            "fr": "Plaine des Scarafeuilles",
+            "en": "Scaraleaf Plain",
+            "es": "Llanura de los escarahojas"
+        },
+        "zone": 1,
+        "monsters": [92,132,447,113,114,115,116,448,449,450]
+    },
+    {
+        "id": 13,
+        "name": {
+            "fr": "Port de Madrestam",
+            "en": "Madrestam Harbour",
+            "es": "Puerto de Madrestam"
+        },
+        "zone": 1,
+        "monsters": [381,382,11,70,34,35,467,359]
+    },
+    {
+        "id": 135,
+        "name": {
+            "fr": "Presqu'île des Dragoeufs",
+            "en": "Dreggon Peninsula",
+            "es": "Península de los dragohuevos"
+        },
+        "zone": 1,
+        "monsters": [535,806,536,537,185,186,187,188,538]
+    },
+    {
+        "id": 168,
+        "name": {
+            "fr": "Repaire de Sphincter Cell",
+            "en": "Sphincter Cell's Lair",
+            "es": "Guarida de Sfinter Cell"
+        },
+        "zone": 1,
+        "monsters": [314,315,351]
+    },
+    {
+        "id": 157,
+        "name": {
+            "fr": "Repaire du Kharnozor",
+            "en": "Kharnotaurus's Lair",
+            "es": "Guarida de Karnozor"
+        },
+        "zone": 1,
+        "monsters": [263,264,265,266]
+    },
+    {
+        "id": 2,
+        "name": {
+            "fr": "Rivière Kawaii",
+            "en": "Kawaii River",
+            "es": "Río Kawaii"
+        },
+        "zone": 1,
+        "monsters": [2,354,357,28,360,12]
+    },
+    {
+        "id": 130,
+        "name": {
+            "fr": "Sanctuaire des Dragoeufs",
+            "en": "The Dreggons' Sanctuary",
+            "es": "Santuario de los dragohuevos"
+        },
+        "zone": 1,
+        "monsters": [164,578,515,246,579,557,247,227]
+    },
+    {
+        "id": 1,
+        "name": {
+            "fr": "Souterrains",
+            "en": "Tunnels",
+            "es": "Subterráneos"
+        },
+        "zone": 1,
+        "monsters": [2,27,98,217]
+    },
+    {
+        "id": 156,
+        "name": {
+            "fr": "Souterrains des Dragoeufs",
+            "en": "Dreggon Tunnels",
+            "es": "Subterráneos de los dragohuevos"
+        },
+        "zone": 1,
+        "monsters": [594,595,263,264,265,266,596,598]
+    },
+    {
+        "id": 37,
+        "name": {
+            "fr": "Territoire des Bandits",
+            "en": "Bandit Territory",
+            "es": "Territorio de los bandidos"
+        },
+        "zone": 1,
+        "monsters": [23,373,374,27,481,133,98,421]
+    },
+    {
+        "id": 92,
+        "name": {
+            "fr": "Territoire des Porcos",
+            "en": "Porco Territory",
+            "es": "Territorio de los porcos"
+        },
+        "zone": 1,
+        "monsters": [109,466,526,177]
+    },
+    {
+        "id": 160,
+        "name": {
+            "fr": "Territoire souterrain des Porcos",
+            "en": "Underground Porco Territory",
+            "es": "Territorio subterráneo de los porcos"
+        },
+        "zone": 1,
+        "monsters": [274]
+    },
+    {
+        "id": 33,
+        "name": {
+            "fr": "Tofulailler Royal",
+            "en": "Royal Tofu House",
+            "es": "Tofullinero Real"
+        },
+        "zone": 1,
+        "monsters": [20,318]
+    },
+    {
+        "id": 17,
+        "name": {
+            "fr": "Village d'Amakna",
+            "en": "Amakna Village",
+            "es": "Pueblo de Amakna"
+        },
+        "zone": 1,
+        "monsters": [13,14,15,17,18,361,362,363,365,366]
+    },
+    {
+        "id": 28,
+        "name": {
+            "fr": "Village des Bworks",
+            "en": "Bwork Village",
+            "es": "Pueblo de los bworks"
+        },
+        "zone": 1,
+        "monsters": [413,84,85,63,433,414,15,18]
+    },
+    {
+        "id": 155,
+        "name": {
+            "fr": "Village des Dragoeufs",
+            "en": "Dreggon Village",
+            "es": "Pueblo de los dragohuevos"
+        },
+        "zone": 1,
+        "monsters": [594,595,263,264,265,266,596,598]
+    },
+    {
+        "id": 210,
+        "name": {
+            "fr": "Refuge sylvestre",
+            "en": "Sylvan Refuge",
+            "es": "Refugio Silvestre"
+        },
+        "zone": 24,
+        "monsters": [800]
+    },
+    {
+        "id": 214,
+        "name": {
+            "fr": "Cratère Minus",
+            "en": "Pinki Crater",
+            "es": "Cráter Mino"
+        },
+        "zone": 25,
+        "monsters": [809,811,813,815,817,829,831,833,835,837,819,821,823,825,827,839,841,843,845,847]
+    },
+    {
+        "id": 220,
+        "name": {
+            "fr": "Cratère Monseleya",
+            "en": "Mountsaleia Crater",
+            "es": "Cráter Montseleya"
+        },
+        "zone": 25,
+        "monsters": [840,842,839,841,843,845,847,846,848,844]
+    },
+    {
+        "id": 216,
+        "name": {
+            "fr": "Cratère Mopyle",
+            "en": "Onthea Crater",
+            "es": "Cráter Mófilo"
+        },
+        "zone": 25,
+        "monsters": [828,826,820,819,821,823,825,827,824,822]
+    }
+]

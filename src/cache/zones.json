@@ -1,0 +1,200 @@
+[
+    {
+        "id": 1,
+        "name": {
+            "fr": "Amakna",
+            "en": "Amakna",
+            "es": "Amakna"
+        },
+        "subzones": [48,131,60,5,46,47,31,34,16,125,8,7,14,30,70,38,171,95,79,32,136,42,57,4,3,61,134,39,44,81,12,13,135,168,157,2,130,1,156,37,92,160,33,17,28,155]
+    },
+    {
+        "id": 24,
+        "name": {
+            "fr": "Archipel de Valonia",
+            "en": "Archipelago of Valonia",
+            "es": "Archipiélago de Valonia"
+        },
+        "subzones": [210]
+    },
+    {
+        "id": 25,
+        "name": {
+            "fr": "Archipel de Vulkania",
+            "en": "Archipelago of Vulkania",
+            "es": "Archipiélago de Vulkania"
+        },
+        "subzones": [214,220,216,218,213,215,212,219,217]
+    },
+    {
+        "id": 2,
+        "name": {
+            "fr": "Astrub",
+            "en": "Astrub",
+            "es": "Astrub"
+        },
+        "subzones": [77,53,78,83,19,10,36,64,54,15,6,9]
+    },
+    {
+        "id": 3,
+        "name": {
+            "fr": "Baie de Sufokia",
+            "en": "Sufokia Bay",
+            "es": "Bahía de Sufokia"
+        },
+        "subzones": [11,18]
+    },
+    {
+        "id": 4,
+        "name": {
+            "fr": "Bonta",
+            "en": "Bonta",
+            "es": "Bonta"
+        },
+        "subzones": [174,111,22,20,169,21,23,52]
+    },
+    {
+        "id": 5,
+        "name": {
+            "fr": "Brâkmar",
+            "en": "Brakmar",
+            "es": "Brakmar"
+        },
+        "subzones": [74,112,173,25,27,24,26,170]
+    },
+    {
+        "id": 23,
+        "name": {
+            "fr": "Expéditions",
+            "en": "Expeditions",
+            "es": "Expediciones"
+        },
+        "subzones": [204,201,205,207,202,206,208,203]
+    },
+    {
+        "id": 7,
+        "name": {
+            "fr": "Foire du Trool",
+            "en": "Trool Fair",
+            "es": "Feria del Trool"
+        },
+        "subzones": [35]
+    },
+    {
+        "id": 11,
+        "name": {
+            "fr": "Forêt des Abraknydes",
+            "en": "Treechnid Forest",
+            "es": "Bosque de los abráknidos"
+        },
+        "subzones": [209,75,180,110,109,49]
+    },
+    {
+        "id": 21,
+        "name": {
+            "fr": "Forêt Maléfique",
+            "en": "Evil Forest",
+            "es": "Bosque Maléfico"
+        },
+        "subzones": [175]
+    },
+    {
+        "id": 10,
+        "name": {
+            "fr": "Gelaxième dimension",
+            "en": "Jellith Dimension",
+            "es": "Gelexta Dimensión"
+        },
+        "subzones": [45]
+    },
+    {
+        "id": 15,
+        "name": {
+            "fr": "Île d'Otomaï",
+            "en": "Otomai Island",
+            "es": "Isla de Otomai"
+        },
+        "subzones": [124,143,91,150,159,129,107,63,144,145,106,128,123,122,151,154,153]
+    },
+    {
+        "id": 20,
+        "name": {
+            "fr": "Île de Grobe",
+            "en": "Nolifis Island",
+            "es": "Isla de Grobe"
+        },
+        "subzones": [165,161,162,166]
+    },
+    {
+        "id": 14,
+        "name": {
+            "fr": "Île de Moon",
+            "en": "Moon Island",
+            "es": "Isla de Moon"
+        },
+        "subzones": [66,90,89,132,65,62,133]
+    },
+    {
+        "id": 16,
+        "name": {
+            "fr": "Île de Pandala",
+            "en": "Pandala Island",
+            "es": "Isla de Pandala"
+        },
+        "subzones": [120,103,85,69,121,127,126,68,84,104]
+    },
+    {
+        "id": 8,
+        "name": {
+            "fr": "Île des Wabbits",
+            "en": "Wabbit Islands",
+            "es": "Archipiélago wabbit"
+        },
+        "subzones": [41,40,67,108,87,172]
+    },
+    {
+        "id": 17,
+        "name": {
+            "fr": "Île du Minotoror",
+            "en": "Minotoror Island",
+            "es": "Isla del Minotauroro"
+        },
+        "subzones": [97,76,98]
+    },
+    {
+        "id": 18,
+        "name": {
+            "fr": "Labyrinthe du Dragon Cochon",
+            "en": "Dragon Pig's Maze",
+            "es": "Laberinto del Dragocerdo"
+        },
+        "subzones": [93,94]
+    },
+    {
+        "id": 9,
+        "name": {
+            "fr": "Landes de Sidimote",
+            "en": "Sidimote Moors",
+            "es": "Landas de Sidimote"
+        },
+        "subzones": [163,211,50,164,177,147,51,73,43]
+    },
+    {
+        "id": 13,
+        "name": {
+            "fr": "Montagne des Koalaks",
+            "en": "Koalak Mountain",
+            "es": "Montaña de los koalaks"
+        },
+        "subzones": [118,117,114,148,116,115,58,59,142,82,149]
+    },
+    {
+        "id": 12,
+        "name": {
+            "fr": "Plaines de Cania",
+            "en": "Cania Plains",
+            "es": "Llanuras de Cania"
+        },
+        "subzones": [167,105,72,80,146,88,137,139,56,158,102,71,152,55,113,86,176,101,138,181]
+    }
+]

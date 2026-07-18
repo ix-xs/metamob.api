@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "slug": "ocre",
+        "name": {
+            "fr": "Ocre",
+            "en": "Ochre",
+            "es": "Ocre"
+        }
+    },
+    {
+        "id": 2,
+        "slug": "dokille",
+        "name": {
+            "fr": "Dokille",
+            "en": "Grofus",
+            "es": "Dosaurio"
+        }
+    }
+]
