@@ -1,12 +1,12 @@
 {
   "name": "@ix-xs/metamob.api",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Client Node.js complet et typé (JSDoc) pour l'API Metamob (Dofus) : zones, monstres, quêtes, serveurs, kralamoures, conversations et gestion de quêtes.",
   "license": "MIT",
   "author": "ix-xs",
   "type": "commonjs",
   "main": "index.js",
-  "types": "types/index.d.ts",
+  "types": "index.d.ts",
   "homepage": "https://github.com/ix-xs/metamob.api#readme",
   "bugs": {
 		"url": "https://github.com/ix-xs/metamob.api/issues"
@@ -17,11 +17,14 @@
 	},
   "files": [
     "index.js",
-    "src/",
-    "types/"
+    "index.d.ts",
+    "src/"
   ],
   "engines": {
     "node": ">=18"
+  },
+  "scripts": {
+    "build:types": "node scripts/generate-types.js"
   },
   "keywords": [
     "metamob",
