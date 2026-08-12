@@ -294,7 +294,7 @@ module.exports = class MetamobAPI {
    * @property {string} id
    * @property {string} event_datetime
    * @property {string} description
-   * @property {string} creator
+   * @property {string|null} creator - `null` si le compte a été supprimé définitivement ou en cas de blocage mutuel.
    * @property {Server|null} server
    */
 
@@ -307,13 +307,13 @@ module.exports = class MetamobAPI {
 
   /**
    * @typedef {object} Participant
-   * @property {string} username
+   * @property {string|null} username - `null` si le compte a été supprimé définitivement ou en cas de blocage mutuel.
    * @property {number} character_count
    */
 
   /**
    * @typedef {object} KraloveMessage
-   * @property {string} username
+   * @property {string|null} username - `null` si le compte a été supprimé définitivement ou en cas de blocage mutuel.
    * @property {string} content
    * @property {string} created_at
    */
