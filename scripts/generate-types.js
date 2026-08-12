@@ -384,21 +384,32 @@ ${literalTypes}
     id: string | number;
     event_datetime: string;
     description: string;
-    creator: string;
+    /** \`null\` si le compte a été supprimé définitivement ou en cas de blocage mutuel. */
+    creator: string | null;
     participants_count: number;
     character_count: number;
     messages_count: number;
     server: Server | null;
   }
 
-  interface Participant { username: string; character_count: number; }
-  interface KraloveMessage { username: string; content: string; created_at: string; }
+  interface Participant {
+    /** \`null\` si le compte a été supprimé définitivement ou en cas de blocage mutuel. */
+    username: string | null;
+    character_count: number;
+  }
+  interface KraloveMessage {
+    /** \`null\` si le compte a été supprimé définitivement ou en cas de blocage mutuel. */
+    username: string | null;
+    content: string;
+    created_at: string;
+  }
 
   interface KraloveDetail {
     id: string | number;
     event_datetime: string;
     description: string;
-    creator: string;
+    /** \`null\` si le compte a été supprimé définitivement ou en cas de blocage mutuel. */
+    creator: string | null;
     server: Server | null;
     participants: Participant[];
     messages: KraloveMessage[];
