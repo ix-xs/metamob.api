@@ -1,6 +1,6 @@
 {
   "name": "@ix-xs/metamob.api",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "Client Node.js complet et typé (JSDoc) pour l'API Metamob (Dofus) : zones, monstres, quêtes, serveurs, kralamoures, conversations et gestion de quêtes.",
   "license": "MIT",
   "author": "ix-xs",
