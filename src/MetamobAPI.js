@@ -231,6 +231,16 @@ module.exports = class MetamobAPI {
    */
 
   /**
+   * Type de quête complet, renvoyé par `getQuestTypes` (inclut `image`, absent des blocs `quest_type` imbriqués).
+   *
+   * @typedef {object} QuestTypeInfo
+   * @property {QuestTypeId} id
+   * @property {QuestTypeSlug} slug
+   * @property {QuestTypeName} name
+   * @property {string} image - Nom de fichier, servi depuis `/img/quest-types/`.
+   */
+
+  /**
    * @typedef {object} Zone
    * @property {ZoneId} id
    * @property {ZoneName} name
@@ -341,6 +351,7 @@ module.exports = class MetamobAPI {
   /**
    * @typedef {object} QuestTemplateRef
    * @property {QuestTemplateId} id
+   * @property {QuestType} quest_type
    * @property {MonsterCount} monster_count
    * @property {StepCount} step_count
    */
@@ -397,6 +408,56 @@ module.exports = class MetamobAPI {
    * @property {Server|null} server
    * @property {QuestTemplateRef} quest_template
    * @property {Array<UserQuestMonster>} monsters
+   * @property {Pagination} pagination
+   */
+
+  /**
+   * Compte associé à la clé API (renvoyé par `getMe`). Profil uniquement — ni e-mail, ni réglages de compte.
+   *
+   * @typedef {object} Me
+   * @property {string} username
+   * @property {string} bio
+   * @property {AvatarMonster|null} avatar
+   * @property {string} last_active
+   */
+
+  /**
+   * Élément de la liste de vos propres quêtes (`getMyQuests`) — inclut les quêtes masquées.
+   *
+   * @typedef {object} OwnQuest
+   * @property {string} slug
+   * @property {string} character_name
+   * @property {MonsterStep} current_step
+   * @property {number} parallel_quests
+   * @property {boolean} show_trades - Réglage « Afficher sur mon profil public ».
+   * @property {boolean} is_favorite
+   * @property {Server|null} server
+   * @property {QuestTemplateRef} quest_template
+   */
+
+  /**
+   * Monstre d'une de vos propres quêtes (`getQuestMonsters`). Identique à {@link UserQuestMonster},
+   * plus les surcharges manuelles d'échange `trade_offer` / `trade_want`.
+   *
+   * @typedef {object} OwnQuestMonster
+   * @property {MonsterId} id
+   * @property {MonsterName} name
+   * @property {MonsterImage} image
+   * @property {MonsterLevelMin} level_min
+   * @property {MonsterLevelMax} level_max
+   * @property {MonsterType|null} type
+   * @property {MonsterStep} step
+   * @property {number} quantity - Quantité possédée par l'utilisateur.
+   * @property {number} want - Quantité réellement recherchée à l'échange.
+   * @property {number} offer - Quantité réellement proposée à l'échange.
+   * @property {number|null} trade_offer - Surcharge manuelle ; `null` = calcul automatique (différent de `0`).
+   * @property {number|null} trade_want - Surcharge manuelle ; `null` = calcul automatique (différent de `0`).
+   */
+
+  /**
+   * @typedef {object} QuestMonstersResult
+   * @property {string} slug
+   * @property {Array<OwnQuestMonster>} monsters
    * @property {Pagination} pagination
    */
 
@@ -730,6 +791,23 @@ module.exports = class MetamobAPI {
    */
 
   /**
+   * @typedef {object} QuestMonstersOptions
+   * @property {MonsterTypeId|MonsterTypeNameFr|MonsterTypeNameEn|MonsterTypeNameEs} [monsterTypeIdOrName] - Filtrer par type de monstre.
+   * @property {"needed"|"ok"|"excess"|"wanted"|"offered"} [status] - Progression (`needed`/`ok`/`excess`) ou échange (`wanted`/`offered`).
+   * @property {"manual"|"auto"} [trade] - `manual` = surcharge d'échange posée, `auto` = valeurs calculées.
+   * @property {MonsterStep} [step] - Filtrer par numéro d'étape.
+   * @property {number} [limit] - Nombre de résultats (défaut : 50, max : 200).
+   * @property {number} [offset] - Décalage pour la pagination (défaut : 0).
+   * @property {string} [api_key] - Clé API alternative pour cette requête (défaut : clé du client).
+   */
+
+  /**
+   * @typedef {object} QuestTypesOptions
+   * @property {QuestTypeId|QuestTypeSlug|QuestTypeNameFr|QuestTypeNameEn|QuestTypeNameEs} [idOrName] - Id, slug ou nom du type de quête.
+   * @property {string} [api_key] - Clé API alternative pour cette requête (défaut : clé du client).
+   */
+
+  /**
    * @param {ClientOptions} options
    */
   constructor(options = {}) {
@@ -844,6 +922,19 @@ module.exports = class MetamobAPI {
     }
 
     return subzone;
+  }
+  #resolveQuestTypeId(value) {
+    const q = this.#normalize(value);
+    const type =
+      typeof value === "number"
+        ? this.cache.quest_types.find(x => x.id === value)
+        : this.cache.quest_types.find(x => this.#normalize(x.slug) === q || this.#matchI18nName(x, value));
+
+    if (!type) {
+      throw new Error(`Unknown quest type: ${value}`);
+    }
+
+    return type.id;
   }
   #buildQuery(params = {}) {
     const qs = Object.entries(params)
@@ -1196,6 +1287,36 @@ module.exports = class MetamobAPI {
   }
 
   /**
+   * ### Types de quête
+   *
+   * Un type de quête regroupe une liste d'archimonstres ; un échange n'est possible qu'entre deux
+   * quêtes du **même type**. Le type est déjà présent dans `quest_template` partout où une quête
+   * est renvoyée ; cet endpoint sert aux applications qui ont besoin de la liste en amont.
+   *
+   * @overload
+   * @returns {Promise<BaseResult & { data: Array<QuestTypeInfo> }>}
+
+   * @overload
+   * @param {QuestTypesOptions & { idOrName: QuestTypeId|QuestTypeSlug|QuestTypeNameFr|QuestTypeNameEn|QuestTypeNameEs }} options
+   * @returns {Promise<BaseResult & { data: QuestTypeInfo }>}
+
+   * @param {QuestTypesOptions} [options]
+   * @returns {Promise<BaseResult & { data: Array<QuestTypeInfo>|QuestTypeInfo }>}
+   * @example
+   * const types = await client.getQuestTypes();
+   * const ocre = await client.getQuestTypes({ idOrName: "ocre" });
+   */
+  async getQuestTypes(options = {}) {
+    if (nodeComfort.isUndefined(options?.idOrName)) {
+      return await this.#req("/quest-types", { apiKey: options.api_key });
+    }
+
+    const id = this.#resolveQuestTypeId(options.idOrName);
+
+    return await this.#req(`/quest-types/${id}`, { apiKey: options.api_key });
+  }
+
+  /**
   * ### Modèles de quête
 
   * @overload
@@ -1360,6 +1481,24 @@ module.exports = class MetamobAPI {
       limit: options.limit,
       offset: options.offset,
     })}`, { apiKey: options.api_key });
+  }
+
+  /**
+   * ### Mon compte
+   *
+   * Retourne le compte auquel appartient la clé API utilisée (pseudo, bio, avatar, dernière
+   * connexion) — pratique pour récupérer le `username` sans le demander à l'utilisateur, puis
+   * l'utiliser tel quel dans les endpoints `/users/{username}/...`. Ne renvoie aucune donnée
+   * sensible (ni e-mail, ni réglages).
+   *
+   * @param {RequestOptions} [options]
+   * @returns {Promise<BaseResult & { data: Me }>}
+   * @example
+   * const me = await client.getMe();
+   * if (me.ok) console.log(me.data.username, me.data.bio);
+   */
+  async getMe(options = {}) {
+    return await this.#req("/me", { apiKey: options.api_key });
   }
 
   /**
@@ -1535,12 +1674,30 @@ module.exports = class MetamobAPI {
   }
 
   /**
+   * ### Lister ses propres quêtes
+   *
+   * Retourne **toutes** vos quêtes, y compris celles masquées (`show_trades: false`) — contrairement
+   * à {@link MetamobAPI#getUserQuests} qui, lui, ne liste que les quêtes publiques. C'est le point
+   * d'entrée pour récupérer les `slug` de vos quêtes. Liste volontairement concise (ni monstres, ni
+   * réglages d'échange) et non paginée (nombre de quêtes plafonné). Les favorites sont renvoyées en premier.
+   *
+   * @param {RequestOptions} [options]
+   * @returns {Promise<BaseResult & { data: Array<OwnQuest> }>}
+   * @example
+   * const quests = await client.getMyQuests();
+   * if (quests.ok) for (const q of quests.data) console.log(q.slug, q.is_favorite);
+   */
+  async getMyQuests(options = {}) {
+    return await this.#req("/quests", { apiKey: options.api_key });
+  }
+
+  /**
    * ### Lire les réglages d'une quête
    *
    * Retourne les réglages complets de **votre** quête (`trade_mode`, seuils, `type_filters`,
    * `show_trades`, `is_favorite`) que les endpoints publics n'exposent pas. C'est le pendant en
-   * lecture du `PATCH` sur la même URL. La liste des monstres n'est pas incluse (utilisez le détail
-   * de quête public ou {@link MetamobAPI#getQuestZones}).
+   * lecture du `PATCH` sur la même URL. La liste des monstres n'est pas incluse (utilisez
+   * {@link MetamobAPI#getQuestMonsters}).
    *
    * Réservé à vos propres quêtes : le slug d'un autre utilisateur renvoie `404`.
    *
@@ -1710,6 +1867,42 @@ module.exports = class MetamobAPI {
       body,
       apiKey: options.api_key,
     });
+  }
+
+  /**
+   * ### Monstres d'une de ses propres quêtes
+   *
+   * Liste à plat les monstres de **votre** quête, avec filtres et pagination. Pendant privé de
+   * {@link MetamobAPI#getUserQuests} (détail) : même format, mais fonctionne aussi sur une quête
+   * masquée. Inclut en plus les surcharges manuelles `trade_offer` / `trade_want`.
+   *
+   * Réservé à vos propres quêtes : le slug d'un autre utilisateur renvoie `404`.
+   *
+   * @param {QuestSlug} slug - Slug de la quête.
+   * @param {QuestMonstersOptions} [options]
+   * @returns {Promise<BaseResult & { data: QuestMonstersResult }>}
+   * @example
+   * // Monstres encore à capturer, page 1
+   * const res = await client.getQuestMonsters("a1b2c3d4", { status: "needed", limit: 50 });
+   * if (res.ok) console.log(res.data.monsters, res.data.pagination);
+   */
+  async getQuestMonsters(slug, options = {}) {
+    if (!nodeComfort.isString(slug)) {
+      throw new Error("`slug` parameter must be a non-empty string");
+    }
+
+    const monster_type = options.monsterTypeIdOrName === undefined
+      ? undefined
+      : this.#resolveMonsterTypeId(options.monsterTypeIdOrName);
+
+    return await this.#req(`/quests/${encodeURIComponent(slug)}/monsters${this.#buildQuery({
+      monster_type,
+      status: options.status,
+      trade: options.trade,
+      step: options.step,
+      limit: options.limit,
+      offset: options.offset,
+    })}`, { apiKey: options.api_key });
   }
 
   /**
