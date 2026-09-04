@@ -82,6 +82,19 @@ declare class MetamobAPI {
   getMonsters(options?: MetamobAPI.MonstersOptions): MetamobAPI.PaginatedResponse<MetamobAPI.BaseMonster[]>;
 
   /**
+   * ### Types de quête
+   *
+   * Un type de quête regroupe une liste d'archimonstres ; un échange n'est possible qu'entre deux
+   * quêtes du même type.
+   * @example
+   * const types = await client.getQuestTypes();
+   * const ocre = await client.getQuestTypes({ idOrName: "ocre" });
+   */
+  getQuestTypes(): MetamobAPI.Response<MetamobAPI.QuestTypeInfo[]>;
+  getQuestTypes(options: Omit<MetamobAPI.QuestTypesOptions, "idOrName"> & { idOrName: MetamobAPI.QuestTypeInput }): MetamobAPI.Response<MetamobAPI.QuestTypeInfo>;
+  getQuestTypes(options?: MetamobAPI.QuestTypesOptions): MetamobAPI.Response<MetamobAPI.QuestTypeInfo[] | MetamobAPI.QuestTypeInfo>;
+
+  /**
    * ### Modèles de quête
    * @example
    * const step15 = await client.getQuestTemplates({ id: 1, step: 15 });
@@ -117,6 +130,16 @@ declare class MetamobAPI {
   searchUsers(query: string, options?: MetamobAPI.SearchUsersOptions): MetamobAPI.PaginatedResponse<MetamobAPI.BaseUser[]>;
 
   /**
+   * ### Mon compte — compte associé à la clé API
+   *
+   * Récupère le `username` (+ bio, avatar, dernière connexion) sans le demander à l'utilisateur.
+   * @example
+   * const me = await client.getMe();
+   * if (me.ok) console.log(me.data.username);
+   */
+  getMe(options?: MetamobAPI.RequestOptions): MetamobAPI.Response<MetamobAPI.Me>;
+
+  /**
    * ### Utilisateur
    * @example
    * const profile = await client.getUser("player1");
@@ -147,6 +170,17 @@ declare class MetamobAPI {
    * const next = await client.getMessages("player1", { before_id: first.pagination.next_before_id });
    */
   getMessages(username: string, options?: MetamobAPI.MessagesOptions): Promise<MetamobAPI.BaseResult & { data: MetamobAPI.ConversationItem[]; pagination: MetamobAPI.CursorPagination }>;
+
+  /**
+   * ### Lister ses propres quêtes (publiques ET masquées)
+   *
+   * Point d'entrée pour récupérer les `slug` de vos quêtes. Contrairement à `getUserQuests`,
+   * inclut les quêtes masquées. Non paginé ; favorites en premier.
+   * @example
+   * const quests = await client.getMyQuests();
+   * if (quests.ok) for (const q of quests.data) console.log(q.slug, q.is_favorite);
+   */
+  getMyQuests(options?: MetamobAPI.RequestOptions): MetamobAPI.Response<MetamobAPI.OwnQuest[]>;
 
   /**
    * ### Lire les réglages d'une quête (réservé à vos propres quêtes)
@@ -186,6 +220,17 @@ declare class MetamobAPI {
    * await client.setQuestMonsterTrade("a1b2c3d4", 123, { trade_offer: 1, trade_want: null });
    */
   setQuestMonsterTrade(slug: string, monsterIdOrName: MetamobAPI.MonsterInput, trade: MetamobAPI.MonsterTradeOptions, options?: MetamobAPI.RequestOptions): MetamobAPI.Response<MetamobAPI.QuestMonsterTradeResult>;
+
+  /**
+   * ### Monstres d'une de ses propres quêtes (liste à plat, filtres + pagination)
+   *
+   * Pendant privé du détail de `getUserQuests` : fonctionne aussi sur une quête masquée, et inclut
+   * les surcharges manuelles `trade_offer` / `trade_want`.
+   * @example
+   * const res = await client.getQuestMonsters("a1b2c3d4", { status: "needed", limit: 50 });
+   * if (res.ok) console.log(res.data.monsters, res.data.pagination);
+   */
+  getQuestMonsters(slug: string, options?: MetamobAPI.QuestMonstersOptions): MetamobAPI.Response<MetamobAPI.QuestMonstersResult>;
 
   /**
    * ### Partenaires d'échange potentiels
@@ -1115,6 +1160,7 @@ declare namespace MetamobAPI {
   type ServerInput = ServerId | ServerName | (string & {}) | (number & {});
   type MonsterTypeInput = MonsterTypeId | MonsterTypeName | (string & {}) | (number & {});
   type GameVersionInput = GameVersionId | GameVersionName | (string & {}) | (number & {});
+  type QuestTypeInput = QuestTypeId | QuestTypeSlug | QuestTypeName | (string & {}) | (number & {});
 
   /** Nom localisé (fr/en/es). */
   interface LocalizedName { fr: string; en: string; es: string; }
@@ -1151,6 +1197,14 @@ declare namespace MetamobAPI {
   interface GameVersion { id: GameVersionId; name: GameVersionName; }
   interface MonsterType { id: MonsterTypeId; name: LocalizedName; }
   interface QuestType { id: QuestTypeId; slug: QuestTypeSlug; name: LocalizedName; }
+  /** Type de quête complet renvoyé par `getQuestTypes` (inclut `image`, absent des blocs imbriqués). */
+  interface QuestTypeInfo {
+    id: QuestTypeId;
+    slug: QuestTypeSlug;
+    name: LocalizedName;
+    /** Nom de fichier, servi depuis `/img/quest-types/`. */
+    image: string;
+  }
   interface MonsterReference { id: MonsterId; name: LocalizedName; }
 
   interface BaseMonster {
@@ -1242,7 +1296,11 @@ declare namespace MetamobAPI {
 
   interface AvatarMonster { id: MonsterId; name: LocalizedName; image: string; }
   interface BaseUser { username: string; avatar: AvatarMonster | null; last_active: string; }
-  interface QuestTemplateRef { id: QuestTemplateId; monster_count: number; step_count: number; }
+
+  /** Compte associé à la clé API (renvoyé par `getMe`). Profil uniquement — ni e-mail, ni réglages. */
+  interface Me { username: string; bio: string; avatar: AvatarMonster | null; last_active: string; }
+
+  interface QuestTemplateRef { id: QuestTemplateId; quest_type: QuestType; monster_count: number; step_count: number; }
 
   interface BaseQuest {
     slug: string;
@@ -1296,6 +1354,46 @@ declare namespace MetamobAPI {
     server: Server | null;
     quest_template: QuestTemplateRef;
     monsters: UserQuestMonster[];
+    pagination: Pagination;
+  }
+
+  /** Élément de la liste de vos propres quêtes (`getMyQuests`) — inclut les quêtes masquées. */
+  interface OwnQuest {
+    slug: string;
+    character_name: string;
+    current_step: number;
+    parallel_quests: number;
+    /** Réglage « Afficher sur mon profil public ». */
+    show_trades: boolean;
+    is_favorite: boolean;
+    server: Server | null;
+    quest_template: QuestTemplateRef;
+  }
+
+  /** Monstre d'une de vos propres quêtes (`getQuestMonsters`) : comme UserQuestMonster + surcharges manuelles. */
+  interface OwnQuestMonster {
+    id: MonsterId;
+    name: LocalizedName;
+    image: MonsterImage;
+    level_min: number;
+    level_max: number;
+    type: MonsterType | null;
+    step: number;
+    /** Quantité possédée par l'utilisateur. */
+    quantity: number;
+    /** Quantité réellement recherchée à l'échange. */
+    want: number;
+    /** Quantité réellement proposée à l'échange. */
+    offer: number;
+    /** Surcharge manuelle ; `null` = calcul automatique (différent de `0`). */
+    trade_offer: number | null;
+    /** Surcharge manuelle ; `null` = calcul automatique (différent de `0`). */
+    trade_want: number | null;
+  }
+
+  interface QuestMonstersResult {
+    slug: string;
+    monsters: OwnQuestMonster[];
     pagination: Pagination;
   }
 
@@ -1562,6 +1660,23 @@ declare namespace MetamobAPI {
     zoneIdOrName?: ZoneInput;
     subzoneIdOrName?: SubZoneInput;
     monsterTypeIdOrName?: MonsterTypeInput;
+  }
+
+  interface QuestMonstersOptions extends RequestOptions {
+    monsterTypeIdOrName?: MonsterTypeInput;
+    /** Progression (`needed`/`ok`/`excess`) ou échange (`wanted`/`offered`). */
+    status?: "needed" | "ok" | "excess" | "wanted" | "offered";
+    /** `manual` = surcharge d'échange posée, `auto` = valeurs calculées. */
+    trade?: "manual" | "auto";
+    step?: number;
+    /** Défaut : 50, max : 200. */
+    limit?: number;
+    offset?: number;
+  }
+
+  interface QuestTypesOptions extends RequestOptions {
+    /** Id, slug ou nom du type de quête. */
+    idOrName?: QuestTypeInput;
   }
 
   // ---- Cache ----
