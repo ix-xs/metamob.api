@@ -126,7 +126,8 @@ différente par utilisateur à chaque appel.
 | --- | --- | --- |
 | `getGameVersions(options?)` | `GET /game-versions` | Liste ou détail (`{ idOrName }`) des versions du jeu |
 | `getServers(options?)` | `GET /servers` | Liste ou détail (`{ idOrName }`) des serveurs |
-| `getMonsterTypes(options?)` | `GET /monster-types` | Liste ou détail (`{ idOrName }`) des types |
+| `getMonsterTypes(options?)` | `GET /monster-types` | Liste ou détail (`{ idOrName }`) des types de monstre |
+| `getQuestTypes(options?)` | `GET /quest-types` | Liste ou détail (`{ idOrName }`) des types de quête (avec `image`) |
 | `getMonsters(options?)` | `GET /monsters` | Liste (`{ query, typeIdOrName, limit, offset }`) ou détail (`{ idOrName }`) |
 | `getQuestTemplates(options?)` | `GET /quest-templates` | Liste ou détail (`{ id, step, limit, offset }`) |
 | `getZones(options?)` | `GET /zones` | Liste, recherche (`{ query }`) ou détail (`{ idOrName }`) |
@@ -137,10 +138,11 @@ différente par utilisateur à chaque appel.
 
 | Méthode | Endpoint | Description |
 | --- | --- | --- |
+| `getMe(options?)` | `GET /me` | Compte associé à la clé API (pseudo, bio, avatar…) |
 | `getKraloves(options?)` | `GET /kralove` | Liste (`{ serverIdOrName, from }`) ou détail (`{ id }`) |
 | `searchUsers(query, options?)` | `GET /users/search` | Recherche (`{ serverIdOrName, active_within_days, limit, offset }`) |
 | `getUser(username, options?)` | `GET /users/{username}` | Profil public |
-| `getUserQuests(username, options?)` | `GET /users/{username}/quests` | Liste des quêtes, ou détail (`{ slug, ... }`) |
+| `getUserQuests(username, options?)` | `GET /users/{username}/quests` | Liste des quêtes **publiques**, ou détail (`{ slug, ... }`) |
 
 ### Conversations
 
@@ -156,7 +158,9 @@ un autre utilisateur que celui du client (voir [Clé API par requête](#clé-api
 
 | Méthode | Endpoint | Description |
 | --- | --- | --- |
+| `getMyQuests(options?)` | `GET /quests` | Lister **ses propres** quêtes (publiques **et** masquées) — point d'entrée pour les slugs |
 | `getQuest(slug, options?)` | `GET /quests/{slug}` | Lire les réglages complets de **sa propre** quête (trade_mode, seuils, type_filters, is_favorite…) |
+| `getQuestMonsters(slug, options?)` | `GET /quests/{slug}/monsters` | Monstres de **sa propre** quête (`{ monsterTypeIdOrName, status, trade, step, limit, offset }`) |
 | `updateQuest(slug, changes, options?)` | `PATCH /quests/{slug}` | Modifier les paramètres d'une quête |
 | `updateQuestMonster(slug, monsterIdOrName, quantity, options?)` | `PATCH /quests/{slug}/monsters/{id}` | Modifier la quantité d'un monstre |
 | `updateQuestMonsters(slug, monsters, options?)` | `PATCH /quests/{slug}/monsters` | Modifier plusieurs monstres (max 200) |
@@ -248,10 +252,28 @@ do {
 } while (before_id);
 ```
 
+### Point d'entrée d'une app tierce : qui suis-je, quelles sont mes quêtes ?
+
+```js
+// 1) À la saisie de la clé : récupérer le compte associé (plus besoin de demander le pseudo)
+const me = await client.getMe();
+console.log(`Connecté en tant que ${me.data.username}`);
+
+// 2) Lister SES propres quêtes (publiques ET masquées) pour obtenir les slugs
+const mine = await client.getMyQuests();
+for (const q of mine.data) {
+  console.log(`${q.slug} — ${q.character_name} (${q.quest_template.quest_type.slug})${q.is_favorite ? " ★" : ""}`);
+}
+
+// 3) Monstres encore à capturer d'une de ses quêtes (fonctionne même si la quête est masquée)
+const toCapture = await client.getQuestMonsters(mine.data[0].slug, { status: "needed", limit: 200 });
+console.log(toCapture.data.monsters.length, "monstres à capturer");
+```
+
 ### Gérer sa propre quête (workflow complet)
 
 ```js
-const slug = "a1b2c3d4"; // visible dans l'URL de votre page de quête
+const slug = "a1b2c3d4"; // obtenu via getMyQuests(), ou visible dans l'URL de votre page de quête
 
 // 0) Lire les réglages actuels (trade_mode, seuils, type_filters, is_favorite…)
 const settings = await client.getQuest(slug);
