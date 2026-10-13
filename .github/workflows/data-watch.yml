@@ -1,0 +1,38 @@
+name: Data watch
+
+# Once a week, compares the reference data pinned in the repository with what
+# the Metamob API serves. The run fails when monsters, zones, servers or quest
+# templates changed, which is the cue to run `npm run data:update` and release
+# a patch version.
+#
+# It needs a repository secret named METAMOB_API_KEY, and does nothing without
+# it. The run sends about 240 requests, paced under the rate limit of the API.
+
+on:
+  schedule:
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      METAMOB_API_KEY: ${{ secrets.METAMOB_API_KEY }}
+    steps:
+      - name: Is there a key?
+        id: key
+        run: echo "present=${{ env.METAMOB_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v7
+        if: steps.key.outputs.present == 'true'
+      - uses: actions/setup-node@v7
+        if: steps.key.outputs.present == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+        if: steps.key.outputs.present == 'true'
+      - run: node scripts/update-data.mjs --check
+        if: steps.key.outputs.present == 'true'
