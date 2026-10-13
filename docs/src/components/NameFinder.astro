@@ -1,0 +1,114 @@
+---
+// The landing page's playground: type a monster the way you would in a chat
+// command, and see the call next to what the library makes of it. It runs on
+// the library's own data set, in the page: nothing is sent anywhere.
+//
+// Without scripts the first example is rendered as is.
+import { data } from "../../../src/data/dataset.js";
+import { type FinderLabels, view } from "./name-finder";
+import { useT } from "../i18n";
+
+const t = useT(Astro.locals.starlightRoute.locale);
+
+// Development only: FINDER_START sets what the box holds when the page opens,
+// to look at the long, shared, unknown and empty cases without typing them.
+const start = process.env.FINDER_START ?? "tofu malefique";
+/** One of each case: no accent, English, Spanish, a typo, a name two monsters share, an id. */
+const EXAMPLES = ["tofu malefique", "Royal Gobball", "jalató real", "Tofu Malefik", "Crognan le Barbare", "397"];
+
+const labels: FinderLabels = {
+  id: t("finder.byId"),
+  fr: t("finder.fr"),
+  en: t("finder.en"),
+  es: t("finder.es"),
+  loose: t("finder.loose"),
+  exact: t("finder.exact"),
+  ambiguous: t("finder.ambiguous"),
+  unknown: t("finder.unknown"),
+  meant: t("finder.meant"),
+  contains: t("finder.contains"),
+  empty: t("finder.empty"),
+  noId: t("finder.noId"),
+  throws: t("finder.throws"),
+};
+const first = view(start, data, labels);
+---
+
+<name-finder class="nf" data-labels={JSON.stringify(labels)}>
+  <div class="nf-ask">
+    <label class="nf-field">
+      <span>{t("finder.label")}</span>
+      <input type="text" value={start} maxlength="60" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="search" />
+    </label>
+    <div class="nf-examples">
+      <span id="nf-try">{t("finder.try")}</span>
+      <div class="nf-picks" role="group" aria-labelledby="nf-try">
+        {EXAMPLES.map((example) => (
+          <button type="button" class="nf-pick at-press" data-nf-fill={example}>{example}</button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="nf-panes">
+    <section class="nf-pane" aria-label={t("finder.writeLabel")}>
+      <h3>{t("finder.write")}</h3>
+      <pre tabindex="0"><code data-nf-code set:html={first.code} /></pre>
+    </section>
+
+    <section class="nf-pane" aria-label={t("finder.readLabel")} aria-live="polite">
+      <h3>{t("finder.read")}</h3>
+      <div class="nf-result" data-nf-result set:html={first.result} />
+    </section>
+  </div>
+
+  <p class="nf-foot" set:html={t("finder.foot", { count: String(data.monsters.length) })} />
+</name-finder>
+
+<script>
+  import { type FinderLabels, view } from "./name-finder";
+
+  class NameFinder extends HTMLElement {
+    constructor() {
+      super();
+      const input = this.querySelector<HTMLInputElement>("input")!;
+      const code = this.querySelector<HTMLElement>("[data-nf-code]")!;
+      const result = this.querySelector<HTMLElement>("[data-nf-result]")!;
+      const labels = JSON.parse(this.dataset.labels!) as FinderLabels;
+
+      // The data set is the library's own, about 30 kB compressed. It is
+      // fetched when the reader shows interest, not with the page.
+      let loading: Promise<typeof import("../../../src/data/dataset.js")> | undefined;
+      const load = () => (loading ??= import("../../../src/data/dataset.js"));
+
+      let latest = 0;
+      const render = async () => {
+        const turn = ++latest;
+        const { data } = await load();
+        // A slower load must not overwrite what was typed since.
+        if (turn !== latest) return;
+        const next = view(input.value, data, labels);
+        code.innerHTML = next.code;
+        result.innerHTML = next.result;
+      };
+
+      input.addEventListener("input", render);
+      input.addEventListener("focus", load, { once: true });
+      this.addEventListener("pointerenter", load, { once: true });
+
+      // Examples and suggestions write themselves in the box.
+      this.addEventListener("click", (event) => {
+        const button = (event.target as Element | null)?.closest<HTMLElement>("[data-nf-fill]");
+        if (!button) return;
+        input.value = button.dataset.nfFill ?? "";
+        void render();
+        // A pointer keeps its place; the keyboard goes back to the box to carry on typing.
+        if ((event as MouseEvent).detail === 0) input.focus();
+      });
+
+      // A form restored by the browser can hold something else than what was rendered.
+      if (input.value !== input.defaultValue) void render();
+    }
+  }
+  customElements.define("name-finder", NameFinder);
+</script>

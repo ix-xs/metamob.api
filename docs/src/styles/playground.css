@@ -1,0 +1,78 @@
+/* ==========================================================================
+   The interactive piece of the site: the name finder on the landing page.
+   Same vocabulary as the rest: hairlines, mono labels, one accent.
+   ========================================================================== */
+
+:root,
+:root[data-theme="dark"] {
+  --nf-keyword: #c4b5fd;
+  --nf-string: #a9c49f;
+  --nf-number: #e0b96a;
+}
+:root[data-theme="light"] {
+  --nf-keyword: #6d28d9;
+  --nf-string: #3c6a39;
+  --nf-number: #8a6100;
+}
+
+.nf { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+
+/* The question: one box, and a few things to put in it. */
+.nf-ask { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.nf-field { display: grid; gap: 0.5rem; }
+.nf-field > span, .nf-examples > span, .nf-label { font-family: var(--sl-font-mono); font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--at-faint); }
+/* 16px at least: a smaller box makes iOS zoom into the page on focus. */
+.nf-field input { width: 100%; min-width: 0; padding: 0.875rem 1rem; border: 1px solid var(--at-line); border-radius: var(--at-radius); background: var(--at-surface); color: var(--at-fg); font-family: var(--sl-font-mono); font-size: 1rem; line-height: 1.5; transition: border-color 150ms ease; }
+.nf-field input:focus-visible { outline: 2px solid var(--at-accent); outline-offset: 2px; border-color: var(--at-accent); }
+.nf-examples { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; min-width: 0; }
+.nf-picks { display: flex; flex-wrap: wrap; gap: 0.5rem; min-width: 0; }
+.nf-pick { max-width: 100%; padding: 0.375rem 0.75rem; border: 1px solid var(--at-line); border-radius: var(--at-radius); background: none; color: var(--at-muted); font-family: var(--sl-font-mono); font-size: 0.8125rem; line-height: 1.4; text-align: start; overflow-wrap: anywhere; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; transition: color 150ms ease, border-color 150ms ease; }
+
+/* The two panes: what you write, what comes back. */
+.nf-panes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.nf-pane { display: grid; grid-template-rows: auto minmax(0, 1fr); min-width: 0; border: 1px solid var(--at-line); border-radius: var(--at-radius); background: var(--at-surface); }
+.nf-pane h3 { margin: 0; padding: 0.625rem 1.25rem; border-bottom: 1px solid var(--at-line); font-family: var(--sl-font-mono); font-weight: 400; font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--at-faint); }
+/* A call is a line or three: it wraps instead of scrolling sideways. */
+.nf-pane pre { margin: 0; padding: 1.25rem; white-space: pre-wrap; overflow-wrap: anywhere; background: none; border: 0; font-family: var(--sl-font-mono); font-size: 0.84rem; line-height: 1.75; color: var(--at-fg); }
+.nf-pane pre code { padding: 0; background: none; font: inherit; color: inherit; }
+.nf-k { color: var(--nf-keyword); }
+.nf-s { color: var(--nf-string); }
+.nf-n { color: var(--nf-number); }
+.nf-p { color: var(--at-muted); }
+.nf-c { color: var(--at-faint); font-style: italic; }
+
+/* Side by side, the answer keeps the height of a full monster, so the pane
+   beside it does not jump while a name is being typed. */
+.nf-result { padding: 1rem 1.25rem 1.25rem; font-size: 0.875rem; line-height: 1.6; color: var(--at-muted); }
+.nf-result p { margin: 0; }
+.nf-how { color: var(--at-fg); }
+.nf-note { color: var(--at-muted); }
+.nf-error { margin-top: 0.75rem !important; padding: 0.75rem 1rem; border-inline-start: 2px solid var(--at-caution); font-family: var(--sl-font-mono); font-size: 0.8125rem; color: var(--at-fg); overflow-wrap: anywhere; }
+.nf-label { margin: 1.25rem 0 0.5rem !important; }
+.nf-rows { margin: 0.75rem 0 0; padding: 0; list-style: none; font-family: var(--sl-font-mono); font-size: 0.8125rem; line-height: 1.5; }
+.nf-row { display: flex; align-items: baseline; justify-content: space-between; gap: 0.125rem 1.5rem; flex-wrap: wrap; padding: 0.4375rem 0; min-width: 0; }
+.nf-row + .nf-row { border-top: 1px solid var(--at-line); }
+.nf-row code { padding: 0; background: none; font: inherit; color: var(--at-muted); overflow-wrap: anywhere; }
+.nf-v { color: var(--at-fg); text-align: end; overflow-wrap: anywhere; }
+
+.nf-foot { margin: 0; font-size: 0.875rem; color: var(--at-muted); }
+.nf-foot strong { color: var(--at-fg); font-weight: 600; }
+
+@media (min-width: 60rem) {
+  .nf-panes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nf-result { min-height: 21rem; }
+}
+/* A finger needs more room than a pointer. */
+@media (pointer: coarse) {
+  .nf-pick { min-height: 2.75rem; padding: 0.625rem 0.875rem; }
+  .nf-examples > span { width: 100%; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .nf-pick:hover { color: var(--at-fg); border-color: color-mix(in srgb, var(--at-accent) 55%, var(--at-line)); }
+}
+@media (prefers-contrast: more) {
+  .nf-pick, .nf-pane, .nf-field input { border-color: var(--at-muted); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nf-pick, .nf-field input { transition: none; }
+}

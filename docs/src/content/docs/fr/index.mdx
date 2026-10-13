@@ -1,0 +1,51 @@
+---
+title: metamob.api
+description: Le client complet de l'API Metamob pour JavaScript et TypeScript, avec chaque monstre, chaque zone et chaque serveur appelés par leur nom.
+template: splash
+hero:
+  title: Toute l'API Metamob, <em>avec chaque monstre appelé par son nom.</em>
+  tagline: Un seul client pour vos quêtes, vos monstres, les partenaires d'échange, les événements Kralamoure et les messages. Il retrouve un monstre à partir de son nom dans trois langues, parcourt les listes page par page et vous maintient sous les 60 requêtes par minute. Aucune dépendance, et il fonctionne partout où fetch existe.
+  actions:
+    - text: Démarrage rapide
+      link: /start/quick-start/
+      variant: primary
+    - text: Toutes les méthodes
+      link: /reference/methods/
+      variant: secondary
+---
+
+import NameFinder from '../../../components/NameFinder.astro';
+
+<div class="at-landing not-content">
+
+<section class="at-section">
+  <header data-reveal><span>01</span><h2>Écrivez le nom, pas l'identifiant</h2></header>
+  <p data-reveal>L'API veut un nombre pour tout. Les joueurs écrivent des noms, avec ou sans accents, en français, en anglais ou en espagnol, et parfois avec une faute de frappe. Saisissez-en un ci-dessous : voici ce que la bibliothèque en fait, avant toute requête.</p>
+  <div data-reveal><NameFinder /></div>
+</section>
+
+<section class="at-section">
+  <header data-reveal><span>02</span><h2>Ce que vous n'écrivez plus</h2></header>
+  <ul class="at-points">
+    <li data-reveal><h3>Les recherches d'identifiants</h3><p>Les monstres, les zones, les sous-zones, les serveurs et les types de monstres se désignent par leur nom, leur identifiant ou l'objet qu'un autre appel a renvoyé. Les noms sont livrés avec le paquet.</p></li>
+    <li data-reveal><h3>Les boucles sur limit et offset</h3><p>Chaque liste s'attend avec <code>await</code> pour une page ou se parcourt avec <code>for await</code>. Les pages sont récupérées au fil de la lecture, à la plus grande taille que l'API accepte.</p></li>
+    <li data-reveal><h3>Les pauses entre les requêtes</h3><p>Le client compte 60 requêtes par minute et par clé, et fait attendre son tour à la suivante. Une boucle sur une quête entière ralentit au lieu de recevoir un 429.</p></li>
+    <li data-reveal><h3>Les lots de 200</h3><p>Donnez à <code>setMonsters</code> une quête entière, sous forme de liste, d'objet indexé par nom ou de Map. Elle est découpée, envoyée dans l'ordre puis réassemblée.</p></li>
+    <li data-reveal><h3>Les tests de code de statut</h3><p>Un appel renvoie les données ou lève une erreur avec un <code>code</code> typé. Une faute de frappe dans un nom revient avec les noms les plus proches, avant de pouvoir toucher à une quête.</p></li>
+    <li data-reveal><h3>Un client par joueur</h3><p><code>metamob.withKey(theirKey)</code> agit pour un joueur qui vous a confié sa clé, avec le même cache et les mêmes réglages, et sa propre fenêtre de limite de requêtes.</p></li>
+  </ul>
+</section>
+
+<section class="at-section">
+  <header data-reveal><span>03</span><h2>Par où continuer</h2></header>
+  <ul class="at-paths">
+    <li data-reveal><a href="/start/quick-start/"><span>01</span><div><strong>Démarrage rapide</strong><small>Obtenez une clé, installez, puis lisez vos quêtes et ce qui leur manque encore en cinq minutes.</small></div></a></li>
+    <li data-reveal><a href="/basics/names-and-ids/"><span>02</span><div><strong>Bases</strong><small>Noms, listes, erreurs, limite de requêtes, cache. Vingt minutes vite rentabilisées.</small></div></a></li>
+    <li data-reveal><a href="/resources/quests/"><span>03</span><div><strong>Vos quêtes</strong><small>Lisez une quête, fixez les quantités une par une ou en lot, suivez la progression zone par zone.</small></div></a></li>
+    <li data-reveal><a href="/resources/trading/"><span>04</span><div><strong>Échanges</strong><small>Trouvez les joueurs qui ont ce qu'il vous faut et qui recherchent ce que vous avez.</small></div></a></li>
+    <li data-reveal><a href="/recipes/discord-command/"><span>05</span><div><strong>Recettes</strong><small>Une commande Discord avec autocomplétion, un rapport de progression, un chercheur d'échanges.</small></div></a></li>
+    <li data-reveal><a href="/reference/methods/"><span>06</span><div><strong>Référence</strong><small>Les 35 méthodes, tous les exports, les codes d'erreur, le dépannage.</small></div></a></li>
+  </ul>
+</section>
+
+</div>

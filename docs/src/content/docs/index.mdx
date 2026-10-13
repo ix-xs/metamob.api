@@ -1,0 +1,51 @@
+---
+title: metamob.api
+description: The complete Metamob API client for JavaScript and TypeScript, with every monster, zone and server called by its name.
+template: splash
+hero:
+  title: The whole Metamob API, <em>with every monster called by its name.</em>
+  tagline: One client for your quests, your monsters, trade partners, Kralamoure events and messages. It finds a monster from its name in three languages, walks through lists page by page, and keeps you under 60 requests a minute. No dependency, and it runs wherever fetch does.
+  actions:
+    - text: Quick start
+      link: /start/quick-start/
+      variant: primary
+    - text: Every method
+      link: /reference/methods/
+      variant: secondary
+---
+
+import NameFinder from '../../components/NameFinder.astro';
+
+<div class="at-landing not-content">
+
+<section class="at-section">
+  <header data-reveal><span>01</span><h2>Write the name, not the id</h2></header>
+  <p data-reveal>The API wants a number for everything. Players write names, with or without accents, in French, English or Spanish, and sometimes with a typo. Type one below: this is what the library makes of it, before any request.</p>
+  <div data-reveal><NameFinder /></div>
+</section>
+
+<section class="at-section">
+  <header data-reveal><span>02</span><h2>What you stop writing</h2></header>
+  <ul class="at-points">
+    <li data-reveal><h3>Id lookups</h3><p>Monsters, zones, subzones, servers and kinds of monsters go by their name, their id or the object another call returned. The names ship with the package.</p></li>
+    <li data-reveal><h3>Limit and offset loops</h3><p>Every list can be awaited for one page or walked with <code>for await</code>. Pages are fetched as you go, at the largest size the API accepts.</p></li>
+    <li data-reveal><h3>Sleeps between requests</h3><p>The client counts 60 requests a minute per key and makes the next one wait its turn. A loop over a whole quest slows down instead of hitting a 429.</p></li>
+    <li data-reveal><h3>Batches of 200</h3><p>Give <code>setMonsters</code> a whole quest, as a list, an object keyed by name or a Map. It is split, sent in order and merged back.</p></li>
+    <li data-reveal><h3>Status code checks</h3><p>A call returns the data or throws an error with a typed <code>code</code>. A typo in a name comes back with the closest names, before it can touch a quest.</p></li>
+    <li data-reveal><h3>One client per player</h3><p><code>metamob.withKey(theirKey)</code> acts for a player who gave you their key, with the same cache and settings, and their own rate limit window.</p></li>
+  </ul>
+</section>
+
+<section class="at-section">
+  <header data-reveal><span>03</span><h2>Where to go next</h2></header>
+  <ul class="at-paths">
+    <li data-reveal><a href="/start/quick-start/"><span>01</span><div><strong>Quick start</strong><small>Get a key, install, and read your quests and what they still need in five minutes.</small></div></a></li>
+    <li data-reveal><a href="/basics/names-and-ids/"><span>02</span><div><strong>Basics</strong><small>Names, lists, errors, the rate limit, caching. Twenty minutes that pay for themselves.</small></div></a></li>
+    <li data-reveal><a href="/resources/quests/"><span>03</span><div><strong>Your quests</strong><small>Read a quest, set quantities one by one or in bulk, follow progress zone by zone.</small></div></a></li>
+    <li data-reveal><a href="/resources/trading/"><span>04</span><div><strong>Trading</strong><small>Find the players who have what you need and want what you have.</small></div></a></li>
+    <li data-reveal><a href="/recipes/discord-command/"><span>05</span><div><strong>Recipes</strong><small>A Discord command with autocomplete, a progress report, a trade finder.</small></div></a></li>
+    <li data-reveal><a href="/reference/methods/"><span>06</span><div><strong>Reference</strong><small>All 35 methods, every export, error codes, troubleshooting.</small></div></a></li>
+  </ul>
+</section>
+
+</div>
