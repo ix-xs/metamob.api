@@ -1,41 +1,93 @@
 {
   "name": "@ix-xs/metamob.api",
-  "version": "4.2.0",
-  "description": "Client Node.js complet et typé (JSDoc) pour l'API Metamob (Dofus) : zones, monstres, quêtes, serveurs, kralamoures, conversations et gestion de quêtes.",
-  "license": "MIT",
-  "author": "ix-xs",
-  "type": "commonjs",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "homepage": "https://github.com/ix-xs/metamob.api#readme",
-  "bugs": {
-		"url": "https://github.com/ix-xs/metamob.api/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/ix-xs/metamob.api.git"
-	},
-  "files": [
-    "index.js",
-    "index.d.ts",
-    "src/"
-  ],
-  "engines": {
-    "node": ">=18"
-  },
-  "scripts": {
-    "build:types": "node scripts/generate-types.js"
-  },
+  "version": "5.0.0",
+  "description": "The complete Metamob API client for JavaScript and TypeScript. Every endpoint, typed, with monsters, zones and servers resolved by name in French, English or Spanish, lazy pagination, a built-in rate limiter, retries and caching. Zero dependencies.",
   "keywords": [
     "metamob",
     "dofus",
-    "api",
-    "api-client",
+    "dofus-retro",
+    "dofus-touch",
     "archimonstre",
+    "archmonster",
+    "ocre",
+    "dokille",
     "kralamoure",
-    "ankama"
+    "ankama",
+    "api-client",
+    "sdk",
+    "typescript",
+    "discord-bot",
+    "rate-limit",
+    "pagination",
+    "zero-dependency",
+    "esm"
   ],
-  "dependencies": {
-    "@ix-xs/node-comfort": "^1.1.31"
+  "author": "ix-xs.dev <contact@ix-xs.dev>",
+  "license": "MIT",
+  "homepage": "https://ix-xs.github.io/metamob.api/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ix-xs/metamob.api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ix-xs/metamob.api/issues"
+  },
+  "type": "commonjs",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "data:update": "node scripts/update-data.mjs",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:types": "tsc -p tsconfig.test.json",
+    "lint:prose": "node scripts/lint-prose.mjs",
+    "attw": "attw --pack .",
+    "smoke": "node test/smoke/cjs.cjs && node test/smoke/esm.mjs",
+    "bench": "node scripts/bench.mjs",
+    "live": "tsx test/live/run.mts",
+    "check": "npm run generate -- --check && npm run lint:prose && npm run typecheck && npm run test:types && npm run build && npm test && npm run smoke",
+    "docs": "npm --prefix docs install && npm --prefix docs run dev",
+    "docs:build": "npm --prefix docs install && npm --prefix docs run build",
+    "prepublishOnly": "npm run check"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@ix-xs/node-comfort": "^2.1.0",
+    "@types/node": "^22.10.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
