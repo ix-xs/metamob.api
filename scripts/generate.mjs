@@ -10,7 +10,7 @@
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { methods } from "./api.config.mjs";
-import { loadSnapshot, normalize } from "./snapshot.mjs";
+import { escapeDashes, loadSnapshot, normalize } from "./snapshot.mjs";
 
 const check = process.argv.includes("--check");
 const out = new URL("../src/generated/", import.meta.url);
@@ -41,7 +41,7 @@ const compact = {
   m: snapshot.monsters.map((monster) => [monster.id, ...names(monster.name), monster.image, monster.level_min, monster.level_max, monster.type ?? 0, monster.reference ?? 0]),
 };
 
-const json = JSON.stringify(compact);
+const json = escapeDashes(JSON.stringify(compact));
 // A single-quoted string: the JSON is full of double quotes and has few apostrophes.
 const literal = `'${json.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
 
@@ -63,7 +63,7 @@ export const DATASET_JSON = ${literal};
 
 const union = (name, doc, values, quote = true) => {
   const unique = [...new Set(values)];
-  const members = unique.map((value) => `  | ${quote ? JSON.stringify(value) : value}`).join("\n");
+  const members = unique.map((value) => `  | ${quote ? escapeDashes(JSON.stringify(value)) : value}`).join("\n");
   return `/** ${doc} */\nexport type ${name} =\n${members};\n`;
 };
 const localized = (prefix, doc, records) =>

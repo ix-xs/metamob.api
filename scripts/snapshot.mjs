@@ -9,6 +9,17 @@ export const SNAPSHOT_URL = new URL("./data/snapshot.json", import.meta.url);
 /** The collections of a snapshot, in the order they are written. */
 export const COLLECTIONS = ["gameVersions", "monsterTypes", "questTypes", "servers", "questTemplates", "zones", "subzones", "monsters"];
 
+// A few names of the game hold a long dash and a non-breaking space. They are
+// kept as the API gives them, written as escapes: the files stay plain to read and to diff, and the
+// repository's own rule against long dashes in prose keeps a single meaning.
+const LONG_DASHES = new RegExp(`[${String.fromCharCode(0xa0, 0x2013, 0x2014)}]`, "g");
+const BACKSLASH = String.fromCharCode(92);
+
+/** JSON or source text with its long dashes and non-breaking spaces written as unicode escapes. */
+export function escapeDashes(text) {
+  return text.replace(LONG_DASHES, (dash) => `${BACKSLASH}u${dash.charCodeAt(0).toString(16).padStart(4, "0")}`);
+}
+
 /** @returns {Promise<Record<string, any>>} */
 export async function loadSnapshot() {
   return JSON.parse(await readFile(SNAPSHOT_URL, "utf8"));
@@ -31,7 +42,7 @@ export function serialize(snapshot) {
     lines.push(`  ]${index < COLLECTIONS.length - 1 ? "," : ""}`);
   });
   lines.push("}", "");
-  return lines.join("\n");
+  return escapeDashes(lines.join("\n"));
 }
 
 export async function saveSnapshot(snapshot) {

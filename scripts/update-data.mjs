@@ -7,8 +7,8 @@
 //   node scripts/update-data.mjs --check    # fetch and fail when the snapshot is out of date
 //
 // Needs METAMOB_API_KEY, from the environment or from `.env`. It sends about
-// 240 requests, paced to stay under the 60 a minute the API allows, so a run
-// takes four to five minutes. Run `npm run generate` afterwards.
+// 240 requests, paced at 44 a minute where the API allows 60, so a run takes
+// five to six minutes. Run `npm run generate` afterwards.
 
 import { existsSync } from "node:fs";
 import { sleep } from "@ix-xs/node-comfort/async";
@@ -16,8 +16,8 @@ import env from "@ix-xs/node-comfort/env";
 import { diff, loadSnapshot, normalize, saveSnapshot, serialize, SNAPSHOT_URL } from "./snapshot.mjs";
 
 const BASE = "https://www.metamob.fr/api/v1";
-// One request every 1.1 s is 54 a minute.
-const PACE = 1100;
+// One request every 1.35 s is 44 a minute, well under the 60 the API allows.
+const PACE = 1350;
 const check = process.argv.includes("--check");
 
 // node-comfort loads `.env` when it is imported; `validate` checks what came out of it.

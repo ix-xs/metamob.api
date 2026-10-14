@@ -1,14 +1,17 @@
 // Built from code points so the pattern survives any editor or encoding.
 const APOSTROPHES = new RegExp(`[${String.fromCharCode(0x2018, 0x2019, 0x60, 0xb4)}]`, "g");
 
+// A few names of the game are written with a long dash, which nobody types.
+const DASHES = new RegExp(`[${String.fromCharCode(0x2010, 0x2011, 0x2012, 0x2013, 0x2014, 0x2212)}]`, "g");
+
 /**
  * The form names are compared in: no accents, lower case, one kind of
- * apostrophe, single spaces. `"  Tofu MALÉFIQUE "` and `"tofu malefique"`
- * give the same result.
+ * apostrophe, one kind of dash, single spaces. `"  Tofu MALÉFIQUE "` and
+ * `"tofu malefique"` give the same result.
  */
 export function normalizeName(value: string): string {
   // Most names are typed without accents or capitals; the common case is cheap.
-  return value.normalize("NFD").replace(/\p{M}+/gu, "").replace(APOSTROPHES, "'").toLowerCase().replace(/\s+/g, " ").trim();
+  return value.normalize("NFD").replace(/\p{M}+/gu, "").replace(APOSTROPHES, "'").replace(DASHES, "-").toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 /** Edit distance between two strings, giving up once it exceeds `max`. */
