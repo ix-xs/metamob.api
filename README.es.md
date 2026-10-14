@@ -53,6 +53,8 @@ await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 
 Cubre los 35 endpoints de la [API de Metamob](https://www.metamob.fr/help/api): cuenta, misiones, monstruos, zonas, socios de intercambio, eventos Kralamar, mensajes privados y todos los datos de referencia, para Dofus, Dofus Retro y Dofus Touch.
 
+> **[Metamob](https://www.metamob.fr)** es el sitio donde los jugadores de Dofus siguen sus misiones de archimonstruos y encuentran con quién intercambiar. Es gratuito y lo mantiene una sola persona. Esta biblioteca solo llama a [su API](https://www.metamob.fr/help/api): nada de esto existiría sin él.
+
 ## Lo que hace por ti
 
 | La API tal como es | Con esta biblioteca |

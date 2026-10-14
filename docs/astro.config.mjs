@@ -78,6 +78,7 @@ export default defineConfig({
       ],
       components: {
         Header: "./src/components/Header.astro",
+        Footer: "./src/components/Footer.astro",
         ThemeSelect: "./src/components/ThemeSelect.astro",
         LanguageSelect: "./src/components/LanguageSelect.astro",
         PageTitle: "./src/components/PageTitle.astro",

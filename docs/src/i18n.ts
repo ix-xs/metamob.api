@@ -13,6 +13,9 @@ const en = {
   "nav.theme": "Switch between dark and light",
   "nav.language": "Language",
 
+  // Foot of every page
+  "footer.credit": "Everything here rests on <a href=\"https://www.metamob.fr\">Metamob</a>, the site of archmonster hunters, and on its API. An independent project, not affiliated with Metamob or Ankama.",
+
   // Names of the parts of the documentation, as the sidebar writes them
   "area.start": "Start",
   "area.basics": "Basics",
@@ -97,6 +100,8 @@ const fr: Record<UiKey, string> = {
   "nav.theme": "Basculer entre sombre et clair",
   "nav.language": "Langue",
 
+  "footer.credit": "Tout repose sur <a href=\"https://www.metamob.fr\">Metamob</a>, le site des chasseurs d'archimonstres, et sur son API. Projet indépendant, non affilié à Metamob ni à Ankama.",
+
   "area.start": "Démarrer",
   "area.basics": "Bases",
   "area.resources": "Ressources",
@@ -174,6 +179,8 @@ const es: Record<UiKey, string> = {
   "nav.github": "Repositorio de GitHub",
   "nav.theme": "Cambiar entre oscuro y claro",
   "nav.language": "Idioma",
+
+  "footer.credit": "Todo se apoya en <a href=\"https://www.metamob.fr\">Metamob</a>, el sitio de los cazadores de archimonstruos, y en su API. Proyecto independiente, no afiliado a Metamob ni a Ankama.",
 
   "area.start": "Empezar",
   "area.basics": "Bases",

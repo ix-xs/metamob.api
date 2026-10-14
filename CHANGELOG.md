@@ -3,6 +3,11 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## 5.0.2
+
+- The READMEs and every page of the documentation site credit
+  [Metamob](https://www.metamob.fr), the site this library exists for.
+
 ## 5.0.1
 
 - The README is in French, the language of most players of Dofus, with an

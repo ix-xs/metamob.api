@@ -447,6 +447,15 @@ mobile-.right-sidebar starlight-toc nav { border-bottom: 1px solid var(--at-line
 .pagination-links a svg { display: none; }
 .pagination-links .link-title { margin-top: 0.15rem; font-family: var(--at-display); font-weight: 650; font-size: 1.25rem; line-height: 1.2; letter-spacing: -0.015em; color: var(--at-fg); }
 footer .meta { font-size: 0.8125rem; color: var(--at-faint); }
+/* Where all of this comes from, under every page. */
+.at-credit { margin: 1.5rem 0 0; max-width: 44rem; font-size: 0.8125rem; line-height: 1.6; color: var(--at-faint); }
+.at-credit a { color: var(--at-muted); text-decoration: underline; text-decoration-color: var(--at-accent); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+/* The two ways out of the landing page's closing section. */
+.at-thanks { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; }
+.at-thanks a { color: var(--at-fg); font-weight: 600; text-decoration: underline; text-decoration-color: var(--at-accent); text-decoration-thickness: 1px; text-underline-offset: 0.25em; }
+@media (hover: hover) and (pointer: fine) {
+  .at-credit a:hover, .at-thanks a:hover { color: var(--at-accent); }
+}
 
 /* ------------------------------- Landing --------------------------------- */
 /* minmax(0, 1fr): a grid track otherwise grows to its widest line of code. */

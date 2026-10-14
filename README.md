@@ -53,6 +53,8 @@ await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 
 La bibliothèque couvre les 35 points d'accès de l'[API Metamob](https://www.metamob.fr/help/api) : compte, quêtes, monstres, zones, partenaires d'échange, événements Kralamoure, messages privés et toutes les données de référence, pour Dofus, Dofus Retro et Dofus Touch.
 
+> **[Metamob](https://www.metamob.fr)** est le site où les joueurs de Dofus suivent leurs quêtes d'archimonstres et trouvent avec qui échanger. Il est gratuit et tenu par une seule personne. Cette bibliothèque ne fait qu'appeler [son API](https://www.metamob.fr/help/api) : rien de tout cela n'existerait sans lui.
+
 ## Ce que la bibliothèque fait pour vous
 
 | L'API telle qu'elle est | Avec cette bibliothèque |

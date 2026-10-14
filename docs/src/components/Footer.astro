@@ -1,0 +1,12 @@
+---
+// The foot of every page: what Starlight puts there (edit link, previous and
+// next page), then a line that says where all of this comes from. Without
+// Metamob, its data and its API, there would be nothing to document.
+import Default from "@astrojs/starlight/components/Footer.astro";
+import { useT } from "../i18n";
+
+const t = useT(Astro.locals.starlightRoute.locale);
+---
+
+<Default><slot /></Default>
+<p class="at-credit" set:html={t("footer.credit")} />

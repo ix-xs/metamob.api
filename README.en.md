@@ -53,6 +53,8 @@ await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 
 It covers the 35 endpoints of the [Metamob API](https://www.metamob.fr/help/api): account, quests, monsters, zones, trade partners, Kralamoure events, private messages and all the reference data, for Dofus, Dofus Retro and Dofus Touch.
 
+> **[Metamob](https://www.metamob.fr)** is the site where Dofus players track their archmonster quests and find who to trade with. It is free and run by one person. This library only calls [its API](https://www.metamob.fr/help/api): none of this would exist without it.
+
 ## What it does for you
 
 | The API as it is | With this library |
