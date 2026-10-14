@@ -52,7 +52,7 @@ const thread = (await metamob.conversations.messages(username).take(50)).reverse
 
 ## Going back in time
 
-Messages are paged with a cursor, not an offset: each page ends with the id from which the next one starts. Iterating does it for you. By hand:
+Messages are paged with a cursor, not an offset: each page comes with the cursor of the next one. Send it back as it is: it is not the id of a message. Iterating does it for you. By hand:
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });

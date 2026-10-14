@@ -10,7 +10,7 @@ const me = await metamob.me();
 
 console.log(me.username); // "Ix-xs"
 console.log(me.bio);
-console.log(me.last_active); // "2026-10-14 09:12:45"
+console.log(me.last_active); // "2026-10-14T09:12:45Z"
 ```
 
 ## What comes back
@@ -64,7 +64,7 @@ async function whose(key: string) {
 | `username` | `string` | The name of the account |
 | `bio` | `string` | The text of the profile, empty when there is none |
 | `avatar` | `Avatar \| null` | The monster chosen as avatar: `id`, `name`, `image` |
-| `last_active` | `string` | Last activity, as `YYYY-MM-DD HH:mm:ss` |
+| `last_active` | `string` | Last activity, as an ISO 8601 date in UTC: `2026-10-14T09:12:45Z` |
 
 | Error | When |
 | --- | --- |

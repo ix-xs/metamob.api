@@ -26,7 +26,7 @@ Thanks for helping out. Everything below runs from the repository root.
 | `npm test` | Unit tests |
 | `npm run test:types` | Type-level tests, plus every README sample |
 | `npm run generate` | Rebuild `src/generated/` after touching the config, the snapshot or the generator |
-| `npm run data:update` | Fetch the reference data from the API and list what changed. Needs `METAMOB_API_KEY` in `.env`, takes four to five minutes |
+| `npm run data:update` | Fetch the reference data from the API and list what changed. Needs `METAMOB_API_KEY` in `.env`, takes five to six minutes |
 | `npm run live` | Check the library against the real API. Needs `METAMOB_API_KEY` in `.env`, sends about 30 requests |
 | `npm run bench` | Time the parts that run on every call |
 | `npm run attw` | Verify the published types resolve in CommonJS, ESM and bundlers |

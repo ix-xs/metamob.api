@@ -15,7 +15,7 @@ for (const quest of profile.quests) {
 
 ## Searching players
 
-A search matches a part of the username, among players who have at least one public quest. It needs 3 characters at least and is a [list](/basics/lists/), 50 players per page at most.
+A search matches a part of the username, among players who have at least one public quest. It needs 3 characters at least and is a [list](/basics/lists/), 50 players per page at most. Only players seen in the last 90 days are searched, unless `activeWithinDays` says otherwise, up to 365.
 
 ```ts
 const page = await metamob.users.search("ix-");

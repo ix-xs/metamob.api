@@ -67,7 +67,7 @@ Comme un blocage change la réponse d'une clé à l'autre, les événements ne s
 const [next] = await metamob.kralove.list({ server: "Draconiros" });
 
 if (next) {
-  const when = new Date(next.event_datetime.replace(" ", "T"));
+  const when = new Date(next.event_datetime);
   await notify(`Kralamoure on ${when.toLocaleString("fr-FR")}: ${next.character_count} characters so far.`);
 }
 ```
@@ -92,7 +92,7 @@ Un événement :
 | Champ | Type | Signification |
 | --- | --- | --- |
 | `id` | `number` | |
-| `event_datetime` | `string` | Quand, au format `YYYY-MM-DD HH:mm:ss` |
+| `event_datetime` | `string` | Quand, en date ISO 8601 UTC : `2026-01-27T20:00:00Z` |
 | `description` | `string` | Ce que l'organisateur a écrit |
 | `creator` | `string \| null` | L'organisateur |
 | `server` | `Server \| null` | Où |

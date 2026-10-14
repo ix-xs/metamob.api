@@ -67,7 +67,7 @@ Because blocking changes the answer from one key to another, events are not cach
 const [next] = await metamob.kralove.list({ server: "Draconiros" });
 
 if (next) {
-  const when = new Date(next.event_datetime.replace(" ", "T"));
+  const when = new Date(next.event_datetime);
   await notify(`Kralamoure on ${when.toLocaleString("fr-FR")}: ${next.character_count} characters so far.`);
 }
 ```
@@ -92,7 +92,7 @@ An event:
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `id` | `number` | |
-| `event_datetime` | `string` | When, as `YYYY-MM-DD HH:mm:ss` |
+| `event_datetime` | `string` | When, as an ISO 8601 date in UTC: `2026-01-27T20:00:00Z` |
 | `description` | `string` | What the organiser wrote |
 | `creator` | `string \| null` | The organiser |
 | `server` | `Server \| null` | Where |

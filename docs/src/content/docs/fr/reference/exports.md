@@ -45,7 +45,7 @@ urls.site; // "https://www.metamob.fr"
 
 ## normalizeName
 
-La comparaison appliquée aux noms : accents retirés, casse ignorée, apostrophes unifiées, espaces réduits. Utilisez-la pour comparer ce qu'un utilisateur a tapé avec un nom, de la même façon que la bibliothèque.
+La comparaison appliquée aux noms : accents retirés, casse ignorée, apostrophes et tirets unifiés, espaces réduits. Utilisez-la pour comparer ce qu'un utilisateur a tapé avec un nom, de la même façon que la bibliothèque.
 
 ```ts
 normalizeName("Tofu  MALÉFIQUE"); // "tofu malefique"

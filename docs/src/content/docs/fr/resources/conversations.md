@@ -52,7 +52,7 @@ const thread = (await metamob.conversations.messages(username).take(50)).reverse
 
 ## Remonter dans le temps
 
-Les messages sont paginés avec un curseur, pas avec un décalage : chaque page se termine par l'identifiant à partir duquel commence la suivante. L'itération le fait pour vous. À la main :
+Les messages sont paginés avec un curseur, pas avec un décalage : chaque page fournit le curseur de la suivante. Renvoyez-le tel quel : ce n'est pas l'identifiant d'un message. L'itération le fait pour vous. À la main :
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });

@@ -111,7 +111,7 @@ mine.slug; // le slug de la quête
 
 ## Les messages utilisent un curseur
 
-Les messages d'une conversation ne sont pas numérotés : l'API les pagine du plus récent vers le plus ancien, avec l'identifiant du plus ancien message vu. Les mêmes méthodes fonctionnent, et `total` et `count()` valent `undefined`.
+Les messages d'une conversation ne sont pas numérotés : l'API les pagine du plus récent vers le plus ancien, avec un curseur qu'elle fournit page après page. Les mêmes méthodes fonctionnent, et `total` et `count()` valent `undefined`.
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });

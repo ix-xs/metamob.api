@@ -45,7 +45,7 @@ for (const subzone of zone.subzones) {
 
 ## How a name is matched
 
-A name is compared after removing accents, ignoring case, treating every kind of apostrophe as the same and collapsing spaces. `"TOFU  MALEFIQUE"` and `"Tofu Maléfique"` are the same name. Nothing else is forgiven: a missing letter is a different name.
+A name is compared after removing accents, ignoring case, treating every kind of apostrophe and of dash as the same, and collapsing spaces. `"TOFU  MALEFIQUE"` and `"Tofu Maléfique"` are the same name. Nothing else is forgiven: a missing letter is a different name.
 
 The lookup happens in the data that ships with the package, so it costs no request. A string made only of digits, such as `"21"`, is read as an id.
 

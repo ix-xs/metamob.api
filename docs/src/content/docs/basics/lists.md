@@ -111,7 +111,7 @@ mine.slug; // the slug of the quest
 
 ## Messages use a cursor
 
-The messages of a conversation are not numbered: the API pages them from the most recent backwards, with the id of the oldest message seen. The same methods work, and `total` and `count()` are `undefined`.
+The messages of a conversation are not numbered: the API pages them from the most recent backwards, with a cursor it hands out page after page. The same methods work, and `total` and `count()` are `undefined`.
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });

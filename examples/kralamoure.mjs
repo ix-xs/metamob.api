@@ -13,7 +13,7 @@ try {
 
   for (const event of events) {
     const detail = await metamob.kralove.get(event);
-    const when = new Date(event.event_datetime.replace(" ", "T")).toLocaleString("fr-FR", { dateStyle: "full", timeStyle: "short" });
+    const when = new Date(event.event_datetime).toLocaleString("fr-FR", { dateStyle: "full", timeStyle: "short" });
     console.log(`${when}, by ${event.creator ?? "a deleted account"}: ${event.character_count} characters`);
     if (event.description) console.log(`  ${event.description}`);
     for (const participant of detail.participants) {

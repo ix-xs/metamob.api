@@ -45,7 +45,7 @@ for (const subzone of zone.subzones) {
 
 ## Comment un nom est comparé
 
-Un nom est comparé après suppression des accents, sans tenir compte de la casse, en traitant toutes les sortes d'apostrophes comme une seule et en réduisant les espaces multiples. `"TOFU  MALEFIQUE"` et `"Tofu Maléfique"` sont le même nom. Rien d'autre n'est pardonné : une lettre manquante donne un autre nom.
+Un nom est comparé après suppression des accents, sans tenir compte de la casse, en traitant toutes les sortes d'apostrophes et de tirets comme une seule, et en réduisant les espaces multiples. `"TOFU  MALEFIQUE"` et `"Tofu Maléfique"` sont le même nom. Rien d'autre n'est pardonné : une lettre manquante donne un autre nom.
 
 La recherche se fait dans les données livrées avec le paquet, donc elle ne coûte aucune requête. Une chaîne composée uniquement de chiffres, comme `"21"`, est lue comme un identifiant.
 

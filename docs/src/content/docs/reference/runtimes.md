@@ -76,7 +76,7 @@ const metamob = new Metamob({
   apiKey: "test",
   rateLimit: false,
   retry: false,
-  fetch: async () => Response.json({ data: { username: "Ix-xs", bio: "", avatar: null, last_active: "2026-10-14 09:12:45" } }),
+  fetch: async () => Response.json({ data: { username: "Ix-xs", bio: "", avatar: null, last_active: "2026-10-14T09:12:45Z" } }),
 });
 
 const me = await metamob.me();

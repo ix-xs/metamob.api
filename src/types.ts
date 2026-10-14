@@ -140,6 +140,7 @@ export interface TemplateMonster extends Monster {
 /** A Kralamoure event, as the list returns it. */
 export interface KraloveEvent {
   id: number;
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   event_datetime: string;
   description: string;
   /** `null` when the account was deleted for good, or when you and that user blocked each other. */
@@ -162,12 +163,14 @@ export interface KraloveMessage {
   /** `null` when the account was deleted for good, or when you and that user blocked each other. */
   username: string | null;
   content: string;
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   created_at: string;
 }
 
 /** A Kralamoure event with its participants and its messages. */
 export interface KraloveEventDetail {
   id: number;
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   event_datetime: string;
   description: string;
   /** `null` when the account was deleted for good, or when you and that user blocked each other. */
@@ -192,6 +195,7 @@ export interface Avatar {
 export interface UserSummary {
   username: string;
   avatar: Avatar | null;
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   last_active: string;
 }
 
@@ -451,6 +455,7 @@ export interface Conversation {
   username: string;
   /** Visible messages, trade proposals included. */
   message_count: number;
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   last_message_at: string;
 }
 
@@ -460,7 +465,9 @@ export interface ConversationMessage {
   id: number;
   content: string;
   sender: string;
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   created_at: string;
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`, or `null`. */
   read_at: string | null;
 }
 
@@ -484,7 +491,9 @@ export interface TradeProposal {
   monsters_received: ProposalMonster[];
   /** Who confirmed their side. */
   applications: { username: string; created_at: string }[];
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`, or `null`. */
   cancelled_at: string | null;
+  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   created_at: string;
 }
 

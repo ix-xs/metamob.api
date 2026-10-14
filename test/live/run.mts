@@ -3,8 +3,8 @@
 //
 //   npm run live
 //
-// Needs METAMOB_API_KEY in `.env`. It sends about 30 requests, paced by the
-// client's own rate limiter. With METAMOB_QUEST_SLUG set to one of your
+// Needs METAMOB_API_KEY in `.env`. It sends about 30 requests, held at 45 a
+// minute by the client's own rate limiter. With METAMOB_QUEST_SLUG set to one of your
 // quests, it also exercises the write endpoints on a single monster and puts
 // everything back the way it was.
 
@@ -20,12 +20,13 @@ try {
   process.exit(2);
 }
 
-const metamob = new Metamob({ apiKey: config.METAMOB_API_KEY, cache: false });
+const metamob = new Metamob({ apiKey: config.METAMOB_API_KEY, cache: false, rateLimit: { requests: 45, per: "1m" } });
 let requests = 0;
 metamob.on("request", () => requests++);
 metamob.on("rateLimit", ({ delay }) => console.log(`  (rate limiter: waited ${Math.round(delay / 1000)} s)`));
 
 let failures = 0;
+const ISO_DATE = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$");
 const problems: string[] = [];
 
 /** Reports what a record has beyond `expected`, and what it lacks. */
@@ -38,6 +39,11 @@ function shape(label: string, record: unknown, expected: string[], optional: str
   if (missing.length) problems.push(`${label}: fields the types promise but the API did not send: ${missing.join(", ")}`);
   const id = (record as { id?: unknown }).id;
   if (id !== undefined && typeof id !== "number") problems.push(`${label}: id is a ${typeof id}`);
+}
+
+/** The API documents every date as ISO 8601 in UTC, with the Z suffix. */
+function date(label: string, value: unknown): void {
+  if (typeof value !== "string" || !ISO_DATE.test(value) || Number.isNaN(Date.parse(value))) problems.push(`${label}: expected a date like 2026-01-27T20:00:00Z, got ${JSON.stringify(value)}`);
 }
 
 async function step<T>(name: string, run: () => Promise<T>): Promise<T | undefined> {
@@ -59,6 +65,7 @@ const QUEST = ["slug", "character_name", "current_step", "parallel_quests", "ser
 const me = await step("me()", async () => {
   const account = await metamob.me();
   shape("Account", account, ["username", "bio", "avatar", "last_active"]);
+  date("Account.last_active", account.last_active);
   return account;
 });
 if (!me) {
@@ -129,12 +136,14 @@ await step("kralove.list() and get()", async () => {
   const events = await metamob.kralove.list();
   if (!events.length) return void console.log("      no event to read");
   shape("KraloveEvent", events[0], ["id", "event_datetime", "description", "creator", "participants_count", "character_count", "messages_count", "server"]);
+  date("KraloveEvent.event_datetime", events[0]!.event_datetime);
   shape("KraloveEventDetail", await metamob.kralove.get(events[0]!), ["id", "event_datetime", "description", "creator", "server", "participants", "messages"]);
 });
 
 const slugs = await step("users: search, get, quests, quest", async () => {
   const page = await metamob.users.search(me.username.slice(0, 3), { limit: 3 });
   if (page.items[0]) shape("UserSummary", page.items[0], ["username", "avatar", "last_active"]);
+  if (page.items[0]) date("UserSummary.last_active", page.items[0].last_active);
   const profile = await metamob.users.get(me.username);
   shape("UserProfile", profile, ["username", "bio", "avatar", "last_active", "quests"]);
   const quests = await metamob.users.quests(me.username);
@@ -151,8 +160,10 @@ await step("conversations: list and messages", async () => {
   const page = await metamob.conversations.list({ limit: 3 });
   if (!page.items[0]) return void console.log("      no conversation to read");
   shape("Conversation", page.items[0], ["username", "message_count", "last_message_at"]);
+  date("Conversation.last_message_at", page.items[0].last_message_at);
   const items = await metamob.conversations.messages(page.items[0].username, { limit: 5 });
   for (const item of items) {
+    date(`${item.kind}.created_at`, item.created_at);
     if (item.kind === "message") shape("ConversationMessage", item, ["kind", "id", "content", "sender", "created_at", "read_at"]);
     else shape("TradeProposal", item, ["kind", "id", "sender", "recipient", "status", "server_id", "quest_type", "monsters_given", "monsters_received", "applications", "cancelled_at", "created_at"]);
   }

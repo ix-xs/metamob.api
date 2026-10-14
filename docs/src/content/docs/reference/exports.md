@@ -45,7 +45,7 @@ urls.site; // "https://www.metamob.fr"
 
 ## normalizeName
 
-The comparison applied to names: accents removed, case ignored, apostrophes unified, spaces collapsed. Use it to compare what a user typed with a name the way the library does.
+The comparison applied to names: accents removed, case ignored, apostrophes and dashes unified, spaces collapsed. Use it to compare what a user typed with a name the way the library does.
 
 ```ts
 normalizeName("Tofu  MALÉFIQUE"); // "tofu malefique"

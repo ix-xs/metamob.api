@@ -50,7 +50,7 @@ documentation site in English and French.
   when that key changes a quest. The store is pluggable.
 - **Names everywhere.** Monsters, zones, subzones, servers, game versions,
   kinds of monsters and kinds of quests are designated by id, by name in
-  French, English or Spanish (accents and case ignored), or by an object that
+  French, English or Spanish (accents, case and the kind of dash ignored), or by an object that
   has the id. A name the package does not know is looked up through the API
   before giving up, and a misspelled one comes back with suggestions.
 - **Searchable embedded data.** `data.monster()`, `data.searchMonsters()`,

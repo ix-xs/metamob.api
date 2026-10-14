@@ -27,7 +27,7 @@ Les deux premiers sont des réglages de la quête, modifiés avec [`quests.updat
 
 ## Trouver des partenaires
 
-`quests.matches()` classe les joueurs avec qui vous pourriez échanger, comme le tri par meilleure correspondance de la page Communauté du site : même serveur, même type de quête, actifs au cours des deux derniers mois.
+`quests.matches()` classe les joueurs avec qui vous pourriez échanger, comme l'option « Meilleur matching » de la page Communauté du site : même serveur, même type de quête, actifs au cours des deux derniers mois. Le classement privilégie l'équilibre : les partenaires avec qui autant de monstres vont dans un sens que dans l'autre arrivent en premier. L'API examine au plus les 500 joueurs actifs le plus récemment.
 
 ```ts
 const best = await metamob.quests.matches(slug).take(10);
@@ -150,7 +150,7 @@ Un `TradeMatch` :
 | `quest` | `slug`, `character_name`, `parallel_quests` de sa quête |
 | `matches.they_have_you_want` | Ce qu'il peut vous donner |
 | `matches.you_have_they_want` | Ce que vous pouvez lui donner |
-| `match_score` | Nombre de monstres différents que vous pouvez donner, plus nombre de monstres différents que vous pouvez recevoir |
+| `match_score` | Nombre de monstres différents que vous pouvez donner, plus nombre de monstres différents que vous pouvez recevoir. Le classement ne suit pas cette somme : l'équilibre passe d'abord |
 
 Chaque monstre d'une correspondance a `id`, `name`, `available`, `needed` et `covers_need`.
 

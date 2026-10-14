@@ -27,7 +27,7 @@ The first two are settings of the quest, changed with [`quests.update()`](/resou
 
 ## Finding partners
 
-`quests.matches()` ranks the players you could trade with, like the "Best matching" order of the Community page of the site: same server, same kind of quest, active in the last two months.
+`quests.matches()` ranks the players you could trade with, like the "Best matching" order of the Community page of the site: same server, same kind of quest, active in the last two months. The order favours balance: partners with whom as many monsters go one way as the other come first. The API looks at the 500 most recently active players at most.
 
 ```ts
 const best = await metamob.quests.matches(slug).take(10);
@@ -150,7 +150,7 @@ A `TradeMatch`:
 | `quest` | `slug`, `character_name`, `parallel_quests` of their quest |
 | `matches.they_have_you_want` | What they can give you |
 | `matches.you_have_they_want` | What you can give them |
-| `match_score` | How many different monsters you can give, plus how many you can receive |
+| `match_score` | How many different monsters you can give, plus how many you can receive. The order is not this sum: balance comes first |
 
 Each monster of a match has `id`, `name`, `available`, `needed` and `covers_need`.
 

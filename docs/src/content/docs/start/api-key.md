@@ -14,7 +14,7 @@ const short = new Metamob(apiKey);
 
 ## Creating a key
 
-Sign in on [metamob.fr](https://www.metamob.fr), open **Settings**, then **API key**. The key is a long string of letters and digits. It belongs to your account, and every call made with it is made as you.
+Sign in on [metamob.fr](https://www.metamob.fr), open **Settings** and, in the **API key** section, generate a key. Copy it right away: the site shows it once. The key is a long string of letters and digits. It belongs to your account, and every call made with it is made as you.
 
 A key cannot be limited to reading: it always gives full access.
 

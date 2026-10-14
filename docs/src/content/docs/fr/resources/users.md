@@ -15,7 +15,7 @@ for (const quest of profile.quests) {
 
 ## Chercher des joueurs
 
-Une recherche porte sur une partie du pseudo, parmi les joueurs qui ont au moins une quête publique. Elle demande au moins 3 caractères et c'est une [liste](/basics/lists/), de 50 joueurs par page au plus.
+Une recherche porte sur une partie du pseudo, parmi les joueurs qui ont au moins une quête publique. Elle demande au moins 3 caractères et c'est une [liste](/basics/lists/), de 50 joueurs par page au plus. Seuls les joueurs vus au cours des 90 derniers jours sont cherchés, sauf si `activeWithinDays` dit autre chose, jusqu'à 365.
 
 ```ts
 const page = await metamob.users.search("ix-");

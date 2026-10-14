@@ -14,7 +14,7 @@ const short = new Metamob(apiKey);
 
 ## Créer une clé
 
-Connectez-vous sur [metamob.fr](https://www.metamob.fr), ouvrez **Paramètres**, puis **Clé API**. La clé est une longue suite de lettres et de chiffres. Elle appartient à votre compte, et chaque appel fait avec elle est fait en votre nom.
+Connectez-vous sur [metamob.fr](https://www.metamob.fr), ouvrez **Paramètres** et, dans la section **Clé API**, générez une clé. Copiez-la aussitôt : le site ne l'affiche qu'une fois. La clé est une longue suite de lettres et de chiffres. Elle appartient à votre compte, et chaque appel fait avec elle est fait en votre nom.
 
 Une clé ne peut pas être limitée à la lecture : elle donne toujours un accès complet.
 
