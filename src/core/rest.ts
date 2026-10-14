@@ -126,6 +126,17 @@ function resolveRetry(base: ResolvedRetry, override: RetryOptions | false | unde
   };
 }
 
+/**
+ * The base URL without its trailing slashes. Walked by hand rather than with a
+ * regular expression, whose cost would grow with the square of a long run of
+ * slashes in a value that comes from the caller.
+ */
+function trimSlashes(url: string): string {
+  let end = url.length;
+  while (end > 0 && url.charCodeAt(end - 1) === 47) end--;
+  return url.slice(0, end);
+}
+
 /** Seconds to wait according to a `Retry-After` header: a number of seconds or an HTTP date. */
 export function retryAfterSeconds(header: string | null, now: number = Date.now()): number | undefined {
   if (!header) return undefined;
@@ -176,7 +187,7 @@ export class Rest {
 
   constructor(options: RestOptions, from?: Rest) {
     this.options = options;
-    this.#base = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
+    this.#base = trimSlashes(options.baseUrl ?? DEFAULT_BASE_URL);
     this.#timeout = toMs(options.timeout ?? "30s");
     this.#retry = resolveRetry({ attempts: 3, delay: 500, maxDelay: 60_000 }, options.retry);
 

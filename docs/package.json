@@ -20,5 +20,8 @@
     "astro": "^7.3.8",
     "github-slugger": "^2.0.0",
     "sharp": "^0.35.5"
+  },
+  "overrides": {
+    "postcss-nested": "^7.0.2"
   }
 }

@@ -72,6 +72,15 @@ describe("credentials", () => {
     // The key always wins over a header of the same name.
     expect(calls[0]!.headers.get("authorization")).toBe("Bearer test-key");
   });
+
+  it("drops any number of trailing slashes from the base URL, in linear time", async () => {
+    const slashes = "/".repeat(100_000);
+    const started = performance.now();
+    const { metamob, calls } = client(ACCOUNT, { baseUrl: `https://staging.example/api${slashes}` });
+    expect(performance.now() - started).toBeLessThan(200);
+    await metamob.me();
+    expect(calls[0]!.url.href).toBe("https://staging.example/api/me");
+  });
 });
 
 describe("errors", () => {

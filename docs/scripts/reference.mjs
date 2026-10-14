@@ -142,7 +142,8 @@ for (const [language, table] of Object.entries(sentences)) {
 }
 if (incomplete) process.exit(1);
 
-const cell = (text) => text.replace(/\|/g, "\\|");
+/** Text made safe for a cell of a Markdown table: backslashes first, then the pipes that would end the cell. */
+const cell = (text) => text.replace(/\\/g, "\\\\").replace(/\|/g, "\\|");
 
 async function page(language) {
   const words = WORDS[language];
