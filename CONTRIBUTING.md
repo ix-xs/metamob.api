@@ -53,7 +53,7 @@ own quests. It then changes one monster and puts it back.
 3. `npm run generate`, then `npm run check`. `test/resources.test.ts` has one
    case per endpoint and fails while one is missing.
 4. `npm run live` with a key, to compare the types with real answers.
-5. Add the page or the paragraph in `docs/`, in English and in French, and a
+5. Add the page or the paragraph in `docs/`, in English, French and Spanish, and a
    line to `CHANGELOG.md`.
 
 ## When the game changes

@@ -366,7 +366,7 @@ export interface MonstersUpdateResult {
 export interface TradeOverride {
   /** Quantity to offer, from 0 to the quantity owned. */
   trade_offer?: number | null | undefined;
-  /** Quantity to look for, from 0 to 30. */
+  /** Quantity to look for, from 0. */
   trade_want?: number | null | undefined;
 }
 

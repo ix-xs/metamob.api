@@ -61,7 +61,7 @@ export class Users {
 
   /**
    * The public profile of a user, with their public quests. The username is
-   * case-sensitive. A deleted account answers with a `NOT_FOUND` error.
+   * found whatever its case. A deleted account answers with a `NOT_FOUND` error.
    *
    * @example
    * const profile = await metamob.users.get("Ix-xs");

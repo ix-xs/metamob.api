@@ -3,6 +3,17 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## 5.0.1
+
+- The README is in French, the language of most players of Dofus, with an
+  [English](./README.en.md) and a [Spanish](./README.es.md) version.
+- The documentation site opens in French, keeps English under `/en/` and
+  gains Spanish under `/es/`, the three languages of Metamob itself.
+- The playground of the site has four trials: a name, an autocomplete, where
+  a monster lives, and a quest step by step.
+- Doc comments follow what the API really does: a quantity goes from 0 to 99,
+  and a username is found whatever its case.
+
 ## 5.0.0
 
 A rewrite from the ground up, in TypeScript. The same 35 endpoints of the
@@ -18,7 +29,7 @@ documentation site in English and French.
 - Methods are grouped by resource: `getMonsters({ idOrName })` becomes
   `metamob.monsters.get(ref)`, `updateQuestMonster(slug, idOrName, quantity)`
   becomes `metamob.quests.setMonster(slug, ref, quantity)`, and so on. The
-  [migration page](https://ix-xs.github.io/metamob.api/start/migrating-from-v4/)
+  [migration page](https://ix-xs.github.io/metamob.api/en/start/migrating-from-v4/)
   lists all of them.
 - Paginated methods return a request to await or iterate instead of taking
   care of one page only. The page is `{ items, total, limit, offset }` instead

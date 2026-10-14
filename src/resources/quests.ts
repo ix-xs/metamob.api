@@ -197,7 +197,7 @@ export class Quests {
   }
 
   /**
-   * Sets how many of a monster you own in a quest, from 0 to 30. The monster
+   * Sets how many of a monster you own in a quest, from 0 to 99. The monster
    * is an id or a name in French, English or Spanish.
    *
    * @example

@@ -2,21 +2,22 @@
 
 # @ix-xs/metamob.api
 
-**The whole Metamob API, with every monster called by its name.**
+**Toute l'API Metamob, avec chaque monstre appelé par son nom.**
 
 [![npm version](https://img.shields.io/npm/v/@ix-xs/metamob.api.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/@ix-xs/metamob.api)
 [![npm downloads](https://img.shields.io/npm/dm/@ix-xs/metamob.api.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/@ix-xs/metamob.api)
 [![CI](https://img.shields.io/github/actions/workflow/status/ix-xs/metamob.api/ci.yml?branch=main&label=CI&logo=github)](https://github.com/ix-xs/metamob.api/actions)
 [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/@ix-xs/metamob.api?activeTab=dependencies)
 [![node](https://img.shields.io/badge/node-%3E%3D20-brightgreen?logo=node.js&logoColor=white)](https://nodejs.org)
-[![types](https://img.shields.io/badge/types-included-3178c6?logo=typescript&logoColor=white)](#names-instead-of-ids)
+[![types](https://img.shields.io/badge/types-included-3178c6?logo=typescript&logoColor=white)](#des-noms-à-la-place-des-identifiants)
 [![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
 **[Documentation](https://ix-xs.github.io/metamob.api/)** ·
-[Documentation en français](https://ix-xs.github.io/metamob.api/fr/) ·
-[Getting started](https://ix-xs.github.io/metamob.api/start/quick-start/) ·
-[Every method](https://ix-xs.github.io/metamob.api/reference/methods/) ·
-[Changelog](./CHANGELOG.md)
+[English](./README.en.md) ·
+[Español](./README.es.md) ·
+[Démarrage rapide](https://ix-xs.github.io/metamob.api/start/quick-start/) ·
+[Toutes les méthodes](https://ix-xs.github.io/metamob.api/reference/methods/) ·
+[Journal des modifications](./CHANGELOG.md)
 
 </div>
 
@@ -24,7 +25,7 @@
 npm install @ix-xs/metamob.api
 ```
 
-Node.js 20 or newer, Bun, Deno, browsers and edge runtimes. No dependencies: it is built on `fetch`.
+Node.js 20 ou plus récent, Bun, Deno, les navigateurs et les environnements edge. Aucune dépendance : le paquet repose sur `fetch`.
 
 ---
 
@@ -33,49 +34,49 @@ import { Metamob } from "@ix-xs/metamob.api";
 
 const metamob = new Metamob({ apiKey: process.env.METAMOB_API_KEY });
 
-// Who the key belongs to, and their quests.
+// À qui appartient la clé, et ses quêtes.
 const me = await metamob.me();
 const [quest] = await metamob.quests.list();
 
-// A monster by its name, in French, English or Spanish. Accents and case do not matter.
+// Un monstre par son nom, en français, en anglais ou en espagnol. Les accents et la casse ne comptent pas.
 const tofu = await metamob.monsters.get("Tofu Maléfique");
 console.log(tofu.level_min, tofu.zones.map((zone) => zone.name.fr));
 
-// What the quest still needs. Pages are fetched as you go.
+// Ce qui manque encore à la quête. Les pages sont récupérées au fil de la lecture.
 for await (const monster of metamob.quests.monsters(quest.slug, { status: "needed" })) {
   console.log(monster.step, monster.name.fr);
 }
 
-// One more archmonster in the bag.
+// Un archimonstre de plus dans la quête.
 await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 ```
 
-It covers the 35 endpoints of the [Metamob API](https://www.metamob.fr/help/api): account, quests, monsters, zones, trade partners, Kralamoure events, private messages and all the reference data, for Dofus, Dofus Retro and Dofus Touch.
+La bibliothèque couvre les 35 points d'accès de l'[API Metamob](https://www.metamob.fr/help/api) : compte, quêtes, monstres, zones, partenaires d'échange, événements Kralamoure, messages privés et toutes les données de référence, pour Dofus, Dofus Retro et Dofus Touch.
 
-## What it does for you
+## Ce que la bibliothèque fait pour vous
 
-| The API as it is | With this library |
+| L'API telle qu'elle est | Avec cette bibliothèque |
 | --- | --- |
-| Everything is addressed by a numeric id | **Write the name.** `"Tofu Maléfique"`, `"evil tofu"` or `21`: monsters, zones, subzones, servers and kinds of monsters, in three languages |
-| A typo is a 404, when it is not a write on the wrong monster | **Caught before the call is made**, with the closest names: `Did you mean "Tofu Maléfique"?` |
-| `limit` and `offset` loops everywhere | **`for await`** over any list, or `.all()`, `.take(n)`, `.count()`, or one page with `await` |
-| 60 requests a minute, then 429 | **A built-in limiter** that makes calls wait their turn, per key, instead of failing |
-| 200 monsters at most per batch | **Pass a thousand.** They are split, sent in order and merged |
-| A subzone needs the id of its zone | **`zones.subzone("Coin des Bouftous")`**: the zone is found for you |
-| Reference data means requests | **`data`**: more than 800 monsters, the zones, the servers and the quest templates, in the package, answered from memory |
-| The same lists are fetched again and again | **A cache** for what only changes when the game does, and identical calls in flight share one request |
-| Errors are a status code and three body shapes | **`error.code`**, typed, plus `isNotFound`, `isRateLimited`, `isUnauthorized` |
-| A bot serves many players, each with their key | **`metamob.withKey(theirKey)`**: same client, their account, their own rate limit window |
+| Tout est désigné par un identifiant numérique | **Écrivez le nom.** `"Tofu Maléfique"`, `"evil tofu"` ou `21` : monstres, zones, sous-zones, serveurs et types de monstres, en trois langues |
+| Une faute de frappe donne un 404, quand ce n'est pas une écriture sur le mauvais monstre | **Détectée avant que l'appel ne parte**, avec les noms les plus proches : `Did you mean "Tofu Maléfique"?` |
+| Des boucles sur `limit` et `offset` partout | **`for await`** sur n'importe quelle liste, ou `.all()`, `.take(n)`, `.count()`, ou une seule page avec `await` |
+| 60 requêtes par minute, puis un 429 | **Un limiteur intégré** qui fait attendre leur tour aux appels, clé par clé, au lieu d'échouer |
+| 200 monstres au plus par lot | **Passez-en mille.** Ils sont découpés, envoyés dans l'ordre puis réassemblés |
+| Une sous-zone exige l'identifiant de sa zone | **`zones.subzone("Coin des Bouftous")`** : la zone est trouvée pour vous |
+| Les données de référence coûtent des requêtes | **`data`** : plus de 800 monstres, les zones, les serveurs et les modèles de quête, dans le paquet, servis depuis la mémoire |
+| Les mêmes listes sont récupérées encore et encore | **Un cache** pour ce qui ne change que lorsque le jeu change, et les appels identiques en cours partagent une seule requête |
+| Les erreurs sont un code de statut et trois formes de corps | **`error.code`**, typé, plus `isNotFound`, `isRateLimited`, `isUnauthorized` |
+| Un bot sert de nombreux joueurs, chacun avec sa clé | **`metamob.withKey(theirKey)`** : le même client, leur compte, leur propre fenêtre de limite de requêtes |
 
-## Names instead of ids
+## Des noms à la place des identifiants
 
-Wherever the API expects an id, you can pass the id, the name, or an object that has the id. Your editor completes the names.
+Partout où l'API attend un identifiant, vous pouvez passer l'identifiant, le nom, ou un objet qui porte l'identifiant. Votre éditeur complète les noms.
 
 ```ts
 await metamob.monsters.get(21);
 await metamob.monsters.get("Tofu Maléfique");
-await metamob.monsters.get("tofu malefique");  // accents and case do not matter
-await metamob.monsters.get("Evil Tofu");       // English and Spanish work too
+await metamob.monsters.get("tofu malefique");  // les accents et la casse ne comptent pas
+await metamob.monsters.get("Evil Tofu");       // l'anglais et l'espagnol fonctionnent aussi
 
 await metamob.monsters.list({ type: "archimonstre" });
 await metamob.kralove.list({ server: "Draconiros" });
@@ -83,7 +84,7 @@ await metamob.zones.monsters("Coin des Bouftous");
 await metamob.quests.zones(slug, { zone: "Amakna", type: "boss" });
 ```
 
-A name that does not exist never reaches a quest:
+Un nom qui n'existe pas n'atteint jamais une quête :
 
 ```ts
 import { isMetamobError } from "@ix-xs/metamob.api";
@@ -97,29 +98,29 @@ try {
 }
 ```
 
-Ten archmonsters share their name between two versions of the game. When you write to a quest, the quest says which one is meant; elsewhere, add `{ gameVersion }`.
+Dix archimonstres portent le même nom dans deux versions du jeu. Quand vous écrivez dans une quête, c'est la quête qui indique lequel est visé ; ailleurs, ajoutez `{ gameVersion }`.
 
-## Lists
+## Listes
 
-Every paginated method returns a request you can await or iterate.
+Chaque méthode paginée renvoie une requête que vous pouvez attendre avec `await` ou parcourir avec `for await`.
 
 ```ts
-// One page.
+// Une page.
 const page = await metamob.monsters.list({ type: "boss", limit: 20 });
 page.items, page.total, page.hasNext;
 
-// Everything, lazily. The largest page size is used, which costs the fewest requests.
+// Tout, au fil de la lecture. La plus grande taille de page est utilisée, ce qui coûte le moins de requêtes.
 for await (const monster of metamob.monsters.list({ type: "archimonstre" })) { /* ... */ }
 
-// An array, bounded or not.
+// Un tableau, borné ou non.
 const first100 = await metamob.users.search("ix-").take(100);
 const wanted = await metamob.users.quest("Ix-xs", "21b0a742", { status: "wanted" }).all();
 
-// Just the number, in one small request.
+// Seulement le nombre, en une seule petite requête.
 const left = await metamob.quests.monsters(slug, { status: "needed" }).count();
 ```
 
-Private messages are paginated with a cursor instead of an offset. The same methods work:
+Les messages privés sont paginés avec un curseur au lieu d'un décalage. Les mêmes méthodes fonctionnent :
 
 ```ts
 for await (const item of metamob.conversations.messages("Ix-xs")) {
@@ -128,31 +129,31 @@ for await (const item of metamob.conversations.messages("Ix-xs")) {
 }
 ```
 
-## Your quests
+## Vos quêtes
 
 ```ts
 const quest = await metamob.quests.get(slug);
 quest.current_step, quest.parallel_quests, quest.trade_mode;
 
-// Settings. Send only what changes.
+// Réglages. N'envoyez que ce qui change.
 await metamob.quests.update(slug, { current_step: 12, parallel_quests: 2 });
 await metamob.quests.update(slug, { never_offer_arch: true });
 
-// Quantities, one at a time or in bulk.
+// Quantités, une par une ou en lot.
 await metamob.quests.setMonster(slug, "Bouftou Royal", 3);
 await metamob.quests.setMonsters(slug, { "Tofu Maléfique": 2, "Bouftou Royal": 0 });
 
-// How many of a monster the quest offers and wants, instead of the automatic calculation.
+// Combien d'exemplaires d'un monstre la quête propose et recherche, à la place du calcul automatique.
 await metamob.quests.setTrade(slug, "Tofu Maléfique", { trade_offer: 1 });
 await metamob.quests.resetTrade(slug, "Tofu Maléfique");
 
-// Progress by zone, least advanced subzones first.
+// Progression par zone, les sous-zones les moins avancées d'abord.
 for (const zone of await metamob.quests.zones(slug, { type: "archimonstre" })) {
   console.log(zone.name.fr, `${zone.completed}/${zone.total}`);
 }
 ```
 
-## Trade partners
+## Partenaires d'échange
 
 ```ts
 const { items } = await metamob.quests.matches(slug, { onlyPossibleTrades: true });
@@ -164,7 +165,7 @@ for (const match of items) {
 }
 ```
 
-Anyone's public quests can be read too, with what they look for and what they offer:
+Les quêtes publiques de n'importe quel joueur peuvent aussi être lues, avec ce qu'il recherche et ce qu'il propose :
 
 ```ts
 const profile = await metamob.users.get("Ix-xs");
@@ -172,28 +173,28 @@ const page = await metamob.users.quest("Ix-xs", profile.quests[0].slug, { status
 page.quest.server?.name, page.items;
 ```
 
-## The data in the package
+## Les données du paquet
 
-Monsters, zones, subzones, servers and quest templates ship with the package. Reading them sends nothing and counts for nothing against the rate limit.
+Les monstres, les zones, les sous-zones, les serveurs et les modèles de quête sont livrés avec le paquet. Les lire n'envoie rien et ne compte pas dans la limite de requêtes.
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
 
-data.monster("Tofu Maléfique");                      // the monster, or undefined
-data.searchMonsters("bouf", { type: "archimonstre" }); // autocomplete for a Discord command
-data.zonesOf("Tofu Maléfique");                      // where it lives
-data.archmonstersOf("Tofu");                         // its rare versions
+data.monster("Tofu Maléfique");                      // le monstre, ou undefined
+data.searchMonsters("bouf", { type: "archimonstre" }); // autocomplétion pour une commande Discord
+data.zonesOf("Tofu Maléfique");                      // où il vit
+data.archmonstersOf("Tofu");                         // ses versions rares
 data.monstersInSubzone("Coin des Bouftous");
 data.server("Draconiros")?.game_version?.name;       // "Dofus (Unity)"
 data.suggest("monster", "Tofu Malefik");             // ["Tofu Maléfique"]
-data.fetchedAt;                                      // the day the data was read from the API
+data.fetchedAt;                                      // le jour où les données ont été lues depuis l'API
 ```
 
-A monster added to the game after the package was published still works by name: when a name is not in the package, the API is asked before giving up.
+Un monstre ajouté au jeu après la publication du paquet fonctionne quand même par son nom : quand un nom n'est pas dans le paquet, l'API est interrogée avant d'abandonner.
 
-## Rate limit, retries and caching
+## Limite de requêtes, nouvelles tentatives et cache
 
-Metamob allows 60 requests a minute per key. The client counts them and makes the extra ones wait, so a loop over a few hundred monsters slows down instead of failing.
+Metamob autorise 60 requêtes par minute et par clé. Le client les compte et fait attendre celles qui dépassent, donc une boucle sur quelques centaines de monstres ralentit au lieu d'échouer.
 
 ```ts
 metamob.rateLimit; // { limit: 60, remaining: 41, resetsIn: 38211 }
@@ -202,9 +203,9 @@ metamob.on("rateLimit", ({ method, delay }) => console.log(`${method} waited ${d
 metamob.on("retry", ({ method, attempt, error }) => console.warn(method, attempt, error.message));
 ```
 
-A 429, a server error or a network failure is retried with exponential backoff, honouring `Retry-After`. Every write of this API sets a value, so replaying one changes nothing.
+Un 429, une erreur du serveur ou une panne réseau donne lieu à une nouvelle tentative, avec un délai exponentiel et en respectant `Retry-After`. Chaque écriture de cette API fixe une valeur, donc en rejouer une ne change rien.
 
-Reference data is cached for 10 minutes. Anything tied to an account is not, unless you ask:
+Les données de référence sont gardées en cache pendant 10 minutes. Ce qui est lié à un compte ne l'est pas, sauf si vous le demandez :
 
 ```ts
 const metamob = new Metamob({
@@ -215,22 +216,22 @@ const metamob = new Metamob({
 });
 ```
 
-## Several players, several keys
+## Plusieurs joueurs, plusieurs clés
 
-A bot or a website acts for players who each handed over their own key. `withKey` gives a client for one of them. It shares the settings, the cache and the listeners of the client it comes from, and each key keeps its own window of 60 requests a minute.
+Un bot ou un site web agit pour des joueurs qui lui ont chacun confié leur clé. `withKey` donne un client pour l'un d'eux. Ce client partage les réglages, le cache et les écouteurs du client dont il est issu, et chaque clé garde sa propre fenêtre de 60 requêtes par minute.
 
 ```ts
 const theirs = metamob.withKey(player.apiKey);
 
-const account = await theirs.me(); // a key says who it belongs to
+const account = await theirs.me(); // une clé dit à qui elle appartient
 await theirs.quests.setMonster(slug, "Tofu Maléfique", 1);
 ```
 
-A single call can also bring its key: `metamob.quests.list({ apiKey })`.
+Un appel isolé peut aussi apporter sa clé : `metamob.quests.list({ apiKey })`.
 
-This exists to act for players who agreed to it. It is not a way around the rate limit, which is there to protect a server run by one person.
+Cela existe pour agir au nom de joueurs qui l'ont accepté. Ce n'est pas un moyen de contourner la limite de requêtes, qui est là pour protéger un serveur tenu par une seule personne.
 
-## Errors
+## Erreurs
 
 ```ts
 import { MetamobApiError, isMetamobError } from "@ix-xs/metamob.api";
@@ -239,18 +240,18 @@ try {
   await metamob.users.get("nobody-by-that-name");
 } catch (error) {
   if (error instanceof MetamobApiError && error.isNotFound) {
-    // no such user
+    // ce joueur n'existe pas
   } else if (isMetamobError(error, "UNAUTHORIZED")) {
-    // the key was revoked
+    // la clé a été révoquée
   } else {
     throw error;
   }
 }
 ```
 
-Every error extends `MetamobError` and has a `code`: `NOT_FOUND`, `UNAUTHORIZED`, `RATE_LIMITED`, `BAD_REQUEST`, `SERVER_ERROR`, `TIMEOUT`, `NETWORK`, `UNKNOWN_NAME`, `INVALID_ARGUMENT`, `MISSING_API_KEY` and a few more.
+Chaque erreur étend `MetamobError` et porte un `code` : `NOT_FOUND`, `UNAUTHORIZED`, `RATE_LIMITED`, `BAD_REQUEST`, `SERVER_ERROR`, `TIMEOUT`, `NETWORK`, `UNKNOWN_NAME`, `INVALID_ARGUMENT`, `MISSING_API_KEY` et quelques autres.
 
-## Small things that save time
+## Des détails qui font gagner du temps
 
 ```ts
 import { urls } from "@ix-xs/metamob.api";
@@ -258,34 +259,34 @@ import { urls } from "@ix-xs/metamob.api";
 urls.monsterImage(tofu);    // "https://www.metamob.fr/img/monsters/..."
 urls.profile("Ix-xs");      // "https://www.metamob.fr/profile/Ix-xs"
 
-tofu.name.fr, tofu.name.en, tofu.name.es;            // every name comes in three languages
-await metamob.kralove.list({ from: new Date() });    // a Date or "YYYY-MM-DD"
-await metamob.monsters.get("Tofu", {}, { signal });  // every call takes an AbortSignal
+tofu.name.fr, tofu.name.en, tofu.name.es;            // chaque nom existe en trois langues
+await metamob.kralove.list({ from: new Date() });    // une Date ou "YYYY-MM-DD"
+await metamob.monsters.get("Tofu", {}, { signal });  // chaque appel accepte un AbortSignal
 ```
 
-## Coming from 4.x
+## Depuis la version 4
 
-Version 5 is a rewrite in TypeScript. The same endpoints, a shorter way to call them:
+La version 5 est une réécriture en TypeScript. Les mêmes points d'accès, une façon plus courte de les appeler :
 
 | 4.x | 5.x |
 | --- | --- |
-| `const MetamobAPI = require("@ix-xs/metamob.api")` | `const { Metamob } = require("@ix-xs/metamob.api")`, or `import { Metamob }` |
+| `const MetamobAPI = require("@ix-xs/metamob.api")` | `const { Metamob } = require("@ix-xs/metamob.api")`, ou `import { Metamob }` |
 | `new MetamobAPI({ api_key })` | `new Metamob({ apiKey })` |
-| `{ ok, status, statusText, data }` | the data, or a thrown `MetamobApiError` |
+| `{ ok, status, statusText, data }` | les données, ou une `MetamobApiError` levée |
 | `getMonsters({ idOrName })`, `getMonsters({ ... })` | `monsters.get(ref)`, `monsters.list({ ... })` |
 | `getUserQuests(username, { slug })` | `users.quest(username, slug)` |
 | `getMyQuests()`, `getQuestMonsters(slug)` | `quests.list()`, `quests.monsters(slug)` |
 | `updateQuestMonster(slug, idOrName, quantity)` | `quests.setMonster(slug, ref, quantity)` |
-| `{ api_key }` in the options of a call | `{ apiKey }` as last argument, or `metamob.withKey(apiKey)` |
+| `{ api_key }` dans les options d'un appel | `{ apiKey }` en dernier argument, ou `metamob.withKey(apiKey)` |
 | `client.cache` | `data` |
-| `@ix-xs/node-comfort` installed with it | no dependency |
+| `@ix-xs/node-comfort` installé avec le paquet | aucune dépendance |
 
-The [migration page](https://ix-xs.github.io/metamob.api/start/migrating-from-v4/) lists every method.
+La page [Depuis la version 4](https://ix-xs.github.io/metamob.api/start/migrating-from-v4/) liste toutes les méthodes.
 
 ## Documentation
 
-Everything is on **[ix-xs.github.io/metamob.api](https://ix-xs.github.io/metamob.api/)**, in English and [in French](https://ix-xs.github.io/metamob.api/fr/): guides, one page per resource, recipes, and the list of all methods. The same documentation is in your editor: every method, parameter and field carries its description and an example.
+Tout se trouve sur **[ix-xs.github.io/metamob.api](https://ix-xs.github.io/metamob.api/)**, en français, [en anglais](https://ix-xs.github.io/metamob.api/en/) et [en espagnol](https://ix-xs.github.io/metamob.api/es/) : des guides, une page par ressource, des recettes et la liste de toutes les méthodes. La même documentation est dans votre éditeur : chaque méthode, chaque paramètre et chaque champ porte sa description et un exemple.
 
-## License
+## Licence
 
-[MIT](./LICENSE). Not affiliated with Metamob or Ankama. Dofus is a trademark of Ankama Games. The data embedded in the package comes from the Metamob API; using the API means following [its rules](https://www.metamob.fr/help/api), the rate limit first among them.
+[MIT](./LICENSE). Sans lien avec Metamob ni Ankama. Dofus est une marque d'Ankama Games. Les données incluses dans le paquet proviennent de l'API Metamob ; utiliser l'API implique de respecter [ses règles](https://www.metamob.fr/help/api), la limite de requêtes en premier lieu.

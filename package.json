@@ -1,7 +1,7 @@
 {
   "name": "@ix-xs/metamob.api",
-  "version": "5.0.0",
-  "description": "The complete Metamob API client for JavaScript and TypeScript. Every endpoint, typed, with monsters, zones and servers resolved by name in French, English or Spanish, lazy pagination, a built-in rate limiter, retries and caching. Zero dependencies.",
+  "version": "5.0.1",
+  "description": "Le client complet de l'API Metamob pour JavaScript et TypeScript : tous les points d'accès, typés, avec les monstres, zones et serveurs appelés par leur nom en français, anglais ou espagnol. Pagination paresseuse, limiteur de requêtes intégré, nouvelles tentatives et cache. Aucune dépendance.",
   "keywords": [
     "metamob",
     "dofus",
@@ -53,6 +53,8 @@
   "files": [
     "dist",
     "README.md",
+    "README.en.md",
+    "README.es.md",
     "CHANGELOG.md",
     "LICENSE"
   ],
