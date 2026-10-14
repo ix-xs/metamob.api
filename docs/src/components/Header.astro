@@ -29,8 +29,8 @@ const areas = [
 // asked for. Under a translation, it hands over to that language's own.
 const notFound = /^\/404(?:\.html|\/)?$/.test(Astro.url.pathname.slice(base.length) || "/");
 const translatedNotFound = LOCALES.map((code) => [withBase(`/${code}/`, base), withBase(`/${code}/404/`, base)]);
-// The published minor version, read from the package itself.
-const version = pkg.version.split(".").slice(0, 2).join(".");
+// The published version, read from the package itself: a release redeploys the site.
+const version = pkg.version;
 ---
 
 {notFound && (
