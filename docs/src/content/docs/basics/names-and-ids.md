@@ -1,6 +1,6 @@
 ---
-title: Names and ids
-description: Wherever the API expects a numeric id, you can write the name, the id, or pass the object another call returned. This page says what is accepted, how names are matched and what happens when one is unknown.
+title: Noms et identifiants
+description: "Partout où l'API attend un identifiant numérique, vous pouvez écrire le nom, l'identifiant, ou passer l'objet qu'un autre appel a renvoyé. Cette page indique ce qui est accepté, comment les noms sont comparés et ce qui se passe quand l'un d'eux est inconnu."
 sidebar:
   order: 1
 ---
@@ -8,31 +8,31 @@ sidebar:
 ```ts
 await metamob.monsters.get(21);
 await metamob.monsters.get("Tofu Maléfique");
-await metamob.monsters.get("tofu malefique"); // accents and case do not matter
-await metamob.monsters.get("Evil Tofu"); // English
-await metamob.monsters.get("Tofu maléfico"); // Spanish
+await metamob.monsters.get("tofu malefique"); // les accents et la casse ne comptent pas
+await metamob.monsters.get("Evil Tofu"); // anglais
+await metamob.monsters.get("Tofu maléfico"); // espagnol
 ```
 
-## What can be designated by name
+## Ce qui peut être désigné par son nom
 
-| What | Accepted | Where |
+| Quoi | Accepté | Où |
 | --- | --- | --- |
-| A monster | id, name in French, English or Spanish, `{ id }` | `monsters.get`, `quests.setMonster`, `quests.setMonsters`, `quests.setTrade` |
-| A zone | id, name in three languages, `{ id }` | `zones.get`, `zones.subzones`, `quests.zones({ zone })` |
-| A subzone | id, name in three languages, `{ id }` | `zones.subzone`, `zones.monsters`, `quests.zones({ subzone })` |
-| A server | id, name, `{ id }` | `servers.get`, `kralove.list({ server })`, `users.search(query, { server })` |
-| A kind of monster | 1, 2, 3, or `monstre`, `boss`, `archimonstre` and their translations | every `type` filter |
-| A version of the game | id, name, `{ id }` | `gameVersions.get`, the `gameVersion` hint |
-| A kind of quest | id, slug (`ocre`, `dokille`), name | `questTypes.get` |
-| A quest template | id, `{ id }`, or `{ questType, gameVersion }` | `questTemplates.get`, `questTemplates.monsters` |
+| Un monstre | identifiant, nom en français, en anglais ou en espagnol, `{ id }` | `monsters.get`, `quests.setMonster`, `quests.setMonsters`, `quests.setTrade` |
+| Une zone | identifiant, nom dans les trois langues, `{ id }` | `zones.get`, `zones.subzones`, `quests.zones({ zone })` |
+| Une sous-zone | identifiant, nom dans les trois langues, `{ id }` | `zones.subzone`, `zones.monsters`, `quests.zones({ subzone })` |
+| Un serveur | identifiant, nom, `{ id }` | `servers.get`, `kralove.list({ server })`, `users.search(query, { server })` |
+| Un type de monstre | 1, 2, 3, ou `monstre`, `boss`, `archimonstre` et leurs traductions | tous les filtres `type` |
+| Une version du jeu | identifiant, nom, `{ id }` | `gameVersions.get`, l'indication `gameVersion` |
+| Un type de quête | identifiant, slug (`ocre`, `dokille`), nom | `questTypes.get` |
+| Un modèle de quête | identifiant, `{ id }`, ou `{ questType, gameVersion }` | `questTemplates.get`, `questTemplates.monsters` |
 
-A quest is always designated by its slug and a player by their username: those are strings the API takes as they are.
+Une quête est toujours désignée par son slug et un joueur par son pseudo : ce sont des chaînes que l'API prend telles quelles.
 
-Your editor completes the names. They are literal types, generated from the data in the package, and any other string is still accepted.
+Votre éditeur complète les noms. Ce sont des types littéraux, générés à partir des données du paquet, et toute autre chaîne reste acceptée.
 
-## Passing an object
+## Passer un objet
 
-Anything with a numeric `id` works, so the result of one call feeds the next without picking the id out.
+Tout ce qui porte un `id` numérique convient, donc le résultat d'un appel alimente le suivant sans avoir à en extraire l'identifiant.
 
 ```ts
 const zone = await metamob.zones.get("Amakna");
@@ -43,15 +43,15 @@ for (const subzone of zone.subzones) {
 }
 ```
 
-## How a name is matched
+## Comment un nom est comparé
 
-A name is compared after removing accents, ignoring case, treating every kind of apostrophe and of dash as the same, and collapsing spaces. `"TOFU  MALEFIQUE"` and `"Tofu Maléfique"` are the same name. Nothing else is forgiven: a missing letter is a different name.
+Un nom est comparé après suppression des accents, sans tenir compte de la casse, en traitant toutes les sortes d'apostrophes et de tirets comme une seule, et en réduisant les espaces multiples. `"TOFU  MALEFIQUE"` et `"Tofu Maléfique"` sont le même nom. Rien d'autre n'est pardonné : une lettre manquante donne un autre nom.
 
-The lookup happens in the data that ships with the package, so it costs no request. A string made only of digits, such as `"21"`, is read as an id.
+La recherche se fait dans les données livrées avec le paquet, donc elle ne coûte aucune requête. Une chaîne composée uniquement de chiffres, comme `"21"`, est lue comme un identifiant.
 
-## When a name is unknown
+## Quand un nom est inconnu
 
-A name that is not in the package may be newer than the package. The library then asks the API once, with a search. If the API does not know it either, the call throws a `MetamobArgumentError` with the code `UNKNOWN_NAME` and the closest names.
+Un nom absent du paquet peut être plus récent que le paquet. La bibliothèque interroge alors l'API une fois, avec une recherche. Si l'API ne le connaît pas non plus, l'appel lève une `MetamobArgumentError` avec le code `UNKNOWN_NAME` et les noms les plus proches.
 
 ```ts
 try {
@@ -65,71 +65,71 @@ try {
 }
 ```
 
-The write is never sent: a typo cannot change the wrong monster.
+L'écriture n'est jamais envoyée : une faute de frappe ne peut pas modifier le mauvais monstre.
 
-To offer suggestions yourself, before calling anything:
+Pour proposer vous-même des suggestions, avant tout appel :
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
 
 data.suggest("monster", "Tofu Malefik"); // ["Tofu Maléfique"]
-data.searchMonsters("tofu", { limit: 5 }); // monsters whose name contains "tofu"
+data.searchMonsters("tofu", { limit: 5 }); // les monstres dont le nom contient "tofu"
 ```
 
-## Monsters that share a name
+## Les monstres qui partagent un nom
 
-Ten archmonsters have the same name in two versions of the game, with two different ids. "Crognan le Barbare" is one monster on Dofus (Unity) and another on Dofus Retro and Dofus Touch.
+Dix archimonstres ont le même nom dans deux versions du jeu, avec deux identifiants différents. « Crognan le Barbare » est un monstre sur Dofus (Unity) et un autre sur Dofus Retro et Dofus Touch.
 
-When you write to a quest, the quest decides. The library reads which template the quest follows, once, and picks the monster of that template.
+Quand vous écrivez dans une quête, c'est la quête qui décide. La bibliothèque lit quel modèle la quête suit, une seule fois, et choisit le monstre de ce modèle.
 
 ```ts
-// The right "Crognan le Barbare" for this quest, whatever its version of the game.
+// Le bon "Crognan le Barbare" pour cette quête, quelle que soit sa version du jeu.
 await metamob.quests.setMonster(slug, "Crognan le Barbare", 1);
 ```
 
-Elsewhere, say which one you mean:
+Ailleurs, précisez lequel vous voulez :
 
 ```ts
 const unity = await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus (Unity)" });
 const touch = await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" });
 
-// Or by quest template.
+// Ou par modèle de quête.
 const ochreOnRetro = { questType: "ocre", gameVersion: "Dofus Retro (1.29)" } as const;
 const retro = await metamob.monsters.get("Crognan le Barbare", { template: ochreOnRetro });
 ```
 
-Without a hint, the monster whose quest template has the lowest id is returned. `data.monstersNamed(name)` lists every monster that answers to a name.
+Sans indication, c'est le monstre du modèle de quête au plus petit identifiant qui est renvoyé. `data.monstersNamed(name)` liste tous les monstres qui répondent à un nom.
 
-## Subzones and their zone
+## Les sous-zones et leur zone
 
-The API addresses a subzone through its zone. The library finds the zone for you when the subzone is in the package:
+L'API accède à une sous-zone à travers sa zone. La bibliothèque trouve la zone pour vous quand la sous-zone est dans le paquet :
 
 ```ts
 const subzone = await metamob.zones.subzone("Coin des Bouftous");
 subzone.zone.name.fr; // "Amakna"
 ```
 
-A subzone added to the game after the package was published is not known yet, and needs its zone:
+Une sous-zone ajoutée au jeu après la publication du paquet n'est pas encore connue, et a besoin de sa zone :
 
 ```ts
 await metamob.zones.monsters("Coin des Bouftous", { zone: "Amakna" });
 ```
 
-## Reference
+## Référence
 
-| Type | Accepts |
+| Type | Accepte |
 | --- | --- |
-| `MonsterLike` | `number`, a monster name, `{ id }` |
-| `ZoneLike`, `SubzoneLike` | `number`, a name, `{ id }` |
-| `ServerLike`, `GameVersionLike` | `number`, a name, `{ id }` |
-| `MonsterTypeLike` | `number`, a name, `{ id }` |
-| `QuestTypeLike` | `number`, a slug, a name, `{ id }` |
+| `MonsterLike` | `number`, un nom de monstre, `{ id }` |
+| `ZoneLike`, `SubzoneLike` | `number`, un nom, `{ id }` |
+| `ServerLike`, `GameVersionLike` | `number`, un nom, `{ id }` |
+| `MonsterTypeLike` | `number`, un nom, `{ id }` |
+| `QuestTypeLike` | `number`, un slug, un nom, `{ id }` |
 | `QuestTemplateLike` | `number`, `{ id }`, `{ questType, gameVersion }` |
 | `MonsterHint` | `{ gameVersion }`, `{ template }` |
 
-## See also
+## Voir aussi
 
-- [The data in the package](/basics/embedded-data/)
-- [Monsters](/resources/monsters/)
-- [Errors](/basics/errors/)
-- [Reference data](/resources/reference-data/)
+- [Les données du paquet](/basics/embedded-data/)
+- [Monstres](/resources/monsters/)
+- [Erreurs](/basics/errors/)
+- [Données de référence](/resources/reference-data/)

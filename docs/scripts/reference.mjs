@@ -5,31 +5,42 @@
 //   node scripts/reference.mjs --check    fail when a page is out of date
 //
 // The sentences that describe a method are written once, in English, in the
-// config. Their French is in `scripts/reference.fr.json`, keyed by the English
-// sentence: after adding or rewording one, this script stops and lists what
-// is left to translate. An entry that translates nothing any more must go.
+// config. Their French and their Spanish are in `scripts/reference.fr.json`
+// and `scripts/reference.es.json`, keyed by the English sentence: after adding
+// or rewording one, this script stops and lists what is left to translate. An
+// entry that translates nothing any more must go.
 
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { methods } from "../../scripts/api.config.mjs";
+import { LOCALES, ROOT_LANGUAGE, SOURCE } from "../plugins/base-links.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const content = path.resolve(here, "..", "src", "content", "docs");
 const check = process.argv.includes("--check");
-const french = JSON.parse(await readFile(path.join(here, "reference.fr.json"), "utf8"));
+
+/** Every language of the site, the original first. */
+const LANGUAGES = [SOURCE, ...[ROOT_LANGUAGE, ...LOCALES].filter((language) => language !== SOURCE)];
+/** Where the pages of a language are: the root for one of them, a folder for the others. */
+const folder = (language) => path.join(content, language === ROOT_LANGUAGE ? "" : language);
+
+const sentences = {};
+for (const language of LANGUAGES) {
+  if (language !== SOURCE) sentences[language] = JSON.parse(await readFile(path.join(here, `reference.${language}.json`), "utf8"));
+}
 
 /** The groups of the page, in order, with the methods whose id starts with each prefix. */
 const GROUPS = [
-  { en: "Account", fr: "Compte", prefixes: ["me."] },
-  { en: "Your quests", fr: "Vos quêtes", prefixes: ["quests."] },
-  { en: "Monsters", fr: "Monstres", prefixes: ["monsters."] },
-  { en: "Zones", fr: "Zones", prefixes: ["zones."] },
-  { en: "Other players", fr: "Autres joueurs", prefixes: ["users."] },
-  { en: "Conversations", fr: "Conversations", prefixes: ["conversations."] },
-  { en: "Kralamoure events", fr: "Événements Kralamoure", prefixes: ["kralove."] },
-  { en: "Reference data", fr: "Données de référence", prefixes: ["gameVersions.", "servers.", "monsterTypes.", "questTypes.", "questTemplates."] },
+  { en: "Account", fr: "Compte", es: "Cuenta", prefixes: ["me."] },
+  { en: "Your quests", fr: "Vos quêtes", es: "Tus misiones", prefixes: ["quests."] },
+  { en: "Monsters", fr: "Monstres", es: "Monstruos", prefixes: ["monsters."] },
+  { en: "Zones", fr: "Zones", es: "Zonas", prefixes: ["zones."] },
+  { en: "Other players", fr: "Autres joueurs", es: "Otros jugadores", prefixes: ["users."] },
+  { en: "Conversations", fr: "Conversations", es: "Conversaciones", prefixes: ["conversations."] },
+  { en: "Kralamoure events", fr: "Événements Kralamoure", es: "Eventos Kralamar", prefixes: ["kralove."] },
+  { en: "Reference data", fr: "Données de référence", es: "Datos de referencia", prefixes: ["gameVersions.", "servers.", "monsterTypes.", "questTypes.", "questTemplates."] },
 ];
 
 const WORDS = {
@@ -83,27 +94,53 @@ const WORDS = {
     seeAlso: "Voir aussi",
     links: ["[Tous les exports](/reference/exports/)", "[Codes d'erreur](/reference/errors/)", "[Les données du paquet](/basics/embedded-data/)"],
   },
+  es: {
+    title: "Todos los métodos",
+    description: `Los ${methods.length} endpoints de la API de Metamob, con el método que llama a cada uno y la página que lo explica.`,
+    intro: [
+      "Cada línea es un endpoint de la API: la llamada, luego el nombre que la biblioteca le da allí donde se nombra un método (ajustes de la caché, eventos, errores), y a la derecha lo que hace y la solicitud que envía.",
+      "Los métodos marcados *lista* devuelven una solicitud que puedes esperar para una página o recorrer para todas, ver [Listas](/basics/lists/). El número es la página más grande que acepta la API: es el tamaño usado cuando recorres.",
+      "Los métodos marcados *compartido* responden lo mismo sea cual sea la clave: su resultado se guarda en caché y se comparte entre las claves. Los demás dependen de la cuenta y solo se guardan en caché si lo pides, ver [Caché](/basics/caching/).",
+    ],
+    columns: ["Método", "Lo que hace"],
+    list: (max, cursor) => (cursor ? `*lista*, ${max} por página, por cursor` : `*lista*, ${max} por página`),
+    shared: "*compartido*",
+    write: "*escritura*",
+    more: "Ver",
+    also: "Más allá de los endpoints",
+    alsoIntro: "Algunos métodos no envían ninguna solicitud propia:",
+    extras: [
+      ["`metamob.monsters.search(query, { type })`", "`monsters.list` con una búsqueda, escrito de forma más corta."],
+      ["`metamob.questTemplates.get(template)`", "Una plantilla de misión, tomada de `questTemplates.list`: la API no tiene un endpoint para ello."],
+      ["`metamob.quests.resetTrade(slug, monster)`", "`quests.setTrade` con los dos valores devueltos al cálculo automático."],
+      ["`metamob.withKey(apiKey)`", "Un cliente para otra clave, que comparte la caché, los oyentes y los ajustes de este."],
+      ["`data.monster(name)` y el resto de `data`", "Los datos de referencia que vienen con el paquete, leídos en memoria."],
+    ],
+    seeAlso: "Ver también",
+    links: ["[Todas las exportaciones](/reference/exports/)", "[Códigos de error](/reference/errors/)", "[Los datos del paquete](/basics/embedded-data/)"],
+  },
 };
 
 /** The title of a docs page, in a language, to name the guide of a method. */
 async function titleOf(guide, language) {
   const slug = guide.replace(/^\/|\/$/g, "");
-  const file = path.join(content, language === "en" ? "" : language, `${slug}.md`);
-  const fallback = path.join(content, `${slug}.md`);
-  const source = existsSync(file) ? file : existsSync(fallback) ? fallback : undefined;
+  // A page that is not translated yet is named as its original is.
+  const source = [language, SOURCE].map((candidate) => path.join(folder(candidate), `${slug}.md`)).find((file) => existsSync(file));
   if (!source) throw new Error(`${guide}: the guide of a method has no page (${slug}.md)`);
   const match = /^title:\s*"?(.+?)"?\s*$/m.exec(await readFile(source, "utf8"));
   if (!match) throw new Error(`${slug}.md has no title`);
   return match[1];
 }
 
-const untranslated = methods.map((method) => method.summary).filter((summary) => !french[summary]);
-const unused = Object.keys(french).filter((sentence) => !methods.some((method) => method.summary === sentence));
-if (untranslated.length || unused.length) {
-  if (untranslated.length) console.error(`Left to translate in scripts/reference.fr.json:\n${untranslated.map((sentence) => `  ${JSON.stringify(sentence)}`).join("\n")}`);
-  if (unused.length) console.error(`Translate nothing any more, remove from scripts/reference.fr.json:\n${unused.map((sentence) => `  ${JSON.stringify(sentence)}`).join("\n")}`);
-  process.exit(1);
+let incomplete = false;
+for (const [language, table] of Object.entries(sentences)) {
+  const untranslated = methods.map((method) => method.summary).filter((summary) => !table[summary]);
+  const unused = Object.keys(table).filter((sentence) => !methods.some((method) => method.summary === sentence));
+  if (untranslated.length) console.error(`Left to translate in scripts/reference.${language}.json:\n${untranslated.map((sentence) => `  ${JSON.stringify(sentence)}`).join("\n")}`);
+  if (unused.length) console.error(`Translate nothing any more, remove from scripts/reference.${language}.json:\n${unused.map((sentence) => `  ${JSON.stringify(sentence)}`).join("\n")}`);
+  incomplete ||= untranslated.length > 0 || unused.length > 0;
 }
+if (incomplete) process.exit(1);
 
 const cell = (text) => text.replace(/\|/g, "\\|");
 
@@ -120,7 +157,7 @@ async function page(language) {
     for (const method of members) {
       listed.add(method.id);
       const marks = [method.verb === "PATCH" ? words.write : "", method.paged ? words.list(method.paged.max, method.paged.cursor) : "", method.scope === "public" ? words.shared : ""].filter(Boolean);
-      const summary = language === "en" ? method.summary : french[method.summary];
+      const summary = language === SOURCE ? method.summary : sentences[language][method.summary];
       out.push(`| \`${cell(method.call)}\`<br />\`${method.id}\` | ${cell(summary)}<br />${[`\`${method.verb} ${method.path}\``, ...marks].join(", ")} |`);
     }
     out.push("");
@@ -133,18 +170,19 @@ async function page(language) {
 }
 
 let stale = 0;
-for (const language of ["en", "fr"]) {
-  const file = path.join(content, language === "en" ? "" : language, "reference", "methods.md");
+for (const language of LANGUAGES) {
+  const file = path.join(folder(language), "reference", "methods.md");
   const next = await page(language);
   const current = existsSync(file) ? (await readFile(file, "utf8")).replace(/\r\n/g, "\n") : "";
   if (current === next) continue;
+  const shown = path.relative(path.resolve(here, ".."), file).replace(/\\/g, "/");
   if (check) {
     stale++;
-    console.error(`${path.relative(path.resolve(here, ".."), file).replace(/\\/g, "/")} is out of date. Run "npm run reference".`);
+    console.error(`${shown} is out of date. Run "npm run reference".`);
   } else {
     await mkdir(path.dirname(file), { recursive: true });
     await writeFile(file, next);
-    console.log(`wrote ${path.relative(path.resolve(here, ".."), file).replace(/\\/g, "/")}`);
+    console.log(`wrote ${shown}`);
   }
 }
 if (stale) process.exit(1);

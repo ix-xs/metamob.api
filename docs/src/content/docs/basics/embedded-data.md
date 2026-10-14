@@ -1,6 +1,6 @@
 ---
-title: The data in the package
-description: Monsters, zones, subzones, servers and quest templates ship with the package. The data object reads them from memory, with no request and no API key, which is what an autocomplete or a lookup command needs.
+title: Les données du paquet
+description: "Les monstres, les zones, les sous-zones, les serveurs et les modèles de quête sont livrés avec le paquet. L'objet data les lit depuis la mémoire, sans requête et sans clé API, ce dont une autocomplétion ou une commande de recherche a besoin."
 sidebar:
   order: 6
 ---
@@ -15,21 +15,21 @@ monster?.level_max; // 200
 data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 ```
 
-## What is in it
+## Ce qu'il y a dedans
 
-A copy of the reference data of the API, taken when the package was published: every monster, zone, subzone, server, version of the game, kind of monster, kind of quest and quest template, with which monsters live in which subzone and which monsters each quest template asks for.
+Une copie des données de référence de l'API, prise au moment où le paquet a été publié : chaque monstre, zone, sous-zone, serveur, version du jeu, type de monstre, type de quête et modèle de quête, avec quels monstres vivent dans quelle sous-zone et quels monstres chaque modèle de quête demande.
 
-`data.fetchedAt` is the day the copy was taken. The records have the shape the API gives them, so what you read from `data` and what you get from a call are interchangeable.
+`data.fetchedAt` est le jour où la copie a été prise. Les enregistrements ont la forme que l'API leur donne, donc ce que vous lisez dans `data` et ce que vous recevez d'un appel sont interchangeables.
 
-The client has it too: `metamob.data` is the same object.
+Le client l'a aussi : `metamob.data` est le même objet.
 
-## Finding one record
+## Trouver un enregistrement
 
-Each kind has a method that takes an id, a name or an object with an id, and returns the record or `undefined`. Nothing throws.
+Chaque type a une méthode qui prend un identifiant, un nom ou un objet avec un identifiant, et renvoie l'enregistrement ou `undefined`. Rien ne lève d'erreur.
 
 ```ts
-data.monster("Bouftou Royal"); // by name, in any of the three languages
-data.monster(305); // by id
+data.monster("Bouftou Royal"); // par nom, dans l'une des trois langues
+data.monster(305); // par identifiant
 data.zone("Amakna")?.subzones.length;
 data.subzone("Coin des Bouftous")?.zone.name.fr;
 data.server("Draconiros")?.game_version?.name; // "Dofus (Unity)"
@@ -38,59 +38,59 @@ data.questType("dokille")?.name.en;
 data.questTemplate({ questType: "ocre", gameVersion: "Dofus Touch" })?.monster_count;
 ```
 
-## Searching monsters
+## Chercher des monstres
 
-`searchMonsters` finds the monsters whose name contains a text, in any language, names that start with it first. It is fast enough to run on every keystroke.
+`searchMonsters` trouve les monstres dont le nom contient un texte, dans n'importe quelle langue, les noms qui commencent par ce texte en premier. Elle est assez rapide pour s'exécuter à chaque frappe.
 
 ```ts
-data.searchMonsters("bouf"); // 25 at most by default
+data.searchMonsters("bouf"); // 25 au plus par défaut
 data.searchMonsters("bouf", { type: "archimonstre", limit: 10 });
 data.searchMonsters("gob", { gameVersion: "Dofus Touch" });
 ```
 
-For a text that matches nothing, `suggest` gives the closest names:
+Pour un texte qui ne correspond à rien, `suggest` donne les noms les plus proches :
 
 ```ts
 data.suggest("monster", "Tofu Malefik"); // ["Tofu Maléfique"]
 data.suggest("server", "Draconirros"); // ["Draconiros"]
-data.suggest("zone", "Amakna", 5); // up to 5 names
+data.suggest("zone", "Amakna", 5); // jusqu'à 5 noms
 ```
 
-## Following the links
+## Suivre les liens
 
 ```ts
-// Where a monster lives.
+// Où vit un monstre.
 data.subzonesOf("Tofu Maléfique").map((subzone) => `${subzone.zone.name.fr} > ${subzone.name.fr}`);
 data.zonesOf("Tofu Maléfique");
 
-// What lives somewhere.
+// Ce qui vit quelque part.
 data.monstersInSubzone("Coin des Bouftous");
 data.monstersInZone("Amakna");
 
-// A monster and its archmonster.
-data.archmonstersOf("Tofu"); // the archmonsters that have it as reference
+// Un monstre et son archimonstre.
+data.archmonstersOf("Tofu"); // les archimonstres qui l'ont pour référence
 data.monster("Tofuldebeu l'Explosif")?.reference?.name.fr; // "Tofu"
 ```
 
-## Quest templates
+## Les modèles de quête
 
-A quest template is what a kind of quest asks for in a version of the game: the Ochre quest on Dofus Touch, for instance.
+Un modèle de quête est ce qu'un type de quête demande dans une version du jeu : la quête Ocre sur Dofus Touch, par exemple.
 
 ```ts
 const ochreOnTouch = { questType: "ocre", gameVersion: "Dofus Touch" } as const;
 
-data.templateMonsters(ochreOnTouch).length; // every monster of the quest, in order
-data.templateMonsters(ochreOnTouch, { step: 4 }); // those of step 4
-data.stepOf("Tofu Maléfique", ochreOnTouch); // the step this monster belongs to
-data.templatesOf("Tofu Maléfique"); // the quest templates that ask for it
+data.templateMonsters(ochreOnTouch).length; // tous les monstres de la quête, dans l'ordre
+data.templateMonsters(ochreOnTouch, { step: 4 }); // ceux de l'étape 4
+data.stepOf("Tofu Maléfique", ochreOnTouch); // l'étape à laquelle ce monstre appartient
+data.templatesOf("Tofu Maléfique"); // les modèles de quête qui le demandent
 ```
 
-## The plain lists
+## Les listes simples
 
 ```ts
-data.monsters; // every monster
-data.zones; // every zone, each with its subzones
-data.subzones; // every subzone, each with its zone
+data.monsters; // tous les monstres
+data.zones; // toutes les zones, chacune avec ses sous-zones
+data.subzones; // toutes les sous-zones, chacune avec sa zone
 data.servers;
 data.gameVersions;
 data.monsterTypes;
@@ -98,28 +98,28 @@ data.questTypes;
 data.questTemplates;
 ```
 
-They are read-only arrays, built once on first use. The whole data set is decoded the first time anything is read, which takes a few milliseconds.
+Ce sont des tableaux en lecture seule, construits une fois à la première utilisation. L'ensemble des données est décodé la première fois que quelque chose est lu, ce qui prend quelques millisecondes.
 
-## When the game changes
+## Quand le jeu change
 
-A new monster, zone or server reaches the package with its next release. In between, nothing breaks:
+Un nouveau monstre, une nouvelle zone ou un nouveau serveur arrive dans le paquet avec sa version suivante. Entre-temps, rien ne casse :
 
-- A call given a name the package does not know asks the API before giving up, see [Names and ids](/basics/names-and-ids/#when-a-name-is-unknown).
-- An id always works, known or not.
-- `data` itself only knows what it shipped with: `data.monster("a brand new monster")` is `undefined` until you update the package.
+- Un appel qui reçoit un nom que le paquet ne connaît pas interroge l'API avant d'abandonner, voir [Noms et identifiants](/basics/names-and-ids/#when-a-name-is-unknown).
+- Un identifiant fonctionne toujours, connu ou non.
+- `data` lui-même ne connaît que ce avec quoi il a été livré : `data.monster("a brand new monster")` vaut `undefined` tant que vous n'avez pas mis le paquet à jour.
 
-To read what the API says right now, use the calls: [`metamob.monsters`](/resources/monsters/), [`metamob.zones`](/resources/zones/) and the [reference lists](/resources/reference-data/).
+Pour lire ce que l'API dit en ce moment, utilisez les appels : [`metamob.monsters`](/resources/monsters/), [`metamob.zones`](/resources/zones/) et les [listes de référence](/resources/reference-data/).
 
-## In a browser
+## Dans un navigateur
 
-`data` needs neither a key nor a network, so it runs in a page. Importing only `data` leaves the client out of your bundle; the data set itself weighs about 30 kB once compressed. The search box on the home page of this site is exactly that.
+`data` n'a besoin ni d'une clé ni d'un réseau, donc il fonctionne dans une page. Importer seulement `data` laisse le client hors de votre bundle ; l'ensemble des données pèse environ 30 ko une fois compressé. Le champ de recherche de la page d'accueil de ce site, c'est exactement cela.
 
-## Reference
+## Référence
 
-| Member | Returns |
+| Membre | Renvoie |
 | --- | --- |
 | `monster(ref, hint?)` | `Monster \| undefined` |
-| `monstersNamed(name)` | `Monster[]`, more than one for a shared name |
+| `monstersNamed(name)` | `Monster[]`, plus d'un pour un nom partagé |
 | `searchMonsters(query, { type, gameVersion, template, limit })` | `Monster[]` |
 | `zone(ref)`, `subzone(ref)` | `ZoneDetail \| undefined`, `Subzone \| undefined` |
 | `server(ref)`, `gameVersion(ref)` | `Server \| undefined`, `GameVersion \| undefined` |
@@ -132,11 +132,11 @@ To read what the API says right now, use the calls: [`metamob.monsters`](/resour
 | `templateMonsters(template, { step })` | `TemplateMonster[]` |
 | `stepOf(monster, template)` | `number \| undefined` |
 | `suggest(kind, text, limit?)` | `string[]` |
-| `fetchedAt` | `string`, as `YYYY-MM-DD` |
+| `fetchedAt` | `string`, au format `YYYY-MM-DD` |
 
-## See also
+## Voir aussi
 
-- [Names and ids](/basics/names-and-ids/)
-- [Monsters](/resources/monsters/)
-- [A Discord command with autocomplete](/recipes/discord-command/)
-- [Caching](/basics/caching/)
+- [Noms et identifiants](/basics/names-and-ids/)
+- [Monstres](/resources/monsters/)
+- [Une commande Discord avec autocomplétion](/recipes/discord-command/)
+- [Cache](/basics/caching/)

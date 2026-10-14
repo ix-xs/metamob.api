@@ -1,6 +1,6 @@
 ---
-title: Monsters
-description: Search the monsters of the game by name in three languages, filter them by kind, and read one with the zones where it lives and, for an archmonster, the monster it is the rare version of.
+title: Monstres
+description: Cherchez les monstres du jeu par leur nom dans trois langues, filtrez-les par type, et lisez-en un avec les zones où il vit et, pour un archimonstre, le monstre dont il est la version rare.
 sidebar:
   order: 4
 ---
@@ -13,104 +13,104 @@ console.log(tofu.level_min, tofu.level_max);
 console.log(tofu.zones.map((zone) => zone.name.fr)); // ["Amakna"]
 ```
 
-## Reading one monster
+## Lire un monstre
 
-`monsters.get()` takes a name, an id or an object, see [Names and ids](/basics/names-and-ids/). On top of what a list gives, the answer has the zones and subzones where the monster can be found.
+`monsters.get()` prend un nom, un identifiant ou un objet, voir [Noms et identifiants](/basics/names-and-ids/). En plus de ce que donne une liste, la réponse contient les zones et les sous-zones où l'on trouve le monstre.
 
 ```ts
 const monster = await metamob.monsters.get("Bouflet le Puéril");
 
 monster.type?.name.fr; // "archimonstre"
-monster.reference?.name.fr; // the monster it is the rare version of
-urls.monsterImage(monster); // its picture on metamob.fr
+monster.reference?.name.fr; // le monstre dont il est la version rare
+urls.monsterImage(monster); // son image sur metamob.fr
 
 for (const zone of monster.zones) {
   console.log(zone.name.fr, zone.subzones.map((subzone) => subzone.name.fr));
 }
 ```
 
-A few archmonsters share their name between two versions of the game. A hint says which one you mean, a version of the game here, or a quest template with `{ template }`:
+Quelques archimonstres portent le même nom dans deux versions du jeu. Une indication dit lequel vous voulez, ici une version du jeu, ou un modèle de quête avec `{ template }` :
 
 ```ts
 await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" });
 ```
 
-## Listing and filtering
+## Lister et filtrer
 
-`monsters.list()` is a [list](/basics/lists/), 200 monsters per page at most.
+`monsters.list()` est une [liste](/basics/lists/), de 200 monstres par page au plus.
 
 ```ts
-// One page of bosses.
+// Une page de boss.
 const page = await metamob.monsters.list({ type: "boss", limit: 50 });
 page.total;
 
-// Every archmonster.
+// Tous les archimonstres.
 for await (const monster of metamob.monsters.list({ type: "archimonstre" })) {
   console.log(monster.name.fr, monster.reference?.name.fr);
 }
 ```
 
-`type` is `"monstre"`, `"boss"` or `"archimonstre"`, their English or Spanish names, or 1, 2 or 3.
+`type` vaut `"monstre"`, `"boss"` ou `"archimonstre"`, leurs noms anglais ou espagnols, ou encore 1, 2 ou 3.
 
-## Searching by name
+## Chercher par nom
 
-A search matches a part of the name, in French, English or Spanish. It needs 3 characters at least.
+Une recherche porte sur une partie du nom, en français, en anglais ou en espagnol. Elle demande au moins 3 caractères.
 
 ```ts
 const found = await metamob.monsters.search("bouf").all();
 const archmonsters = await metamob.monsters.search("tofu", { type: "archimonstre" }).all();
 
-// The same, written with list().
+// La même chose, écrite avec list().
 await metamob.monsters.list({ query: "bouf" });
 ```
 
-## Without a request
+## Sans requête
 
-For names, levels, kinds and where a monster lives, [the data in the package](/basics/embedded-data/) answers from memory. It is the right tool for an autocomplete, where a request per keystroke would eat the rate limit in seconds.
+Pour les noms, les niveaux, les types et les endroits où vit un monstre, [les données du paquet](/basics/embedded-data/) répondent depuis la mémoire. C'est le bon outil pour une autocomplétion, où une requête par frappe épuiserait la limite de requêtes en quelques secondes.
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
 
-data.searchMonsters("bouf", { limit: 10 }); // no request
+data.searchMonsters("bouf", { limit: 10 }); // aucune requête
 data.monster("Tofu Maléfique")?.level_max;
 data.zonesOf("Tofu Maléfique");
 ```
 
-Ask the API when you need the state of the game right now, for instance just after an update of the game.
+Interrogez l'API quand vous avez besoin de l'état du jeu à l'instant présent, par exemple juste après une mise à jour du jeu.
 
-## Monsters of a quest
+## Les monstres d'une quête
 
-Which monsters a quest asks for, and in which step, is a matter of [quest templates](/resources/reference-data/#quest-templates). What you own of them is under [Your quests](/resources/quests/#the-monsters-of-a-quest).
+Quels monstres une quête demande, et à quelle étape, relève des [modèles de quête](/resources/reference-data/#quest-templates). Ce que vous en possédez se trouve dans [Vos quêtes](/resources/quests/#the-monsters-of-a-quest).
 
-## Limits and errors
+## Limites et erreurs
 
-- A search shorter than 3 characters throws `INVALID_ARGUMENT` before a request is spent.
-- An id that does not exist answers `NOT_FOUND`. A name that does not exist throws `UNKNOWN_NAME`, with suggestions.
-- Answers are [cached](/basics/caching/) for 10 minutes by default.
+- Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT` avant qu'une requête soit dépensée.
+- Un identifiant qui n'existe pas répond `NOT_FOUND`. Un nom qui n'existe pas lève `UNKNOWN_NAME`, avec des suggestions.
+- Les réponses sont [mises en cache](/basics/caching/) pendant 10 minutes par défaut.
 
-## Reference
+## Référence
 
-| Method | Returns |
+| Méthode | Renvoie |
 | --- | --- |
 | `monsters.get(monster, { gameVersion, template }?, options?)` | `MonsterDetail` |
-| `monsters.list({ query, type, limit, offset }, options?)` | a list of `Monster` |
-| `monsters.search(query, { type, limit, offset }, options?)` | a list of `Monster` |
+| `monsters.list({ query, type, limit, offset }, options?)` | une liste de `Monster` |
+| `monsters.search(query, { type, limit, offset }, options?)` | une liste de `Monster` |
 
-A `Monster`:
+Un `Monster` :
 
-| Field | Type | Meaning |
+| Champ | Type | Signification |
 | --- | --- | --- |
 | `id` | `number` | |
-| `name` | `{ fr, en, es }` | The name in three languages |
-| `image` | `string` | File name of the picture, see `urls.monsterImage()` |
+| `name` | `{ fr, en, es }` | Le nom dans trois langues |
+| `image` | `string` | Nom de fichier de l'image, voir `urls.monsterImage()` |
 | `level_min`, `level_max` | `number` | |
-| `type` | `MonsterType \| null` | `{ id, name }`: monster, boss or archmonster |
-| `reference` | `{ id, name }` or absent | For an archmonster, its base monster |
-| `zones` | `ZoneDetail[]` | Only from `get()`: zones, each with the subzones concerned |
+| `type` | `MonsterType \| null` | `{ id, name }` : monstre, boss ou archimonstre |
+| `reference` | `{ id, name }` ou absent | Pour un archimonstre, son monstre de base |
+| `zones` | `ZoneDetail[]` | Seulement avec `get()` : les zones, chacune avec les sous-zones concernées |
 
-## See also
+## Voir aussi
 
-- [Names and ids](/basics/names-and-ids/)
-- [The data in the package](/basics/embedded-data/)
+- [Noms et identifiants](/basics/names-and-ids/)
+- [Les données du paquet](/basics/embedded-data/)
 - [Zones](/resources/zones/)
-- [Reference data](/resources/reference-data/)
+- [Données de référence](/resources/reference-data/)

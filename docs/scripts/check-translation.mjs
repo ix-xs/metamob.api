@@ -1,10 +1,11 @@
 // Verifies that a translated page still mirrors its English original:
 //
 //   node scripts/check-translation.mjs            every page of every language
-//   node scripts/check-translation.mjs fr/basics  only the pages under a folder
+//   node scripts/check-translation.mjs es/basics  only the Spanish pages under a folder
+//   node scripts/check-translation.mjs fr/basics  only the French ones (they sit at the root)
 //
 // A translation changes the prose and nothing else. For each page this checks,
-// against the English page of the same path:
+// against the English page of the same path, in src/content/docs/en:
 //   - the same frontmatter keys;
 //   - the same headings, in the same order and at the same levels (the build
 //     gives a translated heading the id of its English counterpart, by position);
@@ -16,7 +17,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { LOCALES } from "../plugins/base-links.mjs";
+import { LOCALES, ROOT_LANGUAGE, SOURCE } from "../plugins/base-links.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 /** The em dash and the en dash, by code point: this file follows the rule it enforces. */
@@ -101,17 +102,22 @@ function links(prose) {
 const filter = process.argv[2]?.replaceAll("\\", "/").replace(/^\/+|\/+$/g, "");
 const problems = [];
 let checked = 0;
-for (const locale of LOCALES) {
-  const dir = path.join(root, locale);
+// Every language but the original: the one at the root, then the folders.
+const translations = [ROOT_LANGUAGE, ...LOCALES].filter((language) => language !== SOURCE);
+const folders = new Set(LOCALES.map((locale) => path.join(root, locale) + path.sep));
+for (const locale of translations) {
+  const dir = locale === ROOT_LANGUAGE ? root : path.join(root, locale);
   if (!existsSync(dir)) continue;
   for (const file of await pages(dir)) {
+    // The pages at the root are the ones that sit in no language folder.
+    if (locale === ROOT_LANGUAGE && [...folders].some((folder) => file.startsWith(folder))) continue;
     const relative = path.relative(dir, file).replaceAll("\\", "/");
     const name = `${locale}/${relative}`;
     if (filter && !name.startsWith(filter)) continue;
     checked++;
-    const original = path.join(root, relative);
+    const original = path.join(root, SOURCE, relative);
     if (!existsSync(original)) {
-      problems.push(`${name}: no English page at ${relative}`);
+      problems.push(`${name}: no English page at ${SOURCE}/${relative}`);
       continue;
     }
     const [en, tr] = await Promise.all([readFile(original, "utf8"), readFile(file, "utf8")]);

@@ -1,6 +1,6 @@
 ---
-title: Caching
-description: Monsters, zones and servers only change when the game does, so their answers are kept for ten minutes. Anything tied to an account is fetched every time unless you say otherwise. This page shows how to tune both.
+title: Cache
+description: "Les monstres, les zones et les serveurs ne changent que lorsque le jeu change, donc leurs réponses sont gardées dix minutes. Tout ce qui est lié à un compte est récupéré à chaque fois, sauf indication contraire de votre part. Cette page montre comment régler les deux."
 sidebar:
   order: 5
 ---
@@ -8,64 +8,64 @@ sidebar:
 ```ts
 const metamob = new Metamob({
   cache: {
-    ttl: "1h", // reference data
-    methods: { "users.get": "30s", "kralove.list": "1m" }, // and what you choose
+    ttl: "1h", // données de référence
+    methods: { "users.get": "30s", "kralove.list": "1m" }, // et ce que vous choisissez
   },
 });
 ```
 
-## What is cached by default
+## Ce qui est mis en cache par défaut
 
-Reference data: game versions, servers, kinds of monsters, kinds of quests, quest templates, monsters, zones and subzones. An answer is kept for 10 minutes, in memory, and shared by every key: it is the same for everyone.
+Les données de référence : versions du jeu, serveurs, types de monstres, types de quêtes, modèles de quête, monstres, zones et sous-zones. Une réponse est gardée 10 minutes, en mémoire, et partagée par toutes les clés : elle est la même pour tout le monde.
 
-Nothing else. Profiles, quests, matches, conversations and Kralamoure events are read from the API on every call, because they change whenever someone plays.
+Rien d'autre. Les profils, les quêtes, les correspondances, les conversations et les événements Kralamoure sont lus depuis l'API à chaque appel, parce qu'ils changent dès que quelqu'un joue.
 
-Two identical reads sent at the same moment always share one request, cached or not.
+Deux lectures identiques envoyées au même moment partagent toujours une seule requête, avec ou sans cache.
 
-## Caching more
+## Mettre davantage en cache
 
-`methods` gives a freshness to any method, by its name from [Every method](/reference/methods/).
+`methods` donne une durée de fraîcheur à n'importe quelle méthode, par son nom tel qu'il figure dans [Toutes les méthodes](/reference/methods/).
 
 ```ts
 const metamob = new Metamob({
   cache: {
     methods: {
-      "users.get": "1m", // a profile page that gets many views
-      "quests.matches": "5m", // matches do not move by the second
-      "monsters.get": "1d", // even longer for reference data
-      "zones.list": false, // never cache this one
+      "users.get": "1m", // une page de profil très consultée
+      "quests.matches": "5m", // les correspondances ne bougent pas à la seconde
+      "monsters.get": "1d", // encore plus longtemps pour les données de référence
+      "zones.list": false, // ne jamais mettre celle-ci en cache
     },
   },
 });
 ```
 
-What depends on the account is kept apart for each key: two players never see each other's answers. The entries of a key are dropped as soon as that key changes a quest, so a read after a write is always fresh.
+Ce qui dépend du compte est gardé à part pour chaque clé : deux joueurs ne voient jamais les réponses l'un de l'autre. Les entrées d'une clé sont supprimées dès que cette clé modifie une quête, donc une lecture après une écriture est toujours fraîche.
 
-## For one call
+## Pour un seul appel
 
 ```ts
-// Skip the cache for this call.
+// Ignorer le cache pour cet appel.
 const fresh = await metamob.servers.list({ cache: false });
 
-// Keep this answer for five minutes, whatever the client says.
+// Garder cette réponse cinq minutes, quoi que dise le client.
 const profile = await metamob.users.get(username, { cache: "5m" });
 ```
 
-## Emptying it
+## Le vider
 
 ```ts
 await metamob.clearCache();
 ```
 
-## Turning it off
+## Le désactiver
 
 ```ts
 const metamob = new Metamob({ cache: false });
 ```
 
-## A cache that outlives the process
+## Un cache qui survit au processus
 
-The default store lives in memory and holds 500 entries, the least recently used going first. A store is a `get` and a `set`, which can be asynchronous, plus an optional `delete` and `clear`: plug in Redis, a file, or the KV of an edge platform.
+Le stockage par défaut vit en mémoire et contient 500 entrées, les moins récemment utilisées partant en premier. Un stockage, c'est un `get` et un `set`, qui peuvent être asynchrones, plus un `delete` et un `clear` facultatifs : branchez Redis, un fichier, ou le KV d'une plateforme edge.
 
 ```ts
 import type { CacheEntry, CacheStore } from "@ix-xs/metamob.api";
@@ -87,30 +87,30 @@ const store: CacheStore = {
 const metamob = new Metamob({ cache: { store } });
 ```
 
-A key of the store never contains an API key: entries tied to an account are filed under a digest of it. A store that fails does not fail the call: the request is sent as if there were no cache, and the failure is emitted as an `error` event.
+Une clé du stockage ne contient jamais de clé API : les entrées liées à un compte sont rangées sous une empreinte de celle-ci. Un stockage qui échoue ne fait pas échouer l'appel : la requête est envoyée comme s'il n'y avait pas de cache, et l'échec est émis sous la forme d'un événement `error`.
 
-## Cache or embedded data
+## Cache ou données embarquées
 
-For reference data there is something faster than a cache: [the data in the package](/basics/embedded-data/), which needs no request at all. Use the API when you need what the package does not hold, such as the zones of a monster as the API lists them today, or when the game just changed.
+Pour les données de référence, il existe plus rapide qu'un cache : [les données du paquet](/basics/embedded-data/), qui ne demandent aucune requête. Utilisez l'API quand vous avez besoin de ce que le paquet ne contient pas, par exemple les zones d'un monstre telles que l'API les liste aujourd'hui, ou quand le jeu vient de changer.
 
-## Durations
+## Durées
 
-Wherever a duration is expected, write a number of milliseconds or a string with a unit: `"500ms"`, `"30s"`, `"10m"`, `"1h"`, `"1d"`.
+Partout où une durée est attendue, écrivez un nombre de millisecondes ou une chaîne avec une unité : `"500ms"`, `"30s"`, `"10m"`, `"1h"`, `"1d"`.
 
-## Reference
+## Référence
 
-| Option | Default | Meaning |
+| Option | Par défaut | Signification |
 | --- | --- | --- |
-| `cache` | on | `false` turns it off |
-| `cache.ttl` | `"10m"` | Freshness of reference data |
-| `cache.methods` | none | Freshness per method, or `false` |
-| `cache.max` | `500` | Entries the memory store holds |
-| `cache.store` | memory | Your own `CacheStore` |
-| `{ cache }` on a call | | A duration, or `false` |
+| `cache` | actif | `false` le désactive |
+| `cache.ttl` | `"10m"` | Durée de fraîcheur des données de référence |
+| `cache.methods` | aucune | Durée de fraîcheur par méthode, ou `false` |
+| `cache.max` | `500` | Entrées que contient le stockage en mémoire |
+| `cache.store` | mémoire | Votre propre `CacheStore` |
+| `{ cache }` sur un appel | | Une durée, ou `false` |
 
-## See also
+## Voir aussi
 
-- [The rate limit](/basics/rate-limit/)
-- [The data in the package](/basics/embedded-data/)
+- [La limite de requêtes](/basics/rate-limit/)
+- [Les données du paquet](/basics/embedded-data/)
 - [Configuration](/basics/configuration/)
-- [Every method](/reference/methods/)
+- [Toutes les méthodes](/reference/methods/)

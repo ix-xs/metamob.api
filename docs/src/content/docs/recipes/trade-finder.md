@@ -1,11 +1,11 @@
 ---
-title: A trade finder
-description: A script that finds who can give you a monster you are missing, and what you could give them in return, ready to paste in a message.
+title: Un chercheur d'échanges
+description: "Un script qui trouve qui peut vous donner un monstre qui vous manque, et ce que vous pourriez lui donner en retour, prêt à coller dans un message."
 sidebar:
   order: 3
 ---
 
-## What you get
+## Ce que vous obtenez
 
 ```text
 Looking for Bouflet le Puéril
@@ -16,12 +16,12 @@ PlayerName (score 14, seen 2026-10-13)
   https://www.metamob.fr/profile/PlayerName
 ```
 
-## The script
+## Le script
 
 ```ts
 import { Metamob, data, urls } from "@ix-xs/metamob.api";
 
-const metamob = new Metamob(); // reads METAMOB_API_KEY
+const metamob = new Metamob(); // lit METAMOB_API_KEY
 
 const [slug, ...words] = process.argv.slice(2);
 const wanted = data.monster(words.join(" "));
@@ -33,7 +33,7 @@ if (!slug || !wanted) {
 console.log(`Looking for ${wanted.name.fr}\n`);
 
 let found = 0;
-// Partners with whom something can go both ways, best match first.
+// Les partenaires avec qui un échange peut se faire dans les deux sens, la meilleure correspondance d'abord.
 for await (const match of metamob.quests.matches(slug, { onlyPossibleTrades: true })) {
   const offer = match.matches.they_have_you_want.find((monster) => monster.id === wanted.id);
   if (!offer) continue;
@@ -43,7 +43,7 @@ for await (const match of metamob.quests.matches(slug, { onlyPossibleTrades: tru
   console.log(`  wants from you: ${match.matches.you_have_they_want.map((monster) => monster.name.fr).join(", ")}`);
   console.log(`  ${urls.profile(match.user)}\n`);
 
-  // Leaving the loop stops the requests: only the pages that were read were fetched.
+  // Quitter la boucle arrête les requêtes : seules les pages lues ont été demandées.
   if (++found === 5) break;
 }
 
@@ -54,15 +54,15 @@ if (!found) console.log("Nobody offers it right now among your matches.");
 METAMOB_API_KEY=your-key node trade.mjs 21b0a742 bouflet le pueril
 ```
 
-## How it stays cheap
+## Pourquoi il coûte peu
 
-The monster is found in [the data in the package](/basics/embedded-data/), with no request, and a typo is caught before anything is sent.
+Le monstre est trouvé dans [les données du paquet](/basics/embedded-data/), sans requête, et une faute de frappe est repérée avant tout envoi.
 
-Matches come 50 per page. The loop reads them in order and stops at the fifth partner, so a common monster costs one request and a rare one a few. Without the `break`, every page would be read.
+Les correspondances arrivent par pages de 50. La boucle les lit dans l'ordre et s'arrête au cinquième partenaire : un monstre courant coûte donc une requête, et un monstre rare quelques-unes. Sans le `break`, toutes les pages seraient lues.
 
-## Checking a partner before writing to them
+## Vérifier un partenaire avant de lui écrire
 
-A match says what a player offers today. Their public quest says the rest: how many they own, and what else they look for.
+Une correspondance indique ce qu'un joueur propose aujourd'hui. Sa quête publique dit le reste : combien d'exemplaires il possède, et ce qu'il recherche d'autre.
 
 ```ts
 const match = await metamob.quests.matches(slug).first();
@@ -73,15 +73,15 @@ if (match) {
 }
 ```
 
-## Everything you could get in one pass
+## Tout ce que vous pourriez obtenir en un seul passage
 
-Turn the question around: for each monster you miss, who has it.
+Retournez la question : pour chaque monstre qui vous manque, qui le possède.
 
 ```ts
 const sources = new Map<string, string[]>();
 
-for await (const match of metamob.quests.matches(slug, { onlyPossibleTrades: true }).pages({ limit: 100 })) {
-  for (const partner of match.items) {
+for await (const page of metamob.quests.matches(slug, { onlyPossibleTrades: true }).pages({ limit: 100 })) {
+  for (const partner of page.items) {
     for (const monster of partner.matches.they_have_you_want) {
       const players = sources.get(monster.name.fr) ?? [];
       players.push(partner.user.username);
@@ -90,26 +90,26 @@ for await (const match of metamob.quests.matches(slug, { onlyPossibleTrades: tru
   }
 }
 
-// The rarest first: the monsters only one or two players offer.
+// Les plus rares d'abord : les monstres que seuls un ou deux joueurs proposent.
 const rarest = [...sources].sort((a, b) => a[1].length - b[1].length).slice(0, 10);
 for (const [monster, players] of rarest) console.log(monster, players.join(", "));
 ```
 
-`pages({ limit: 100 })` stops after the pages that hold 100 partners: two requests.
+`pages({ limit: 100 })` s'arrête après les pages qui contiennent 100 partenaires : deux requêtes.
 
-## Keeping a monster for a friend
+## Garder un monstre pour un ami
 
-Once a trade is agreed, keep the monster out of other trades with an override, and release it afterwards.
+Une fois un échange convenu, tenez le monstre à l'écart des autres échanges avec un réglage manuel, puis libérez-le ensuite.
 
 ```ts
 await metamob.quests.setTrade(slug, "Tofuldebeu l'Explosif", { trade_offer: 0 });
-// ... the trade happens in game ...
+// ... l'échange a lieu en jeu ...
 await metamob.quests.resetTrade(slug, "Tofuldebeu l'Explosif");
 ```
 
-## See also
+## Voir aussi
 
-- [Trading](/resources/trading/)
-- [Other players](/resources/users/)
-- [Lists](/basics/lists/)
+- [Échanges](/resources/trading/)
+- [Autres joueurs](/resources/users/)
+- [Listes](/basics/lists/)
 - [Conversations](/resources/conversations/)

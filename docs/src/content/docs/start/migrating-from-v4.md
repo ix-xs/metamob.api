@@ -1,6 +1,6 @@
 ---
-title: Coming from version 4
-description: Version 5 is a rewrite. The endpoints are the same, the way to call them is shorter. This page maps every method of version 4 to its replacement.
+title: Depuis la version 4
+description: "La version 5 est une réécriture. Les points d'accès sont les mêmes, la façon de les appeler est plus courte. Cette page fait correspondre chaque méthode de la version 4 à sa remplaçante."
 ---
 
 ```ts
@@ -18,25 +18,25 @@ const monster = await metamob.monsters.get("Tofu Maléfique");
 console.log(monster.name.fr);
 ```
 
-## What changed
+## Ce qui a changé
 
 | | Version 4 | Version 5 |
 | --- | --- | --- |
-| Import | a default class, CommonJS only | a named `Metamob` class, ES modules and CommonJS |
+| Import | une classe par défaut, CommonJS uniquement | une classe nommée `Metamob`, modules ES et CommonJS |
 | Options | `api_key` | `apiKey` |
-| Result | `{ ok, status, statusText, data, pagination, error }` | the data itself |
-| Failure | `ok: false` | a thrown [`MetamobApiError`](/basics/errors/) |
-| Lists | one page per call | a request to [await or iterate](/basics/lists/) |
-| One or many | `getX({ idOrName })` or `getX()` | `x.get(ref)` and `x.list()` |
-| Another player's key | `{ api_key }` in the options | `{ apiKey }` as last argument, or [`withKey()`](/basics/many-keys/) |
-| Embedded data | `client.cache` | [`data`](/basics/embedded-data/), searchable |
-| Rate limit | yours to handle | [handled](/basics/rate-limit/) |
-| Dependencies | `@ix-xs/node-comfort` | none |
-| Node.js | 18 | 20 or newer |
+| Résultat | `{ ok, status, statusText, data, pagination, error }` | les données elles-mêmes |
+| Échec | `ok: false` | une [`MetamobApiError`](/basics/errors/) levée |
+| Listes | une page par appel | une requête à [attendre ou à parcourir](/basics/lists/) |
+| Un ou plusieurs | `getX({ idOrName })` ou `getX()` | `x.get(ref)` et `x.list()` |
+| La clé d'un autre joueur | `{ api_key }` dans les options | `{ apiKey }` en dernier argument, ou [`withKey()`](/basics/many-keys/) |
+| Données embarquées | `client.cache` | [`data`](/basics/embedded-data/), avec recherche |
+| Limite de requêtes | à gérer vous-même | [gérée](/basics/rate-limit/) |
+| Dépendances | `@ix-xs/node-comfort` | aucune |
+| Node.js | 18 | 20 ou plus récent |
 
-## Results and errors
+## Résultats et erreurs
 
-Version 4 never threw: you tested `ok`. Version 5 returns the data and throws when the API refuses.
+La version 4 ne levait jamais d'erreur : vous testiez `ok`. La version 5 renvoie les données et lève une erreur quand l'API refuse.
 
 ```ts
 try {
@@ -48,11 +48,11 @@ try {
 }
 ```
 
-`error.status` is the HTTP status, as before. `error.code` is easier to test: see [Errors](/basics/errors/).
+`error.status` est le statut HTTP, comme avant. `error.code` est plus simple à tester : voir [Erreurs](/basics/errors/).
 
-## Lists
+## Listes
 
-A paginated call used to resolve to `{ data, pagination }`, and you looped on `offset`. It now returns a request. Awaited, it gives a page with `items`, `total`, `limit` and `offset`. Iterated, it gives every item.
+Un appel paginé renvoyait `{ data, pagination }`, et vous faisiez une boucle sur `offset`. Il renvoie maintenant une requête. Attendue avec `await`, elle donne une page avec `items`, `total`, `limit` et `offset`. Parcourue, elle donne chaque élément.
 
 ```ts
 // Version 4
@@ -70,7 +70,7 @@ for await (const monster of metamob.monsters.list()) {
 }
 ```
 
-## Every method
+## Toutes les méthodes
 
 | Version 4 | Version 5 |
 | --- | --- |
@@ -105,25 +105,25 @@ for await (const monster of metamob.monsters.list()) {
 | `getQuestMatches(slug, { min_parallel_quests, only_possible_trades })` | `quests.matches(slug, { minParallelQuests, onlyPossibleTrades })` |
 | `getQuestZones(slug, { zoneIdOrName, subzoneIdOrName, monsterTypeIdOrName })` | `quests.zones(slug, { zone, subzone, type })` |
 
-The parameters that designate something lost their `IdOrName` suffix: `serverIdOrName` is `server`, `typeIdOrName` and `monsterTypeIdOrName` are `type`. Options of the library are in camelCase. What the API returns keeps the names the API gives it, in snake_case.
+Les paramètres qui désignent quelque chose ont perdu leur suffixe `IdOrName` : `serverIdOrName` devient `server`, `typeIdOrName` et `monsterTypeIdOrName` deviennent `type`. Les options de la bibliothèque sont en camelCase. Ce que l'API renvoie garde les noms que l'API lui donne, en snake_case.
 
-## The key of another player
+## La clé d'un autre joueur
 
 ```ts
 // Version 4
 // await client.updateQuestMonster(slug, "Tofu", 2, { api_key: theirKey });
 
-// Version 5: one call
+// Version 5 : un seul appel
 await metamob.quests.setMonster(slug, "Tofu", 2, { apiKey: theirKey });
 
-// Version 5: a client for that player
+// Version 5 : un client pour ce joueur
 const theirs = metamob.withKey(theirKey);
 await theirs.quests.setMonster(slug, "Tofu", 2);
 ```
 
-## The embedded data
+## Les données embarquées
 
-`client.cache.monsters` and its siblings are now `data.monsters`, `data.zones`, `data.subzones`, `data.servers`, `data.questTemplates`, `data.gameVersions`, `data.monsterTypes` and `data.questTypes`, with methods to search them. See [The data in the package](/basics/embedded-data/).
+`client.cache.monsters` et ses voisins sont maintenant `data.monsters`, `data.zones`, `data.subzones`, `data.servers`, `data.questTemplates`, `data.gameVersions`, `data.monsterTypes` et `data.questTypes`, avec des méthodes pour y chercher. Voir [Les données du paquet](/basics/embedded-data/).
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -132,17 +132,17 @@ data.monsters.length;
 data.monster("Tofu Maléfique")?.id;
 ```
 
-Version 4 shipped 50 of the 192 subzones. Version 5 ships all of them, so `zones.subzone("...")` and `zones.monsters("...")` now recognise every subzone by name.
+La version 4 livrait 50 des 192 sous-zones. La version 5 les livre toutes, donc `zones.subzone("...")` et `zones.monsters("...")` reconnaissent maintenant chaque sous-zone par son nom.
 
-## Things that are stricter
+## Ce qui est plus strict
 
-- A name the library cannot find throws `UNKNOWN_NAME` with suggestions. Version 4 resolved to `{ ok: false }`.
-- A search of fewer than 3 characters throws `INVALID_ARGUMENT` before a request is spent. The API refuses it anyway.
-- Ten archmonsters share their name between two versions of the game. Version 4 took the first one. Version 5 picks the one of the quest you write to, see [Names and ids](/basics/names-and-ids/#monsters-that-share-a-name).
+- Un nom que la bibliothèque ne trouve pas lève `UNKNOWN_NAME` avec des suggestions. La version 4 renvoyait `{ ok: false }`.
+- Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT` avant qu'une requête soit dépensée. L'API la refuse de toute façon.
+- Dix archimonstres portent le même nom dans deux versions du jeu. La version 4 prenait le premier. La version 5 choisit celui de la quête dans laquelle vous écrivez, voir [Noms et identifiants](/basics/names-and-ids/#monsters-that-share-a-name).
 
-## See also
+## Voir aussi
 
-- [Quick start](/start/quick-start/)
-- [Every method](/reference/methods/)
+- [Démarrage rapide](/start/quick-start/)
+- [Toutes les méthodes](/reference/methods/)
 - [Configuration](/basics/configuration/)
-- [The changelog](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md)
+- [Le journal des modifications](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md)

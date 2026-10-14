@@ -1,6 +1,6 @@
 ---
-title: Kralamoure events
-description: Opening the lair of the Giant Kralove takes a crowd, so players plan it on Metamob. Read the coming events of a server, who signed up and what was said.
+title: Événements Kralamoure
+description: Ouvrir l'antre du Kralamoure Géant demande beaucoup de monde, alors les joueurs s'organisent sur Metamob. Lisez les prochains événements d'un serveur, qui s'est inscrit et ce qui s'est dit.
 sidebar:
   order: 8
 ---
@@ -13,20 +13,20 @@ for (const event of events) {
 }
 ```
 
-## Listing events
+## Lister les événements
 
-Without filters, `kralove.list()` returns the events from today on, on every server. Past events are left out unless you ask from an earlier day.
+Sans filtre, `kralove.list()` renvoie les événements à partir d'aujourd'hui, sur tous les serveurs. Les événements passés sont laissés de côté, sauf si vous demandez à partir d'un jour antérieur.
 
 ```ts
 const everywhere = await metamob.kralove.list();
 const draconiros = await metamob.kralove.list({ server: "Draconiros" });
 
-// From a given day: a Date or "YYYY-MM-DD".
+// À partir d'un jour donné : une Date ou "YYYY-MM-DD".
 const since = await metamob.kralove.list({ from: "2026-01-01" });
 const today = await metamob.kralove.list({ from: new Date() });
 ```
 
-A server is a name, an id or an object, see [Names and ids](/basics/names-and-ids/). A `Date` is read in UTC.
+Un serveur est un nom, un identifiant ou un objet, voir [Noms et identifiants](/basics/names-and-ids/). Une `Date` est lue en UTC.
 
 ```ts
 for (const event of await metamob.kralove.list({ server: "Draconiros" })) {
@@ -36,9 +36,9 @@ for (const event of await metamob.kralove.list({ server: "Draconiros" })) {
 }
 ```
 
-## Reading one event
+## Lire un événement
 
-`kralove.get()` adds the participants and the messages. It takes the id of the event, or the event itself.
+`kralove.get()` ajoute les participants et les messages. Elle prend l'identifiant de l'événement, ou l'événement lui-même.
 
 ```ts
 const [next] = await metamob.kralove.list({ server: "Draconiros" });
@@ -55,13 +55,13 @@ if (next) {
 }
 ```
 
-## Names that are missing
+## Les noms manquants
 
-`creator`, and the `username` of a participant or of a message, can be `null`. It happens when the account was deleted for good, or when you and that player blocked each other. Handle it wherever you print a name.
+`creator`, ainsi que le `username` d'un participant ou d'un message, peuvent valoir `null`. Cela arrive quand le compte a été supprimé définitivement, ou quand ce joueur et vous vous êtes bloqués l'un l'autre. Prévoyez ce cas partout où vous affichez un nom.
 
-Because blocking changes the answer from one key to another, events are not cached by default.
+Comme un blocage change la réponse d'une clé à l'autre, les événements ne sont pas mis en cache par défaut.
 
-## Announcing the next opening
+## Annoncer la prochaine ouverture
 
 ```ts
 const [next] = await metamob.kralove.list({ server: "Draconiros" });
@@ -72,37 +72,37 @@ if (next) {
 }
 ```
 
-Checking once every few minutes is plenty. To check more often without more requests, cache the list: `cache: { methods: { "kralove.list": "5m" } }`.
+Vérifier une fois toutes les quelques minutes suffit largement. Pour vérifier plus souvent sans faire plus de requêtes, mettez la liste en cache : `cache: { methods: { "kralove.list": "5m" } }`.
 
-## Limits and errors
+## Limites et erreurs
 
-- The API reads events. Creating one, signing up and posting a message are done on the site.
-- `NOT_FOUND` for an event that does not exist.
-- `from` in another format than `YYYY-MM-DD` throws `INVALID_ARGUMENT` before a request is spent.
+- L'API lit les événements. En créer un, s'inscrire et publier un message se font sur le site.
+- `NOT_FOUND` pour un événement qui n'existe pas.
+- `from` dans un autre format que `YYYY-MM-DD` lève `INVALID_ARGUMENT` avant qu'une requête soit dépensée.
 
-## Reference
+## Référence
 
-| Method | Returns |
+| Méthode | Renvoie |
 | --- | --- |
 | `kralove.list({ server, from }, options?)` | `KraloveEvent[]` |
 | `kralove.get(id, options?)` | `KraloveEventDetail` |
 
-An event:
+Un événement :
 
-| Field | Type | Meaning |
+| Champ | Type | Signification |
 | --- | --- | --- |
 | `id` | `number` | |
-| `event_datetime` | `string` | When, as an ISO 8601 date in UTC: `2026-01-27T20:00:00Z` |
-| `description` | `string` | What the organiser wrote |
-| `creator` | `string \| null` | The organiser |
-| `server` | `Server \| null` | Where |
-| `participants_count`, `character_count`, `messages_count` | `number` | Only from `list()` |
-| `participants` | `{ username, character_count }[]` | Only from `get()` |
-| `messages` | `{ username, content, created_at }[]` | Only from `get()` |
+| `event_datetime` | `string` | Quand, en date ISO 8601 UTC : `2026-01-27T20:00:00Z` |
+| `description` | `string` | Ce que l'organisateur a écrit |
+| `creator` | `string \| null` | L'organisateur |
+| `server` | `Server \| null` | Où |
+| `participants_count`, `character_count`, `messages_count` | `number` | Seulement avec `list()` |
+| `participants` | `{ username, character_count }[]` | Seulement avec `get()` |
+| `messages` | `{ username, content, created_at }[]` | Seulement avec `get()` |
 
-## See also
+## Voir aussi
 
-- [Reference data](/resources/reference-data/)
-- [Caching](/basics/caching/)
-- [Names and ids](/basics/names-and-ids/)
-- [Other players](/resources/users/)
+- [Données de référence](/resources/reference-data/)
+- [Cache](/basics/caching/)
+- [Noms et identifiants](/basics/names-and-ids/)
+- [Autres joueurs](/resources/users/)

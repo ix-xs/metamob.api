@@ -1,6 +1,6 @@
 ---
-title: Error codes
-description: Every error code the library throws, what causes it, whether a retry already happened, and the properties of each error class. Use it to look up what a failure means.
+title: Codes d'erreur
+description: "Tous les codes d'erreur que la bibliothèque lève, leur cause, si une nouvelle tentative a déjà eu lieu, et les propriétés de chaque classe d'erreur. Servez-vous-en pour savoir ce que signifie un échec."
 ---
 
 ```ts
@@ -8,104 +8,104 @@ try {
   await metamob.quests.setMonster(slug, "Tofu Maléfique", 2);
 } catch (error) {
   if (error instanceof MetamobError) {
-    error.code; // set by the library, for example "NOT_FOUND"
+    error.code; // défini par la bibliothèque, par exemple "NOT_FOUND"
     error.message; // "quests.setMonster: Quest not found"
   }
   throw error;
 }
 ```
 
-Every error extends `MetamobError` and carries a `code`. [Errors](/basics/errors/) explains how to handle them. This page is the lookup table.
+Toutes les erreurs étendent `MetamobError` et portent un `code`. [Erreurs](/basics/errors/) explique comment les traiter. Cette page est la table où les retrouver.
 
 ## Codes
 
-`code` is a `MetamobErrorCode`. There are 14 of them.
+`code` est un `MetamobErrorCode`. Il y en a 14.
 
-"Retried" means up to 3 more attempts by default. The delay starts at 500 ms and doubles, up to 60 seconds. When the API sends a `Retry-After`, that wait is used instead, unless it is longer than `retry.maxDelay`: the error is then thrown at once, with its `retryAfter`.
+« Retentée » signifie jusqu'à 3 tentatives de plus par défaut. Le délai commence à 500 ms et double, jusqu'à 60 secondes. Quand l'API envoie un `Retry-After`, c'est cette attente qui est utilisée, sauf si elle dépasse `retry.maxDelay` : l'erreur est alors levée aussitôt, avec son `retryAfter`.
 
-From the API, as a `MetamobApiError`:
+Venant de l'API, sous forme de `MetamobApiError` :
 
-| Code | Status | Cause | Retried |
+| Code | Statut | Cause | Retentée |
 | --- | --- | --- | --- |
-| `BAD_REQUEST` | 400, 422 | A parameter the API refuses: a quantity out of range, an unknown filter value | No |
-| `UNAUTHORIZED` | 401 | The key is missing, invalid or was revoked | No |
-| `FORBIDDEN` | 403 | The key may not do this | No |
-| `NOT_FOUND` | 404 | It does not exist, or it is not yours: a quest of another account, a hidden quest, a deleted player | No |
-| `RATE_LIMITED` | 429 | More than 60 requests in a minute with this key | Yes |
-| `SERVER_ERROR` | 500 and up | The API failed | 502, 503, 504: yes. 500: reads only |
-| `API_ERROR` | any other | An error status the library has no name for | No |
+| `BAD_REQUEST` | 400, 422 | Un paramètre que l'API refuse. La bibliothèque vérifie la plupart d'entre eux avant l'envoi | Non |
+| `UNAUTHORIZED` | 401 | La clé est absente, invalide ou a été révoquée | Non |
+| `FORBIDDEN` | 403 | La clé n'a pas le droit de faire cela | Non |
+| `NOT_FOUND` | 404 | Cela n'existe pas, ou ce n'est pas à vous : une quête d'un autre compte, une quête masquée, un joueur supprimé | Non |
+| `RATE_LIMITED` | 429 | Plus de 60 requêtes en une minute avec cette clé | Oui |
+| `SERVER_ERROR` | 500 et plus | L'API a échoué | 502, 503, 504 : oui. 500 : lectures seulement |
+| `API_ERROR` | tout autre | Un statut d'erreur pour lequel la bibliothèque n'a pas de nom | Non |
 
-From the request, as a `MetamobRequestError`:
+Venant de la requête, sous forme de `MetamobRequestError` :
 
-| Code | Cause | Retried |
+| Code | Cause | Retentée |
 | --- | --- | --- |
-| `TIMEOUT` | One attempt got no answer within `timeout`, 30 seconds by default | Yes |
-| `NETWORK` | The request could not be made: no connection, DNS, TLS | Yes |
-| `ABORTED` | Your `signal` cancelled the call | No |
-| `PARSE_ERROR` | The API answered 200 with something that is not JSON | No |
+| `TIMEOUT` | Une tentative n'a reçu aucune réponse dans le délai `timeout`, 30 secondes par défaut | Oui |
+| `NETWORK` | La requête n'a pas pu être faite : pas de connexion, DNS, TLS | Oui |
+| `ABORTED` | Votre `signal` a annulé l'appel | Non |
+| `PARSE_ERROR` | L'API a répondu 200 avec autre chose que du JSON | Non |
 
-From the library, as a `MetamobArgumentError`, before anything is sent:
+Venant de la bibliothèque, sous forme de `MetamobArgumentError`, avant tout envoi :
 
 | Code | Cause |
 | --- | --- |
-| `MISSING_API_KEY` | No key in the options of the client, in the options of the call or in `METAMOB_API_KEY` |
-| `INVALID_ARGUMENT` | An argument that cannot be right: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format, an empty batch |
-| `UNKNOWN_NAME` | No monster, zone, subzone, server, version or kind has this name. `suggestions` holds the closest ones |
+| `MISSING_API_KEY` | Aucune clé dans les options du client, ni dans les options de l'appel, ni dans `METAMOB_API_KEY` |
+| `INVALID_ARGUMENT` | Un argument qui ne peut pas être correct : un slug vide, une quantité négative, une recherche de moins de 3 caractères, une date au mauvais format, un lot vide |
+| `UNKNOWN_NAME` | Aucun monstre, zone, sous-zone, serveur, version ou type ne porte ce nom. `suggestions` contient les plus proches |
 
 ## MetamobError
 
-The base of all three.
+La base des trois.
 
-| Property | Type | Meaning |
+| Propriété | Type | Signification |
 | --- | --- | --- |
-| `code` | `MetamobErrorCode` | One of the codes above |
-| `message` | `string` | The method, then what went wrong |
-| `name` | `string` | The name of the class |
-| `cause` | `unknown` | The underlying error, when there is one |
+| `code` | `MetamobErrorCode` | L'un des codes ci-dessus |
+| `message` | `string` | La méthode, puis ce qui a échoué |
+| `name` | `string` | Le nom de la classe |
+| `cause` | `unknown` | L'erreur d'origine, quand il y en a une |
 
 ## MetamobApiError
 
-| Property | Type | Meaning |
+| Propriété | Type | Signification |
 | --- | --- | --- |
-| `status` | `number` | The HTTP status |
-| `method` | `string` | The method that failed, for example `quests.get` |
-| `url` | `string` | The address called. It never contains the key |
-| `messages` | `Record<string, string>` | What the API said, by field. Often `{ error: "..." }` |
-| `retryAfter` | `number \| undefined` | Seconds the API asked to wait, on a 429 |
-| `body` | `unknown` | The body of the answer, parsed when it is JSON |
+| `status` | `number` | Le statut HTTP |
+| `method` | `string` | La méthode qui a échoué, par exemple `quests.get` |
+| `url` | `string` | L'adresse appelée. Elle ne contient jamais la clé |
+| `messages` | `Record<string, string>` | Ce que l'API a dit, par champ. Souvent `{ error: "..." }` |
+| `retryAfter` | `number \| undefined` | Le nombre de secondes que l'API a demandé d'attendre, sur un 429 |
+| `body` | `unknown` | Le corps de la réponse, analysé quand c'est du JSON |
 | `isNotFound` | `boolean` | `status === 404` |
 | `isUnauthorized` | `boolean` | `status === 401` |
 | `isRateLimited` | `boolean` | `status === 429` |
 
-The API words its errors in three ways depending on the endpoint. The library reads all of them into `message` and `messages`, so you never parse `body` yourself.
+L'API formule ses erreurs de trois façons selon le point d'accès. La bibliothèque les lit toutes dans `message` et `messages` : vous n'avez donc jamais à analyser `body` vous-même.
 
 ## MetamobRequestError
 
-| Property | Type | Meaning |
+| Propriété | Type | Signification |
 | --- | --- | --- |
-| `method` | `string` | The method that failed |
-| `cause` | `unknown` | What `fetch` threw, or the reason of the abort |
+| `method` | `string` | La méthode qui a échoué |
+| `cause` | `unknown` | Ce que `fetch` a levé, ou la raison de l'annulation |
 
 ## MetamobArgumentError
 
-| Property | Type | Meaning |
+| Propriété | Type | Signification |
 | --- | --- | --- |
-| `suggestions` | `readonly string[]` | For `UNKNOWN_NAME`, the closest names that exist, best first. Empty otherwise |
+| `suggestions` | `readonly string[]` | Pour `UNKNOWN_NAME`, les noms existants les plus proches, le meilleur d'abord. Vide sinon |
 
 ## isMetamobError
 
 ```ts
 function handle(error: unknown) {
-  if (isMetamobError(error)) error.code; // any error of the library
-  if (isMetamobError(error, "NOT_FOUND")) error.message; // one code
+  if (isMetamobError(error)) error.code; // n'importe quelle erreur de la bibliothèque
+  if (isMetamobError(error, "NOT_FOUND")) error.message; // un seul code
 }
 ```
 
-It is a type guard: inside the branch, `error` is a `MetamobError`.
+C'est un garde de type : dans la branche, `error` est une `MetamobError`.
 
-## See also
+## Voir aussi
 
-- [Errors](/basics/errors/)
-- [Troubleshooting](/help/troubleshooting/)
-- [The rate limit](/basics/rate-limit/)
-- [All exports](/reference/exports/)
+- [Erreurs](/basics/errors/)
+- [Dépannage](/help/troubleshooting/)
+- [La limite de requêtes](/basics/rate-limit/)
+- [Tous les exports](/reference/exports/)

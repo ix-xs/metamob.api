@@ -1,6 +1,6 @@
 ---
-title: Quick start
-description: Install the package, get your API key, then read your quests, find what one of them still needs and record a monster you just caught.
+title: Démarrage rapide
+description: "Installez le paquet, obtenez votre clé API, puis lisez vos quêtes, trouvez ce qui manque encore à l'une d'elles et enregistrez un monstre que vous venez de capturer."
 ---
 
 ```ts
@@ -12,15 +12,15 @@ const me = await metamob.me();
 console.log(`Signed in as ${me.username}`);
 ```
 
-## Install
+## Installer
 
 ```bash
 npm install @ix-xs/metamob.api
 ```
 
-It needs Node.js 20 or newer and has no dependency. For Bun, Deno, browsers and edge runtimes, see [Runtimes](/reference/runtimes/).
+Il faut Node.js 20 ou plus récent, et le paquet n'a aucune dépendance. Pour Bun, Deno, les navigateurs et les environnements edge, voir [Environnements d'exécution](/reference/runtimes/).
 
-Both module systems work:
+Les deux systèmes de modules fonctionnent :
 
 ```ts
 import { Metamob } from "@ix-xs/metamob.api";
@@ -30,21 +30,21 @@ import { Metamob } from "@ix-xs/metamob.api";
 const { Metamob } = require("@ix-xs/metamob.api");
 ```
 
-## Get your API key
+## Obtenir votre clé API
 
-Every call needs a key. Create yours on [metamob.fr](https://www.metamob.fr), in **Settings > API key**.
+Chaque appel a besoin d'une clé. Créez la vôtre sur [metamob.fr](https://www.metamob.fr), dans **Paramètres > Clé API**.
 
-Keep the key out of your code. Put it in an environment variable named `METAMOB_API_KEY`: the client reads it when you pass no `apiKey`.
+Gardez la clé hors de votre code. Placez-la dans une variable d'environnement nommée `METAMOB_API_KEY` : le client la lit quand vous ne passez pas d'`apiKey`.
 
 ```ts
-const metamob = new Metamob(); // uses process.env.METAMOB_API_KEY
+const metamob = new Metamob(); // utilise process.env.METAMOB_API_KEY
 ```
 
-[Your API key](/start/api-key/) says what a key gives access to and how to store it.
+[Votre clé API](/start/api-key/) indique à quoi une clé donne accès et comment la conserver.
 
-## Read your quests
+## Lire vos quêtes
 
-A quest is known by its slug, the short identifier in the address of its page. `quests.list()` gives the slugs of the account.
+Une quête est désignée par son slug, le court identifiant qui figure dans l'adresse de sa page. `quests.list()` donne les slugs du compte.
 
 ```ts
 const quests = await metamob.quests.list();
@@ -55,33 +55,33 @@ for (const quest of quests) {
 }
 ```
 
-## Find what a quest still needs
+## Trouver ce qui manque encore à une quête
 
-A list can be awaited for one page, or walked to the end with `for await`. Pages are fetched as you go.
+Une liste peut être attendue avec `await` pour une page, ou parcourue jusqu'au bout avec `for await`. Les pages sont récupérées au fil de la lecture.
 
 ```ts
 for await (const monster of metamob.quests.monsters(slug, { status: "needed" })) {
   console.log(`step ${monster.step}: ${monster.name.fr} (${monster.quantity} owned)`);
 }
 
-// Only the number, in one small request.
+// Seulement le nombre, en une seule petite requête.
 const left = await metamob.quests.monsters(slug, { status: "needed" }).count();
 ```
 
-[Lists](/basics/lists/) covers pages, limits and counting.
+[Listes](/basics/lists/) couvre les pages, les limites et le comptage.
 
-## Record a monster
+## Enregistrer un monstre
 
-A monster is designated by its name in French, English or Spanish, by its id, or by an object that has its id. Accents and case do not matter.
+Un monstre se désigne par son nom en français, en anglais ou en espagnol, par son identifiant, ou par un objet qui porte son identifiant. Les accents et la casse ne comptent pas.
 
 ```ts
 const result = await metamob.quests.setMonster(slug, "Bouflet le Puéril", 1);
 
 console.log(result.owned); // 1
-console.log(result.status); // owned minus parallel quests: 0 means "enough"
+console.log(result.status); // possédés moins quêtes en parallèle : 0 signifie « assez »
 ```
 
-A name with a typo is not sent to your quest. The call throws, and the error lists the closest names:
+Un nom qui contient une faute de frappe n'est pas envoyé à votre quête. L'appel lève une erreur, et celle-ci liste les noms les plus proches :
 
 ```ts
 try {
@@ -91,11 +91,11 @@ try {
 }
 ```
 
-[Names and ids](/basics/names-and-ids/) explains what is accepted, and [Errors](/basics/errors/) what can be thrown.
+[Noms et identifiants](/basics/names-and-ids/) explique ce qui est accepté, et [Erreurs](/basics/errors/) ce qui peut être levé.
 
-## Look something up without a request
+## Chercher quelque chose sans requête
 
-The monsters, zones and servers ship with the package. `data` answers from memory, which is what an autocomplete needs.
+Les monstres, les zones et les serveurs sont livrés avec le paquet. `data` répond depuis la mémoire, ce dont une autocomplétion a besoin.
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -105,13 +105,13 @@ data.searchMonsters("bouf", { limit: 5 }).map((monster) => monster.name.fr);
 data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 ```
 
-## Mind the rate limit
+## Tenir compte de la limite de requêtes
 
-Metamob allows 60 requests a minute per key. The client counts them and makes the next call wait instead of failing, so nothing has to be done. [The rate limit](/basics/rate-limit/) shows how to watch it.
+Metamob autorise 60 requêtes par minute et par clé. Le client les compte et fait attendre l'appel suivant au lieu d'échouer, donc vous n'avez rien à faire. [La limite de requêtes](/basics/rate-limit/) montre comment la surveiller.
 
-## See also
+## Voir aussi
 
-- [Your quests](/resources/quests/)
-- [Trading](/resources/trading/)
-- [The data in the package](/basics/embedded-data/)
-- [Coming from version 4](/start/migrating-from-v4/)
+- [Vos quêtes](/resources/quests/)
+- [Échanges](/resources/trading/)
+- [Les données du paquet](/basics/embedded-data/)
+- [Depuis la version 4](/start/migrating-from-v4/)

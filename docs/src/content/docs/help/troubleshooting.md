@@ -1,19 +1,19 @@
 ---
-title: Troubleshooting
-description: The problems that come up most, each with what it means and how to fix it. Start from the error code or from what you see.
+title: Dépannage
+description: "Les problèmes les plus fréquents, chacun avec ce qu'il signifie et comment le corriger. Partez du code d'erreur ou de ce que vous observez."
 ---
 
 ## MISSING_API_KEY
 
-No key reached the client. Check, in this order:
+Aucune clé n'est parvenue au client. Vérifiez, dans cet ordre :
 
-- The `METAMOB_API_KEY` environment variable is set in the process that runs your code. A `.env` file is not read by Node.js on its own: start with `node --env-file=.env app.mjs`, or load it with your framework.
-- You passed `apiKey` and it is not `undefined`. `new Metamob({ apiKey: process.env.METAMOB_KEY })` with a misspelled variable is the usual cause.
-- On an edge platform there may be no environment variable: pass the key yourself, see [Runtimes](/reference/runtimes/#the-api-key).
+- La variable d'environnement `METAMOB_API_KEY` est définie dans le processus qui exécute votre code. Node.js ne lit pas un fichier `.env` de lui-même : démarrez avec `node --env-file=.env app.mjs`, ou chargez-le avec votre framework.
+- Vous avez passé `apiKey` et elle ne vaut pas `undefined`. `new Metamob({ apiKey: process.env.METAMOB_KEY })` avec une variable mal orthographiée est la cause habituelle.
+- Sur une plateforme edge, il n'y a peut-être pas de variable d'environnement : passez la clé vous-même, voir [Environnements d'exécution](/reference/runtimes/#the-api-key).
 
 ## UNAUTHORIZED
 
-The API does not accept the key. It was mistyped, cut when copied, or revoked because a new one was created. Create a key again on metamob.fr, in Settings > API key, and check it with `metamob.me()`.
+L'API n'accepte pas la clé. Elle a été mal saisie, coupée lors de la copie, ou révoquée parce qu'une nouvelle a été créée. Créez de nouveau une clé sur metamob.fr, dans Paramètres > Clé API, et vérifiez-la avec `metamob.me()`.
 
 ```ts
 try {
@@ -23,45 +23,45 @@ try {
 }
 ```
 
-## NOT_FOUND on one of my quests
+## NOT_FOUND sur l'une de mes quêtes
 
-The API answers 404 for what is not yours, exactly as for what does not exist.
+L'API répond 404 pour ce qui n'est pas à vous, exactement comme pour ce qui n'existe pas.
 
-- The slug belongs to a quest of another account. `quests.list()` gives the slugs of the key in use.
-- You are using the key of another player with your slug, or the reverse. With [`withKey()`](/basics/many-keys/), slugs go with their key.
-- Through `users.quest()`, the quest is hidden from the public profile. Its owner still reads it with `quests.monsters()`.
+- Le slug appartient à une quête d'un autre compte. `quests.list()` donne les slugs de la clé utilisée.
+- Vous utilisez la clé d'un autre joueur avec votre slug, ou l'inverse. Avec [`withKey()`](/basics/many-keys/), les slugs vont avec leur clé.
+- Avec `users.quest()`, la quête est masquée du profil public. Son propriétaire la lit toujours avec `quests.monsters()`.
 
-## UNKNOWN_NAME for a name that exists
+## UNKNOWN_NAME pour un nom qui existe
 
-- Check the spelling against `error.suggestions`. Accents and case are forgiven, a missing or extra letter is not.
-- The monster may be newer than your version of the package. The library then asks the API, which works for everything but a subzone given alone: the API only looks subzones up inside a zone. Pass `{ zone }`, see [Zones](/resources/zones/#subzones).
-- Update the package: each release ships the current names.
+- Vérifiez l'orthographe à l'aide de `error.suggestions`. Les accents et la casse sont pardonnés, une lettre manquante ou en trop ne l'est pas.
+- Le monstre est peut-être plus récent que votre version du paquet. La bibliothèque interroge alors l'API, ce qui fonctionne pour tout sauf une sous-zone donnée seule : l'API ne cherche une sous-zone qu'à l'intérieur d'une zone. Passez `{ zone }`, voir [Zones](/resources/zones/#subzones).
+- Mettez le paquet à jour : chaque version livre les noms actuels.
 
-## The wrong monster for a shared name
+## Le mauvais monstre pour un nom partagé
 
-Ten archmonsters have the same name in two versions of the game. `monsters.get("Crognan le Barbare")` returns the one whose quest template has the lowest id. Add `{ gameVersion }`, or use the id. Writes to a quest are not affected: they pick the monster of that quest. See [Names and ids](/basics/names-and-ids/#monsters-that-share-a-name).
+Dix archimonstres portent le même nom dans deux versions du jeu. `monsters.get("Crognan le Barbare")` renvoie celui dont le modèle de quête a le plus petit identifiant. Ajoutez `{ gameVersion }`, ou utilisez l'identifiant. Les écritures dans une quête ne sont pas concernées : elles prennent le monstre de cette quête. Voir [Noms et identifiants](/basics/names-and-ids/#monsters-that-share-a-name).
 
-## My script is slow
+## Mon script est lent
 
-It is waiting for the rate limit: 60 requests a minute. Listen to the `rateLimit` event to confirm it.
+Il attend à cause de la limite de requêtes : 60 requêtes par minute. Écoutez l'événement `rateLimit` pour le confirmer.
 
 ```ts
 metamob.on("rateLimit", ({ method, delay }) => console.log(`${method} waited ${delay} ms`));
 ```
 
-Then spend fewer requests: one `setMonsters()` instead of many `setMonster()`, `count()` instead of counting pages, [`data`](/basics/embedded-data/) instead of reference calls. See [The rate limit](/basics/rate-limit/#spending-fewer-requests).
+Dépensez ensuite moins de requêtes : un seul `setMonsters()` au lieu de nombreux `setMonster()`, `count()` au lieu de compter des pages, [`data`](/basics/embedded-data/) au lieu des appels de référence. Voir [La limite de requêtes](/basics/rate-limit/#spending-fewer-requests).
 
-## RATE_LIMITED although the limiter is on
+## RATE_LIMITED alors que le limiteur est actif
 
-The limiter counts what this client sends. The key is also used elsewhere: another process, another instance of your server, a second client created in the same program. Create one client and share it, or lower the limit of each with `rateLimit: { requests: 30 }`.
+Le limiteur compte ce que ce client envoie. La clé est aussi utilisée ailleurs : un autre processus, une autre instance de votre serveur, un second client créé dans le même programme. Créez un seul client et partagez-le, ou abaissez la limite de chacun avec `rateLimit: { requests: 30 }`.
 
-## A value I just wrote reads back unchanged
+## Une valeur que je viens d'écrire se relit inchangée
 
-Reads tied to the account are not cached unless you asked. If you gave `quests.get` or `quests.monsters` a freshness in `cache.methods`, a write made with the same client clears it, but a write made elsewhere, on the site for instance, does not. Pass `{ cache: false }` on the read, or shorten the freshness.
+Les lectures liées au compte ne sont pas mises en cache, sauf si vous l'avez demandé. Si vous avez donné une durée de fraîcheur à `quests.get` ou à `quests.monsters` dans `cache.methods`, une écriture faite avec le même client l'efface, mais pas une écriture faite ailleurs, sur le site par exemple. Passez `{ cache: false }` à la lecture, ou raccourcissez la durée de fraîcheur.
 
-## setMonster did not add one
+## setMonster n'a pas ajouté un exemplaire
 
-It sets the quantity, it does not add to it. Read, then write:
+Elle fixe la quantité, elle n'y ajoute rien. Lisez, puis écrivez :
 
 ```ts
 const tofu = data.monster("Tofu Maléfique");
@@ -70,29 +70,31 @@ const owned = (await metamob.quests.monsters(slug).all()).find((monster) => mons
 await metamob.quests.setMonster(slug, "Tofu Maléfique", owned + 1);
 ```
 
-## TIMEOUT or NETWORK
+## TIMEOUT ou NETWORK
 
-The request did not get through, after 3 retries. Check the connection of the machine, then whether metamob.fr itself answers. Behind a proxy, give the client a `fetch` that uses it, see [Configuration](/basics/configuration/#another-fetch-another-host).
+La requête n'est pas passée, après 3 nouvelles tentatives. Vérifiez la connexion de la machine, puis si metamob.fr lui-même répond. Derrière un proxy, donnez au client un `fetch` qui l'utilise, voir [Configuration](/basics/configuration/#another-fetch-another-host).
 
 ## SERVER_ERROR
 
-The API failed on its side. Reads were retried. If it lasts, the site may be under maintenance: wait rather than loop.
+L'API a échoué de son côté. Les lectures ont été retentées. Si cela dure, le site est peut-être en maintenance : attendez plutôt que de boucler.
 
-## It works on my server and fails in the browser
+Sur une écriture, il peut aussi s'agir d'une valeur que l'API n'attendait pas, à laquelle elle répond par un 500 sans message : un `current_step` au-delà de la dernière étape de la quête, par exemple. Vérifiez ce que vous avez envoyé avant de réessayer.
 
-A page may only call an API that allows its origin. Call Metamob from your server and have the page talk to your server. It also keeps the key out of the page. See [Runtimes](/reference/runtimes/#browsers).
+## Cela fonctionne sur mon serveur et échoue dans le navigateur
 
-## require() returns something without Metamob
+Une page ne peut appeler qu'une API qui autorise son origine. Appelez Metamob depuis votre serveur et faites dialoguer la page avec votre serveur. Cela garde aussi la clé hors de la page. Voir [Environnements d'exécution](/reference/runtimes/#browsers).
 
-Version 5 has named exports. `const MetamobAPI = require("@ix-xs/metamob.api")` is now `const { Metamob } = require("@ix-xs/metamob.api")`. See [Coming from version 4](/start/migrating-from-v4/).
+## require() renvoie quelque chose sans Metamob
 
-## Still stuck
+La version 5 a des exports nommés. `const MetamobAPI = require("@ix-xs/metamob.api")` devient `const { Metamob } = require("@ix-xs/metamob.api")`. Voir [Depuis la version 4](/start/migrating-from-v4/).
 
-Open an issue on [GitHub](https://github.com/ix-xs/metamob.api/issues) with the version of the package, your runtime, `error.code` and the smallest code that shows the problem. Remove your API key from anything you paste.
+## Toujours bloqué
 
-## See also
+Ouvrez une issue sur [GitHub](https://github.com/ix-xs/metamob.api/issues) avec la version du paquet, votre environnement d'exécution, `error.code` et le plus petit code qui montre le problème. Retirez votre clé API de tout ce que vous collez.
 
-- [Error codes](/reference/errors/)
-- [Errors](/basics/errors/)
+## Voir aussi
+
+- [Codes d'erreur](/reference/errors/)
+- [Erreurs](/basics/errors/)
 - [FAQ](/help/faq/)
-- [Runtimes](/reference/runtimes/)
+- [Environnements d'exécution](/reference/runtimes/)

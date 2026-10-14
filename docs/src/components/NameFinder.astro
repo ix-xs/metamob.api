@@ -1,22 +1,38 @@
 ---
-// The landing page's playground: type a monster the way you would in a chat
-// command, and see the call next to what the library makes of it. It runs on
-// the library's own data set, in the page: nothing is sent anywhere.
+// The landing page's playground: four trials of what the library does with
+// the data it ships. Each one shows the call you would write next to what
+// comes back. It runs on the library's own data set, in the page: nothing is
+// sent anywhere.
 //
-// Without scripts the first example is rendered as is.
+// Without scripts the first trial is rendered as is, and the others stay
+// closed.
 import { data } from "../../../src/data/dataset.js";
-import { type FinderLabels, view } from "./name-finder";
-import { useT } from "../i18n";
+import { type FinderLabels, questView, searchView, view, whereView } from "./name-finder";
+import { ROOT_LANGUAGE } from "../../plugins/base-links.mjs";
+import { type UiKey, useT } from "../i18n";
 
-const t = useT(Astro.locals.starlightRoute.locale);
+const { locale } = Astro.locals.starlightRoute;
+const t = useT(locale);
+const language = (locale ?? ROOT_LANGUAGE) as FinderLabels["language"];
 
-// Development only: FINDER_START sets what the box holds when the page opens,
-// to look at the long, shared, unknown and empty cases without typing them.
+// Development only: FINDER_START sets what the first box holds when the page
+// opens, to look at the long, shared, unknown and empty cases without typing
+// them. A normal build ignores it.
 const start = process.env.FINDER_START ?? "tofu malefique";
-/** One of each case: no accent, English, Spanish, a typo, a name two monsters share, an id. */
-const EXAMPLES = ["tofu malefique", "Royal Gobball", "jalató real", "Tofu Malefik", "Crognan le Barbare", "397"];
+
+/** Examples are checked against the data: one that stopped existing is left out. */
+const known = (names: string[]) => names.filter((name) => data.monster(name));
+const TRIALS = [
+  // No accent, English, Spanish, a typo, a name two monsters share, an id.
+  { id: "name", start, examples: ["tofu malefique", "Royal Gobball", "jalató real", "Tofu Malefik", "Crognan le Barbare", "397"] },
+  { id: "search", start: "bouf", examples: ["bouf", "tofu", "dragon", "wab", "kani"] },
+  { id: "where", start: "Bouflet le Puéril", examples: known(["Bouflet le Puéril", "Minotoror", "Wabbit", "Tofu Maléfique", "Chêne Mou"]) },
+  { id: "quest", start: "", examples: [] },
+] as const;
+const KINDS = ["", "monstre", "boss", "archimonstre"] as const;
 
 const labels: FinderLabels = {
+  language,
   id: t("finder.byId"),
   fr: t("finder.fr"),
   en: t("finder.en"),
@@ -30,84 +46,335 @@ const labels: FinderLabels = {
   empty: t("finder.empty"),
   noId: t("finder.noId"),
   throws: t("finder.throws"),
+  found: t("finder.found"),
+  foundAll: t("finder.foundAll"),
+  nothing: t("finder.nothing"),
+  level: t("finder.level"),
+  livesIn: t("finder.livesIn"),
+  nowhere: t("finder.nowhere"),
+  rare: t("finder.rare"),
+  rareOf: t("finder.rareOf"),
+  askedBy: t("finder.askedBy"),
+  step: t("finder.step"),
+  atStep: t("finder.atStep"),
+  more: t("finder.more"),
 };
-const first = view(start, data, labels);
+
+const templates = data.questTemplates.map((template) => ({
+  id: template.id,
+  steps: template.step_count,
+  label: `${template.quest_type?.name[language] ?? ""}, ${template.game_version?.name ?? ""}`,
+}));
+const firstTemplate = data.questTemplates[0];
+const firstStep = Math.min(4, firstTemplate?.step_count ?? 1);
+
+// What each trial shows before anything is touched.
+const first = {
+  name: view(start, data, labels),
+  search: searchView("bouf", "", data, labels),
+  where: whereView("Bouflet le Puéril", data, labels),
+  quest: questView(firstTemplate, firstStep, data, labels),
+};
+const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[language] ?? kind) : t("finder.anyKind"));
 ---
 
 <name-finder class="nf" data-labels={JSON.stringify(labels)}>
-  <div class="nf-ask">
-    <label class="nf-field">
-      <span>{t("finder.label")}</span>
-      <input type="text" value={start} maxlength="60" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="search" />
-    </label>
-    <div class="nf-examples">
-      <span id="nf-try">{t("finder.try")}</span>
-      <div class="nf-picks" role="group" aria-labelledby="nf-try">
-        {EXAMPLES.map((example) => (
-          <button type="button" class="nf-pick at-press" data-nf-fill={example}>{example}</button>
-        ))}
+  <div class="nf-tabs" role="tablist" aria-label={t("finder.trials")}>
+    {TRIALS.map((trial, index) => (
+      <button class="nf-tab at-press" type="button" role="tab" id={`nf-tab-${trial.id}`} aria-controls={`nf-panel-${trial.id}`} aria-selected={index === 0 ? "true" : "false"} tabindex={index === 0 ? 0 : -1} data-nf-trial={trial.id}>
+        {t(`finder.tab.${trial.id}` as UiKey)}
+      </button>
+    ))}
+  </div>
+
+  {TRIALS.map((trial, index) => (
+    <div class="nf-panel" role="tabpanel" id={`nf-panel-${trial.id}`} aria-labelledby={`nf-tab-${trial.id}`} hidden={index !== 0} data-nf-trial={trial.id}>
+      <p class="nf-about">{t(`finder.about.${trial.id}` as UiKey)}</p>
+
+      <div class="nf-ask">
+        {trial.id !== "quest" && (
+          <label class="nf-field">
+            <span>{t(`finder.label.${trial.id}` as UiKey)}</span>
+            <input type="text" value={trial.start} maxlength="60" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="search" data-nf-input />
+          </label>
+        )}
+
+        {trial.id === "search" && (
+          <fieldset class="nf-choice">
+            <legend>{t("finder.kind")}</legend>
+            {KINDS.map((kind, position) => (
+              <label class="nf-chip at-press">
+                <input type="radio" name="nf-kind" value={kind} checked={position === 0} />
+                <span>{kindLabel(kind)}</span>
+              </label>
+            ))}
+          </fieldset>
+        )}
+
+        {trial.id === "quest" && (
+          <>
+            <fieldset class="nf-choice">
+              <legend>{t("finder.template")}</legend>
+              {templates.map((template, position) => (
+                <label class="nf-chip at-press">
+                  <input type="radio" name="nf-template" value={template.id} data-steps={template.steps} checked={position === 0} />
+                  <span>{template.label}</span>
+                </label>
+              ))}
+            </fieldset>
+            <label class="nf-field nf-range">
+              <span>{t("finder.stepLabel")} <output data-nf-step-output>{firstStep}</output></span>
+              <input type="range" min="1" max={firstTemplate?.step_count ?? 1} step="1" value={firstStep} data-nf-step />
+            </label>
+          </>
+        )}
+
+        {trial.examples.length > 0 && (
+          <div class="nf-examples">
+            <span id={`nf-try-${trial.id}`}>{t("finder.try")}</span>
+            <div class="nf-picks" role="group" aria-labelledby={`nf-try-${trial.id}`}>
+              {trial.examples.map((example) => (
+                <button type="button" class="nf-pick at-press" data-nf-fill={example}>{example}</button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div class="nf-panes">
+        <section class="nf-pane" aria-label={t("finder.writeLabel")}>
+          <h3>{t("finder.write")}</h3>
+          <pre tabindex="0"><code data-nf-code set:html={first[trial.id].code} /></pre>
+        </section>
+
+        <section class="nf-pane" aria-label={t("finder.readLabel")} aria-live="polite">
+          <h3>{t("finder.read")}</h3>
+          <div class="nf-result" data-nf-result set:html={first[trial.id].result} />
+        </section>
       </div>
     </div>
-  </div>
+  ))}
 
-  <div class="nf-panes">
-    <section class="nf-pane" aria-label={t("finder.writeLabel")}>
-      <h3>{t("finder.write")}</h3>
-      <pre tabindex="0"><code data-nf-code set:html={first.code} /></pre>
-    </section>
-
-    <section class="nf-pane" aria-label={t("finder.readLabel")} aria-live="polite">
-      <h3>{t("finder.read")}</h3>
-      <div class="nf-result" data-nf-result set:html={first.result} />
-    </section>
-  </div>
-
-  <p class="nf-foot" set:html={t("finder.foot", { count: String(data.monsters.length) })} />
+  <p class="nf-foot">
+    <span set:html={t("finder.foot", { count: String(data.monsters.length) })} />
+    <span class="nf-time" data-nf-time data-text={t("finder.time")} hidden></span>
+  </p>
 </name-finder>
 
 <script>
-  import { type FinderLabels, view } from "./name-finder";
+  import { type FinderKind, type FinderLabels, type FinderView, questView, searchView, view, whereView } from "./name-finder";
+
+  type Library = typeof import("../../../src/data/dataset.js");
 
   class NameFinder extends HTMLElement {
     constructor() {
       super();
-      const input = this.querySelector<HTMLInputElement>("input")!;
-      const code = this.querySelector<HTMLElement>("[data-nf-code]")!;
-      const result = this.querySelector<HTMLElement>("[data-nf-result]")!;
       const labels = JSON.parse(this.dataset.labels!) as FinderLabels;
+      const tabs = [...this.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+      const panels = [...this.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+      const list = this.querySelector<HTMLElement>('[role="tablist"]')!;
+      const time = this.querySelector<HTMLElement>("[data-nf-time]")!;
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)");
 
       // The data set is the library's own, about 30 kB compressed. It is
       // fetched when the reader shows interest, not with the page.
-      let loading: Promise<typeof import("../../../src/data/dataset.js")> | undefined;
+      let loading: Promise<Library> | undefined;
       const load = () => (loading ??= import("../../../src/data/dataset.js"));
 
-      let latest = 0;
-      const render = async () => {
-        const turn = ++latest;
-        const { data } = await load();
-        // A slower load must not overwrite what was typed since.
-        if (turn !== latest) return;
-        const next = view(input.value, data, labels);
-        code.innerHTML = next.code;
-        result.innerHTML = next.result;
+      /** What a trial shows, from the state of its own controls. */
+      const compute = (panel: HTMLElement, { data }: Library): FinderView => {
+        const text = panel.querySelector<HTMLInputElement>("[data-nf-input]")?.value ?? "";
+        switch (panel.dataset.nfTrial) {
+          case "search":
+            return searchView(text, (panel.querySelector<HTMLInputElement>('input[name="nf-kind"]:checked')?.value ?? "") as FinderKind, data, labels);
+          case "where":
+            return whereView(text, data, labels);
+          case "quest": {
+            const chosen = panel.querySelector<HTMLInputElement>('input[name="nf-template"]:checked');
+            const step = panel.querySelector<HTMLInputElement>("[data-nf-step]")!;
+            return questView(data.questTemplate(Number(chosen?.value)), Number(step.value), data, labels);
+          }
+          default:
+            return view(text, data, labels);
+        }
       };
 
-      input.addEventListener("input", render);
-      input.addEventListener("focus", load, { once: true });
-      this.addEventListener("pointerenter", load, { once: true });
+      let latest = 0;
+      /**
+       * Shows what a trial answers. `fresh` is for a change the reader made in
+       * one go (an example, a filter, another trial): the rows then come in one
+       * after the other. While typing or dragging, nothing moves.
+       */
+      const render = async (panel: HTMLElement, fresh: boolean) => {
+        const turn = ++latest;
+        const library = await load();
+        // A slower load must not overwrite what was typed since.
+        if (turn !== latest) return;
+        const started = performance.now();
+        const next = compute(panel, library);
+        const elapsed = performance.now() - started;
+        const result = panel.querySelector<HTMLElement>("[data-nf-result]")!;
+        panel.querySelector<HTMLElement>("[data-nf-code]")!.innerHTML = next.code;
+        result.innerHTML = next.result;
+        result.toggleAttribute("data-nf-fresh", fresh);
+        // Written the way the language of the page writes a number.
+        time.textContent = (time.dataset.text ?? "").replace("{time}", Math.max(elapsed, 0.1).toLocaleString(labels.language, { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+        time.hidden = false;
+      };
 
-      // Examples and suggestions write themselves in the box.
-      this.addEventListener("click", (event) => {
-        const button = (event.target as Element | null)?.closest<HTMLElement>("[data-nf-fill]");
-        if (!button) return;
-        input.value = button.dataset.nfFill ?? "";
-        void render();
-        // A pointer keeps its place; the keyboard goes back to the box to carry on typing.
-        if ((event as MouseEvent).detail === 0) input.focus();
+      // ---- The trials: tabs with one marker that slides between them.
+      const marker = document.createElement("span");
+      marker.className = "nf-marker";
+      marker.setAttribute("aria-hidden", "true");
+      list.append(marker);
+      list.setAttribute("data-nf-marker", "");
+
+      /** Puts the marker under the selected tab: sliding there, or at once. */
+      const place = (slide: boolean) => {
+        const active = tabs.find((tab) => tab.getAttribute("aria-selected") === "true");
+        if (!active || active.offsetWidth === 0) return;
+        if (!slide) marker.style.transition = "none";
+        marker.style.transform = `translateX(${active.offsetLeft}px) scaleX(${active.offsetWidth / 100})`;
+        if (!slide) {
+          // Apply the jump before the transition comes back.
+          void marker.offsetWidth;
+          marker.style.transition = "";
+        }
+      };
+
+      const select = (index: number, focus: boolean, slide: boolean) => {
+        stopDemo();
+        tabs.forEach((tab, position) => {
+          const active = position === index;
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+          panels[position]!.hidden = !active;
+        });
+        if (focus) tabs[index]!.focus();
+        // On a narrow screen the row of trials scrolls: the chosen one comes into view.
+        const chosen = tabs[index]!;
+        if (chosen.offsetLeft < list.scrollLeft || chosen.offsetLeft + chosen.offsetWidth > list.scrollLeft + list.clientWidth) {
+          list.scrollTo({ left: Math.max(0, chosen.offsetLeft - 16), behavior: slide && !reduced.matches ? "smooth" : "auto" });
+        }
+        place(slide);
+        // A trial is rendered again when it opens: its controls may have been
+        // restored by the browser to something else than what was rendered.
+        void render(panels[index]!, slide);
+      };
+
+      place(false);
+      addEventListener("resize", () => place(false));
+      // Fonts arriving change the width of the tabs.
+      void document.fonts?.ready.then(() => place(false));
+
+      tabs.forEach((tab, index) => {
+        // `detail` is 0 when the click comes from the keyboard: no slide then.
+        tab.addEventListener("click", (event) => select(index, false, event.detail > 0));
+        tab.addEventListener("keydown", (event) => {
+          const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+          const target = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : step ? (index + step + tabs.length) % tabs.length : -1;
+          if (target === -1) return;
+          event.preventDefault();
+          select(target, true, false);
+        });
       });
 
+      // ---- The controls of each trial.
+      for (const panel of panels) {
+        const input = panel.querySelector<HTMLInputElement>("[data-nf-input]");
+        input?.addEventListener("input", () => {
+          stopDemo();
+          void render(panel, false);
+        });
+        input?.addEventListener("focus", load, { once: true });
+
+        for (const radio of panel.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
+          radio.addEventListener("change", () => {
+            // Another quest has another number of steps.
+            const range = panel.querySelector<HTMLInputElement>("[data-nf-step]");
+            if (range && radio.dataset.steps) {
+              range.max = radio.dataset.steps;
+              if (Number(range.value) > Number(range.max)) range.value = range.max;
+              panel.querySelector<HTMLElement>("[data-nf-step-output]")!.textContent = range.value;
+            }
+            void render(panel, true);
+          });
+        }
+
+        const range = panel.querySelector<HTMLInputElement>("[data-nf-step]");
+        range?.addEventListener("input", () => {
+          panel.querySelector<HTMLElement>("[data-nf-step-output]")!.textContent = range.value;
+          void render(panel, false);
+        });
+
+        // Examples and suggestions write themselves in the box.
+        panel.addEventListener("click", (event) => {
+          const button = (event.target as Element | null)?.closest<HTMLElement>("[data-nf-fill]");
+          if (!button || !input) return;
+          stopDemo();
+          input.value = button.dataset.nfFill ?? "";
+          void render(panel, true);
+          // A pointer keeps its place; the keyboard goes back to the box to carry on typing.
+          if ((event as MouseEvent).detail === 0) input.focus();
+        });
+      }
+      this.addEventListener("pointerenter", load, { once: true });
+
+      // ---- The demonstration: the first time the playground comes into view,
+      // the first box types its own example, so the answer is seen forming.
+      // It runs once, stops at the first sign of the reader, and is skipped
+      // for whoever asked for less motion.
+      let demo: number | undefined;
+      const stopDemo = () => {
+        if (demo === undefined) return;
+        clearTimeout(demo);
+        demo = undefined;
+        this.removeAttribute("data-nf-demo");
+      };
+      const first = panels[0]!;
+      const box = first.querySelector<HTMLInputElement>("[data-nf-input]");
+      if (box && !reduced.matches && box.value === box.defaultValue && box.value.length > 0) {
+        const text = box.value;
+        const watcher = new IntersectionObserver(
+          (entries) => {
+            if (!entries.some((entry) => entry.isIntersecting)) return;
+            watcher.disconnect();
+            void load().then(() => {
+              // Someone already took over, or moved to another trial.
+              if (first.hidden || box.value !== text || document.activeElement === box) return;
+              this.setAttribute("data-nf-demo", "");
+              let length = 0;
+              const type = () => {
+                length++;
+                box.value = text.slice(0, length);
+                void render(first, false);
+                if (length < text.length) demo = window.setTimeout(type, 70);
+                else stopDemo();
+              };
+              box.value = "";
+              void render(first, false);
+              demo = window.setTimeout(type, 350);
+            });
+          },
+          { threshold: 0.6 },
+        );
+        watcher.observe(first.querySelector(".nf-panes")!);
+        for (const kind of ["pointerdown", "keydown", "focusin"] as const) {
+          this.addEventListener(kind, () => {
+            // Interrupted half way, the box gets its whole example back.
+            if (demo !== undefined && box.value !== text && document.activeElement !== box) {
+              box.value = text;
+              void render(first, false);
+            }
+            stopDemo();
+          });
+        }
+      }
+
       // A form restored by the browser can hold something else than what was rendered.
-      if (input.value !== input.defaultValue) void render();
+      const open = panels.find((panel) => !panel.hidden) ?? first;
+      const restored = [...open.querySelectorAll<HTMLInputElement>("input")].some((control) => (control.type === "radio" ? control.checked !== control.defaultChecked : control.value !== control.defaultValue));
+      if (restored) void render(open, false);
     }
   }
   customElements.define("name-finder", NameFinder);

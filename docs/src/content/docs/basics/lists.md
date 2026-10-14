@@ -1,6 +1,6 @@
 ---
-title: Lists
-description: Every paginated method returns a request you can await for one page, iterate to the end, or collect into an array. Nothing is sent until you do one of the three.
+title: Listes
+description: "Chaque méthode paginée renvoie une requête que vous pouvez attendre avec await pour une page, parcourir jusqu'au bout ou rassembler dans un tableau. Rien n'est envoyé tant que vous ne faites pas l'un des trois."
 sidebar:
   order: 2
 ---
@@ -8,33 +8,33 @@ sidebar:
 ```ts
 const request = metamob.monsters.list({ type: "archimonstre" });
 
-// One page.
+// Une page.
 const page = await request;
 
-// Every item, page after page.
+// Chaque élément, page après page.
 for await (const monster of request) {
   console.log(monster.name.fr);
 }
 
-// An array.
+// Un tableau.
 const everything = await request.all();
 ```
 
-## One page
+## Une page
 
-Awaiting a list gives its first page.
+Attendre une liste avec `await` donne sa première page.
 
 ```ts
 const page = await metamob.monsters.list({ type: "boss", limit: 20 });
 
-page.items; // the monsters
-page.total; // how many there are with these filters
+page.items; // les monstres
+page.total; // combien il y en a avec ces filtres
 page.limit; // 20
 page.offset; // 0
-page.hasNext; // whether there is more
+page.hasNext; // indique s'il en reste
 ```
 
-A page is iterable, and `next()` fetches the following one. It resolves to `null` after the last.
+Une page est itérable, et `next()` récupère la suivante. Elle renvoie `null` après la dernière.
 
 ```ts
 const page = await metamob.monsters.list({ type: "boss", limit: 20 });
@@ -44,26 +44,26 @@ for (const monster of page) console.log(monster.name.fr);
 const second = await page.next();
 ```
 
-To start somewhere else, pass `offset`:
+Pour commencer ailleurs, passez `offset` :
 
 ```ts
 const third = await metamob.monsters.list({ limit: 20, offset: 40 });
 ```
 
-## Everything
+## Tout
 
-`for await` walks every item. Pages are fetched as the loop reaches them, so leaving the loop early stops the requests.
+`for await` parcourt chaque élément. Les pages sont récupérées quand la boucle y arrive, donc quitter la boucle plus tôt arrête les requêtes.
 
 ```ts
 for await (const monster of metamob.quests.monsters(slug, { status: "needed" })) {
-  if (monster.step > 20) break; // nothing more is fetched
+  if (monster.step > 20) break; // plus rien n'est récupéré
   console.log(monster.name.fr);
 }
 ```
 
-When you give no `limit`, a walk uses the largest page the endpoint accepts: 200 for monsters and quests, 50 for users, conversations and matches. That is the fewest requests for the same data, and the rate limit counts requests.
+Quand vous ne donnez pas de `limit`, un parcours utilise la plus grande page que le point d'accès accepte : 200 pour les monstres et les quêtes, 50 pour les utilisateurs, les conversations et les correspondances. C'est le plus petit nombre de requêtes pour les mêmes données, et la limite de requêtes compte les requêtes.
 
-## Arrays
+## Tableaux
 
 ```ts
 const all = await metamob.monsters.list({ type: "archimonstre" }).all();
@@ -71,22 +71,22 @@ const first100 = await metamob.users.search("ix-").take(100);
 const capped = await metamob.quests.matches(slug).all({ limit: 30 });
 ```
 
-`all()` without a limit fetches every page: on a search, give one.
+`all()` sans limite récupère toutes les pages : sur une recherche, donnez-en une.
 
-## The first item, or the count
+## Le premier élément, ou le nombre
 
-Both send a single request for a single item.
+Les deux envoient une seule requête pour un seul élément.
 
 ```ts
-const best = await metamob.quests.matches(slug).first(); // undefined when there is none
+const best = await metamob.quests.matches(slug).first(); // undefined quand il n'y en a aucune
 
 const missing = await metamob.quests.monsters(slug, { status: "needed" }).count();
 const archmonsters = await metamob.monsters.list({ type: "archimonstre" }).count();
 ```
 
-## Page by page
+## Page par page
 
-`pages()` yields whole pages, for when the page itself matters: a progress bar, a batch insert.
+`pages()` produit des pages entières, pour les cas où la page elle-même compte : une barre de progression, une insertion par lots.
 
 ```ts
 for await (const page of metamob.monsters.list().pages()) {
@@ -94,69 +94,69 @@ for await (const page of metamob.monsters.list().pages()) {
 }
 ```
 
-## Pages that carry more
+## Des pages qui portent davantage
 
-Three lists come with what they belong to, on every page:
+Trois listes arrivent avec ce à quoi elles appartiennent, sur chaque page :
 
 ```ts
 const template = await metamob.questTemplates.monsters(1, { step: 4 });
-template.template.game_version?.name; // the template the monsters belong to
+template.template.game_version?.name; // le modèle auquel appartiennent les monstres
 
 const theirs = await metamob.users.quest(username, slug, { status: "offered" });
-theirs.quest.character_name; // the quest the monsters belong to
+theirs.quest.character_name; // la quête à laquelle appartiennent les monstres
 
 const mine = await metamob.quests.monsters(slug);
-mine.slug; // the slug of the quest
+mine.slug; // le slug de la quête
 ```
 
-## Messages use a cursor
+## Les messages utilisent un curseur
 
-The messages of a conversation are not numbered: the API pages them from the most recent backwards, with a cursor it hands out page after page. The same methods work, and `total` and `count()` are `undefined`.
+Les messages d'une conversation ne sont pas numérotés : l'API les pagine du plus récent vers le plus ancien, avec un curseur qu'elle fournit page après page. Les mêmes méthodes fonctionnent, et `total` et `count()` valent `undefined`.
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });
-page.nextBeforeId; // where the next page starts, undefined at the end
+page.nextBeforeId; // là où commence la page suivante, undefined à la fin
 
 const older = await page.next();
 
 for await (const item of metamob.conversations.messages(username)) {
-  // from the most recent to the oldest
+  // du plus récent au plus ancien
 }
 ```
 
-## Lists that are not paginated
+## Les listes qui ne sont pas paginées
 
-Some endpoints answer everything at once and return a plain array: `quests.list()`, `quests.zones()`, `users.quests()`, `zones.list()`, `zones.subzones()`, `zones.monsters()`, `kralove.list()` and the reference lists (`servers.list()` and the like).
+Certains points d'accès répondent tout en une fois et renvoient un simple tableau : `quests.list()`, `quests.zones()`, `users.quests()`, `zones.list()`, `zones.subzones()`, `zones.monsters()`, `kralove.list()` et les listes de référence (`servers.list()` et les autres du même genre).
 
-## Reference
+## Référence
 
-What a list request offers:
+Ce qu'offre une requête de liste :
 
-| Member | Result | Requests |
+| Membre | Résultat | Requêtes |
 | --- | --- | --- |
 | `await request` | `Page` | 1 |
-| `for await (const item of request)` | each item | 1 per page, as reached |
-| `request.all({ limit })` | `T[]` | 1 per page |
-| `request.take(n)` | `T[]` of `n` items at most | 1 per page |
+| `for await (const item of request)` | chaque élément | 1 par page, quand la boucle y arrive |
+| `request.all({ limit })` | `T[]` | 1 par page |
+| `request.take(n)` | `T[]` de `n` éléments au plus | 1 par page |
 | `request.first()` | `T \| undefined` | 1 |
 | `request.count()` | `number \| undefined` | 1 |
-| `request.pages({ limit })` | each `Page` | 1 per page |
+| `request.pages({ limit })` | chaque `Page` | 1 par page |
 
-What a page holds:
+Ce que contient une page :
 
-| Member | Meaning |
+| Membre | Signification |
 | --- | --- |
-| `items` | The items of the page |
-| `total` | Items across all pages, `undefined` for messages |
-| `limit`, `offset` | What the API applied |
-| `nextBeforeId` | For messages, the cursor of the next page |
-| `hasNext` | Whether another page exists |
-| `next()` | The next page, or `null` |
-| `raw` | The body the API sent |
+| `items` | Les éléments de la page |
+| `total` | Éléments sur l'ensemble des pages, `undefined` pour les messages |
+| `limit`, `offset` | Ce que l'API a appliqué |
+| `nextBeforeId` | Pour les messages, le curseur de la page suivante |
+| `hasNext` | Indique si une autre page existe |
+| `next()` | La page suivante, ou `null` |
+| `raw` | Le corps que l'API a envoyé |
 
-The methods that return a list request:
+Les méthodes qui renvoient une requête de liste :
 
-| Method | Largest page |
+| Méthode | Plus grande page |
 | --- | --- |
 | `monsters.list`, `monsters.search` | 200 |
 | `questTemplates.monsters` | 200 |
@@ -165,11 +165,11 @@ The methods that return a list request:
 | `users.search` | 50 |
 | `quests.matches` | 50 |
 | `conversations.list` | 50 |
-| `conversations.messages` | 50, by cursor |
+| `conversations.messages` | 50, par curseur |
 
-## See also
+## Voir aussi
 
-- [The rate limit](/basics/rate-limit/)
-- [Your quests](/resources/quests/)
+- [La limite de requêtes](/basics/rate-limit/)
+- [Vos quêtes](/resources/quests/)
 - [Conversations](/resources/conversations/)
-- [Every method](/reference/methods/)
+- [Toutes les méthodes](/reference/methods/)

@@ -1,6 +1,6 @@
 ---
 title: Zones
-description: The world of the game is cut into zones and subzones. Read them, search them by name, and list the monsters that live in a subzone.
+description: Le monde du jeu est découpé en zones et en sous-zones. Lisez-les, cherchez-les par nom et listez les monstres qui vivent dans une sous-zone.
 sidebar:
   order: 5
 ---
@@ -15,15 +15,15 @@ console.log(monsters.map((monster) => monster.name.fr));
 
 ```ts
 const zones = await metamob.zones.list();
-const found = await metamob.zones.list({ query: "ama" }); // 3 characters at least
+const found = await metamob.zones.list({ query: "ama" }); // 3 caractères au moins
 
 const amakna = await metamob.zones.get("Amakna");
 amakna.subzones.map((subzone) => subzone.name.fr);
 ```
 
-A zone is a name, an id or an object, see [Names and ids](/basics/names-and-ids/). Names work in French, English and Spanish: `"Sufokia Bay"` is `"Baie de Sufokia"`.
+Une zone est un nom, un identifiant ou un objet, voir [Noms et identifiants](/basics/names-and-ids/). Les noms fonctionnent en français, en anglais et en espagnol : `"Sufokia Bay"` désigne `"Baie de Sufokia"`.
 
-## Subzones
+## Sous-zones
 
 ```ts
 const subzones = await metamob.zones.subzones("Amakna");
@@ -33,15 +33,15 @@ const subzone = await metamob.zones.subzone("Coin des Bouftous");
 subzone.zone.name.fr; // "Amakna"
 ```
 
-The API addresses a subzone through its zone. You do not have to: the library knows which zone each subzone of the package is in.
+L'API désigne une sous-zone en passant par sa zone. Vous n'avez pas à le faire : la bibliothèque sait dans quelle zone se trouve chaque sous-zone du paquet.
 
-For a subzone added to the game after the package was published, give the zone as well:
+Pour une sous-zone ajoutée au jeu après la publication du paquet, donnez aussi la zone :
 
 ```ts
 await metamob.zones.subzone("Coin des Bouftous", { zone: "Amakna" });
 ```
 
-## Monsters of a subzone
+## Les monstres d'une sous-zone
 
 ```ts
 const monsters = await metamob.zones.monsters("Coin des Bouftous");
@@ -50,13 +50,13 @@ const archmonsters = monsters.filter((monster) => monster.type?.id === 3);
 console.log(archmonsters.map((monster) => monster.name.fr));
 ```
 
-The answer is a plain array: a subzone holds a handful of monsters.
+La réponse est un simple tableau : une sous-zone ne contient qu'une poignée de monstres.
 
-To go the other way, from a monster to its zones, read [`monsters.get()`](/resources/monsters/#reading-one-monster).
+Pour aller dans l'autre sens, d'un monstre vers ses zones, lisez [`monsters.get()`](/resources/monsters/#reading-one-monster).
 
-## Walking a zone
+## Parcourir une zone
 
-Pass the objects along instead of their ids:
+Passez les objets eux-mêmes plutôt que leurs identifiants :
 
 ```ts
 const zone = await metamob.zones.get("Amakna");
@@ -67,7 +67,7 @@ for (const subzone of zone.subzones) {
 }
 ```
 
-That is one request per subzone. The same walk costs nothing with [the data in the package](/basics/embedded-data/):
+Cela fait une requête par sous-zone. Le même parcours ne coûte rien avec [les données du paquet](/basics/embedded-data/) :
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -77,32 +77,32 @@ for (const subzone of data.zone("Amakna")?.subzones ?? []) {
 }
 ```
 
-## Your progress in a zone
+## Votre progression dans une zone
 
-How far one of your quests is in each zone is another call, [`quests.zones()`](/resources/quests/#progress-by-zone).
+L'avancement de l'une de vos quêtes dans chaque zone est un autre appel, [`quests.zones()`](/resources/quests/#progress-by-zone).
 
-## Limits and errors
+## Limites et erreurs
 
-- A search shorter than 3 characters throws `INVALID_ARGUMENT`.
-- A name that is neither in the package nor known to the API throws `UNKNOWN_NAME`, with suggestions.
-- A subzone the package does not know, given without its zone, throws `UNKNOWN_NAME` and says to pass `{ zone }`.
-- Answers are [cached](/basics/caching/) for 10 minutes by default.
+- Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT`.
+- Un nom qui n'est ni dans le paquet ni connu de l'API lève `UNKNOWN_NAME`, avec des suggestions.
+- Une sous-zone que le paquet ne connaît pas, donnée sans sa zone, lève `UNKNOWN_NAME` et demande de passer `{ zone }`.
+- Les réponses sont [mises en cache](/basics/caching/) pendant 10 minutes par défaut.
 
-## Reference
+## Référence
 
-| Method | Returns |
+| Méthode | Renvoie |
 | --- | --- |
 | `zones.list({ query }, options?)` | `Zone[]` |
-| `zones.get(zone, options?)` | `ZoneDetail`, the zone with its `subzones` |
+| `zones.get(zone, options?)` | `ZoneDetail`, la zone avec ses `subzones` |
 | `zones.subzones(zone, { query }, options?)` | `SubzoneRef[]` |
-| `zones.subzone(subzone, { zone }?, options?)` | `Subzone`, the subzone with its `zone` |
+| `zones.subzone(subzone, { zone }?, options?)` | `Subzone`, la sous-zone avec sa `zone` |
 | `zones.monsters(subzone, { zone }?, options?)` | `Monster[]` |
 
-A zone and a subzone both have an `id` and a `name` in three languages.
+Une zone et une sous-zone ont toutes deux un `id` et un `name` dans trois langues.
 
-## See also
+## Voir aussi
 
-- [Monsters](/resources/monsters/)
-- [Your quests](/resources/quests/)
-- [The data in the package](/basics/embedded-data/)
-- [Names and ids](/basics/names-and-ids/)
+- [Monstres](/resources/monsters/)
+- [Vos quêtes](/resources/quests/)
+- [Les données du paquet](/basics/embedded-data/)
+- [Noms et identifiants](/basics/names-and-ids/)

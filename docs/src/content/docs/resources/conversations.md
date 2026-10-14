@@ -1,6 +1,6 @@
 ---
 title: Conversations
-description: Read the private conversations of the account and, inside each one, the messages and the trade proposals exchanged with a player. The API reads them, it does not send any.
+description: Lisez les conversations privées du compte et, dans chacune, les messages et les propositions d'échange échangés avec un joueur. L'API les lit, elle n'en envoie pas.
 sidebar:
   order: 7
 ---
@@ -12,9 +12,9 @@ for await (const item of metamob.conversations.messages(username)) {
 }
 ```
 
-## Listing conversations
+## Lister les conversations
 
-There is one conversation per correspondent, the most recent first. It is a [list](/basics/lists/), 50 per page at most.
+Il y a une conversation par correspondant, la plus récente en premier. C'est une [liste](/basics/lists/), de 50 par page au plus.
 
 ```ts
 const page = await metamob.conversations.list();
@@ -26,11 +26,11 @@ for (const conversation of page.items) {
 const archived = await metamob.conversations.list({ status: "archived" }).all();
 ```
 
-Without `status`, the active conversations are listed.
+Sans `status`, ce sont les conversations actives qui sont listées.
 
-## Reading a conversation
+## Lire une conversation
 
-`conversations.messages()` gives what was exchanged with a player, from the most recent to the oldest. Two kinds of items come mixed, told apart by `kind`.
+`conversations.messages()` donne ce qui a été échangé avec un joueur, du plus récent au plus ancien. Deux sortes d'éléments arrivent mélangés, et `kind` les distingue.
 
 ```ts
 const latest = await metamob.conversations.messages(username).take(10);
@@ -39,20 +39,20 @@ for (const item of latest) {
   if (item.kind === "message") {
     item.content;
     item.sender;
-    item.read_at; // null while it is unread
+    item.read_at; // null tant qu'il n'est pas lu
   }
 }
 ```
 
-To show them in reading order, reverse what you collected:
+Pour les afficher dans l'ordre de lecture, inversez ce que vous avez récupéré :
 
 ```ts
 const thread = (await metamob.conversations.messages(username).take(50)).reverse();
 ```
 
-## Going back in time
+## Remonter dans le temps
 
-Messages are paged with a cursor, not an offset: each page comes with the cursor of the next one. Send it back as it is: it is not the id of a message. Iterating does it for you. By hand:
+Les messages sont paginés avec un curseur, pas avec un décalage : chaque page fournit le curseur de la suivante. Renvoyez-le tel quel : ce n'est pas l'identifiant d'un message. L'itération le fait pour vous. À la main :
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });
@@ -63,11 +63,11 @@ if (page.hasNext) {
 }
 ```
 
-There is no total for messages: `page.total` and `count()` are `undefined`. The number of items of a conversation is `message_count` in the list of conversations.
+Il n'y a pas de total pour les messages : `page.total` et `count()` valent `undefined`. Le nombre d'éléments d'une conversation est `message_count`, dans la liste des conversations.
 
-## Trade proposals
+## Propositions d'échange
 
-A proposal made on the site appears in the conversation as an item of kind `"proposal"`.
+Une proposition faite sur le site apparaît dans la conversation comme un élément dont `kind` vaut `"proposal"`.
 
 ```ts
 for await (const item of metamob.conversations.messages(username)) {
@@ -83,18 +83,18 @@ for await (const item of metamob.conversations.messages(username)) {
 }
 ```
 
-A proposal names its monsters by id: [`data.monster()`](/basics/embedded-data/) turns an id into a monster without a request.
+Une proposition désigne ses monstres par leur identifiant : [`data.monster()`](/basics/embedded-data/) transforme un identifiant en monstre sans requête.
 
-| `status` | Meaning |
+| `status` | Signification |
 | --- | --- |
-| `pending` | Nobody confirmed yet |
-| `half_applied` | One side confirmed: see `applications` |
-| `completed` | Both sides confirmed |
-| `cancelled` | Cancelled, at `cancelled_at` |
+| `pending` | Personne n'a encore confirmé |
+| `half_applied` | Un des deux joueurs a confirmé : voir `applications` |
+| `completed` | Les deux joueurs ont confirmé |
+| `cancelled` | Annulée, à la date `cancelled_at` |
 
-## Unread messages
+## Messages non lus
 
-The API has no unread counter. A message you received and did not open has `read_at` set to `null`:
+L'API n'a pas de compteur de messages non lus. Un message que vous avez reçu et pas encore ouvert a `read_at` à `null` :
 
 ```ts
 const me = await metamob.me();
@@ -103,48 +103,48 @@ const recent = await metamob.conversations.messages(username).take(50);
 const unread = recent.filter((item) => item.kind === "message" && item.sender !== me.username && item.read_at === null);
 ```
 
-## Limits and errors
+## Limites et erreurs
 
-- The API does not send messages, and does not create, confirm or cancel proposals.
-- A correspondent may have no profile left: a deleted account keeps its conversations readable for 30 days, while `users.get()` answers `NOT_FOUND`.
-- Conversations belong to the account of the key. Nothing here is cached by default.
+- L'API n'envoie pas de messages. Elle ne crée, ne confirme et n'annule pas non plus de propositions.
+- Un correspondant peut ne plus avoir de profil : un compte supprimé garde ses conversations lisibles pendant 30 jours, alors que `users.get()` répond `NOT_FOUND`.
+- Les conversations appartiennent au compte de la clé. Rien ici n'est mis en cache par défaut.
 
-## Reference
+## Référence
 
-| Method | Returns |
+| Méthode | Renvoie |
 | --- | --- |
-| `conversations.list({ status, limit, offset }, options?)` | a list of `Conversation` |
-| `conversations.messages(username, { limit, beforeId }, options?)` | a list of `ConversationItem`, by cursor |
+| `conversations.list({ status, limit, offset }, options?)` | une liste de `Conversation` |
+| `conversations.messages(username, { limit, beforeId }, options?)` | une liste de `ConversationItem`, par curseur |
 
-A message:
+Un message :
 
-| Field | Type |
+| Champ | Type |
 | --- | --- |
 | `kind` | `"message"` |
 | `id` | `number` |
 | `content` | `string` |
-| `sender` | `string`, a username |
+| `sender` | `string`, un pseudo |
 | `created_at` | `string` |
 | `read_at` | `string \| null` |
 
-A proposal:
+Une proposition :
 
-| Field | Type |
+| Champ | Type |
 | --- | --- |
 | `kind` | `"proposal"` |
 | `id` | `number` |
-| `sender`, `recipient` | `string`, usernames |
+| `sender`, `recipient` | `string`, des pseudos |
 | `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
 | `server_id` | `number` |
-| `quest_type` | `{ id, slug } \| null`, `null` when the quest was deleted |
+| `quest_type` | `{ id, slug } \| null`, `null` quand la quête a été supprimée |
 | `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
-| `applications` | `{ username, created_at }[]`, who confirmed |
+| `applications` | `{ username, created_at }[]`, qui a confirmé |
 | `cancelled_at` | `string \| null` |
 | `created_at` | `string` |
 
-## See also
+## Voir aussi
 
-- [Lists](/basics/lists/)
-- [Trading](/resources/trading/)
-- [Other players](/resources/users/)
-- [The data in the package](/basics/embedded-data/)
+- [Listes](/basics/lists/)
+- [Échanges](/resources/trading/)
+- [Autres joueurs](/resources/users/)
+- [Les données du paquet](/basics/embedded-data/)

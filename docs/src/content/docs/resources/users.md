@@ -1,6 +1,6 @@
 ---
-title: Other players
-description: Search players by name, read a public profile, and look into a public quest to see what its owner offers and looks for.
+title: Autres joueurs
+description: Cherchez des joueurs par leur pseudo, lisez un profil public et regardez dans une quête publique ce que son propriétaire propose et recherche.
 sidebar:
   order: 6
 ---
@@ -13,19 +13,19 @@ for (const quest of profile.quests) {
 }
 ```
 
-## Searching players
+## Chercher des joueurs
 
-A search matches a part of the username, among players who have at least one public quest. It needs 3 characters at least and is a [list](/basics/lists/), 50 players per page at most. Only players seen in the last 90 days are searched, unless `activeWithinDays` says otherwise, up to 365.
+Une recherche porte sur une partie du pseudo, parmi les joueurs qui ont au moins une quête publique. Elle demande au moins 3 caractères et c'est une [liste](/basics/lists/), de 50 joueurs par page au plus. Seuls les joueurs vus au cours des 90 derniers jours sont cherchés, sauf si `activeWithinDays` dit autre chose, jusqu'à 365.
 
 ```ts
 const page = await metamob.users.search("ix-");
 page.items.map((user) => user.username);
 
-// On one server, among players seen in the last 30 days.
+// Sur un serveur, parmi les joueurs vus au cours des 30 derniers jours.
 const active = await metamob.users.search("ix-", { server: "Draconiros", activeWithinDays: 30 }).all();
 ```
 
-## Reading a profile
+## Lire un profil
 
 ```ts
 const profile = await metamob.users.get(username);
@@ -33,14 +33,14 @@ const profile = await metamob.users.get(username);
 profile.bio;
 profile.last_active;
 profile.avatar?.name.fr;
-urls.profile(profile); // the address of the profile on metamob.fr
+urls.profile(profile); // l'adresse du profil sur metamob.fr
 ```
 
-Usernames are case-sensitive: `"ix-xs"` is not `"Ix-xs"`. A profile lists the public quests of the player, without their monsters.
+Un joueur est trouvé quelle que soit la casse du pseudo que vous donnez, et la réponse l'écrit comme son propriétaire : `"ix-xs"` trouve `"Ix-xs"`. Un profil liste les quêtes publiques du joueur, sans leurs monstres.
 
-## Public quests
+## Quêtes publiques
 
-`users.quests()` adds, for each quest, how many monsters it looks for and offers.
+`users.quests()` ajoute, pour chaque quête, le nombre de monstres qu'elle recherche et qu'elle propose.
 
 ```ts
 for (const quest of await metamob.users.quests(username)) {
@@ -49,9 +49,9 @@ for (const quest of await metamob.users.quests(username)) {
 }
 ```
 
-## The monsters of a public quest
+## Les monstres d'une quête publique
 
-`users.quest()` is a [list](/basics/lists/) of the monsters of one quest, with what its owner owns, wants and offers. Each page also carries the quest itself.
+`users.quest()` est une [liste](/basics/lists/) des monstres d'une quête, avec ce que son propriétaire possède, recherche et propose. Chaque page contient aussi la quête elle-même.
 
 ```ts
 const page = await metamob.users.quest(username, slug, { status: "offered" });
@@ -64,54 +64,54 @@ for (const monster of page.items) {
 }
 ```
 
-Filters:
+Filtres :
 
 ```ts
-// What they look for among archmonsters.
+// Ce qu'il recherche parmi les archimonstres.
 await metamob.users.quest(username, slug, { status: "wanted", type: "archimonstre" }).all();
 
-// Everything of step 12.
+// Tout ce qui est à l'étape 12.
 await metamob.users.quest(username, slug, { step: 12 }).all();
 ```
 
-`want` and `offer` are what the quest really puts on the market, after the trade settings of its owner. A player can own spares and offer none.
+`want` et `offer` sont ce que la quête met réellement sur le marché, une fois appliqués les réglages d'échange de son propriétaire. Un joueur peut posséder des exemplaires en trop et n'en proposer aucun.
 
-## Your own quests
+## Vos propres quêtes
 
-Through these methods your quests look the way others see them: only the public ones, without your trade settings. For the full picture, and to change anything, use [`metamob.quests`](/resources/quests/).
+Avec ces méthodes, vos quêtes apparaissent telles que les autres les voient : seulement les quêtes publiques, sans vos réglages d'échange. Pour la vue complète, et pour modifier quoi que ce soit, utilisez [`metamob.quests`](/resources/quests/).
 
-## Limits and errors
+## Limites et erreurs
 
-- `NOT_FOUND` for a player who does not exist, whose account was deleted, or for a quest that is hidden.
-- A search shorter than 3 characters throws `INVALID_ARGUMENT` before a request is spent.
-- Nothing here is cached by default. A profile page with many visitors can cache it: `cache: { methods: { "users.get": "1m" } }`, see [Caching](/basics/caching/).
+- `NOT_FOUND` pour un joueur qui n'existe pas, dont le compte a été supprimé, ou pour une quête masquée.
+- Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT` avant qu'une requête soit dépensée.
+- Rien ici n'est mis en cache par défaut. Une page de profil très visitée peut le faire : `cache: { methods: { "users.get": "1m" } }`, voir [Cache](/basics/caching/).
 
-## Reference
+## Référence
 
-| Method | Returns |
+| Méthode | Renvoie |
 | --- | --- |
-| `users.search(query, { server, activeWithinDays, limit, offset }, options?)` | a list of `UserSummary` |
+| `users.search(query, { server, activeWithinDays, limit, offset }, options?)` | une liste de `UserSummary` |
 | `users.get(username, options?)` | `UserProfile` |
 | `users.quests(username, options?)` | `PublicQuestSummary[]` |
-| `users.quest(username, slug, { type, status, step, limit, offset }, options?)` | a list of `QuestMonster`, with `page.quest` |
+| `users.quest(username, slug, { type, status, step, limit, offset }, options?)` | une liste de `QuestMonster`, avec `page.quest` |
 
-A public quest:
+Une quête publique :
 
-| Field | Meaning |
+| Champ | Signification |
 | --- | --- |
-| `slug` | Its identifier |
-| `character_name` | The character doing the quest |
-| `current_step` | The step the character is at |
-| `parallel_quests` | Quests done in parallel, which is how many of each monster is needed |
-| `server` | The server, with its version of the game |
-| `quest_template` | The kind of quest, its number of monsters and of steps |
-| `wanted_count`, `offered_count` | Only from `users.quests()` |
+| `slug` | Son identifiant |
+| `character_name` | Le personnage qui fait la quête |
+| `current_step` | L'étape où en est le personnage |
+| `parallel_quests` | Quêtes menées en parallèle, soit le nombre d'exemplaires de chaque monstre à réunir |
+| `server` | Le serveur, avec sa version du jeu |
+| `quest_template` | Le type de quête, son nombre de monstres et d'étapes |
+| `wanted_count`, `offered_count` | Seulement avec `users.quests()` |
 
-A monster of a public quest is a `Monster` with `step`, `quantity`, `want` and `offer`.
+Un monstre d'une quête publique est un `Monster` avec `step`, `quantity`, `want` et `offer`.
 
-## See also
+## Voir aussi
 
-- [Trading](/resources/trading/)
-- [Your quests](/resources/quests/)
+- [Échanges](/resources/trading/)
+- [Vos quêtes](/resources/quests/)
 - [Conversations](/resources/conversations/)
-- [Account](/resources/account/)
+- [Compte](/resources/account/)

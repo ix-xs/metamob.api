@@ -1,17 +1,17 @@
 ---
-title: A Discord command with autocomplete
-description: A slash command that records a monster in a player's quest, with the name completed as they type. The autocomplete runs on the data in the package, so it never spends a request.
+title: Une commande Discord avec autocomplétion
+description: "Une commande slash qui enregistre un monstre dans la quête d'un joueur, avec le nom complété pendant la saisie. L'autocomplétion s'appuie sur les données du paquet : elle ne dépense donc jamais de requête."
 sidebar:
   order: 1
 ---
 
-## What you get
+## Ce que vous obtenez
 
-A `/caught` command. The player starts typing a monster, Discord shows up to 25 names that match, in any of the three languages. On submit, the monster is added to their quest with their own Metamob key, and the reply says how many are left to find.
+Une commande `/caught`. Le joueur commence à taper le nom d'un monstre, Discord affiche jusqu'à 25 noms qui correspondent, dans n'importe laquelle des trois langues. À l'envoi, le monstre est ajouté à sa quête avec sa propre clé Metamob, et la réponse indique combien il en reste à trouver.
 
-It uses [discord.js](https://discord.js.org) for the Discord side. The Metamob side is the same with any other library.
+Elle utilise [discord.js](https://discord.js.org) pour la partie Discord. La partie Metamob est la même avec n'importe quelle autre bibliothèque.
 
-## The command
+## La commande
 
 ```js
 import { SlashCommandBuilder } from "discord.js";
@@ -23,9 +23,9 @@ export const caught = new SlashCommandBuilder()
   .addIntegerOption((option) => option.setName("quantity").setDescription("How many you own now").setMinValue(0).setMaxValue(30));
 ```
 
-## Completing the name
+## Compléter le nom
 
-Discord asks for suggestions on every keystroke and wants an answer within three seconds. A request to the API per keystroke would be slow and would empty the rate limit of the key. `data.searchMonsters()` reads the package instead: it takes a few microseconds and needs no key.
+Discord demande des suggestions à chaque frappe et veut une réponse en moins de trois secondes. Une requête à l'API par frappe serait lente et viderait la limite de requêtes de la clé. `data.searchMonsters()` lit le paquet à la place : cela prend quelques microsecondes et ne demande aucune clé.
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -42,9 +42,9 @@ export async function autocomplete(interaction: any) {
 }
 ```
 
-The value sent back is the id, as a string. An id is never ambiguous, even for the few monsters that share a name.
+La valeur renvoyée est l'identifiant, sous forme de chaîne. Un identifiant n'est jamais ambigu, même pour les quelques monstres qui partagent un nom.
 
-To offer only the monsters of the player's kind of quest, pass a template:
+Pour ne proposer que les monstres du type de quête du joueur, passez un modèle de quête :
 
 ```ts
 const ochreOnUnity = { questType: "ocre", gameVersion: "Dofus (Unity)" } as const;
@@ -52,14 +52,14 @@ const ochreOnUnity = { questType: "ocre", gameVersion: "Dofus (Unity)" } as cons
 data.searchMonsters("tofu", { template: ochreOnUnity, limit: 25 });
 ```
 
-## Recording the monster
+## Enregistrer le monstre
 
-Each player registered their own key beforehand, see [Acting for other players](/basics/many-keys/). `withKey()` gives a client that acts as them.
+Chaque joueur a enregistré sa propre clé au préalable, voir [Agir pour d'autres joueurs](/basics/many-keys/). `withKey()` donne un client qui agit en son nom.
 
 ```ts
 import { Metamob, data, isMetamobError } from "@ix-xs/metamob.api";
 
-// One client for the whole bot: it holds the cache and the rate limiter.
+// Un seul client pour tout le bot : il porte le cache et le limiteur.
 const base = new Metamob();
 
 export async function execute(interaction: any) {
@@ -90,11 +90,11 @@ function explain(error: unknown): string {
 }
 ```
 
-The reply is deferred first: Discord gives three seconds to answer, and a call can wait for its turn in the rate limiter.
+La réponse est d'abord différée : Discord laisse trois secondes pour répondre, et un appel peut attendre son tour dans le limiteur.
 
-A player who types the name without picking a suggestion still gets through: the text is resolved like any [name](/basics/names-and-ids/), and a typo comes back with the closest names.
+Un joueur qui tape le nom sans choisir de suggestion passe quand même : le texte est résolu comme n'importe quel [nom](/basics/names-and-ids/), et une faute de frappe revient avec les noms les plus proches.
 
-## Registering a key
+## Enregistrer une clé
 
 ```ts
 export async function register(interaction: any) {
@@ -116,17 +116,17 @@ export async function register(interaction: any) {
 }
 ```
 
-Keep the reply ephemeral, so the key never shows in a channel, and store it encrypted.
+Gardez la réponse éphémère, pour que la clé n'apparaisse jamais dans un salon, et stockez la clé chiffrée.
 
-## Going further
+## Aller plus loin
 
-- Several quests per player: list them with `quests.list()` and add a `quest` option, completed from what you stored.
-- A `/where` command needs no key at all: [`data.subzonesOf()`](/basics/embedded-data/#following-the-links) says where a monster lives.
-- A whole screenshot of catches at once: [`quests.setMonsters()`](/resources/quests/#recording-many-monsters) writes 200 monsters in one request.
+- Plusieurs quêtes par joueur : listez-les avec `quests.list()` et ajoutez une option `quest`, complétée à partir de ce que vous avez stocké.
+- Une commande `/where` ne demande aucune clé : [`data.subzonesOf()`](/basics/embedded-data/#following-the-links) indique où vit un monstre.
+- Tous les monstres d'une capture d'écran en une fois : [`quests.setMonsters()`](/resources/quests/#recording-many-monsters) écrit 200 monstres en une seule requête.
 
-## See also
+## Voir aussi
 
-- [The data in the package](/basics/embedded-data/)
-- [Acting for other players](/basics/many-keys/)
-- [Your quests](/resources/quests/)
-- [Errors](/basics/errors/)
+- [Les données du paquet](/basics/embedded-data/)
+- [Agir pour d'autres joueurs](/basics/many-keys/)
+- [Vos quêtes](/resources/quests/)
+- [Erreurs](/basics/errors/)

@@ -1,6 +1,6 @@
 ---
-title: Account
-description: One call tells which account an API key belongs to. It is how you greet a user, validate a key they gave you, and get the username the public endpoints need.
+title: Compte
+description: Un seul appel indique à quel compte appartient une clé API. C'est ainsi que vous saluez un utilisateur, validez une clé qu'il vous a donnée et obtenez le pseudo dont les points d'accès publics ont besoin.
 sidebar:
   order: 1
 ---
@@ -13,36 +13,36 @@ console.log(me.bio);
 console.log(me.last_active); // "2026-10-14T09:12:45Z"
 ```
 
-## What comes back
+## Ce que vous recevez
 
-The username, the bio, the avatar and the last activity of the account. Nothing private: it is what the public profile shows, minus the quests.
+Le pseudo, la bio, l'avatar et la dernière activité du compte. Rien de privé : c'est ce que montre le profil public, sans les quêtes.
 
 ```ts
 const me = await metamob.me();
 
 if (me.avatar) {
-  console.log(me.avatar.name.fr); // the avatar is a monster
-  console.log(urls.monsterImage(me.avatar)); // its picture
+  console.log(me.avatar.name.fr); // l'avatar est un monstre
+  console.log(urls.monsterImage(me.avatar)); // son image
 }
 ```
 
-## From a key to everything else
+## D'une clé à tout le reste
 
-A key does not contain a username. `me()` gives it, and with it the public side of the account:
+Une clé ne contient pas de pseudo. `me()` le donne, et avec lui le côté public du compte :
 
 ```ts
 const { username } = await metamob.me();
 
-const profile = await metamob.users.get(username); // as others see it
+const profile = await metamob.users.get(username); // tel que les autres le voient
 const hidden = (await metamob.quests.list()).filter((quest) => !quest.show_trades);
 console.log(`${profile.quests.length} public quests, ${hidden.length} hidden`);
 ```
 
-The quests of the account, hidden ones included, are under [`metamob.quests`](/resources/quests/). The profile and public quests of any player are under [`metamob.users`](/resources/users/).
+Les quêtes du compte, y compris les quêtes masquées, se trouvent sous [`metamob.quests`](/resources/quests/). Le profil et les quêtes publiques de n'importe quel joueur se trouvent sous [`metamob.users`](/resources/users/).
 
-## Validating a key
+## Valider une clé
 
-`me()` is the lightest call that needs a working key, which makes it the right test when a player submits theirs.
+`me()` est l'appel le plus léger qui exige une clé valide. C'est donc le bon test quand un joueur vous donne la sienne.
 
 ```ts
 async function whose(key: string) {
@@ -55,25 +55,25 @@ async function whose(key: string) {
 }
 ```
 
-## Reference
+## Référence
 
-`metamob.me(options?)` resolves to an `Account`:
+`metamob.me(options?)` renvoie un `Account` :
 
-| Field | Type | Meaning |
+| Champ | Type | Signification |
 | --- | --- | --- |
-| `username` | `string` | The name of the account |
-| `bio` | `string` | The text of the profile, empty when there is none |
-| `avatar` | `Avatar \| null` | The monster chosen as avatar: `id`, `name`, `image` |
-| `last_active` | `string` | Last activity, as an ISO 8601 date in UTC: `2026-10-14T09:12:45Z` |
+| `username` | `string` | Le pseudo du compte |
+| `bio` | `string` | Le texte du profil, vide quand il n'y en a pas |
+| `avatar` | `Avatar \| null` | Le monstre choisi comme avatar : `id`, `name`, `image` |
+| `last_active` | `string` | Dernière activité, en date ISO 8601 UTC : `2026-10-14T09:12:45Z` |
 
-| Error | When |
+| Erreur | Quand |
 | --- | --- |
-| `UNAUTHORIZED` | The key is invalid or was revoked |
-| `MISSING_API_KEY` | No key was given anywhere |
+| `UNAUTHORIZED` | La clé est invalide ou a été révoquée |
+| `MISSING_API_KEY` | Aucune clé n'a été fournie, nulle part |
 
-## See also
+## Voir aussi
 
-- [Your API key](/start/api-key/)
-- [Acting for other players](/basics/many-keys/)
-- [Your quests](/resources/quests/)
-- [Other players](/resources/users/)
+- [Votre clé API](/start/api-key/)
+- [Agir pour d'autres joueurs](/basics/many-keys/)
+- [Vos quêtes](/resources/quests/)
+- [Autres joueurs](/resources/users/)

@@ -23,13 +23,22 @@ export function withBase(url, base) {
 }
 
 /**
- * The languages the site is translated into. English is the original: its
- * pages sit at the root of the content and of the site, a translation sits in
- * a folder named after its language, at the same paths.
+ * The languages that live in a folder named after them, at the same paths.
+ * French sits at the root of the content and of the site: it is what most
+ * readers of this documentation speak.
  */
-export const LOCALES = ["fr"];
+export const LOCALES = ["en", "es"];
 
-/** The language of a content file ("fr"), or undefined for an English page. */
+/** The language of the pages at the root. */
+export const ROOT_LANGUAGE = "fr";
+
+/**
+ * The language the pages are written in first. The others are translations
+ * of it: they keep its headings, its code and its links.
+ */
+export const SOURCE = "en";
+
+/** The language of a content file ("en"), or undefined for a page at the root. */
 export function localeOfFile(file) {
   const match = /[\\/]content[\\/]docs[\\/]([a-z]{2}(?:-[a-z]{2})?)[\\/]/i.exec(String(file ?? ""));
   return match && LOCALES.includes(match[1].toLowerCase()) ? match[1].toLowerCase() : undefined;
@@ -43,8 +52,8 @@ export function localeOfPath(pathname) {
 
 /**
  * Sends a root-relative link to the page of the given language. Links are
- * written once, as in English ("/data/store/"); a French page gets
- * "/fr/data/store/". Files (an image, a download) have no translation.
+ * written once, without a language ("/data/store/"); an English page gets
+ * "/en/data/store/". Files (an image, a download) have no translation.
  */
 export function withLocale(url, locale) {
   if (!locale || typeof url !== "string") return url;
@@ -54,11 +63,27 @@ export function withLocale(url, locale) {
   return `/${locale}${url}`;
 }
 
-/** The same page in another language: "/fr/data/store/" <-> "/data/store/". */
+/** The same page in another language: "/en/data/store/" <-> "/data/store/". */
 export function switchLocale(pathname, locale) {
   const current = localeOfPath(pathname);
   const bare = current ? pathname.replace(new RegExp(`^/${current}(?=/|$)`), "") || "/" : pathname;
   return locale ? `/${locale}${bare}` : bare;
+}
+
+/**
+ * The file of the original a content file translates, or undefined when the
+ * file is itself an original. "docs/basics/lists.md" and
+ * "docs/es/basics/lists.md" both translate "docs/en/basics/lists.md".
+ */
+export function originalOf(file) {
+  const text = String(file ?? "");
+  const locale = localeOfFile(text);
+  if (locale === SOURCE) return undefined;
+  const docs = /^(.*[\\/]content[\\/]docs)([\\/])(.*)$/i.exec(text);
+  if (!docs) return undefined;
+  const [, folder, separator, rest] = docs;
+  const relative = locale ? rest.slice(locale.length + 1) : rest;
+  return `${folder}${separator}${SOURCE}${separator}${relative}`;
 }
 
 /** Attributes of MDX components that hold an internal link. */

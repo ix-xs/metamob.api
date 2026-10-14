@@ -12,7 +12,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import GithubSlugger from "github-slugger";
-import { localeOfFile } from "./base-links.mjs";
+import { originalOf } from "./base-links.mjs";
 
 /** The text of a Markdown heading as a reader sees it. */
 function plain(text) {
@@ -61,10 +61,8 @@ function visit(node, fn) {
 export function rehypeSharedHeadingIds() {
   return (tree, file) => {
     const source = file?.path ?? file?.history?.[0];
-    const locale = localeOfFile(source);
-    if (!locale) return;
-    const original = String(source).replace(new RegExp(`([\\\\/]content[\\\\/]docs)[\\\\/]${locale}([\\\\/])`, "i"), "$1$2");
-    if (!existsSync(original)) return;
+    const original = originalOf(source);
+    if (!original || !existsSync(original)) return;
     const ids = headingIds(readFileSync(path.normalize(original), "utf8"));
     let index = 0;
     visit(tree, (node) => {

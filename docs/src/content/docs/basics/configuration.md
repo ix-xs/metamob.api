@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: Every option of the client and of a single call, with its default. Nothing is required but an API key, and the defaults suit a script as well as a bot.
+description: "Chaque option du client et d'un appel isolé, avec sa valeur par défaut. Rien n'est requis à part une clé API, et les valeurs par défaut conviennent à un script aussi bien qu'à un bot."
 sidebar:
   order: 8
 ---
@@ -15,9 +15,9 @@ const metamob = new Metamob({
 });
 ```
 
-## The client
+## Le client
 
-Every option is optional. The key alone can be passed as a string.
+Toutes les options sont facultatives. La clé seule peut être passée sous forme de chaîne.
 
 ```ts
 const fromEnvironment = new Metamob();
@@ -25,11 +25,11 @@ const fromString = new Metamob(apiKey);
 const fromOptions = new Metamob({ apiKey });
 ```
 
-Create one client and keep it: the rate limiter and the cache live in it. Two clients for the same key count their requests separately and can go over the limit together.
+Créez un seul client et gardez-le : le limiteur et le cache vivent dedans. Deux clients pour la même clé comptent leurs requêtes séparément et peuvent dépasser la limite à eux deux.
 
-## One call
+## Un seul appel
 
-Every method takes its own arguments first, then an options object for that call only.
+Chaque méthode prend d'abord ses propres arguments, puis un objet d'options pour cet appel seulement.
 
 ```ts
 await metamob.monsters.get("Tofu", {}, { timeout: "5s", cache: false });
@@ -37,11 +37,11 @@ await metamob.quests.list({ apiKey: theirKey, retry: false });
 await metamob.users.get(username, { signal });
 ```
 
-When a method has filters, they come before the options: `monsters.get(monster, hint, options)`, `quests.monsters(slug, filters, options)`.
+Quand une méthode a des filtres, ils viennent avant les options : `monsters.get(monster, hint, options)`, `quests.monsters(slug, filters, options)`.
 
-## Listening to the client
+## Écouter le client
 
-The client emits what it does. `on` returns a function that stops listening.
+Le client émet ce qu'il fait. `on` renvoie une fonction qui arrête l'écoute.
 
 ```ts
 const stop = metamob.on("request", ({ method, verb, url, attempt }) => {
@@ -55,23 +55,23 @@ metamob.on("response", ({ method, status, duration, cached }) => {
 stop();
 ```
 
-| Event | When | Payload |
+| Événement | Quand | Contenu |
 | --- | --- | --- |
-| `request` | A request leaves | `method`, `verb`, `url`, `attempt` |
-| `response` | An answer arrived, or came from the cache | `method`, `status`, `duration`, `cached` |
-| `retry` | A request will be tried again | `method`, `attempt`, `delay`, `error` |
-| `rateLimit` | A call waited for its turn | `method`, `delay` |
-| `error` | A listener or a cache store threw | the error |
+| `request` | Une requête part | `method`, `verb`, `url`, `attempt` |
+| `response` | Une réponse est arrivée, ou vient du cache | `method`, `status`, `duration`, `cached` |
+| `retry` | Une requête va être retentée | `method`, `attempt`, `delay`, `error` |
+| `rateLimit` | Un appel a attendu son tour | `method`, `delay` |
+| `error` | Un écouteur ou un stockage de cache a levé une erreur | l'erreur |
 
-A URL in an event never contains the key.
+Une URL dans un événement ne contient jamais la clé.
 
-## Durations
+## Durées
 
-Wherever a duration is expected, write a number of milliseconds or a string with a unit: `"500ms"`, `"30s"`, `"10m"`, `"1h"`, `"1d"`.
+Partout où une durée est attendue, écrivez un nombre de millisecondes ou une chaîne avec une unité : `"500ms"`, `"30s"`, `"10m"`, `"1h"`, `"1d"`.
 
-## Another fetch, another host
+## Un autre fetch, un autre hôte
 
-`fetch` replaces the global one: to go through a proxy, to record requests in tests, or on a runtime that has none.
+`fetch` remplace le fetch global : pour passer par un proxy, pour enregistrer les requêtes dans des tests, ou sur un environnement qui n'en a pas.
 
 ```ts
 const calls: string[] = [];
@@ -86,50 +86,50 @@ const metamob = new Metamob({
 });
 ```
 
-`baseUrl` points the client at another host. The key is sent to that host: only use one you trust.
+`baseUrl` dirige le client vers un autre hôte. La clé est envoyée à cet hôte : n'en utilisez qu'un en qui vous avez confiance.
 
-## Reference
+## Référence
 
-Options of the client:
+Options du client :
 
-| Option | Default | Meaning |
+| Option | Par défaut | Signification |
 | --- | --- | --- |
-| `apiKey` | `METAMOB_API_KEY` | The key of the client |
-| `timeout` | `"30s"` | Time allowed for one attempt |
-| `retry` | 3 retries | `{ attempts, delay, maxDelay }`, or `false`. See [Errors](/basics/errors/#what-is-retried) |
-| `cache` | on, `"10m"` | `{ ttl, methods, max, store }`, or `false`. See [Caching](/basics/caching/) |
-| `rateLimit` | on, 60 a minute | `{ requests, per }`, or `false`. See [The rate limit](/basics/rate-limit/) |
-| `fetch` | the global `fetch` | A `fetch` to use instead |
-| `baseUrl` | `https://www.metamob.fr/api/v1` | Where the API is |
-| `headers` | none | Headers added to every request |
+| `apiKey` | `METAMOB_API_KEY` | La clé du client |
+| `timeout` | `"30s"` | Temps accordé à une tentative |
+| `retry` | 3 nouvelles tentatives | `{ attempts, delay, maxDelay }`, ou `false`. Voir [Erreurs](/basics/errors/#what-is-retried) |
+| `cache` | actif, `"10m"` | `{ ttl, methods, max, store }`, ou `false`. Voir [Cache](/basics/caching/) |
+| `rateLimit` | actif, 60 par minute | `{ requests, per }`, ou `false`. Voir [La limite de requêtes](/basics/rate-limit/) |
+| `fetch` | le `fetch` global | Un `fetch` à utiliser à la place |
+| `baseUrl` | `https://www.metamob.fr/api/v1` | Où se trouve l'API |
+| `headers` | aucun | En-têtes ajoutés à chaque requête |
 
-Options of a call:
+Options d'un appel :
 
-| Option | Meaning |
+| Option | Signification |
 | --- | --- |
-| `apiKey` | The key for this call. See [Acting for other players](/basics/many-keys/) |
-| `signal` | An `AbortSignal` that cancels the call |
-| `timeout` | Time allowed for one attempt of this call |
-| `retry` | Retry policy of this call, or `false` |
-| `cache` | Freshness of this answer, or `false` to skip the cache |
-| `headers` | Headers added to this request |
+| `apiKey` | La clé pour cet appel. Voir [Agir pour d'autres joueurs](/basics/many-keys/) |
+| `signal` | Un `AbortSignal` qui annule l'appel |
+| `timeout` | Temps accordé à une tentative de cet appel |
+| `retry` | Politique de nouvelles tentatives de cet appel, ou `false` |
+| `cache` | Durée de fraîcheur de cette réponse, ou `false` pour ignorer le cache |
+| `headers` | En-têtes ajoutés à cette requête |
 
-Members of the client:
+Membres du client :
 
-| Member | Meaning |
+| Membre | Signification |
 | --- | --- |
-| `me()` | The account of the key |
-| `quests`, `monsters`, `zones`, `users`, `conversations`, `kralove` | The resources |
-| `gameVersions`, `servers`, `monsterTypes`, `questTypes`, `questTemplates` | The reference lists |
-| `data` | [The data in the package](/basics/embedded-data/) |
-| `withKey(apiKey)` | A client for another key |
-| `rateLimit` | Where the key stands against the limit |
-| `on`, `once`, `off` | Events |
-| `clearCache()` | Empties the cache |
+| `me()` | Le compte de la clé |
+| `quests`, `monsters`, `zones`, `users`, `conversations`, `kralove` | Les ressources |
+| `gameVersions`, `servers`, `monsterTypes`, `questTypes`, `questTemplates` | Les listes de référence |
+| `data` | [Les données du paquet](/basics/embedded-data/) |
+| `withKey(apiKey)` | Un client pour une autre clé |
+| `rateLimit` | Où en est la clé par rapport à la limite |
+| `on`, `once`, `off` | Événements |
+| `clearCache()` | Vide le cache |
 
-## See also
+## Voir aussi
 
-- [Errors](/basics/errors/)
-- [Caching](/basics/caching/)
-- [The rate limit](/basics/rate-limit/)
-- [Runtimes](/reference/runtimes/)
+- [Erreurs](/basics/errors/)
+- [Cache](/basics/caching/)
+- [La limite de requêtes](/basics/rate-limit/)
+- [Environnements d'exécution](/reference/runtimes/)

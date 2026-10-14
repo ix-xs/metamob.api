@@ -1,6 +1,6 @@
 ---
-title: Trading
-description: Find the players who have what one of your quests needs and want what it has in spare, and decide monster by monster how many you offer and look for.
+title: Échanges
+description: Trouvez les joueurs qui ont ce qui manque à l'une de vos quêtes et qui recherchent ce qu'elle a en trop, et décidez monstre par monstre combien vous en proposez et combien vous en recherchez.
 sidebar:
   order: 3
 ---
@@ -15,19 +15,19 @@ for (const match of page.items) {
 }
 ```
 
-## How a quest trades
+## Comment une quête échange
 
-For each monster, a quest offers some and looks for some. By default the site calculates both from what you own and from `parallel_quests`: spares are offered, what is missing is wanted. Three settings bend that calculation:
+Pour chaque monstre, une quête en propose un certain nombre et en recherche un certain nombre. Par défaut, le site calcule les deux à partir de ce que vous possédez et de `parallel_quests` : les exemplaires en trop sont proposés, ce qui manque est recherché. Trois réglages modifient ce calcul :
 
-1. The trade mode of the quest. In expert mode, two thresholds say from which quantity a monster is offered and up to which it is wanted.
-2. The filters by kind: never offer, or never look for, monsters, bosses or archmonsters.
-3. A manual override on one monster, which wins over the rest.
+1. Le mode d'échange de la quête. En mode expert, deux seuils disent à partir de quelle quantité un monstre est proposé et jusqu'à quelle quantité il est recherché.
+2. Les filtres par type : ne jamais proposer, ou ne jamais rechercher, les monstres, les boss ou les archimonstres.
+3. Un réglage manuel sur un monstre, qui l'emporte sur tout le reste.
 
-The first two are settings of the quest, changed with [`quests.update()`](/resources/quests/#changing-settings). The third is below. What comes out of all three is what other players see: `want` and `offer` on each monster.
+Les deux premiers sont des réglages de la quête, modifiés avec [`quests.update()`](/resources/quests/#changing-settings). Le troisième est décrit plus bas. Ce qui ressort des trois est ce que voient les autres joueurs : `want` et `offer` sur chaque monstre.
 
-## Finding partners
+## Trouver des partenaires
 
-`quests.matches()` ranks the players you could trade with, like the "Best matching" order of the Community page of the site: same server, same kind of quest, active in the last two months. The order favours balance: partners with whom as many monsters go one way as the other come first. The API looks at the 500 most recently active players at most.
+`quests.matches()` classe les joueurs avec qui vous pourriez échanger, comme l'option « Meilleur matching » de la page Communauté du site : même serveur, même type de quête, actifs au cours des deux derniers mois. Le classement privilégie l'équilibre : les partenaires avec qui autant de monstres vont dans un sens que dans l'autre arrivent en premier. L'API examine au plus les 500 joueurs actifs le plus récemment.
 
 ```ts
 const best = await metamob.quests.matches(slug).take(10);
@@ -39,7 +39,7 @@ for (const match of best) {
 }
 ```
 
-Each match lists the monsters both ways, with quantities:
+Chaque correspondance liste les monstres dans les deux sens, avec les quantités :
 
 ```ts
 const match = await metamob.quests.matches(slug).first();
@@ -50,21 +50,21 @@ for (const monster of match?.matches.they_have_you_want ?? []) {
 }
 ```
 
-Two filters:
+Deux filtres :
 
 ```ts
-// Only partners with whom something can go both ways.
+// Seulement les partenaires avec qui un échange peut se faire dans les deux sens.
 await metamob.quests.matches(slug, { onlyPossibleTrades: true });
 
-// Only partners doing at least two quests in parallel.
+// Seulement les partenaires qui mènent au moins deux quêtes en parallèle.
 await metamob.quests.matches(slug, { minParallelQuests: 2 });
 ```
 
-It is a [list](/basics/lists/), 50 partners per page at most.
+C'est une [liste](/basics/lists/), de 50 partenaires par page au plus.
 
-## Who has one monster
+## Qui possède un monstre donné
 
-To look for a single monster rather than the best overall partner, filter the matches yourself:
+Pour chercher un seul monstre plutôt que le meilleur partenaire d'ensemble, filtrez vous-même les correspondances :
 
 ```ts
 const wanted = data.monster("Bouflet le Puéril");
@@ -76,45 +76,45 @@ for await (const match of metamob.quests.matches(slug)) {
 }
 ```
 
-## Looking at someone's quest
+## Regarder la quête d'un joueur
 
-Once you have a partner, their quest is public. `status` narrows it to what they offer or what they look for.
+Une fois que vous avez un partenaire, sa quête est publique. `status` la réduit à ce qu'il propose ou à ce qu'il recherche.
 
 ```ts
 const offered = await metamob.users.quest(username, slug, { status: "offered" }).all();
 const wanted = await metamob.users.quest(username, slug, { status: "wanted", type: "archimonstre" }).all();
 ```
 
-See [Other players](/resources/users/).
+Voir [Autres joueurs](/resources/users/).
 
-## Overriding one monster
+## Poser un réglage manuel sur un monstre
 
-`setTrade` forces how many of a monster the quest offers, looks for, or both.
+`setTrade` impose le nombre d'exemplaires d'un monstre que la quête propose, recherche, ou les deux.
 
 ```ts
-// Offer a single one, however many spares there are.
+// En proposer un seul, quel que soit le nombre d'exemplaires en trop.
 await metamob.quests.setTrade(slug, "Tofu Maléfique", { trade_offer: 1 });
 
-// Offer none: keep them all.
+// N'en proposer aucun : les garder tous.
 await metamob.quests.setTrade(slug, "Tofu Maléfique", { trade_offer: 0 });
 
-// Look for two, whatever the calculation says.
+// En rechercher deux, quoi que donne le calcul.
 const result = await metamob.quests.setTrade(slug, "Bouftou Royal", { trade_want: 2 });
-result.effective_want; // what the quest now looks for
+result.effective_want; // ce que la quête recherche désormais
 ```
 
-`null` is not 0. `0` forces "none". `null` removes the override and hands the value back to the calculation.
+`null` n'est pas 0. `0` impose « aucun ». `null` retire le réglage manuel et rend la valeur au calcul.
 
 ```ts
 await metamob.quests.setTrade(slug, "Tofu Maléfique", { trade_offer: null });
 
-// Both at once.
+// Les deux à la fois.
 await metamob.quests.resetTrade(slug, "Tofu Maléfique");
 ```
 
-A field you leave out is not touched.
+Un champ que vous omettez n'est pas touché.
 
-## Seeing your overrides
+## Voir vos réglages manuels
 
 ```ts
 for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) {
@@ -122,41 +122,42 @@ for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) 
 }
 ```
 
-`trade_offer` and `trade_want` are the overrides, `null` when there is none. `offer` and `want` are the result.
+`trade_offer` et `trade_want` sont les réglages manuels, `null` quand il n'y en a pas. `offer` et `want` sont le résultat.
 
-## Proposals
+## Propositions
 
-A trade proposal between two players is made on the site. The API shows the ones you sent and received, inside your [conversations](/resources/conversations/#trade-proposals), but does not create or confirm them.
+Une proposition d'échange entre deux joueurs se fait sur le site. L'API montre celles que vous avez envoyées et reçues, dans vos [conversations](/resources/conversations/#trade-proposals), mais elle ne les crée pas et ne les confirme pas.
 
-## Limits and errors
+## Limites et erreurs
 
-- `trade_offer` goes from 0 to the quantity you own, `trade_want` from 0 to 30. Outside, the API answers `BAD_REQUEST`.
-- `NOT_FOUND` for a quest that is not yours.
-- An empty override, with neither field, is refused before being sent.
+- `trade_offer` va de 0 à la quantité que vous possédez. Au-delà, l'API répond `BAD_REQUEST`.
+- `trade_want` commence à 0. Gardez-le dans ce dont une quête peut avoir besoin : l'API ne refuse pas une grande valeur.
+- `NOT_FOUND` pour une quête qui n'est pas la vôtre.
+- Un réglage manuel vide, sans aucun des deux champs, est refusé avant d'être envoyé.
 
-## Reference
+## Référence
 
-| Method | Returns |
+| Méthode | Renvoie |
 | --- | --- |
-| `quests.matches(slug, { minParallelQuests, onlyPossibleTrades, limit, offset }, options?)` | a list of `TradeMatch` |
+| `quests.matches(slug, { minParallelQuests, onlyPossibleTrades, limit, offset }, options?)` | une liste de `TradeMatch` |
 | `quests.setTrade(slug, monster, { trade_offer, trade_want }, options?)` | `TradeOverrideResult` |
 | `quests.resetTrade(slug, monster, options?)` | `TradeOverrideResult` |
 
-A `TradeMatch`:
+Un `TradeMatch` :
 
-| Field | Meaning |
+| Champ | Signification |
 | --- | --- |
 | `user` | `username`, `avatar`, `last_active` |
-| `quest` | `slug`, `character_name`, `parallel_quests` of their quest |
-| `matches.they_have_you_want` | What they can give you |
-| `matches.you_have_they_want` | What you can give them |
-| `match_score` | How many different monsters you can give, plus how many you can receive. The order is not this sum: balance comes first |
+| `quest` | `slug`, `character_name`, `parallel_quests` de sa quête |
+| `matches.they_have_you_want` | Ce qu'il peut vous donner |
+| `matches.you_have_they_want` | Ce que vous pouvez lui donner |
+| `match_score` | Nombre de monstres différents que vous pouvez donner, plus nombre de monstres différents que vous pouvez recevoir. Le classement ne suit pas cette somme : l'équilibre passe d'abord |
 
-Each monster of a match has `id`, `name`, `available`, `needed` and `covers_need`.
+Chaque monstre d'une correspondance a `id`, `name`, `available`, `needed` et `covers_need`.
 
-## See also
+## Voir aussi
 
-- [Your quests](/resources/quests/)
-- [Other players](/resources/users/)
+- [Vos quêtes](/resources/quests/)
+- [Autres joueurs](/resources/users/)
 - [Conversations](/resources/conversations/)
-- [A trade finder](/recipes/trade-finder/)
+- [Un chercheur d'échanges](/recipes/trade-finder/)

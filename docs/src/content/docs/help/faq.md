@@ -1,79 +1,79 @@
 ---
 title: FAQ
-description: Short answers to the questions that come up before and after installing the library, each with a link to the page that covers the subject.
+description: Des réponses courtes aux questions qui se posent avant et après l'installation de la bibliothèque, chacune avec un lien vers la page qui traite le sujet.
 ---
 
-## Is it official?
+## Est-ce officiel ?
 
-No. `@ix-xs/metamob.api` is an independent open-source project under the MIT license. It is not affiliated with Metamob or with Ankama. It follows the [public API of Metamob](https://www.metamob.fr/help/api) and is updated when the API changes.
+Non. `@ix-xs/metamob.api` est un projet open source indépendant, sous licence MIT. Il n'est affilié ni à Metamob ni à Ankama. Il suit l'[API publique de Metamob](https://www.metamob.fr/help/api) et est mis à jour quand l'API change.
 
-## What is Metamob?
+## Qu'est-ce que Metamob ?
 
-[Metamob](https://www.metamob.fr) is a free site where Dofus players track the monsters of the Ochre Dofus and Dokille quests and find each other to trade them. It covers Dofus (Unity), Dofus Retro and Dofus Touch.
+[Metamob](https://www.metamob.fr) est un site gratuit où les joueurs de Dofus suivent les monstres des quêtes du Dofus Ocre et du Dokille, et se trouvent entre eux pour les échanger. Il couvre Dofus (Unity), Dofus Retro et Dofus Touch.
 
-## Does it cover the whole API?
+## Couvre-t-il toute l'API ?
 
-Yes, the 35 endpoints. [Every method](/reference/methods/) lists them next to the method that calls each one.
+Oui, les 35 points d'accès. [Toutes les méthodes](/reference/methods/) les liste, avec la méthode qui appelle chacun.
 
-## Do I need an API key?
+## Ai-je besoin d'une clé API ?
 
-For every call to the API, yes: see [Your API key](/start/api-key/). The [data in the package](/basics/embedded-data/) needs none.
+Pour chaque appel à l'API, oui : voir [Votre clé API](/start/api-key/). Les [données du paquet](/basics/embedded-data/) n'en demandent aucune.
 
-## Is it free?
+## Est-ce gratuit ?
 
-The library is, and so is the API. The API is limited to 60 requests a minute per key, which the client respects for you: see [The rate limit](/basics/rate-limit/).
+La bibliothèque l'est, et l'API aussi. L'API est limitée à 60 requêtes par minute et par clé, ce que le client respecte pour vous : voir [La limite de requêtes](/basics/rate-limit/).
 
-## Can I raise the rate limit?
+## Puis-je augmenter la limite de requêtes ?
 
-No, and please do not try to get around it with several keys. Metamob is run by one person and the limit keeps it up for everyone. The library helps you need fewer requests instead: larger pages, a cache, batches, and reference data read from the package.
+Non, et merci de ne pas chercher à la contourner avec plusieurs clés. Metamob est tenu par une seule personne, et la limite garde le site disponible pour tout le monde. La bibliothèque vous aide plutôt à avoir besoin de moins de requêtes : des pages plus grandes, un cache, des lots, et des données de référence lues dans le paquet.
 
-## Does it work with TypeScript? With plain JavaScript?
+## Fonctionne-t-il avec TypeScript ? Avec du JavaScript simple ?
 
-Both. It is written in TypeScript and ships its types. In JavaScript, your editor still shows the documentation and completes the names of monsters.
+Les deux. Il est écrit en TypeScript et livre ses types. En JavaScript, votre éditeur affiche quand même la documentation et complète les noms des monstres.
 
-## ES modules or CommonJS?
+## Modules ES ou CommonJS ?
 
-Both: `import { Metamob }` and `const { Metamob } = require(...)`. See [Runtimes](/reference/runtimes/).
+Les deux : `import { Metamob }` et `const { Metamob } = require(...)`. Voir [Environnements d'exécution](/reference/runtimes/).
 
-## Can I use it in a browser?
+## Puis-je l'utiliser dans un navigateur ?
 
-Yes, with care for the key: see [Runtimes](/reference/runtimes/#browsers). The `data` object alone is safe anywhere.
+Oui, en faisant attention à la clé : voir [Environnements d'exécution](/reference/runtimes/#browsers). L'objet `data` seul est sans risque partout.
 
-## In which language are the names?
+## Dans quelle langue sont les noms ?
 
-French, English and Spanish. Every monster, zone and subzone has a `name` with `fr`, `en` and `es`, and all three are accepted wherever you write a name: see [Names and ids](/basics/names-and-ids/).
+En français, en anglais et en espagnol. Chaque monstre, zone et sous-zone a un `name` avec `fr`, `en` et `es`, et les trois sont acceptés partout où vous écrivez un nom : voir [Noms et identifiants](/basics/names-and-ids/).
 
-## How current is the data in the package?
+## Les données du paquet sont-elles à jour ?
 
-`data.fetchedAt` says when it was read from the API. Each release refreshes it. A monster newer than your version still works by name in calls, because the library asks the API when a name is unknown: see [The data in the package](/basics/embedded-data/#when-the-game-changes).
+`data.fetchedAt` indique quand elles ont été lues depuis l'API. Chaque version du paquet les actualise. Un monstre plus récent que votre version fonctionne quand même par son nom dans les appels, car la bibliothèque interroge l'API quand un nom est inconnu : voir [Les données du paquet](/basics/embedded-data/#when-the-game-changes).
 
-## Can it create a quest, send a message or propose a trade?
+## Peut-il créer une quête, envoyer un message ou proposer un échange ?
 
-No: the API does not offer it. Through the API you read almost everything, and you write to your own quests: settings, quantities and trade overrides. The rest is done on the site.
+Non : l'API ne le permet pas. Par l'API, vous lisez presque tout, et vous écrivez dans vos propres quêtes : réglages, quantités et réglages manuels d'échange. Le reste se fait sur le site.
 
-## Can I manage the quests of other players?
+## Puis-je gérer les quêtes d'autres joueurs ?
 
-With their own key, given willingly: see [Acting for other players](/basics/many-keys/). Without it you can read what they made public.
+Avec leur propre clé, donnée de plein gré : voir [Agir pour d'autres joueurs](/basics/many-keys/). Sans elle, vous pouvez lire ce qu'ils ont rendu public.
 
-## How do I add one to a quantity?
+## Comment ajouter 1 à une quantité ?
 
-Read it, then set it: `setMonster` sets a quantity. The snippet is in [Troubleshooting](/help/troubleshooting/#setmonster-did-not-add-one).
+Lisez-la, puis fixez-la : `setMonster` fixe une quantité. L'extrait de code se trouve dans [Dépannage](/help/troubleshooting/#setmonster-did-not-add-one).
 
-## Does it retry on its own?
+## Fait-il de nouvelles tentatives tout seul ?
 
-Yes: rate limits, server errors on reads, timeouts and network failures, up to 3 times with growing delays. See [Errors](/basics/errors/#what-is-retried).
+Oui : limites de requêtes, erreurs du serveur sur les lectures, délais dépassés et échecs réseau, jusqu'à 3 fois avec des délais croissants. Voir [Erreurs](/basics/errors/#what-is-retried).
 
-## I used version 4. What changes?
+## J'utilisais la version 4. Qu'est-ce qui change ?
 
-The way to call things, not what they do. [Coming from version 4](/start/migrating-from-v4/) maps every method.
+La façon d'appeler les choses, pas ce qu'elles font. [Depuis la version 4](/start/migrating-from-v4/) donne la correspondance de chaque méthode.
 
-## Where do I report a bug or ask for something?
+## Où signaler un bug ou demander quelque chose ?
 
-On [GitHub](https://github.com/ix-xs/metamob.api/issues). For a problem with the API itself or with the site, Metamob has its own contact on [metamob.fr](https://www.metamob.fr).
+Sur [GitHub](https://github.com/ix-xs/metamob.api/issues). Pour un problème avec l'API elle-même ou avec le site, Metamob a son propre contact sur [metamob.fr](https://www.metamob.fr).
 
-## See also
+## Voir aussi
 
-- [Quick start](/start/quick-start/)
-- [Troubleshooting](/help/troubleshooting/)
-- [Every method](/reference/methods/)
-- [The changelog](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md)
+- [Démarrage rapide](/start/quick-start/)
+- [Dépannage](/help/troubleshooting/)
+- [Toutes les méthodes](/reference/methods/)
+- [Le journal des modifications](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md)

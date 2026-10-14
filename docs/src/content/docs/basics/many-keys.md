@@ -1,6 +1,6 @@
 ---
-title: Acting for other players
-description: A bot or a website often works for players who each gave it their own API key. This page shows how to use those keys with one client, what they share and what stays separate.
+title: Agir pour d'autres joueurs
+description: "Un bot ou un site web travaille souvent pour des joueurs qui lui ont chacun confié leur propre clé API. Cette page montre comment utiliser ces clés avec un seul client, ce qu'elles partagent et ce qui reste séparé."
 sidebar:
   order: 7
 ---
@@ -12,15 +12,15 @@ const account = await theirs.me();
 await theirs.quests.setMonster(slug, "Tofu Maléfique", 1);
 ```
 
-## What this is for
+## À quoi cela sert
 
-An API key acts as its owner: it reads their quests and messages, and writes to their quests. A tool that manages the quests of several players therefore needs the key of each of them, given willingly.
+Une clé API agit en tant que son propriétaire : elle lit ses quêtes et ses messages, et écrit dans ses quêtes. Un outil qui gère les quêtes de plusieurs joueurs a donc besoin de la clé de chacun d'eux, donnée de plein gré.
 
-That is the only purpose of what follows. Each key has its own 60 requests a minute, and using several keys to send more requests for yourself is exactly what the limit is there to prevent. See [The rate limit](/basics/rate-limit/).
+C'est le seul usage de ce qui suit. Chaque clé a ses propres 60 requêtes par minute, et utiliser plusieurs clés pour envoyer plus de requêtes pour vous-même est exactement ce que la limite est là pour empêcher. Voir [La limite de requêtes](/basics/rate-limit/).
 
-## A client per player
+## Un client par joueur
 
-`withKey()` returns a client that uses another key. It is cheap to create: make one when a player's request comes in, and let it go afterwards.
+`withKey()` renvoie un client qui utilise une autre clé. Il ne coûte presque rien à créer : faites-en un quand la demande d'un joueur arrive, et laissez-le partir ensuite.
 
 ```ts
 async function progress(playerKey: string) {
@@ -31,27 +31,27 @@ async function progress(playerKey: string) {
 }
 ```
 
-The new client shares, with the one it comes from:
+Le nouveau client partage, avec celui dont il vient :
 
-- the options: timeout, retries, base URL, headers;
-- the cache: reference data fetched for one player serves all the others;
-- the listeners: `metamob.on("retry", ...)` hears every client;
-- the rate limiter, which keeps one window per key.
+- les options : délai, nouvelles tentatives, URL de base, en-têtes ;
+- le cache : les données de référence récupérées pour un joueur servent à tous les autres ;
+- les écouteurs : `metamob.on("retry", ...)` entend tous les clients ;
+- le limiteur, qui garde une fenêtre par clé.
 
-It does not share the account. What depends on a key is cached apart for each key, so two players can never see each other's quests.
+Il ne partage pas le compte. Ce qui dépend d'une clé est mis en cache à part pour chaque clé, donc deux joueurs ne peuvent jamais voir les quêtes l'un de l'autre.
 
-## A key for one call
+## Une clé pour un seul appel
 
-For a single call, the key goes in the options, as last argument.
+Pour un appel isolé, la clé se place dans les options, en dernier argument.
 
 ```ts
 const quests = await metamob.quests.list({ apiKey: theirKey });
 await metamob.quests.setMonster(slug, "Tofu Maléfique", 1, { apiKey: theirKey });
 ```
 
-## Finding out whose key it is
+## Savoir à qui appartient une clé
 
-A key says nothing about its owner until you ask. `me()` answers with the username, which you need for the public endpoints.
+Une clé ne dit rien de son propriétaire tant que vous ne le demandez pas. `me()` répond avec le pseudo, dont vous avez besoin pour les points d'accès publics.
 
 ```ts
 const player = metamob.withKey(theirKey);
@@ -59,7 +59,7 @@ const { username } = await player.me();
 const publicQuests = await player.users.quests(username);
 ```
 
-It is also how to validate a key when a player submits it:
+C'est aussi le moyen de valider une clé quand un joueur la fournit :
 
 ```ts
 async function register(playerKey: string) {
@@ -68,15 +68,15 @@ async function register(playerKey: string) {
     await db.players.save({ username, key: playerKey });
     return username;
   } catch (error) {
-    if (isMetamobError(error, "UNAUTHORIZED")) return undefined; // not a valid key
+    if (isMetamobError(error, "UNAUTHORIZED")) return undefined; // pas une clé valide
     throw error;
   }
 }
 ```
 
-## A client without a key of its own
+## Un client sans clé à lui
 
-A service that only ever acts for players does not need a key of its own. Create the client without one and derive from it. Make sure `METAMOB_API_KEY` is not set, or it would be used.
+Un service qui n'agit jamais que pour des joueurs n'a pas besoin d'une clé à lui. Créez le client sans clé et dérivez-en les autres. Assurez-vous que `METAMOB_API_KEY` n'est pas définie, sinon elle serait utilisée.
 
 ```ts
 const base = new Metamob({ cache: { ttl: "1h" } });
@@ -85,28 +85,28 @@ const player = base.withKey(theirKey);
 await player.quests.list();
 ```
 
-Calling `base` directly then throws `MISSING_API_KEY`, which is what you want: nothing can run without saying for whom.
+Appeler `base` directement lève alors `MISSING_API_KEY`, ce qui est le but : rien ne peut s'exécuter sans dire pour qui.
 
-## Storing keys
+## Conserver les clés
 
-A key is a password for a Metamob account.
+Une clé est un mot de passe pour un compte Metamob.
 
-- Store it encrypted, and never log it. The library keeps it out of URLs, errors and events.
-- Ask for it over HTTPS, in a form or a private command, never in a public channel.
-- Delete it when the player leaves, and tell them they can revoke it at any time on metamob.fr, in Settings > API key.
-- A `401` on a key that used to work means it was revoked: stop using it.
+- Conservez-la chiffrée, et ne l'écrivez jamais dans un journal. La bibliothèque la tient hors des URL, des erreurs et des événements.
+- Demandez-la en HTTPS, dans un formulaire ou une commande privée, jamais dans un salon public.
+- Supprimez-la quand le joueur part, et dites-lui qu'il peut la révoquer à tout moment sur metamob.fr, dans Paramètres > Clé API.
+- Un `401` sur une clé qui fonctionnait signifie qu'elle a été révoquée : cessez de l'utiliser.
 
-## Reference
+## Référence
 
 | | |
 | --- | --- |
-| `metamob.withKey(apiKey)` | A client for that key, sharing options, cache, listeners and limiter |
-| `{ apiKey }` as last argument | The key for one call |
-| `metamob.me()` | The account of the key in use |
+| `metamob.withKey(apiKey)` | Un client pour cette clé, qui partage les options, le cache, les écouteurs et le limiteur |
+| `{ apiKey }` en dernier argument | La clé pour un seul appel |
+| `metamob.me()` | Le compte de la clé utilisée |
 
-## See also
+## Voir aussi
 
-- [Your API key](/start/api-key/)
-- [The rate limit](/basics/rate-limit/)
-- [Account](/resources/account/)
-- [A Discord command with autocomplete](/recipes/discord-command/)
+- [Votre clé API](/start/api-key/)
+- [La limite de requêtes](/basics/rate-limit/)
+- [Compte](/resources/account/)
+- [Une commande Discord avec autocomplétion](/recipes/discord-command/)

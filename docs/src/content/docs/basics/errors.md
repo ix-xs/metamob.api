@@ -1,6 +1,6 @@
 ---
-title: Errors
-description: A call returns the data or throws. Every error has a typed code, and the ones that come from the API also carry the status and the message it sent. This page shows how to tell them apart and what is retried for you.
+title: Erreurs
+description: "Un appel renvoie les données ou lève une erreur. Chaque erreur a un code typé, et celles qui viennent de l'API portent aussi le statut et le message qu'elle a envoyés. Cette page montre comment les distinguer et ce qui est retenté pour vous."
 sidebar:
   order: 3
 ---
@@ -14,37 +14,37 @@ try {
 }
 ```
 
-## Three kinds of errors
+## Trois sortes d'erreurs
 
-| Class | When | Extra |
+| Classe | Quand | En plus |
 | --- | --- | --- |
-| `MetamobApiError` | The API answered with an error status | `status`, `messages`, `retryAfter`, `body`, `method`, `url` |
-| `MetamobRequestError` | No usable answer: network failure, timeout, abort, invalid JSON | `method`, `cause` |
-| `MetamobArgumentError` | The call was refused before being sent: bad argument, unknown name, no key | `suggestions` |
+| `MetamobApiError` | L'API a répondu avec un statut d'erreur | `status`, `messages`, `retryAfter`, `body`, `method`, `url` |
+| `MetamobRequestError` | Aucune réponse exploitable : panne réseau, délai dépassé, annulation, JSON invalide | `method`, `cause` |
+| `MetamobArgumentError` | L'appel a été refusé avant d'être envoyé : mauvais argument, nom inconnu, pas de clé | `suggestions` |
 
-All three extend `MetamobError`, which has a `code`.
+Les trois étendent `MetamobError`, qui a un `code`.
 
-## Testing an error
+## Tester une erreur
 
-`isMetamobError(error)` tells whether an error comes from the library. With a code, it also checks the code.
+`isMetamobError(error)` indique si une erreur vient de la bibliothèque. Avec un code, elle vérifie aussi le code.
 
 ```ts
 try {
   await metamob.quests.setMonster(slug, "Bouftou Royal", 3);
 } catch (error) {
   if (isMetamobError(error, "UNKNOWN_NAME")) {
-    // a typo in the name of the monster
+    // une faute de frappe dans le nom du monstre
   } else if (isMetamobError(error, "NOT_FOUND")) {
-    // the quest does not exist, or is not yours
+    // la quête n'existe pas, ou n'est pas à vous
   } else if (isMetamobError(error, "UNAUTHORIZED")) {
-    // the key was revoked
+    // la clé a été révoquée
   } else {
     throw error;
   }
 }
 ```
 
-An API error has shortcuts for the three you test most:
+Une erreur de l'API a des raccourcis pour les trois que vous testez le plus :
 
 ```ts
 try {
@@ -54,43 +54,43 @@ try {
     error.isNotFound; // 404
     error.isUnauthorized; // 401
     error.isRateLimited; // 429
-    error.status; // the HTTP status
-    error.messages; // what the API said, by field: { error: "Quest not found" }
+    error.status; // le statut HTTP
+    error.messages; // ce que l'API a dit, par champ : { error: "Quest not found" }
   }
 }
 ```
 
-## What a 404 means
+## Ce que signifie un 404
 
-The API answers 404 for what does not exist and for what is not yours. `quests.get()`, `quests.monsters()` and every write answer `NOT_FOUND` on a quest of another account, whether it exists or not. `users.quest()` answers `NOT_FOUND` on a hidden quest.
+L'API répond 404 pour ce qui n'existe pas et pour ce qui n'est pas à vous. `quests.get()`, `quests.monsters()` et toutes les écritures répondent `NOT_FOUND` sur une quête d'un autre compte, qu'elle existe ou non. `users.quest()` répond `NOT_FOUND` sur une quête masquée.
 
-## What is retried
+## Ce qui est retenté
 
-Before an error reaches you, the library has already tried again when trying again can help.
+Avant qu'une erreur vous parvienne, la bibliothèque a déjà réessayé quand réessayer peut aider.
 
-| Failure | Retried |
+| Échec | Retenté |
 | --- | --- |
-| 429, rate limit | Yes, after the wait the API asks for |
-| 502, 503, 504 | Yes |
-| 500 | On reads only |
-| Network failure, timeout | Yes |
-| 400, 401, 403, 404 | No |
-| Aborted with your `signal` | No |
+| 429, limite de requêtes | Oui, après l'attente que l'API demande |
+| 502, 503, 504 | Oui |
+| 500 | Sur les lectures seulement |
+| Panne réseau, délai dépassé | Oui |
+| 400, 401, 403, 404 | Non |
+| Annulé avec votre `signal` | Non |
 
-By default there are up to 3 more attempts. The delay starts at 500 ms and doubles each time, up to 60 seconds. When the API sends `Retry-After`, that wait is used instead. A `Retry-After` longer than `maxDelay` is not waited for: the error is thrown at once, with its `retryAfter` in seconds.
+Par défaut, il y a jusqu'à 3 tentatives supplémentaires. Le délai commence à 500 ms et double à chaque fois, jusqu'à 60 secondes. Quand l'API envoie `Retry-After`, c'est cette attente qui est utilisée. Un `Retry-After` plus long que `maxDelay` n'est pas attendu : l'erreur est levée aussitôt, avec son `retryAfter` en secondes.
 
-Every write of this API sets a value, so sending one twice gives the same result. That is why writes are retried too.
+Chaque écriture de cette API fixe une valeur, donc en envoyer une deux fois donne le même résultat. C'est pourquoi les écritures sont retentées elles aussi.
 
 ```ts
-// For the whole client.
+// Pour tout le client.
 const patient = new Metamob({ retry: { attempts: 5, delay: "1s", maxDelay: "2m" } });
 const strict = new Metamob({ retry: false });
 
-// For one call.
+// Pour un seul appel.
 await metamob.quests.get(slug, { retry: false });
 ```
 
-To see retries as they happen:
+Pour voir les nouvelles tentatives au moment où elles ont lieu :
 
 ```ts
 metamob.on("retry", ({ method, attempt, delay, error }) => {
@@ -98,9 +98,9 @@ metamob.on("retry", ({ method, attempt, delay, error }) => {
 });
 ```
 
-## Timeouts and cancellation
+## Délais et annulation
 
-One attempt has 30 seconds by default. `timeout` changes it, for the client or for a call. A `signal` cancels a call from outside, including while it waits for the rate limiter.
+Une tentative dispose de 30 secondes par défaut. `timeout` change ce délai, pour le client ou pour un appel. Un `signal` annule un appel de l'extérieur, y compris pendant qu'il attend le limiteur.
 
 ```ts
 const controller = new AbortController();
@@ -114,34 +114,34 @@ try {
 }
 ```
 
-## Arguments are checked first
+## Les arguments sont vérifiés d'abord
 
-What can be known to be wrong without asking the API is refused locally, with `INVALID_ARGUMENT`: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format. No request is spent.
+Ce dont on peut savoir que c'est faux sans interroger l'API est refusé localement, avec `INVALID_ARGUMENT` : un slug vide, une quantité négative, une recherche de moins de 3 caractères, une date au mauvais format. Aucune requête n'est dépensée.
 
-## Reference
+## Référence
 
-| Code | Meaning |
+| Code | Signification |
 | --- | --- |
-| `BAD_REQUEST` | 400: the API refused the parameters |
-| `UNAUTHORIZED` | 401: missing, invalid or revoked key |
+| `BAD_REQUEST` | 400 : l'API a refusé les paramètres |
+| `UNAUTHORIZED` | 401 : clé manquante, invalide ou révoquée |
 | `FORBIDDEN` | 403 |
-| `NOT_FOUND` | 404: does not exist, or is not yours |
-| `RATE_LIMITED` | 429, after the retries |
-| `SERVER_ERROR` | 5xx, after the retries |
-| `API_ERROR` | Any other error status |
-| `TIMEOUT` | No answer in time |
-| `NETWORK` | The request could not be made |
-| `ABORTED` | Cancelled with your `signal` |
-| `PARSE_ERROR` | The answer was not valid JSON |
-| `MISSING_API_KEY` | No key in the options, the call or the environment |
-| `INVALID_ARGUMENT` | An argument is wrong |
-| `UNKNOWN_NAME` | No monster, zone or server has this name |
+| `NOT_FOUND` | 404 : n'existe pas, ou n'est pas à vous |
+| `RATE_LIMITED` | 429, après les nouvelles tentatives |
+| `SERVER_ERROR` | 5xx, après les nouvelles tentatives |
+| `API_ERROR` | Tout autre statut d'erreur |
+| `TIMEOUT` | Pas de réponse à temps |
+| `NETWORK` | La requête n'a pas pu être faite |
+| `ABORTED` | Annulé avec votre `signal` |
+| `PARSE_ERROR` | La réponse n'était pas du JSON valide |
+| `MISSING_API_KEY` | Pas de clé dans les options, l'appel ou l'environnement |
+| `INVALID_ARGUMENT` | Un argument est faux |
+| `UNKNOWN_NAME` | Aucun monstre, zone ou serveur ne porte ce nom |
 
-[Error codes](/reference/errors/) lists the properties of each class.
+[Codes d'erreur](/reference/errors/) liste les propriétés de chaque classe.
 
-## See also
+## Voir aussi
 
-- [The rate limit](/basics/rate-limit/)
-- [Names and ids](/basics/names-and-ids/)
+- [La limite de requêtes](/basics/rate-limit/)
+- [Noms et identifiants](/basics/names-and-ids/)
 - [Configuration](/basics/configuration/)
-- [Troubleshooting](/help/troubleshooting/)
+- [Dépannage](/help/troubleshooting/)

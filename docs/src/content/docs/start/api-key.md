@@ -1,43 +1,43 @@
 ---
-title: Your API key
-description: Where a Metamob API key comes from, what it gives access to, how to hand it to the client and how to keep it safe.
+title: Votre clé API
+description: "D'où vient une clé API Metamob, à quoi elle donne accès, comment la transmettre au client et comment la protéger."
 ---
 
 ```ts
-// Reads the METAMOB_API_KEY environment variable.
+// Lit la variable d'environnement METAMOB_API_KEY.
 const metamob = new Metamob();
 
-// Or pass it yourself.
+// Ou passez-la vous-même.
 const explicit = new Metamob({ apiKey });
 const short = new Metamob(apiKey);
 ```
 
-## Creating a key
+## Créer une clé
 
-Sign in on [metamob.fr](https://www.metamob.fr), open **Settings** and, in the **API key** section, generate a key. Copy it right away: the site shows it once. The key is a long string of letters and digits. It belongs to your account, and every call made with it is made as you.
+Connectez-vous sur [metamob.fr](https://www.metamob.fr), ouvrez **Paramètres** et, dans la section **Clé API**, générez une clé. Copiez-la aussitôt : le site ne l'affiche qu'une fois. La clé est une longue suite de lettres et de chiffres. Elle appartient à votre compte, et chaque appel fait avec elle est fait en votre nom.
 
-A key cannot be limited to reading: it always gives full access.
+Une clé ne peut pas être limitée à la lecture : elle donne toujours un accès complet.
 
-## What a key gives access to
+## À quoi une clé donne accès
 
-| With any key | Only with the key of the account |
+| Avec n'importe quelle clé | Seulement avec la clé du compte |
 | --- | --- |
-| Monsters, zones, servers, quest templates | `metamob.me()` |
-| Public profiles and public quests of any player | `metamob.quests`: settings, monsters, matches, progress, and every write |
-| Kralamoure events | `metamob.conversations`: private messages and trade proposals |
+| Monstres, zones, serveurs, modèles de quête | `metamob.me()` |
+| Profils publics et quêtes publiques de n'importe quel joueur | `metamob.quests` : réglages, monstres, correspondances, progression, et toutes les écritures |
+| Événements Kralamoure | `metamob.conversations` : messages privés et propositions d'échange |
 
-There is no call without a key, not even for public data.
+Aucun appel ne se fait sans clé, même pour des données publiques.
 
-## Giving the key to the client
+## Donner la clé au client
 
-In order of preference:
+Par ordre de préférence :
 
-1. The `METAMOB_API_KEY` environment variable. Nothing to write, nothing to leak in a commit.
-2. The `apiKey` option of the client.
-3. `{ apiKey }` as last argument of one call, or [`metamob.withKey()`](/basics/many-keys/), when you act for another player.
+1. La variable d'environnement `METAMOB_API_KEY`. Rien à écrire, rien qui puisse fuiter dans un commit.
+2. L'option `apiKey` du client.
+3. `{ apiKey }` en dernier argument d'un appel, ou [`metamob.withKey()`](/basics/many-keys/), quand vous agissez pour un autre joueur.
 
 ```bash
-# .env, kept out of git
+# .env, tenu hors de git
 METAMOB_API_KEY=your-key
 ```
 
@@ -45,11 +45,11 @@ METAMOB_API_KEY=your-key
 const quests = await metamob.quests.list({ apiKey: theirKey });
 ```
 
-Without a key anywhere, the first call throws an error with the code `MISSING_API_KEY`.
+Sans clé nulle part, le premier appel lève une erreur avec le code `MISSING_API_KEY`.
 
-## Checking a key
+## Vérifier une clé
 
-`metamob.me()` is the cheapest way to know whether a key works and whose it is.
+`metamob.me()` est le moyen le moins coûteux de savoir si une clé fonctionne et à qui elle appartient.
 
 ```ts
 try {
@@ -61,20 +61,20 @@ try {
 }
 ```
 
-## Keeping it safe
+## La protéger
 
-- Never commit a key, paste it in an issue or log it. The library never puts it in a URL, an error or an event.
-- A key in a browser is visible to whoever opens the page. Call the API from your server unless the page is only ever used by the owner of the key.
-- When players give you their key, store it like a password: encrypted, and deleted when they leave.
-- If a key leaks, create a new one on the same page of metamob.fr. The old one stops working.
+- Ne mettez jamais une clé dans un commit, dans un ticket ou dans un journal. La bibliothèque ne la place jamais dans une URL, une erreur ou un événement.
+- Une clé dans un navigateur est visible par quiconque ouvre la page. Appelez l'API depuis votre serveur, sauf si la page n'est jamais utilisée que par le propriétaire de la clé.
+- Quand des joueurs vous confient leur clé, conservez-la comme un mot de passe : chiffrée, et supprimée quand ils partent.
+- Si une clé fuite, créez-en une nouvelle sur la même page de metamob.fr. L'ancienne cesse de fonctionner.
 
-## The rate limit goes with the key
+## La limite de requêtes suit la clé
 
-Each key has its own 60 requests a minute. That is what makes a bot for many players possible, each with their key. It is not an invitation to collect keys to go faster: the limit protects a server run by one person. See [The rate limit](/basics/rate-limit/).
+Chaque clé a ses propres 60 requêtes par minute. C'est ce qui rend possible un bot pour de nombreux joueurs, chacun avec sa clé. Ce n'est pas une invitation à rassembler des clés pour aller plus vite : la limite protège un serveur tenu par une seule personne. Voir [La limite de requêtes](/basics/rate-limit/).
 
-## See also
+## Voir aussi
 
-- [Quick start](/start/quick-start/)
-- [Acting for other players](/basics/many-keys/)
-- [Account](/resources/account/)
-- [Errors](/basics/errors/)
+- [Démarrage rapide](/start/quick-start/)
+- [Agir pour d'autres joueurs](/basics/many-keys/)
+- [Compte](/resources/account/)
+- [Erreurs](/basics/errors/)

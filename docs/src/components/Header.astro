@@ -25,7 +25,7 @@ const areas = [
   { label: t("nav.recipes"), href: "/recipes/discord-command/", current: inRecipes },
   { label: t("nav.reference"), href: "/reference/methods/", current: inReference },
 ];
-// The host serves one "not found" page, the English one, whatever the address
+// The host serves one "not found" page, the French one, whatever the address
 // asked for. Under a translation, it hands over to that language's own.
 const notFound = /^\/404(?:\.html|\/)?$/.test(Astro.url.pathname.slice(base.length) || "/");
 const translatedNotFound = LOCALES.map((code) => [withBase(`/${code}/`, base), withBase(`/${code}/404/`, base)]);

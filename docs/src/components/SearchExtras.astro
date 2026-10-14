@@ -35,7 +35,7 @@ function area(slug: string): string {
 const pages = (
   await Promise.all(
     STARTING_POINTS.map(async (slug) => {
-      // The page in this language when it is translated, the English one otherwise.
+      // The page in this language when it is translated, the one at the root otherwise.
       const entry = (locale && (await getEntry("docs", `${locale}/${slug}`))) || (await getEntry("docs", slug));
       return entry ? { title: entry.data.title, area: area(slug), href: href(`/${slug}/`, locale) } : undefined;
     }),

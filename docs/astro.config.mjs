@@ -28,7 +28,7 @@ const exists = (slug) => ["md", "mdx"].some((extension) => existsSync(new URL(`.
 const pages = (...slugs) => slugs.filter((slug) => !draft || exists(slug)).map((slug) => ({ slug }));
 
 /** One section of the sidebar, listing every page of a folder in its own order. */
-const section = (label, fr, directory, collapsed = true) => ({ label, translations: { fr }, collapsed, items: [{ autogenerate: { directory } }] });
+const section = (fr, en, es, directory, collapsed = true) => ({ label: fr, translations: { en, es }, collapsed, items: [{ autogenerate: { directory } }] });
 
 // https://starlight.astro.build/reference/configuration/
 export default defineConfig({
@@ -44,16 +44,18 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "metamob.api",
-      // English is the original and keeps the addresses it always had; a
-      // translation lives under its language code. A page that is not
-      // translated yet falls back to English, with a notice.
+      // French sits at the root: Dofus and Metamob are French, and so are
+      // most readers. English, the language the pages are written in first,
+      // and Spanish live under their language code. A page that is not
+      // translated yet falls back to French, with a notice.
       defaultLocale: "root",
       locales: {
-        root: { label: "English", lang: "en" },
-        fr: { label: "Français", lang: "fr" },
+        root: { label: "Français", lang: "fr" },
+        en: { label: "English", lang: "en" },
+        es: { label: "Español", lang: "es" },
       },
       description:
-        "The complete Metamob API client for JavaScript and TypeScript: every endpoint, typed, with monsters, zones and servers called by their name in French, English or Spanish. Lazy pagination, a built-in rate limiter, retries and caching, with no dependency.",
+        "Le client complet de l'API Metamob pour JavaScript et TypeScript : tous les points d'accès, typés, avec les monstres, les zones et les serveurs appelés par leur nom en français, en anglais ou en espagnol. Pagination paresseuse, limiteur de requêtes intégré, nouvelles tentatives et cache, sans aucune dépendance.",
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/ix-xs/metamob.api" }],
       editLink: {
         baseUrl: "https://github.com/ix-xs/metamob.api/edit/main/docs/",
@@ -113,17 +115,17 @@ export default defineConfig({
       // One page per topic, grouped by what you are trying to do.
       sidebar: [
         {
-          label: "Start",
-          translations: { fr: "Démarrer" },
+          label: "Démarrer",
+          translations: { en: "Start", es: "Empezar" },
           // The landing page is not listed: the sidebar only holds pages of the documentation, and the brand in the header leads home.
           items: pages("start/quick-start", "start/api-key", "start/migrating-from-v4"),
         },
-        section("Basics", "Bases", "basics", false),
-        section("Resources", "Ressources", "resources"),
-        section("Recipes", "Recettes", "recipes"),
+        section("Bases", "Basics", "Bases", "basics", false),
+        section("Ressources", "Resources", "Recursos", "resources"),
+        section("Recettes", "Recipes", "Recetas", "recipes"),
         {
-          label: "Reference",
-          translations: { fr: "Référence" },
+          label: "Référence",
+          translations: { en: "Reference", es: "Referencia" },
           collapsed: true,
           items: pages("reference/methods", "reference/errors", "reference/exports", "reference/runtimes", "help/troubleshooting", "help/faq"),
         },

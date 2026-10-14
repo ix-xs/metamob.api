@@ -1,6 +1,6 @@
 ---
-title: All exports
-description: Everything the package exports, values and types, with a line on each and the page that explains it. There is a single entry point.
+title: Tous les exports
+description: "Tout ce que le paquet exporte, valeurs et types, avec une ligne sur chacun et la page qui l'explique. Il y a un seul point d'entrée."
 ---
 
 ```ts
@@ -8,44 +8,44 @@ import { Metamob, data, urls, isMetamobError } from "@ix-xs/metamob.api";
 import type { Monster, OwnQuest, MonsterLike } from "@ix-xs/metamob.api";
 ```
 
-The package has one entry point, `@ix-xs/metamob.api`, for ES modules and CommonJS alike. Every type is exported from it.
+Le paquet a un seul point d'entrée, `@ix-xs/metamob.api`, pour les modules ES comme pour CommonJS. Tous les types en sont exportés.
 
-## Values
+## Valeurs
 
-| Export | What it is | Page |
+| Export | Ce que c'est | Page |
 | --- | --- | --- |
-| `Metamob` | The client | [Configuration](/basics/configuration/) |
-| `data` | The reference data that ships with the package | [The data in the package](/basics/embedded-data/) |
-| `Dataset` | The class of `data` | [The data in the package](/basics/embedded-data/) |
-| `urls` | Addresses on metamob.fr: pictures and profiles | below |
-| `MetamobError` | Base class of every error | [Error codes](/reference/errors/) |
-| `MetamobApiError` | The API answered with an error status | [Error codes](/reference/errors/#metamobapierror) |
-| `MetamobRequestError` | Timeout, network failure, abort, invalid JSON | [Error codes](/reference/errors/#metamobrequesterror) |
-| `MetamobArgumentError` | Refused before being sent | [Error codes](/reference/errors/#metamobargumenterror) |
-| `isMetamobError` | Type guard for the errors of the library | [Errors](/basics/errors/#testing-an-error) |
-| `ListRequest` | What a paginated method returns | [Lists](/basics/lists/) |
-| `Page` | One page of a list | [Lists](/basics/lists/#one-page) |
-| `MemoryCache` | The built-in cache store | [Caching](/basics/caching/) |
-| `normalizeName` | The name comparison the library uses | [Names and ids](/basics/names-and-ids/#how-a-name-is-matched) |
-| `METHODS` | The 35 endpoints, by method name | [Every method](/reference/methods/) |
-| `VERSION` | The version of the package | |
+| `Metamob` | Le client | [Configuration](/basics/configuration/) |
+| `data` | Les données de référence livrées avec le paquet | [Les données du paquet](/basics/embedded-data/) |
+| `Dataset` | La classe de `data` | [Les données du paquet](/basics/embedded-data/) |
+| `urls` | Des adresses sur metamob.fr : images et profils | ci-dessous |
+| `MetamobError` | La classe de base de toutes les erreurs | [Codes d'erreur](/reference/errors/) |
+| `MetamobApiError` | L'API a répondu avec un statut d'erreur | [Codes d'erreur](/reference/errors/#metamobapierror) |
+| `MetamobRequestError` | Délai dépassé, échec réseau, annulation, JSON invalide | [Codes d'erreur](/reference/errors/#metamobrequesterror) |
+| `MetamobArgumentError` | Refusé avant l'envoi | [Codes d'erreur](/reference/errors/#metamobargumenterror) |
+| `isMetamobError` | Garde de type pour les erreurs de la bibliothèque | [Erreurs](/basics/errors/#testing-an-error) |
+| `ListRequest` | Ce que renvoie une méthode paginée | [Listes](/basics/lists/) |
+| `Page` | Une page d'une liste | [Listes](/basics/lists/#one-page) |
+| `MemoryCache` | Le stockage intégré du cache | [Cache](/basics/caching/) |
+| `normalizeName` | La comparaison de noms qu'utilise la bibliothèque | [Noms et identifiants](/basics/names-and-ids/#how-a-name-is-matched) |
+| `METHODS` | Les 35 points d'accès, par nom de méthode | [Toutes les méthodes](/reference/methods/) |
+| `VERSION` | La version du paquet | |
 
 ## urls
 
-Builds addresses from what the API returns. Nothing is fetched.
+Construit des adresses à partir de ce que renvoie l'API. Aucune requête n'est faite.
 
 ```ts
 const monster = await metamob.monsters.get("Tofu Maléfique");
 
-urls.monsterImage(monster); // from a monster, an avatar, or a file name
-urls.questTypeImage("ocre.png"); // from a quest type or a file name
-urls.profile("Ix-xs"); // from a user or a username
+urls.monsterImage(monster); // à partir d'un monstre, d'un avatar ou d'un nom de fichier
+urls.questTypeImage("ocre.png"); // à partir d'un type de quête ou d'un nom de fichier
+urls.profile("Ix-xs"); // à partir d'un utilisateur ou d'un pseudo
 urls.site; // "https://www.metamob.fr"
 ```
 
 ## normalizeName
 
-The comparison applied to names: accents removed, case ignored, apostrophes and dashes unified, spaces collapsed. Use it to compare what a user typed with a name the way the library does.
+La comparaison appliquée aux noms : accents retirés, casse ignorée, apostrophes et tirets unifiés, espaces réduits. Utilisez-la pour comparer ce qu'un utilisateur a tapé avec un nom, de la même façon que la bibliothèque.
 
 ```ts
 normalizeName("Tofu  MALÉFIQUE"); // "tofu malefique"
@@ -54,78 +54,78 @@ normalizeName(monsters[0]?.name.fr ?? "") === normalizeName("tofu malefique");
 
 ## METHODS
 
-A description of each endpoint, keyed by the name of its method. It is what the keys of `cache.methods` are checked against.
+Une description de chaque point d'accès, rangée sous le nom de sa méthode. C'est par rapport à elle que les clés de `cache.methods` sont vérifiées.
 
 ```ts
 METHODS["quests.setMonster"]; // { id, verb: "PATCH", path: "/quests/{slug}/monsters/{monsterId}", scope: "account" }
 Object.keys(METHODS).length; // 35
 ```
 
-## Types of the client
+## Types du client
 
-| Type | What it describes |
+| Type | Ce qu'il décrit |
 | --- | --- |
-| `MetamobOptions` | Options of the client |
-| `RequestOptions` | Options of one call |
+| `MetamobOptions` | Les options du client |
+| `RequestOptions` | Les options d'un appel |
 | `RetryOptions` | `{ attempts, delay, maxDelay }` |
-| `CacheOptions`, `CacheStore`, `CacheEntry` | The cache and its store |
-| `RateLimitOptions`, `RateLimitState` | The limiter and `metamob.rateLimit` |
-| `ClientEvents` | The events and their payloads |
-| `Duration` | A number of milliseconds or a string such as `"10m"` |
-| `MethodId`, `MethodSpec` | A method name, and its description in `METHODS` |
-| `MetamobErrorCode` | The error codes |
-| `CollectOptions`, `PageParams` | `{ limit }` of `all()` and `pages()`, `{ limit, offset }` of a list |
+| `CacheOptions`, `CacheStore`, `CacheEntry` | Le cache et son stockage |
+| `RateLimitOptions`, `RateLimitState` | Le limiteur et `metamob.rateLimit` |
+| `ClientEvents` | Les événements et les données qu'ils transmettent |
+| `Duration` | Un nombre de millisecondes ou une chaîne comme `"10m"` |
+| `MethodId`, `MethodSpec` | Un nom de méthode, et sa description dans `METHODS` |
+| `MetamobErrorCode` | Les codes d'erreur |
+| `CollectOptions`, `PageParams` | `{ limit }` de `all()` et `pages()`, `{ limit, offset }` d'une liste |
 
-## Types of what you pass
+## Types de ce que vous passez
 
-| Type | What it accepts |
+| Type | Ce qu'il accepte |
 | --- | --- |
-| `MonsterLike`, `ZoneLike`, `SubzoneLike`, `ServerLike` | An id, a name, an object with an `id` |
-| `GameVersionLike`, `MonsterTypeLike`, `QuestTypeLike` | An id, a name, an object with an `id` |
-| `QuestTemplateLike` | An id, `{ id }`, `{ questType, gameVersion }` |
-| `MonsterHint`, `MonsterSearchOptions` | What tells apart two monsters of the same name; options of `data.searchMonsters()` |
-| `MonsterListParams`, `TemplateMonstersParams` | Filters of `monsters.list()` and `questTemplates.monsters()` |
+| `MonsterLike`, `ZoneLike`, `SubzoneLike`, `ServerLike` | Un identifiant, un nom, un objet avec un `id` |
+| `GameVersionLike`, `MonsterTypeLike`, `QuestTypeLike` | Un identifiant, un nom, un objet avec un `id` |
+| `QuestTemplateLike` | Un identifiant, `{ id }`, `{ questType, gameVersion }` |
+| `MonsterHint`, `MonsterSearchOptions` | Ce qui distingue deux monstres du même nom ; les options de `data.searchMonsters()` |
+| `MonsterListParams`, `TemplateMonstersParams` | Les filtres de `monsters.list()` et de `questTemplates.monsters()` |
 | `SubzoneParams` | `{ zone }` |
-| `KraloveListParams` | Filters of `kralove.list()` |
-| `UserSearchParams`, `PublicQuestParams` | Filters of `users.search()` and `users.quest()` |
-| `ConversationListParams`, `MessagesParams` | Filters of the conversations |
-| `OwnQuestMonstersParams`, `MatchesParams`, `QuestZonesParams` | Filters of `quests.monsters()`, `quests.matches()`, `quests.zones()` |
-| `QuestUpdate`, `TradeOverride`, `MonsterQuantities` | What `quests.update()`, `quests.setTrade()` and `quests.setMonsters()` take |
+| `KraloveListParams` | Les filtres de `kralove.list()` |
+| `UserSearchParams`, `PublicQuestParams` | Les filtres de `users.search()` et de `users.quest()` |
+| `ConversationListParams`, `MessagesParams` | Les filtres des conversations |
+| `OwnQuestMonstersParams`, `MatchesParams`, `QuestZonesParams` | Les filtres de `quests.monsters()`, `quests.matches()`, `quests.zones()` |
+| `QuestUpdate`, `TradeOverride`, `MonsterQuantities` | Ce que prennent `quests.update()`, `quests.setTrade()` et `quests.setMonsters()` |
 
-## Types of what comes back
+## Types de ce qui revient
 
-| Type | Where from |
+| Type | D'où il vient |
 | --- | --- |
 | `Account` | `me()` |
-| `GameVersion`, `Server`, `MonsterType`, `QuestType`, `QuestTemplate` | The reference lists |
-| `Monster`, `MonsterDetail`, `MonsterReference`, `TemplateMonster` | Monsters |
-| `Zone`, `ZoneDetail`, `Subzone`, `SubzoneRef` | Zones |
-| `KraloveEvent`, `KraloveEventDetail`, `KraloveParticipant`, `KraloveMessage` | Kralamoure events |
-| `UserSummary`, `UserProfile`, `Avatar` | Players |
-| `PublicQuest`, `PublicQuestSummary`, `QuestMonster` | Public quests |
-| `OwnQuest`, `QuestSettings`, `OwnQuestMonster`, `TypeFilter`, `TypeFilters` | Your quests |
-| `QuestUpdateResult`, `MonsterQuantityResult`, `MonstersUpdateResult`, `TradeOverrideResult` | Answers to writes |
-| `TradeMatch`, `MatchMonster` | Matches |
-| `ZoneProgress`, `SubzoneProgress`, `ZoneProgressMonster` | Progress by zone |
-| `Conversation`, `ConversationItem`, `ConversationMessage`, `TradeProposal`, `ProposalMonster` | Conversations |
-| `LocalizedName`, `Language` | `{ fr, en, es }` and its keys |
-| `QuestBase`, `QuestTemplateRef`, `QuestTypeRef`, `TemplateHeader` | Parts shared by the types above |
+| `GameVersion`, `Server`, `MonsterType`, `QuestType`, `QuestTemplate` | Les listes de référence |
+| `Monster`, `MonsterDetail`, `MonsterReference`, `TemplateMonster` | Les monstres |
+| `Zone`, `ZoneDetail`, `Subzone`, `SubzoneRef` | Les zones |
+| `KraloveEvent`, `KraloveEventDetail`, `KraloveParticipant`, `KraloveMessage` | Les événements Kralamoure |
+| `UserSummary`, `UserProfile`, `Avatar` | Les joueurs |
+| `PublicQuest`, `PublicQuestSummary`, `QuestMonster` | Les quêtes publiques |
+| `OwnQuest`, `QuestSettings`, `OwnQuestMonster`, `TypeFilter`, `TypeFilters` | Vos quêtes |
+| `QuestUpdateResult`, `MonsterQuantityResult`, `MonstersUpdateResult`, `TradeOverrideResult` | Les réponses aux écritures |
+| `TradeMatch`, `MatchMonster` | Les correspondances |
+| `ZoneProgress`, `SubzoneProgress`, `ZoneProgressMonster` | La progression par zone |
+| `Conversation`, `ConversationItem`, `ConversationMessage`, `TradeProposal`, `ProposalMonster` | Les conversations |
+| `LocalizedName`, `Language` | `{ fr, en, es }` et ses clés |
+| `QuestBase`, `QuestTemplateRef`, `QuestTypeRef`, `TemplateHeader` | Les parties communes aux types ci-dessus |
 
-The classes of the resources are exported as types too, to annotate a parameter: `Quests`, `Monsters`, `Zones`, `Users`, `Conversations`, `Kralove`, `GameVersions`, `Servers`, `MonsterTypes`, `QuestTypes`, `QuestTemplates`.
+Les classes des ressources sont aussi exportées comme types, pour annoter un paramètre : `Quests`, `Monsters`, `Zones`, `Users`, `Conversations`, `Kralove`, `GameVersions`, `Servers`, `MonsterTypes`, `QuestTypes`, `QuestTemplates`.
 
-## Names as types
+## Les noms comme types
 
-The names known when the package was built are literal types. They are what makes your editor complete `"Tofu Maléfique"`.
+Les noms connus au moment où le paquet a été construit sont des types littéraux. C'est grâce à eux que votre éditeur complète `"Tofu Maléfique"`.
 
-| Type | Values |
+| Type | Valeurs |
 | --- | --- |
-| `MonsterNameFr`, `MonsterNameEn`, `MonsterNameEs` | Names of monsters |
-| `ZoneNameFr`, `ZoneNameEn`, `ZoneNameEs` | Names of zones |
-| `SubzoneNameFr`, `SubzoneNameEn`, `SubzoneNameEs` | Names of subzones |
-| `MonsterTypeNameFr`, `MonsterTypeNameEn`, `MonsterTypeNameEs` | Kinds of monsters |
-| `QuestTypeNameFr`, `QuestTypeNameEn`, `QuestTypeNameEs`, `QuestTypeSlug` | Kinds of quests |
-| `ServerName`, `GameVersionName` | Servers and versions of the game |
-| `QuestTemplateId` | Ids of the quest templates |
+| `MonsterNameFr`, `MonsterNameEn`, `MonsterNameEs` | Les noms des monstres |
+| `ZoneNameFr`, `ZoneNameEn`, `ZoneNameEs` | Les noms des zones |
+| `SubzoneNameFr`, `SubzoneNameEn`, `SubzoneNameEs` | Les noms des sous-zones |
+| `MonsterTypeNameFr`, `MonsterTypeNameEn`, `MonsterTypeNameEs` | Les types de monstres |
+| `QuestTypeNameFr`, `QuestTypeNameEn`, `QuestTypeNameEs`, `QuestTypeSlug` | Les types de quêtes |
+| `ServerName`, `GameVersionName` | Les serveurs et les versions du jeu |
+| `QuestTemplateId` | Les identifiants des modèles de quête |
 
 ```ts
 function isArchmonsterName(name: MonsterNameFr) {
@@ -135,9 +135,9 @@ function isArchmonsterName(name: MonsterNameFr) {
 isArchmonsterName("Bouflet le Puéril");
 ```
 
-## See also
+## Voir aussi
 
-- [Every method](/reference/methods/)
-- [Error codes](/reference/errors/)
+- [Toutes les méthodes](/reference/methods/)
+- [Codes d'erreur](/reference/errors/)
 - [Configuration](/basics/configuration/)
-- [Runtimes](/reference/runtimes/)
+- [Environnements d'exécution](/reference/runtimes/)
