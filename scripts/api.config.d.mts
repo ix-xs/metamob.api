@@ -1,7 +1,7 @@
 /** One endpoint of the API, as the library exposes it. See api.config.mjs. */
 export interface MethodConfig {
   id: string;
-  verb: "GET" | "PATCH";
+  verb: "GET" | "PATCH" | "POST";
   path: string;
   scope: "public" | "account";
   call: string;

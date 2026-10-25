@@ -156,17 +156,62 @@ const slugs = await step("users: search, get, quests, quest", async () => {
 });
 void slugs;
 
-await step("conversations: list and messages", async () => {
-  const page = await metamob.conversations.list({ limit: 3 });
+const PROPOSAL = ["id", "sender", "recipient", "status", "server", "quest_template", "sender_quest", "recipient_quest", "monsters_given", "monsters_received", "applications", "cancelled_at", "cancelled_by", "created_at", "read_at"];
+
+/** Checks a proposal against its type, wherever it comes from. */
+function proposal(label: string, item: Record<string, unknown>, extra: string[] = [], optional: string[] = []): void {
+  shape(label, item, [...PROPOSAL, ...extra], optional);
+  date(`${label}.created_at`, item.created_at);
+  for (const key of ["cancelled_at", "read_at"]) if (item[key] !== null) date(`${label}.${key}`, item[key]);
+  if (item.server !== null) shape(`${label}.server`, item.server, ["id", "name", "community", "game_version"]);
+  if (item.quest_template !== null) shape(`${label}.quest_template`, item.quest_template, ["id", "quest_type"]);
+}
+
+/** Runs a call the API must refuse with this code. */
+async function refused(code: string, run: () => Promise<unknown>): Promise<void> {
+  try {
+    await run();
+  } catch (error) {
+    if (error instanceof MetamobApiError && error.code === code) return;
+    throw new Error(`expected ${code}, got ${error instanceof MetamobApiError ? `${error.status} ${error.code}` : (error as Error).message}`);
+  }
+  throw new Error(`expected ${code}, the call succeeded`);
+}
+
+await step("conversations: list, messages, unread_count, markAsRead", async () => {
+  const page = await metamob.conversations.list({ limit: 10 });
+  for (const conversation of page.items) {
+    shape("Conversation", conversation, ["username", "message_count", "unread_count", "last_message_at"]);
+    date("Conversation.last_message_at", conversation.last_message_at);
+    if (!Number.isInteger(conversation.unread_count) || conversation.unread_count < 0) problems.push(`Conversation.unread_count: ${conversation.unread_count}`);
+  }
+  await refused("NOT_FOUND", () => metamob.conversations.markAsRead("zz-nobody-zz-0000"));
+  const read = page.items.find((conversation) => conversation.unread_count === 0);
+  if (read) {
+    // Nothing unread there, so marking it changes nothing.
+    const result = await metamob.conversations.markAsRead(read.username);
+    if (result.marked_count !== 0) problems.push(`markAsRead on a read conversation marked ${result.marked_count}`);
+  }
   if (!page.items[0]) return void console.log("      no conversation to read");
-  shape("Conversation", page.items[0], ["username", "message_count", "last_message_at"]);
-  date("Conversation.last_message_at", page.items[0].last_message_at);
   const items = await metamob.conversations.messages(page.items[0].username, { limit: 5 });
   for (const item of items) {
     date(`${item.kind}.created_at`, item.created_at);
     if (item.kind === "message") shape("ConversationMessage", item, ["kind", "id", "content", "sender", "created_at", "read_at"]);
-    else shape("TradeProposal", item, ["kind", "id", "sender", "recipient", "status", "server_id", "quest_type", "monsters_given", "monsters_received", "applications", "cancelled_at", "created_at"]);
+    // The API still sends the two deprecated fields for a while.
+    else proposal("ConversationProposal", item as unknown as Record<string, unknown>, ["kind"], ["server_id", "quest_type"]);
   }
+});
+
+await step("tradeProposals: list, get, filters", async () => {
+  const page = await metamob.tradeProposals.list({ limit: 5 });
+  for (const item of page.items) proposal("TradeProposal", item as unknown as Record<string, unknown>);
+  const recent = await metamob.tradeProposals.list({ direction: "received", status: "pending", since: new Date(Date.now() - 30 * 86_400_000), limit: 5 });
+  for (const item of recent.items) if (item.status !== "pending") problems.push(`tradeProposals status filter let through ${item.status}`);
+  await refused("NOT_FOUND", () => metamob.tradeProposals.get(2_000_000_000));
+  if (!page.items[0]) return void console.log("      no trade proposal to read");
+  const detail = await metamob.tradeProposals.get(page.items[0]);
+  proposal("TradeProposalDetail", detail as unknown as Record<string, unknown>);
+  for (const monster of [...detail.monsters_given, ...detail.monsters_received]) shape("ProposalMonsterDetail", monster, ["monster_id", "quantity", "owned"]);
 });
 
 const own = await step("quests: list, get, monsters, matches, zones", async () => {

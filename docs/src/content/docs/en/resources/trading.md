@@ -126,7 +126,7 @@ for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) 
 
 ## Proposals
 
-A trade proposal between two players is made on the site. The API shows the ones you sent and received, inside your [conversations](/resources/conversations/#trade-proposals), but does not create or confirm them.
+A trade proposal between two players is made on the site. The API shows the ones you sent and received with [`tradeProposals.list()`](/resources/trade-proposals/), and inside your [conversations](/resources/conversations/#trade-proposals), but does not create or confirm them.
 
 ## Limits and errors
 
@@ -159,5 +159,6 @@ Each monster of a match has `id`, `name`, `available`, `needed` and `covers_need
 
 - [Your quests](/resources/quests/)
 - [Other players](/resources/users/)
+- [Trade proposals](/resources/trade-proposals/)
 - [Conversations](/resources/conversations/)
 - [A trade finder](/recipes/trade-finder/)

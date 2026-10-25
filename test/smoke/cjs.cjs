@@ -21,7 +21,7 @@ const fetch = async (url, init) => {
     assert.ok(api[name], `missing export ${name}`);
   }
   assert.equal(api.VERSION, require("../../package.json").version);
-  assert.equal(Object.keys(api.METHODS).length, 35);
+  assert.equal(Object.keys(api.METHODS).length, 38);
   assert.equal(api.data.monster("Aboudbra le Porteur").id, 472);
   assert.equal(api.data.server("draconiros").name, "Draconiros");
   assert.equal(api.urls.monsterImage(monster.image || "tofu.png"), "https://www.metamob.fr/img/monsters/tofu.png");

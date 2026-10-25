@@ -33,6 +33,13 @@ const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>;
   "users.quest": { run: (m) => m.users.quest("Ix-xs", SLUG, { status: "offered" }), path: `/users/Ix-xs/quests/${SLUG}`, query: "?status=offered" },
   "conversations.list": { run: (m) => m.conversations.list({ status: "archived", limit: 10, offset: 20 }), path: "/conversations", query: "?status=archived&limit=10&offset=20" },
   "conversations.messages": { run: (m) => m.conversations.messages("Ix-xs", { limit: 5, beforeId: 99 }), path: "/conversations/Ix-xs", query: "?limit=5&before_id=99" },
+  "conversations.markAsRead": { run: (m) => m.conversations.markAsRead("Ix-xs"), path: "/conversations/Ix-xs/read" },
+  "tradeProposals.list": {
+    run: (m) => m.tradeProposals.list({ direction: "received", status: "pending", quest: SLUG, since: new Date("2026-01-27T14:00:00Z"), limit: 20, beforeId: 77 }),
+    path: "/trade-proposals",
+    query: `?direction=received&status=pending&quest=${SLUG}&since=2026-01-27T14%3A00%3A00.000Z&limit=20&before_id=77`,
+  },
+  "tradeProposals.get": { run: (m) => m.tradeProposals.get(57), path: "/trade-proposals/57" },
   "quests.list": { run: (m) => m.quests.list(), path: "/quests" },
   "quests.get": { run: (m) => m.quests.get(SLUG), path: `/quests/${SLUG}` },
   "quests.update": {
@@ -193,6 +200,61 @@ describe("argument checks", () => {
     await expect(metamob.kralove.list({ from: new Date("nope") })).rejects.toThrow(/from/);
     await expect(metamob.kralove.get("abc")).rejects.toThrow(/id/);
     expect(calls).toHaveLength(0);
+  });
+});
+
+describe("trade proposals and conversations", () => {
+  const proposal = (id: number) => ({ id, sender: "a", recipient: "b", status: "pending", server: null, quest_template: null, sender_quest: null, recipient_quest: null, monsters_given: [], monsters_received: [], applications: [], cancelled_at: null, cancelled_by: null, created_at: "2026-01-27T14:20:00Z", read_at: null });
+
+  it("walks the proposals with the cursor of the API, the largest page first", async () => {
+    const { metamob, calls } = client([
+      { data: [proposal(9), proposal(8)], pagination: { has_more: true, next_before_id: 8 } },
+      { data: [proposal(7)], pagination: { has_more: false, next_before_id: null } },
+    ]);
+    const all = await metamob.tradeProposals.list({ direction: "sent" }).all();
+    expect(all.map((item) => item.id)).toEqual([9, 8, 7]);
+    expect(calls.map((call) => call.url.search)).toEqual(["?direction=sent&limit=50", "?direction=sent&limit=50&before_id=8"]);
+  });
+
+  it("sends a date written by hand as it is, and refuses one the API would reject", async () => {
+    const { metamob, calls } = client({ data: [], pagination: { has_more: false, next_before_id: null } });
+    await metamob.tradeProposals.list({ since: "2026-01-27T16:00:00+02:00" });
+    expect(calls[0]!.url.searchParams.get("since")).toBe("2026-01-27T16:00:00+02:00");
+    for (const since of ["2026-01-27", "27/01/2026 14:00", "2026-01-27T14:00:00", new Date("nope")]) {
+      await expect(metamob.tradeProposals.list({ since }).page()).rejects.toThrow(/since/);
+    }
+    await expect(metamob.tradeProposals.list({ quest: " " }).page()).rejects.toThrow(/quest/);
+    expect(calls).toHaveLength(1);
+  });
+
+  it("reads one proposal from its id, its digits or the proposal itself", async () => {
+    const { metamob, calls } = client({ data: proposal(57) });
+    await metamob.tradeProposals.get(57);
+    await metamob.tradeProposals.get("57");
+    await metamob.tradeProposals.get({ id: 57 });
+    expect(calls.map((call) => call.path)).toEqual(Array(3).fill("/trade-proposals/57"));
+    for (const id of [0, -1, 1.5, "abc", null as never]) await expect(metamob.tradeProposals.get(id)).rejects.toThrow(/trade proposal/);
+    expect(calls).toHaveLength(3);
+  });
+
+  it("marks a conversation as read with a POST and no body, and drops what was cached for the account", async () => {
+    let unread = 2;
+    const { metamob, calls } = client((call) => {
+      if (call.method === "POST") {
+        const marked = unread;
+        unread = 0;
+        return { data: { marked_count: marked } };
+      }
+      return { data: [{ username: "Ix-xs", message_count: 3, unread_count: unread, last_message_at: "2026-01-27T14:22:00Z" }], pagination: { total: 1, limit: 50, offset: 0 } };
+    }, { cache: { methods: { "conversations.list": "1h" } } });
+    expect((await metamob.conversations.list()).items[0]!.unread_count).toBe(2);
+    expect(await metamob.conversations.markAsRead(" Ix-xs ")).toEqual({ marked_count: 2 });
+    expect((await metamob.conversations.list()).items[0]!.unread_count).toBe(0);
+    const post = calls.find((call) => call.method === "POST")!;
+    expect(post.path).toBe("/conversations/Ix-xs/read");
+    expect(post.body).toBeUndefined();
+    expect(calls.filter((call) => call.method === "GET")).toHaveLength(2);
+    await expect(metamob.conversations.markAsRead("")).rejects.toThrow(/username/);
   });
 });
 

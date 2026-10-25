@@ -13,7 +13,7 @@ No. `@ix-xs/metamob.api` es un proyecto independiente de código abierto, bajo l
 
 ## ¿Cubre toda la API?
 
-Sí, los 35 endpoints. [Todos los métodos](/reference/methods/) los enumera junto al método que llama a cada uno.
+Sí, los 38 endpoints. [Todos los métodos](/reference/methods/) los enumera junto al método que llama a cada uno.
 
 ## ¿Necesito una clave API?
 

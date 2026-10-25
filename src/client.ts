@@ -12,6 +12,7 @@ import { Kralove } from "./resources/kralove.js";
 import { Monsters } from "./resources/monsters.js";
 import { Quests } from "./resources/quests.js";
 import { GameVersions, MonsterTypes, QuestTemplates, QuestTypes, Servers } from "./resources/reference.js";
+import { TradeProposals } from "./resources/trade-proposals.js";
 import { Users } from "./resources/users.js";
 import { Zones } from "./resources/zones.js";
 import type { Account } from "./types.js";
@@ -85,6 +86,8 @@ export class Metamob {
   readonly users: Users;
   /** The private messages of the account. */
   readonly conversations: Conversations;
+  /** The trade proposals the account sent and received. */
+  readonly tradeProposals: TradeProposals;
   /** The quests of the account: settings, monsters, trade partners, progress. */
   readonly quests: Quests;
 
@@ -114,6 +117,7 @@ export class Metamob {
     this.kralove = new Kralove(context);
     this.users = new Users(context);
     this.conversations = new Conversations(context);
+    this.tradeProposals = new TradeProposals(context);
     this.quests = new Quests(context);
   }
 

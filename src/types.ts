@@ -455,6 +455,8 @@ export interface Conversation {
   username: string;
   /** Visible messages, trade proposals included. */
   message_count: number;
+  /** Messages received and not read yet, trade proposals included. */
+  unread_count: number;
   /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   last_message_at: string;
 }
@@ -471,31 +473,90 @@ export interface ConversationMessage {
   read_at: string | null;
 }
 
-/** A quantity of a monster in a trade proposal. `monsters.get()` gives the monster. */
+/** A quantity of a monster in a trade proposal. `monsters.get()` or `data.monster()` gives the monster. */
 export interface ProposalMonster {
   monster_id: number;
   quantity: number;
 }
 
-/** A trade proposal in a conversation. */
-export interface TradeProposal {
-  kind: "proposal";
+/** A monster of a trade proposal read on its own, with what you own of it now. */
+export interface ProposalMonsterDetail extends ProposalMonster {
+  /**
+   * How many of this monster you own now, in your quest the proposal is
+   * about. It is the current count: once the trade is applied, it already
+   * includes the trade. `null` when you have no quest of this kind on this
+   * server.
+   */
+  owned: number | null;
+}
+
+/** The quest of one side of a trade proposal. */
+export interface ProposalQuest {
+  slug: string;
+  /** The character doing the quest, when its owner gave one. */
+  character_name: string | null;
+}
+
+/** The quest template of a trade proposal: which kind of quest, in which version of the game. */
+export interface ProposalQuestTemplate {
   id: number;
+  quest_type: QuestTypeRef;
+}
+
+/** A trade proposal between two players. */
+export interface TradeProposal {
+  id: number;
+  /** Username of the player who proposed. */
   sender: string;
+  /** Username of the player the proposal was made to. */
   recipient: string;
+  /**
+   * `pending`: nobody confirmed yet. `half_applied`: one side confirmed, see
+   * `applications`. `completed`: both did. `cancelled`: cancelled or expired.
+   */
   status: "pending" | "half_applied" | "completed" | "cancelled";
-  server_id: number;
-  /** `null` when the quest concerned was deleted. */
-  quest_type: { id: number; slug: string } | null;
+  /** The server the trade happens on. */
+  server: Server | null;
+  /** The kind of quest and the version of the game. `null` when the quest concerned was deleted. */
+  quest_template: ProposalQuestTemplate | null;
+  /** The quest of the sender, or `null` when it is not visible. */
+  sender_quest: ProposalQuest | null;
+  /** The quest of the recipient, or `null` when it is not visible. */
+  recipient_quest: ProposalQuest | null;
+  /** What the sender gives. If you are the recipient, this is what you receive. */
   monsters_given: ProposalMonster[];
+  /** What the sender receives. If you are the recipient, this is what you give. */
   monsters_received: ProposalMonster[];
   /** Who confirmed their side. */
   applications: { username: string; created_at: string }[];
   /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`, or `null`. */
   cancelled_at: string | null;
+  /** Username of the player who cancelled it. `null` when it is not cancelled, or when it expired. */
+  cancelled_by: string | null;
   /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   created_at: string;
+  /** When the recipient read it, as an ISO 8601 date in UTC, or `null` while unread. */
+  read_at: string | null;
+}
+
+/** A trade proposal read on its own, with what you own of each monster. */
+export interface TradeProposalDetail extends Omit<TradeProposal, "monsters_given" | "monsters_received"> {
+  /** What the sender gives, with what you own of each monster. */
+  monsters_given: ProposalMonsterDetail[];
+  /** What the sender receives, with what you own of each monster. */
+  monsters_received: ProposalMonsterDetail[];
+}
+
+/** A trade proposal as it appears in a conversation, among the messages. */
+export interface ConversationProposal extends TradeProposal {
+  kind: "proposal";
 }
 
 /** What a conversation is made of. `kind` tells the two apart. */
-export type ConversationItem = ConversationMessage | TradeProposal;
+export type ConversationItem = ConversationMessage | ConversationProposal;
+
+/** What marking a conversation as read answers. */
+export interface MarkAsReadResult {
+  /** How many messages were marked as read. 0 when there was nothing unread. */
+  marked_count: number;
+}

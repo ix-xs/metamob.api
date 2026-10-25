@@ -2,7 +2,7 @@
 title: Kralamoure events
 description: Opening the lair of the Giant Kralove takes a crowd, so players plan it on Metamob. Read the coming events of a server, who signed up and what was said.
 sidebar:
-  order: 8
+  order: 9
 ---
 
 ```ts

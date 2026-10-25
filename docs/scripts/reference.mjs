@@ -39,6 +39,7 @@ const GROUPS = [
   { en: "Zones", fr: "Zones", es: "Zonas", prefixes: ["zones."] },
   { en: "Other players", fr: "Autres joueurs", es: "Otros jugadores", prefixes: ["users."] },
   { en: "Conversations", fr: "Conversations", es: "Conversaciones", prefixes: ["conversations."] },
+  { en: "Trade proposals", fr: "Propositions d'échange", es: "Propuestas de intercambio", prefixes: ["tradeProposals."] },
   { en: "Kralamoure events", fr: "Événements Kralamoure", es: "Eventos Kralamar", prefixes: ["kralove."] },
   { en: "Reference data", fr: "Données de référence", es: "Datos de referencia", prefixes: ["gameVersions.", "servers.", "monsterTypes.", "questTypes.", "questTemplates."] },
 ];

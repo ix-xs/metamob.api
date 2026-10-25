@@ -51,7 +51,7 @@ for await (const monster of metamob.quests.monsters(quest.slug, { status: "neede
 await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 ```
 
-La bibliothèque couvre les 35 points d'accès de l'[API Metamob](https://www.metamob.fr/help/api) : compte, quêtes, monstres, zones, partenaires d'échange, événements Kralamoure, messages privés et toutes les données de référence, pour Dofus, Dofus Retro et Dofus Touch.
+La bibliothèque couvre les 38 points d'accès de l'[API Metamob](https://www.metamob.fr/help/api) : compte, quêtes, monstres, zones, partenaires d'échange, événements Kralamoure, messages privés, propositions d'échange et toutes les données de référence, pour Dofus, Dofus Retro et Dofus Touch.
 
 > **[Metamob](https://www.metamob.fr)** est le site où les joueurs de Dofus suivent leurs quêtes d'archimonstres et trouvent avec qui échanger. Il est gratuit et tenu par une seule personne. Cette bibliothèque ne fait qu'appeler [son API](https://www.metamob.fr/help/api) : rien de tout cela n'existerait sans lui.
 
@@ -122,13 +122,16 @@ const wanted = await metamob.users.quest("Ix-xs", "21b0a742", { status: "wanted"
 const left = await metamob.quests.monsters(slug, { status: "needed" }).count();
 ```
 
-Les messages privés sont paginés avec un curseur au lieu d'un décalage. Les mêmes méthodes fonctionnent :
+Les messages privés et les propositions d'échange sont paginés avec un curseur au lieu d'un décalage. Les mêmes méthodes fonctionnent :
 
 ```ts
 for await (const item of metamob.conversations.messages("Ix-xs")) {
   if (item.kind === "message") console.log(item.sender, item.content);
   else console.log(item.sender, "proposed a trade:", item.status);
 }
+
+// Les propositions d'échange qui attendent votre réponse.
+const waiting = await metamob.tradeProposals.list({ direction: "received", status: "pending" }).all();
 ```
 
 ## Vos quêtes

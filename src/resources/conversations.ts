@@ -2,7 +2,7 @@ import { ListRequest, topLevel } from "../core/pagination.js";
 import { type Context, type PageParams, text } from "../core/resource.js";
 import type { RequestOptions } from "../core/rest.js";
 import { METHODS } from "../generated/methods.js";
-import type { Conversation, ConversationItem } from "../types.js";
+import type { Conversation, ConversationItem, MarkAsReadResult } from "../types.js";
 
 /** Filters of {@link Conversations.list}. */
 export interface ConversationListParams extends PageParams {
@@ -33,9 +33,11 @@ export class Conversations {
    *
    * A correspondent listed here may have no profile left: a deleted account
    * keeps its conversations for 30 days while `users.get()` answers 404.
+   * `unread_count` says how many messages of a conversation you have not read.
    *
    * @example
    * const page = await metamob.conversations.list();
+   * const unread = page.items.filter((conversation) => conversation.unread_count > 0);
    * const archived = await metamob.conversations.list({ status: "archived" }).all();
    */
   list(params: ConversationListParams = {}, options?: RequestOptions): ListRequest<Conversation> {
@@ -65,5 +67,18 @@ export class Conversations {
       options,
       topLevel<ConversationItem>,
     );
+  }
+
+  /**
+   * Marks as read every message received from a user, trade proposals
+   * included, as opening the conversation on the site does. Answers how many
+   * were marked: 0 when there was nothing unread, which changes nothing.
+   *
+   * @example
+   * const { marked_count } = await metamob.conversations.markAsRead("Ix-xs");
+   */
+  async markAsRead(username: string, options?: RequestOptions): Promise<MarkAsReadResult> {
+    const path = { username: text(username, "username") };
+    return (await this.#context.rest.request<{ data: MarkAsReadResult }>(METHODS["conversations.markAsRead"], { path }, options)).data;
   }
 }

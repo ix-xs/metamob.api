@@ -1,6 +1,6 @@
 {
   "name": "@ix-xs/metamob.api",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "description": "Le client complet de l'API Metamob pour JavaScript et TypeScript : tous les points d'accès, typés, avec les monstres, zones et serveurs appelés par leur nom en français, anglais ou espagnol. Pagination paresseuse, limiteur de requêtes intégré, nouvelles tentatives et cache. Aucune dépendance.",
   "keywords": [
     "metamob",

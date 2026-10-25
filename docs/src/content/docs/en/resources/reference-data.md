@@ -2,7 +2,7 @@
 title: Reference data
 description: The lists everything else refers to. Versions of the game, servers, kinds of monsters, kinds of quests, and the quest templates that say which monsters a quest asks for at each step.
 sidebar:
-  order: 9
+  order: 10
 ---
 
 ```ts

@@ -27,7 +27,7 @@ El paquete tiene un solo punto de entrada, `@ix-xs/metamob.api`, tanto para mód
 | `Page` | Una página de una lista | [Listas](/basics/lists/#one-page) |
 | `MemoryCache` | El almacén de caché integrado | [Caché](/basics/caching/) |
 | `normalizeName` | La comparación de nombres que usa la biblioteca | [Nombres e identificadores](/basics/names-and-ids/#how-a-name-is-matched) |
-| `METHODS` | Los 35 endpoints, por nombre de método | [Todos los métodos](/reference/methods/) |
+| `METHODS` | Los 38 endpoints, por nombre de método | [Todos los métodos](/reference/methods/) |
 | `VERSION` | La versión del paquete | |
 
 ## urls
@@ -58,7 +58,7 @@ Una descripción de cada endpoint, indexada por el nombre de su método. Con ell
 
 ```ts
 METHODS["quests.setMonster"]; // { id, verb: "PATCH", path: "/quests/{slug}/monsters/{monsterId}", scope: "account" }
-Object.keys(METHODS).length; // 35
+Object.keys(METHODS).length; // 38
 ```
 
 ## Tipos del cliente
@@ -89,6 +89,7 @@ Object.keys(METHODS).length; // 35
 | `KraloveListParams` | Filtros de `kralove.list()` |
 | `UserSearchParams`, `PublicQuestParams` | Filtros de `users.search()` y `users.quest()` |
 | `ConversationListParams`, `MessagesParams` | Filtros de las conversaciones |
+| `TradeProposalListParams` | Filtros de `tradeProposals.list()` |
 | `OwnQuestMonstersParams`, `MatchesParams`, `QuestZonesParams` | Filtros de `quests.monsters()`, `quests.matches()`, `quests.zones()` |
 | `QuestUpdate`, `TradeOverride`, `MonsterQuantities` | Lo que reciben `quests.update()`, `quests.setTrade()` y `quests.setMonsters()` |
 
@@ -107,11 +108,12 @@ Object.keys(METHODS).length; // 35
 | `QuestUpdateResult`, `MonsterQuantityResult`, `MonstersUpdateResult`, `TradeOverrideResult` | Respuestas a las escrituras |
 | `TradeMatch`, `MatchMonster` | Coincidencias |
 | `ZoneProgress`, `SubzoneProgress`, `ZoneProgressMonster` | Progreso por zona |
-| `Conversation`, `ConversationItem`, `ConversationMessage`, `TradeProposal`, `ProposalMonster` | Conversaciones |
+| `Conversation`, `ConversationItem`, `ConversationMessage`, `ConversationProposal`, `MarkAsReadResult` | Conversaciones |
+| `TradeProposal`, `TradeProposalDetail`, `ProposalMonster`, `ProposalMonsterDetail`, `ProposalQuest`, `ProposalQuestTemplate` | Propuestas de intercambio |
 | `LocalizedName`, `Language` | `{ fr, en, es }` y sus claves |
 | `QuestBase`, `QuestTemplateRef`, `QuestTypeRef`, `TemplateHeader` | Partes compartidas por los tipos anteriores |
 
-Las clases de los recursos también se exportan como tipos, para anotar un parámetro: `Quests`, `Monsters`, `Zones`, `Users`, `Conversations`, `Kralove`, `GameVersions`, `Servers`, `MonsterTypes`, `QuestTypes`, `QuestTemplates`.
+Las clases de los recursos también se exportan como tipos, para anotar un parámetro: `Quests`, `Monsters`, `Zones`, `Users`, `Conversations`, `TradeProposals`, `Kralove`, `GameVersions`, `Servers`, `MonsterTypes`, `QuestTypes`, `QuestTemplates`.
 
 ## Los nombres como tipos
 

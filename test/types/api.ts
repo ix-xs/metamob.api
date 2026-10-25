@@ -13,9 +13,12 @@ import {
   type MonsterDetail,
   type MonsterLike,
   type MonsterNameFr,
+  type MarkAsReadResult,
   type OwnQuestMonster,
   type Page,
   type PublicQuest,
+  type TradeProposal,
+  type TradeProposalDetail,
   type QuestMonster,
   type ServerName,
   type TemplateHeader,
@@ -80,9 +83,29 @@ export async function results() {
     if (item.kind === "message") item.content satisfies string;
     else item.monsters_given satisfies { monster_id: number; quantity: number }[];
   }
+  const conversations = await metamob.conversations.list();
+  expect<Equal<(typeof conversations.items)[number]["unread_count"], number>>();
+  expect<Equal<Awaited<ReturnType<typeof metamob.conversations.markAsRead>>, MarkAsReadResult>>();
+
+  // Proposals listed on their own have no `kind`; read one by one, each
+  // monster says what you own of it.
+  const proposals = metamob.tradeProposals.list({ direction: "received", since: new Date() });
+  expect<Equal<typeof proposals, ListRequest<TradeProposal>>>();
+  const proposal = await metamob.tradeProposals.get(57);
+  expect<Equal<typeof proposal, TradeProposalDetail>>();
+  expect<Equal<(typeof proposal.monsters_given)[number]["owned"], number | null>>();
+  expect<Equal<typeof proposal.status, "pending" | "half_applied" | "completed" | "cancelled">>();
+  // @ts-expect-error the deprecated fields are gone
+  void proposal.server_id;
+  // @ts-expect-error the quest type is read from quest_template
+  void proposal.quest_type;
 }
 
 export async function refused() {
+  // @ts-expect-error `direction` is received, sent or all
+  metamob.tradeProposals.list({ direction: "inbox" });
+  // @ts-expect-error `status` of a proposal takes four values
+  metamob.tradeProposals.list({ status: "accepted" });
   // @ts-expect-error `status` of your own quest takes five values
   metamob.quests.monsters(slug, { status: "missing" });
   // @ts-expect-error a public quest only shows what is wanted and offered

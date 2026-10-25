@@ -18,7 +18,7 @@ const metamob = new Metamob({
 
 Les données de référence : versions du jeu, serveurs, types de monstres, types de quêtes, modèles de quête, monstres, zones et sous-zones. Une réponse est gardée 10 minutes, en mémoire, et partagée par toutes les clés : elle est la même pour tout le monde.
 
-Rien d'autre. Les profils, les quêtes, les correspondances, les conversations et les événements Kralamoure sont lus depuis l'API à chaque appel, parce qu'ils changent dès que quelqu'un joue.
+Rien d'autre. Les profils, les quêtes, les correspondances, les conversations, les propositions d'échange et les événements Kralamoure sont lus depuis l'API à chaque appel, parce qu'ils changent dès que quelqu'un joue.
 
 Deux lectures identiques envoyées au même moment partagent toujours une seule requête, avec ou sans cache.
 
@@ -39,7 +39,7 @@ const metamob = new Metamob({
 });
 ```
 
-Ce qui dépend du compte est gardé à part pour chaque clé : deux joueurs ne voient jamais les réponses l'un de l'autre. Les entrées d'une clé sont supprimées dès que cette clé modifie une quête, donc une lecture après une écriture est toujours fraîche.
+Ce qui dépend du compte est gardé à part pour chaque clé : deux joueurs ne voient jamais les réponses l'un de l'autre. Les entrées d'une clé sont supprimées dès que cette clé modifie une quête ou marque une conversation comme lue, donc une lecture après une écriture est toujours fraîche.
 
 ## Pour un seul appel
 

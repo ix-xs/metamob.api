@@ -1,6 +1,6 @@
 ---
 title: Conversaciones
-description: Lee las conversaciones privadas de la cuenta y, dentro de cada una, los mensajes y las propuestas de intercambio cruzados con un jugador. La API los lee, no envía ninguno.
+description: Lee las conversaciones privadas de la cuenta y, dentro de cada una, los mensajes y las propuestas de intercambio cruzados con un jugador, ve lo que está sin leer y márcalo como leído. La API no envía mensajes.
 sidebar:
   order: 7
 ---
@@ -20,7 +20,7 @@ Hay una conversación por interlocutor, la más reciente primero. Es una [lista]
 const page = await metamob.conversations.list();
 
 for (const conversation of page.items) {
-  console.log(conversation.username, conversation.message_count, conversation.last_message_at);
+  console.log(conversation.username, `${conversation.unread_count} unread of ${conversation.message_count}`);
 }
 
 const archived = await metamob.conversations.list({ status: "archived" }).all();
@@ -67,7 +67,7 @@ No hay total para los mensajes: `page.total` y `count()` valen `undefined`. El n
 
 ## Propuestas de intercambio
 
-Una propuesta hecha en el sitio aparece en la conversación como un elemento de tipo `"proposal"`.
+Una propuesta hecha en el sitio aparece en la conversación como un elemento de tipo `"proposal"`. Para seguir todas las propuestas de la cuenta a la vez, filtradas por estado, misión o fecha, consulta [Propuestas de intercambio](/resources/trade-proposals/).
 
 ```ts
 for await (const item of metamob.conversations.messages(username)) {
@@ -85,27 +85,36 @@ for await (const item of metamob.conversations.messages(username)) {
 
 Una propuesta designa sus monstruos por identificador: [`data.monster()`](/basics/embedded-data/) convierte un identificador en un monstruo sin ninguna solicitud.
 
-| `status` | Significado |
-| --- | --- |
-| `pending` | Nadie ha confirmado todavía |
-| `half_applied` | Una de las partes ha confirmado: ver `applications` |
-| `completed` | Las dos partes han confirmado |
-| `cancelled` | Cancelada, en la fecha `cancelled_at` |
+Cuando eres el destinatario, recibes `monsters_given` y das `monsters_received`. Una propuesta tiene aquí los mismos campos que en [`tradeProposals.list()`](/resources/trade-proposals/), con `kind` además.
 
 ## Mensajes no leídos
 
-La API no tiene contador de mensajes no leídos. Un mensaje que has recibido y no has abierto tiene `read_at` a `null`:
+Cada conversación cuenta en `unread_count` lo que has recibido y todavía no has leído, propuestas de intercambio incluidas. Dentro de una conversación, un elemento que no has abierto tiene `read_at` a `null`.
 
 ```ts
-const me = await metamob.me();
-const recent = await metamob.conversations.messages(username).take(50);
+const conversations = await metamob.conversations.list().all();
+const waiting = conversations.filter((conversation) => conversation.unread_count > 0);
 
-const unread = recent.filter((item) => item.kind === "message" && item.sender !== me.username && item.read_at === null);
+for (const conversation of waiting) {
+  console.log(`${conversation.username}: ${conversation.unread_count} unread`);
+}
 ```
+
+## Marcar como leído
+
+`conversations.markAsRead()` marca como leído todo lo recibido de un jugador, propuestas incluidas, como lo haría abrir la conversación en el sitio. Responde cuántos elementos ha marcado: `0` cuando no había nada sin leer.
+
+```ts
+const { marked_count } = await metamob.conversations.markAsRead(username);
+console.log(`${marked_count} marked as read`);
+```
+
+Es la única escritura de las conversaciones: la API no envía mensajes.
 
 ## Límites y errores
 
 - La API no envía mensajes, y no crea, confirma ni cancela propuestas.
+- `markAsRead()` responde `NOT_FOUND` para un nombre de usuario que no existe.
 - Un interlocutor puede no tener ya perfil: las conversaciones de una cuenta eliminada siguen siendo legibles durante 30 días, mientras que `users.get()` responde `NOT_FOUND`.
 - Las conversaciones pertenecen a la cuenta de la clave. Nada de esto se guarda en caché por defecto.
 
@@ -115,6 +124,16 @@ const unread = recent.filter((item) => item.kind === "message" && item.sender !=
 | --- | --- |
 | `conversations.list({ status, limit, offset }, options?)` | una lista de `Conversation` |
 | `conversations.messages(username, { limit, beforeId }, options?)` | una lista de `ConversationItem`, por cursor |
+| `conversations.markAsRead(username, options?)` | `{ marked_count }` |
+
+Una `Conversation`:
+
+| Campo | Tipo |
+| --- | --- |
+| `username` | `string`, el interlocutor |
+| `message_count` | `number`, propuestas incluidas |
+| `unread_count` | `number`, recibidos y todavía no leídos |
+| `last_message_at` | `string` |
 
 Un mensaje:
 
@@ -135,16 +154,19 @@ Una propuesta:
 | `id` | `number` |
 | `sender`, `recipient` | `string`, nombres de usuario |
 | `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
-| `server_id` | `number` |
-| `quest_type` | `{ id, slug } \| null`, `null` cuando la misión ha sido eliminada |
+| `server` | `Server \| null` |
+| `quest_template` | `{ id, quest_type } \| null`, `null` cuando la misión ha sido eliminada |
+| `sender_quest`, `recipient_quest` | `{ slug, character_name } \| null` |
 | `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
 | `applications` | `{ username, created_at }[]`, quién ha confirmado |
-| `cancelled_at` | `string \| null` |
+| `cancelled_at`, `cancelled_by` | `string \| null` |
 | `created_at` | `string` |
+| `read_at` | `string \| null` |
 
 ## Ver también
 
 - [Listas](/basics/lists/)
+- [Propuestas de intercambio](/resources/trade-proposals/)
 - [Intercambios](/resources/trading/)
 - [Otros jugadores](/resources/users/)
 - [Los datos del paquete](/basics/embedded-data/)

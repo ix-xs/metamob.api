@@ -2,7 +2,7 @@
 title: Eventos Kralamar
 description: Abrir la guarida del Kralamar gigante requiere mucha gente, así que los jugadores lo organizan en Metamob. Lee los próximos eventos de un servidor, quién se ha apuntado y qué se ha dicho.
 sidebar:
-  order: 8
+  order: 9
 ---
 
 ```ts

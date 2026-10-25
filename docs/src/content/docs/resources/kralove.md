@@ -2,7 +2,7 @@
 title: Événements Kralamoure
 description: Ouvrir l'antre du Kralamoure Géant demande beaucoup de monde, alors les joueurs s'organisent sur Metamob. Lisez les prochains événements d'un serveur, qui s'est inscrit et ce qui s'est dit.
 sidebar:
-  order: 8
+  order: 9
 ---
 
 ```ts

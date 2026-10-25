@@ -109,9 +109,9 @@ const mine = await metamob.quests.monsters(slug);
 mine.slug; // le slug de la quête
 ```
 
-## Les messages utilisent un curseur
+## Les messages et les propositions utilisent un curseur
 
-Les messages d'une conversation ne sont pas numérotés : l'API les pagine du plus récent vers le plus ancien, avec un curseur qu'elle fournit page après page. Les mêmes méthodes fonctionnent, et `total` et `count()` valent `undefined`.
+Les messages d'une conversation et les propositions d'échange ne sont pas numérotés : l'API les pagine du plus récent vers le plus ancien, avec un curseur qu'elle fournit page après page. Les mêmes méthodes fonctionnent, et `total` et `count()` valent `undefined`.
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });
@@ -147,9 +147,9 @@ Ce que contient une page :
 | Membre | Signification |
 | --- | --- |
 | `items` | Les éléments de la page |
-| `total` | Éléments sur l'ensemble des pages, `undefined` pour les messages |
+| `total` | Éléments sur l'ensemble des pages, `undefined` pour les messages et les propositions |
 | `limit`, `offset` | Ce que l'API a appliqué |
-| `nextBeforeId` | Pour les messages, le curseur de la page suivante |
+| `nextBeforeId` | Pour les messages et les propositions, le curseur de la page suivante |
 | `hasNext` | Indique si une autre page existe |
 | `next()` | La page suivante, ou `null` |
 | `raw` | Le corps que l'API a envoyé |
@@ -166,6 +166,7 @@ Les méthodes qui renvoient une requête de liste :
 | `quests.matches` | 50 |
 | `conversations.list` | 50 |
 | `conversations.messages` | 50, par curseur |
+| `tradeProposals.list` | 50, par curseur |
 
 ## Voir aussi
 

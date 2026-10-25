@@ -2,7 +2,7 @@
 title: Données de référence
 description: Les listes auxquelles tout le reste renvoie. Versions du jeu, serveurs, types de monstres, types de quêtes, et les modèles de quête qui disent quels monstres une quête demande à chaque étape.
 sidebar:
-  order: 9
+  order: 10
 ---
 
 ```ts

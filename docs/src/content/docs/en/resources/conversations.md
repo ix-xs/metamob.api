@@ -1,6 +1,6 @@
 ---
 title: Conversations
-description: Read the private conversations of the account and, inside each one, the messages and the trade proposals exchanged with a player. The API reads them, it does not send any.
+description: Read the private conversations of the account and, inside each one, the messages and the trade proposals exchanged with a player, see what is unread and mark it as read. The API does not send messages.
 sidebar:
   order: 7
 ---
@@ -20,7 +20,7 @@ There is one conversation per correspondent, the most recent first. It is a [lis
 const page = await metamob.conversations.list();
 
 for (const conversation of page.items) {
-  console.log(conversation.username, conversation.message_count, conversation.last_message_at);
+  console.log(conversation.username, `${conversation.unread_count} unread of ${conversation.message_count}`);
 }
 
 const archived = await metamob.conversations.list({ status: "archived" }).all();
@@ -67,7 +67,7 @@ There is no total for messages: `page.total` and `count()` are `undefined`. The 
 
 ## Trade proposals
 
-A proposal made on the site appears in the conversation as an item of kind `"proposal"`.
+A proposal made on the site appears in the conversation as an item of kind `"proposal"`. To follow every proposal of the account at once, filtered by state, quest or date, see [Trade proposals](/resources/trade-proposals/).
 
 ```ts
 for await (const item of metamob.conversations.messages(username)) {
@@ -85,27 +85,36 @@ for await (const item of metamob.conversations.messages(username)) {
 
 A proposal names its monsters by id: [`data.monster()`](/basics/embedded-data/) turns an id into a monster without a request.
 
-| `status` | Meaning |
-| --- | --- |
-| `pending` | Nobody confirmed yet |
-| `half_applied` | One side confirmed: see `applications` |
-| `completed` | Both sides confirmed |
-| `cancelled` | Cancelled, at `cancelled_at` |
+When you are the recipient, you receive `monsters_given` and give `monsters_received`. A proposal has the same fields here as in [`tradeProposals.list()`](/resources/trade-proposals/), with `kind` on top.
 
 ## Unread messages
 
-The API has no unread counter. A message you received and did not open has `read_at` set to `null`:
+Each conversation counts what you received and did not read yet, trade proposals included, in `unread_count`. Inside a conversation, an item you did not open has `read_at` set to `null`.
 
 ```ts
-const me = await metamob.me();
-const recent = await metamob.conversations.messages(username).take(50);
+const conversations = await metamob.conversations.list().all();
+const waiting = conversations.filter((conversation) => conversation.unread_count > 0);
 
-const unread = recent.filter((item) => item.kind === "message" && item.sender !== me.username && item.read_at === null);
+for (const conversation of waiting) {
+  console.log(`${conversation.username}: ${conversation.unread_count} unread`);
+}
 ```
+
+## Marking as read
+
+`conversations.markAsRead()` marks as read every message received from a player, proposals included, as opening the conversation on the site would. It answers how many it marked: `0` when there was nothing unread.
+
+```ts
+const { marked_count } = await metamob.conversations.markAsRead(username);
+console.log(`${marked_count} marked as read`);
+```
+
+It is the only write of conversations: the API does not send messages.
 
 ## Limits and errors
 
 - The API does not send messages, and does not create, confirm or cancel proposals.
+- `markAsRead()` answers `NOT_FOUND` for a username that does not exist.
 - A correspondent may have no profile left: a deleted account keeps its conversations readable for 30 days, while `users.get()` answers `NOT_FOUND`.
 - Conversations belong to the account of the key. Nothing here is cached by default.
 
@@ -115,6 +124,16 @@ const unread = recent.filter((item) => item.kind === "message" && item.sender !=
 | --- | --- |
 | `conversations.list({ status, limit, offset }, options?)` | a list of `Conversation` |
 | `conversations.messages(username, { limit, beforeId }, options?)` | a list of `ConversationItem`, by cursor |
+| `conversations.markAsRead(username, options?)` | `{ marked_count }` |
+
+A `Conversation`:
+
+| Field | Type |
+| --- | --- |
+| `username` | `string`, the correspondent |
+| `message_count` | `number`, proposals included |
+| `unread_count` | `number`, received and not read yet |
+| `last_message_at` | `string` |
 
 A message:
 
@@ -135,16 +154,19 @@ A proposal:
 | `id` | `number` |
 | `sender`, `recipient` | `string`, usernames |
 | `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
-| `server_id` | `number` |
-| `quest_type` | `{ id, slug } \| null`, `null` when the quest was deleted |
+| `server` | `Server \| null` |
+| `quest_template` | `{ id, quest_type } \| null`, `null` when the quest was deleted |
+| `sender_quest`, `recipient_quest` | `{ slug, character_name } \| null` |
 | `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
 | `applications` | `{ username, created_at }[]`, who confirmed |
-| `cancelled_at` | `string \| null` |
+| `cancelled_at`, `cancelled_by` | `string \| null` |
 | `created_at` | `string` |
+| `read_at` | `string \| null` |
 
 ## See also
 
 - [Lists](/basics/lists/)
+- [Trade proposals](/resources/trade-proposals/)
 - [Trading](/resources/trading/)
 - [Other players](/resources/users/)
 - [The data in the package](/basics/embedded-data/)

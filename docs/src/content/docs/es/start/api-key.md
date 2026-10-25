@@ -24,7 +24,7 @@ Una clave no se puede limitar a la lectura: siempre da acceso completo.
 | --- | --- |
 | Monstruos, zonas, servidores, plantillas de misión | `metamob.me()` |
 | Perfiles públicos y misiones públicas de cualquier jugador | `metamob.quests`: ajustes, monstruos, coincidencias, progreso y todas las escrituras |
-| Eventos Kralamar | `metamob.conversations`: mensajes privados y propuestas de intercambio |
+| Eventos Kralamar | `metamob.conversations` y `metamob.tradeProposals`: mensajes privados y propuestas de intercambio |
 
 No hay ninguna llamada sin clave, ni siquiera para los datos públicos.
 

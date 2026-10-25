@@ -51,7 +51,7 @@ for await (const monster of metamob.quests.monsters(quest.slug, { status: "neede
 await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 ```
 
-Cubre los 35 endpoints de la [API de Metamob](https://www.metamob.fr/help/api): cuenta, misiones, monstruos, zonas, socios de intercambio, eventos Kralamar, mensajes privados y todos los datos de referencia, para Dofus, Dofus Retro y Dofus Touch.
+Cubre los 38 endpoints de la [API de Metamob](https://www.metamob.fr/help/api): cuenta, misiones, monstruos, zonas, socios de intercambio, eventos Kralamar, mensajes privados, propuestas de intercambio y todos los datos de referencia, para Dofus, Dofus Retro y Dofus Touch.
 
 > **[Metamob](https://www.metamob.fr)** es el sitio donde los jugadores de Dofus siguen sus misiones de archimonstruos y encuentran con quién intercambiar. Es gratuito y lo mantiene una sola persona. Esta biblioteca solo llama a [su API](https://www.metamob.fr/help/api): nada de esto existiría sin él.
 
@@ -122,13 +122,16 @@ const wanted = await metamob.users.quest("Ix-xs", "21b0a742", { status: "wanted"
 const left = await metamob.quests.monsters(slug, { status: "needed" }).count();
 ```
 
-Los mensajes privados se paginan con un cursor en lugar de un offset. Los mismos métodos funcionan:
+Los mensajes privados y las propuestas de intercambio se paginan con un cursor en lugar de un offset. Los mismos métodos funcionan:
 
 ```ts
 for await (const item of metamob.conversations.messages("Ix-xs")) {
   if (item.kind === "message") console.log(item.sender, item.content);
   else console.log(item.sender, "proposed a trade:", item.status);
 }
+
+// Las propuestas de intercambio que esperan tu respuesta.
+const waiting = await metamob.tradeProposals.list({ direction: "received", status: "pending" }).all();
 ```
 
 ## Tus misiones

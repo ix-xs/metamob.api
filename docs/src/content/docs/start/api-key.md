@@ -24,7 +24,7 @@ Une clé ne peut pas être limitée à la lecture : elle donne toujours un accè
 | --- | --- |
 | Monstres, zones, serveurs, modèles de quête | `metamob.me()` |
 | Profils publics et quêtes publiques de n'importe quel joueur | `metamob.quests` : réglages, monstres, correspondances, progression, et toutes les écritures |
-| Événements Kralamoure | `metamob.conversations` : messages privés et propositions d'échange |
+| Événements Kralamoure | `metamob.conversations` et `metamob.tradeProposals` : messages privés et propositions d'échange |
 
 Aucun appel ne se fait sans clé, même pour des données publiques.
 

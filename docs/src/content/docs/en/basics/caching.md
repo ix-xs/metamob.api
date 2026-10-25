@@ -18,7 +18,7 @@ const metamob = new Metamob({
 
 Reference data: game versions, servers, kinds of monsters, kinds of quests, quest templates, monsters, zones and subzones. An answer is kept for 10 minutes, in memory, and shared by every key: it is the same for everyone.
 
-Nothing else. Profiles, quests, matches, conversations and Kralamoure events are read from the API on every call, because they change whenever someone plays.
+Nothing else. Profiles, quests, matches, conversations, trade proposals and Kralamoure events are read from the API on every call, because they change whenever someone plays.
 
 Two identical reads sent at the same moment always share one request, cached or not.
 
@@ -39,7 +39,7 @@ const metamob = new Metamob({
 });
 ```
 
-What depends on the account is kept apart for each key: two players never see each other's answers. The entries of a key are dropped as soon as that key changes a quest, so a read after a write is always fresh.
+What depends on the account is kept apart for each key: two players never see each other's answers. The entries of a key are dropped as soon as that key changes a quest or marks a conversation as read, so a read after a write is always fresh.
 
 ## For one call
 

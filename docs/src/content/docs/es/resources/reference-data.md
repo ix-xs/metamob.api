@@ -2,7 +2,7 @@
 title: Datos de referencia
 description: Las listas a las que remite todo lo demás. Versiones del juego, servidores, tipos de monstruos, tipos de misión y las plantillas de misión, que dicen qué monstruos pide una misión en cada etapa.
 sidebar:
-  order: 9
+  order: 10
 ---
 
 ```ts

@@ -3,6 +3,32 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## 5.1.0
+
+Follows the update of the Metamob API of October 2026: 38 endpoints.
+
+### Added
+
+- `metamob.tradeProposals.list()`: the trade proposals the account sent and
+  received, filtered by `direction`, `status`, `quest` and `since`, paged with
+  a cursor.
+- `metamob.tradeProposals.get(id)`: one proposal, with `owned` on each
+  monster, what you own of it now in the quest concerned.
+- `metamob.conversations.markAsRead(username)`: marks as read what a player
+  sent you, and answers `marked_count`.
+- `unread_count` on each conversation.
+- New fields on trade proposals: `server`, `quest_template`, `sender_quest`,
+  `recipient_quest`, `cancelled_by` and `read_at`.
+- Types `TradeProposalDetail`, `ProposalMonsterDetail`, `ProposalQuest`,
+  `ProposalQuestTemplate`, `ConversationProposal`, `MarkAsReadResult` and
+  `TradeProposalListParams`.
+- A documentation page for trade proposals, in French, English and Spanish.
+
+### Removed
+
+- `server_id` and `quest_type` from the type of a trade proposal: the API
+  deprecated them. Read `server.id` and `quest_template.quest_type` instead.
+
 ## 5.0.2
 
 - The READMEs and every page of the documentation site credit

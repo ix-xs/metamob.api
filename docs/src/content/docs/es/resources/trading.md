@@ -126,7 +126,7 @@ for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) 
 
 ## Propuestas
 
-Una propuesta de intercambio entre dos jugadores se hace en el sitio. La API muestra las que has enviado y recibido, dentro de tus [conversaciones](/resources/conversations/#trade-proposals), pero no las crea ni las confirma.
+Una propuesta de intercambio entre dos jugadores se hace en el sitio. La API muestra las que has enviado y recibido con [`tradeProposals.list()`](/resources/trade-proposals/), y dentro de tus [conversaciones](/resources/conversations/#trade-proposals), pero no las crea ni las confirma.
 
 ## Límites y errores
 
@@ -159,5 +159,6 @@ Cada monstruo de una coincidencia tiene `id`, `name`, `available`, `needed` y `c
 
 - [Tus misiones](/resources/quests/)
 - [Otros jugadores](/resources/users/)
+- [Propuestas de intercambio](/resources/trade-proposals/)
 - [Conversaciones](/resources/conversations/)
 - [Un buscador de intercambios](/recipes/trade-finder/)

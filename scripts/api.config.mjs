@@ -16,7 +16,7 @@
 //   guide    the docs page that explains it
 //   paged    for lists the API paginates: the largest page it accepts
 
-/** @typedef {{ id: string, verb: "GET" | "PATCH", path: string, scope: "public" | "account", call: string, summary: string, guide: string, paged?: { max: number, cursor?: boolean } }} MethodConfig */
+/** @typedef {{ id: string, verb: "GET" | "PATCH" | "POST", path: string, scope: "public" | "account", call: string, summary: string, guide: string, paged?: { max: number, cursor?: boolean } }} MethodConfig */
 
 /** @type {MethodConfig[]} */
 export const methods = [
@@ -272,6 +272,36 @@ export const methods = [
     summary: "The messages and trade proposals exchanged with a user, most recent first.",
     guide: "/resources/conversations/",
     paged: { max: 50, cursor: true },
+  },
+  {
+    id: "conversations.markAsRead",
+    verb: "POST",
+    path: "/conversations/{username}/read",
+    scope: "account",
+    call: "metamob.conversations.markAsRead(username)",
+    summary: "Marks as read every message received from a user, and says how many were.",
+    guide: "/resources/conversations/",
+  },
+
+  // Trade proposals
+  {
+    id: "tradeProposals.list",
+    verb: "GET",
+    path: "/trade-proposals",
+    scope: "account",
+    call: "metamob.tradeProposals.list({ direction, status, quest, since })",
+    summary: "The trade proposals the account sent and received, most recent first, filtered by direction, status, quest or date.",
+    guide: "/resources/trade-proposals/",
+    paged: { max: 50, cursor: true },
+  },
+  {
+    id: "tradeProposals.get",
+    verb: "GET",
+    path: "/trade-proposals/{id}",
+    scope: "account",
+    call: "metamob.tradeProposals.get(id)",
+    summary: "One trade proposal, with how many of each monster you own now.",
+    guide: "/resources/trade-proposals/",
   },
 
   // Your own quests

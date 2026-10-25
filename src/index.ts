@@ -36,6 +36,7 @@ export type { MonsterListParams, Monsters } from "./resources/monsters.js";
 export type { MatchesParams, MonsterQuantities, OwnQuestMonstersParams, Quests, QuestZonesParams } from "./resources/quests.js";
 export type { GameVersions, MonsterTypes, QuestTemplates, QuestTypes, Servers, TemplateHeader, TemplateMonstersParams } from "./resources/reference.js";
 export type { PublicQuestParams, UserSearchParams, Users } from "./resources/users.js";
+export type { TradeProposalListParams, TradeProposals } from "./resources/trade-proposals.js";
 export type { SubzoneParams, Zones } from "./resources/zones.js";
 
 // What the API answers with

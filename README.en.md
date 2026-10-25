@@ -51,7 +51,7 @@ for await (const monster of metamob.quests.monsters(quest.slug, { status: "neede
 await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 ```
 
-It covers the 35 endpoints of the [Metamob API](https://www.metamob.fr/help/api): account, quests, monsters, zones, trade partners, Kralamoure events, private messages and all the reference data, for Dofus, Dofus Retro and Dofus Touch.
+It covers the 38 endpoints of the [Metamob API](https://www.metamob.fr/help/api): account, quests, monsters, zones, trade partners, Kralamoure events, private messages, trade proposals and all the reference data, for Dofus, Dofus Retro and Dofus Touch.
 
 > **[Metamob](https://www.metamob.fr)** is the site where Dofus players track their archmonster quests and find who to trade with. It is free and run by one person. This library only calls [its API](https://www.metamob.fr/help/api): none of this would exist without it.
 
@@ -122,13 +122,16 @@ const wanted = await metamob.users.quest("Ix-xs", "21b0a742", { status: "wanted"
 const left = await metamob.quests.monsters(slug, { status: "needed" }).count();
 ```
 
-Private messages are paginated with a cursor instead of an offset. The same methods work:
+Private messages and trade proposals are paginated with a cursor instead of an offset. The same methods work:
 
 ```ts
 for await (const item of metamob.conversations.messages("Ix-xs")) {
   if (item.kind === "message") console.log(item.sender, item.content);
   else console.log(item.sender, "proposed a trade:", item.status);
 }
+
+// The trade proposals waiting for your answer.
+const waiting = await metamob.tradeProposals.list({ direction: "received", status: "pending" }).all();
 ```
 
 ## Your quests

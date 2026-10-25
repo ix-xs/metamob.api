@@ -18,7 +18,7 @@ const metamob = new Metamob({
 
 Los datos de referencia: versiones del juego, servidores, tipos de monstruo, tipos de misión, plantillas de misión, monstruos, zonas y subzonas. Una respuesta se guarda 10 minutos, en memoria, y se comparte entre todas las claves: es la misma para todos.
 
-Nada más. Los perfiles, las misiones, las coincidencias, las conversaciones y los eventos Kralamar se leen de la API en cada llamada, porque cambian cada vez que alguien juega.
+Nada más. Los perfiles, las misiones, las coincidencias, las conversaciones, las propuestas de intercambio y los eventos Kralamar se leen de la API en cada llamada, porque cambian cada vez que alguien juega.
 
 Dos lecturas idénticas enviadas en el mismo momento siempre comparten una sola solicitud, con caché o sin ella.
 
@@ -39,7 +39,7 @@ const metamob = new Metamob({
 });
 ```
 
-Lo que depende de la cuenta se guarda aparte para cada clave: dos jugadores nunca ven las respuestas del otro. Las entradas de una clave se eliminan en cuanto esa clave modifica una misión, así que una lectura después de una escritura siempre es reciente.
+Lo que depende de la cuenta se guarda aparte para cada clave: dos jugadores nunca ven las respuestas del otro. Las entradas de una clave se eliminan en cuanto esa clave modifica una misión o marca una conversación como leída, así que una lectura después de una escritura siempre es reciente.
 
 ## Para una llamada
 

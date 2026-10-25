@@ -24,7 +24,7 @@ A key cannot be limited to reading: it always gives full access.
 | --- | --- |
 | Monsters, zones, servers, quest templates | `metamob.me()` |
 | Public profiles and public quests of any player | `metamob.quests`: settings, monsters, matches, progress, and every write |
-| Kralamoure events | `metamob.conversations`: private messages and trade proposals |
+| Kralamoure events | `metamob.conversations` and `metamob.tradeProposals`: private messages and trade proposals |
 
 There is no call without a key, not even for public data.
 

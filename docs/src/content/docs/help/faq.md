@@ -13,7 +13,7 @@ Non. `@ix-xs/metamob.api` est un projet open source indépendant, sous licence M
 
 ## Couvre-t-il toute l'API ?
 
-Oui, les 35 points d'accès. [Toutes les méthodes](/reference/methods/) les liste, avec la méthode qui appelle chacun.
+Oui, les 38 points d'accès. [Toutes les méthodes](/reference/methods/) les liste, avec la méthode qui appelle chacun.
 
 ## Ai-je besoin d'une clé API ?
 

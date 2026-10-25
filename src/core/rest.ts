@@ -9,7 +9,7 @@ import { type Duration, sleep, toMs } from "./time.js";
 export interface MethodSpec {
   /** Name of the method, for example `monsters.get`. */
   readonly id: string;
-  readonly verb: "GET" | "PATCH";
+  readonly verb: "GET" | "PATCH" | "POST";
   /** Path under the base URL, with `{placeholders}`. */
   readonly path: string;
   /**
