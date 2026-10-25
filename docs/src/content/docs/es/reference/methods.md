@@ -79,7 +79,7 @@ Ver [Conversaciones](/resources/conversations/).
 
 ## Propuestas de intercambio
 
-Ver [Trade proposals](/resources/trade-proposals/).
+Ver [Propuestas de intercambio](/resources/trade-proposals/).
 
 | Método | Lo que hace |
 | --- | --- |
