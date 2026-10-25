@@ -91,6 +91,7 @@ setInterval(async () => {
 
 - The API does not create, confirm or cancel proposals.
 - `NOT_FOUND` for a proposal that does not exist or is not yours.
+- `BAD_REQUEST` for a `quest` that is not one of your quests, and for a `direction` or `status` the API does not know.
 - An invalid id, quest or date is refused before being sent.
 - Proposals belong to the account of the key. Nothing here is cached by default.
 

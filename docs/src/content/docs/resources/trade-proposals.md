@@ -91,6 +91,7 @@ setInterval(async () => {
 
 - L'API ne crée, ne confirme et n'annule pas de propositions.
 - `NOT_FOUND` pour une proposition qui n'existe pas ou qui n'est pas la vôtre.
+- `BAD_REQUEST` pour une `quest` qui n'est pas l'une de vos quêtes, et pour un `direction` ou un `status` que l'API ne connaît pas.
 - Un identifiant, une quête ou une date invalide est refusé avant d'être envoyé.
 - Les propositions appartiennent au compte de la clé. Rien ici n'est mis en cache par défaut.
 

@@ -91,6 +91,7 @@ setInterval(async () => {
 
 - La API no crea, confirma ni cancela propuestas.
 - `NOT_FOUND` para una propuesta que no existe o que no es tuya.
+- `BAD_REQUEST` para una `quest` que no es una de tus misiones, y para un `direction` o un `status` que la API no conoce.
 - Un identificador, una misión o una fecha no válidos se rechazan antes de enviarse.
 - Las propuestas pertenecen a la cuenta de la clave. Nada de esto se guarda en caché por defecto.
 
