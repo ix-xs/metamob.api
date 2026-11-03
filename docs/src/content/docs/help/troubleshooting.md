@@ -78,7 +78,7 @@ La requête n'est pas passée, après 3 nouvelles tentatives. Vérifiez la conne
 
 L'API a échoué de son côté. Les lectures ont été retentées. Si cela dure, le site est peut-être en maintenance : attendez plutôt que de boucler.
 
-Sur une écriture, il peut aussi s'agir d'une valeur que l'API n'attendait pas, à laquelle elle répond par un 500 sans message : un `current_step` au-delà de la dernière étape de la quête, par exemple. Vérifiez ce que vous avez envoyé avant de réessayer.
+Un message ou une proposition d'échange n'est pas réessayé : après un `SERVER_ERROR` dans ce cas, consultez la conversation ou `tradeProposals.list()` avant de le renvoyer, il est peut-être passé.
 
 ## Cela fonctionne sur mon serveur et échoue dans le navigateur
 

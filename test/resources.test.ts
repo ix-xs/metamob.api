@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { methods as CONFIG } from "../scripts/api.config.mjs";
 import { METHODS, type Metamob, MetamobArgumentError, type MethodId } from "../src/index.js";
-import { type Call, client, monsters, page } from "./helpers.js";
+import { apiError, type Call, client, monsters, page } from "./helpers.js";
 
 const SLUG = "a1b2c3d4";
 
@@ -34,12 +34,18 @@ const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>;
   "conversations.list": { run: (m) => m.conversations.list({ status: "archived", limit: 10, offset: 20 }), path: "/conversations", query: "?status=archived&limit=10&offset=20" },
   "conversations.messages": { run: (m) => m.conversations.messages("Ix-xs", { limit: 5, beforeId: 99 }), path: "/conversations/Ix-xs", query: "?limit=5&before_id=99" },
   "conversations.markAsRead": { run: (m) => m.conversations.markAsRead("Ix-xs"), path: "/conversations/Ix-xs/read" },
+  "conversations.send": { run: (m) => m.conversations.send("Ix-xs", "Salut !"), path: "/conversations/Ix-xs/messages", body: { content: "Salut !" } },
   "tradeProposals.list": {
     run: (m) => m.tradeProposals.list({ direction: "received", status: "pending", quest: SLUG, since: new Date("2026-01-27T14:00:00Z"), limit: 20, beforeId: 77 }),
     path: "/trade-proposals",
     query: `?direction=received&status=pending&quest=${SLUG}&since=2026-01-27T14%3A00%3A00.000Z&limit=20&before_id=77`,
   },
   "tradeProposals.get": { run: (m) => m.tradeProposals.get(57), path: "/trade-proposals/57" },
+  "tradeProposals.create": {
+    run: (m) => m.tradeProposals.create({ recipient: "Ix-xs", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: { Tofu: 2 }, monsters_received: [{ monster: 472, quantity: 1 }] }),
+    path: "/trade-proposals",
+    body: { recipient: "Ix-xs", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: [{ monster_id: 20, quantity: 2 }], monsters_received: [{ monster_id: 472, quantity: 1 }] },
+  },
   "quests.list": { run: (m) => m.quests.list(), path: "/quests" },
   "quests.get": { run: (m) => m.quests.get(SLUG), path: `/quests/${SLUG}` },
   "quests.update": {
@@ -78,7 +84,8 @@ describe("every endpoint", () => {
       expect(call.path).toBe(scenario.path);
       expect(call.url.search).toBe(scenario.query ?? "");
       expect(call.body).toEqual(scenario.body);
-      if (config.verb === "PATCH") expect(call.headers.get("content-type")).toBe("application/json");
+      // A JSON body goes with its content type, and only then.
+      if (scenario.body !== undefined) expect(call.headers.get("content-type")).toBe("application/json");
       else expect(call.headers.get("content-type")).toBeNull();
       expect(METHODS[config.id as MethodId].scope).toBe(config.scope);
     });
@@ -255,6 +262,67 @@ describe("trade proposals and conversations", () => {
     expect(post.body).toBeUndefined();
     expect(calls.filter((call) => call.method === "GET")).toHaveLength(2);
     await expect(metamob.conversations.markAsRead("")).rejects.toThrow(/username/);
+  });
+});
+
+describe("sending messages and proposals", () => {
+  const message = { kind: "message", id: 8123, content: "Salut !", sender: "Ix-xs", created_at: "2026-01-27T14:22:00Z", read_at: null };
+
+  it("sends a message as it is written, and refuses an empty or too long one before any request", async () => {
+    const { metamob, calls } = client({ data: message });
+    expect(await metamob.conversations.send(" Ix-xs ", "  Salut !\n")).toEqual(message);
+    expect(calls[0]!.body).toEqual({ content: "  Salut !\n" });
+    expect(calls[0]!.headers.get("content-type")).toBe("application/json");
+    await expect(metamob.conversations.send("Ix-xs", "  ")).rejects.toThrow(/content/);
+    await expect(metamob.conversations.send("Ix-xs", "x".repeat(1001))).rejects.toThrow(/1001 characters/);
+    // Characters, not UTF-16 units: an emoji counts for one.
+    await metamob.conversations.send("Ix-xs", "😀".repeat(1000));
+    expect(calls).toHaveLength(2);
+  });
+
+  it("never sends a message twice, whatever the failure", async () => {
+    for (const failure of [apiError(503, "down"), apiError(502, "bad gateway"), apiError(429, "Slow down", { "retry-after": "0.01" })]) {
+      const { metamob, calls } = client([failure, { data: message }], { retry: { attempts: 3, delay: 1, maxDelay: 1000 } });
+      await expect(metamob.conversations.send("Ix-xs", "Salut !")).rejects.toMatchObject({ status: failure.status });
+      expect(calls).toHaveLength(1);
+    }
+    const network = client([() => Promise.reject(new TypeError("fetch failed")), { data: message }]);
+    await expect(network.metamob.conversations.send("Ix-xs", "Salut !")).rejects.toMatchObject({ code: "NETWORK" });
+    expect(network.calls).toHaveLength(1);
+  });
+
+  it("keeps retrying the other writes", async () => {
+    const { metamob, calls } = client([apiError(503, "down"), { data: { marked_count: 0 } }]);
+    await metamob.conversations.markAsRead("Ix-xs");
+    expect(calls).toHaveLength(2);
+  });
+
+  it("says FORBIDDEN when sending is not opened for the account", async () => {
+    const { metamob } = client(apiError(403, "Sending is not enabled for this account"));
+    await expect(metamob.conversations.send("Ix-xs", "Salut !")).rejects.toMatchObject({ code: "FORBIDDEN", message: expect.stringContaining("not enabled") });
+  });
+
+  it("builds a proposal from names, leaves out an unknown recipient quest, and refuses what the API would", async () => {
+    const proposal = { id: 58, sender: "Ix-xs", recipient: "Other", status: "pending" };
+    const { metamob, calls } = client({ data: proposal });
+    expect(await metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, monsters_given: new Map([["Tofu", 1]]) })).toEqual(proposal);
+    expect(calls[0]!.body).toEqual({ recipient: "Other", sender_quest: SLUG, monsters_given: [{ monster_id: 20, quantity: 1 }], monsters_received: [] });
+
+    const base = { recipient: "Other", sender_quest: SLUG };
+    await expect(metamob.tradeProposals.create(base)).rejects.toThrow(/at least one monster/);
+    await expect(metamob.tradeProposals.create({ ...base, monsters_given: {} })).rejects.toThrow(/at least one monster/);
+    await expect(metamob.tradeProposals.create({ ...base, monsters_given: { Tofu: 0 } })).rejects.toThrow(/1 or more/);
+    await expect(metamob.tradeProposals.create({ ...base, monsters_given: [{ monster: "Tofu", quantity: 1 }, { monster: 20, quantity: 2 }] })).rejects.toThrow(/twice/);
+    await expect(metamob.tradeProposals.create({ ...base, monsters_given: monsters(201).map((m) => ({ monster: m.id, quantity: 1 })) })).rejects.toThrow(/201 monsters/);
+    await expect(metamob.tradeProposals.create({ ...base, sender_quest: " " , monsters_given: { Tofu: 1 } })).rejects.toThrow(/sender_quest/);
+    await expect(metamob.tradeProposals.create({ ...base, recipient: "", monsters_given: { Tofu: 1 } })).rejects.toThrow(/recipient/);
+    expect(calls).toHaveLength(1);
+  });
+
+  it("never sends a proposal twice", async () => {
+    const { metamob, calls } = client([apiError(504, "timeout"), { data: {} }]);
+    await expect(metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, monsters_given: { Tofu: 1 } })).rejects.toMatchObject({ status: 504 });
+    expect(calls).toHaveLength(1);
   });
 });
 

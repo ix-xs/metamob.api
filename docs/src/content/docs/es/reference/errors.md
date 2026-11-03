@@ -29,18 +29,18 @@ De la API, como `MetamobApiError`:
 | --- | --- | --- | --- |
 | `BAD_REQUEST` | 400, 422 | Un parámetro que la API rechaza. La biblioteca comprueba la mayoría antes del envío | No |
 | `UNAUTHORIZED` | 401 | La clave falta, no es válida o fue revocada | No |
-| `FORBIDDEN` | 403 | La clave no tiene permiso para hacer esto | No |
+| `FORBIDDEN` | 403 | La clave no tiene permiso para hacer esto: el envío no está abierto en la cuenta, o uno de los dos jugadores ha bloqueado al otro | No |
 | `NOT_FOUND` | 404 | No existe, o no es tuyo: una misión de otra cuenta, una misión oculta, un jugador eliminado | No |
-| `RATE_LIMITED` | 429 | Más de 60 solicitudes en un minuto con esta clave | Sí |
-| `SERVER_ERROR` | 500 o más | La API falló | 502, 503, 504: sí. 500: solo las lecturas |
+| `RATE_LIMITED` | 429 | Más de 60 solicitudes en un minuto con esta clave, o los límites antispam del sitio en un mensaje o una propuesta | Sí, salvo un mensaje o una propuesta |
+| `SERVER_ERROR` | 500 o más | La API falló | 502, 503, 504: sí, salvo un mensaje o una propuesta. 500: solo las lecturas |
 | `API_ERROR` | cualquier otro | Un estado de error para el que la biblioteca no tiene nombre | No |
 
 De la solicitud, como `MetamobRequestError`:
 
 | Código | Causa | Reintentada |
 | --- | --- | --- |
-| `TIMEOUT` | Un intento no obtuvo respuesta dentro de `timeout`, 30 segundos por defecto | Sí |
-| `NETWORK` | No se pudo hacer la solicitud: sin conexión, DNS, TLS | Sí |
+| `TIMEOUT` | Un intento no obtuvo respuesta dentro de `timeout`, 30 segundos por defecto | Sí, salvo un mensaje o una propuesta |
+| `NETWORK` | No se pudo hacer la solicitud: sin conexión, DNS, TLS | Sí, salvo un mensaje o una propuesta |
 | `ABORTED` | Tu `signal` canceló la llamada | No |
 | `PARSE_ERROR` | La API respondió 200 con algo que no es JSON | No |
 
@@ -49,7 +49,7 @@ De la biblioteca, como `MetamobArgumentError`, antes de enviar nada:
 | Código | Causa |
 | --- | --- |
 | `MISSING_API_KEY` | Ninguna clave en las opciones del cliente, en las opciones de la llamada ni en `METAMOB_API_KEY` |
-| `INVALID_ARGUMENT` | Un argumento que no puede ser correcto: un slug vacío, una cantidad negativa, una búsqueda de menos de 3 caracteres, una fecha con formato incorrecto, un lote vacío |
+| `INVALID_ARGUMENT` | Un argumento que no puede ser correcto: un slug vacío, una cantidad negativa, una búsqueda de menos de 3 caracteres, una fecha con formato incorrecto, un lote vacío, un mensaje de más de 1000 caracteres, una propuesta sin monstruos |
 | `UNKNOWN_NAME` | Ningún monstruo, zona, subzona, servidor, versión o tipo tiene este nombre. `suggestions` contiene los más parecidos |
 
 ## MetamobError

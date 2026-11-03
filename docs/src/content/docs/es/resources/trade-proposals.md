@@ -1,6 +1,6 @@
 ---
 title: Propuestas de intercambio
-description: Sigue las propuestas de intercambio que has enviado y recibido en todas tus misiones, fíltralas por dirección, estado, misión o fecha, y mira cuántos tienes de cada monstruo antes de responder.
+description: Sigue las propuestas de intercambio que has enviado y recibido en todas tus misiones, fíltralas por dirección, estado, misión o fecha, mira cuántos tienes de cada monstruo antes de responder, y propón un intercambio.
 sidebar:
   order: 8
 ---
@@ -13,7 +13,7 @@ for (const proposal of waiting) {
 }
 ```
 
-Una propuesta de intercambio se hace en el sitio, desde una misión, a otro jugador. La API las lee: no crea, confirma ni cancela ninguna. Cada una aparece también en la [conversación](/resources/conversations/#trade-proposals) con ese jugador.
+Una propuesta de intercambio se hace desde una misión, a otro jugador. La API las lee, y crea nuevas cuando el envío está abierto en la cuenta. Confirmarlas o cancelarlas se hace en el sitio. Cada una aparece también en la [conversación](/resources/conversations/#trade-proposals) con ese jugador.
 
 ## Listar las propuestas
 
@@ -70,6 +70,27 @@ for (const monster of proposal.monsters_given) {
 
 `owned` es la cantidad de ahora, no la del día en que se hizo la propuesta: una vez aplicado el intercambio, ya lo incluye. Vale `null` cuando no tienes ninguna misión de ese tipo en ese servidor.
 
+## Hacer una propuesta
+
+`tradeProposals.create()` propone un intercambio desde una de tus misiones. Recibe los mismos nombres que la API devuelve al leer: `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` y `monsters_received`. Los monstruos llegan en las formas que acepta [`quests.setMonsters()`](/resources/quests/#recording-many-monsters), designados por identificador o por nombre en cualquier idioma.
+
+```ts
+const proposal = await metamob.tradeProposals.create({
+  recipient: "Ix-xs",
+  sender_quest: slug,
+  monsters_given: { "Tofu Maléfique": 1 },
+  monsters_received: { "Bouftou Royal": 1 },
+});
+
+console.log(proposal.id, proposal.status); // "pending"
+```
+
+`sender_quest` es obligatorio. `recipient_quest` es el slug de la misión del otro jugador, cuando lo conoces. Una propuesta necesita al menos un monstruo, de un lado o del otro, y acepta 200 como máximo en cada lado. Lo que encuentra `quests.matches()` es un buen punto de partida: cada coincidencia indica el jugador y lo que puede ir en un sentido y en el otro.
+
+El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petición, y sin él la API responde `FORBIDDEN`. Las reglas son las del sitio: `FORBIDDEN` cuando uno de los dos jugadores ha bloqueado al otro, `RATE_LIMITED` al superar sus límites antispam.
+
+Una propuesta nunca se reintenta, sea cual sea el fallo: enviada dos veces, existiría dos veces. Tras un tiempo de espera agotado o un fallo de red, mira `list({ direction: "sent" })` antes de volver a proponer.
+
 ## Vigilar las nuevas propuestas
 
 Consultada cada pocos minutos con `since`, la lista te dice lo que ha llegado entretanto, por ejemplo para un bot que te avise.
@@ -89,7 +110,8 @@ setInterval(async () => {
 
 ## Límites y errores
 
-- La API no crea, confirma ni cancela propuestas.
+- Confirmar o cancelar una propuesta se hace en el sitio.
+- `create()` rechaza antes de enviarla una propuesta sin ningún monstruo, una cantidad inferior a 1, un monstruo nombrado dos veces en un mismo lado, o más de 200 en un lado. La API responde `BAD_REQUEST` para un monstruo que no está en la misión o una cantidad fuera de los límites.
 - `NOT_FOUND` para una propuesta que no existe o que no es tuya.
 - `BAD_REQUEST` para una `quest` que no es una de tus misiones, y para un `direction` o un `status` que la API no conoce.
 - Un identificador, una misión o una fecha no válidos se rechazan antes de enviarse.
@@ -101,6 +123,7 @@ setInterval(async () => {
 | --- | --- |
 | `tradeProposals.list({ direction, status, quest, since, limit, beforeId }, options?)` | una lista de `TradeProposal`, por cursor |
 | `tradeProposals.get(id, options?)` | `TradeProposalDetail` |
+| `tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received }, options?)` | `TradeProposal` |
 
 Una `TradeProposal`:
 

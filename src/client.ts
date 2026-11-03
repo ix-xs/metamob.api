@@ -117,8 +117,8 @@ export class Metamob {
     this.kralove = new Kralove(context);
     this.users = new Users(context);
     this.conversations = new Conversations(context);
-    this.tradeProposals = new TradeProposals(context);
     this.quests = new Quests(context);
+    this.tradeProposals = new TradeProposals(context, this.quests);
   }
 
   /**

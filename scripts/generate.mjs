@@ -92,6 +92,7 @@ ${union("QuestTemplateId", "Id of a quest template.", snapshot.questTemplates.ma
 const methodLines = methods.map((method) => {
   const fields = [`id: ${JSON.stringify(method.id)}`, `verb: ${JSON.stringify(method.verb)}`, `path: ${JSON.stringify(method.path)}`, `scope: ${JSON.stringify(method.scope)}`];
   if (method.paged) fields.push(`paged: { max: ${method.paged.max}${method.paged.cursor ? ", cursor: true" : ""} }`);
+  if (method.once) fields.push("once: true");
   return `  ${JSON.stringify(method.id)}: { ${fields.join(", ")} },`;
 });
 

@@ -79,7 +79,7 @@ Antes de que un error llegue hasta ti, la biblioteca ya ha vuelto a intentarlo c
 
 Por defecto hay hasta 3 intentos más. La espera empieza en 500 ms y se duplica cada vez, hasta 60 segundos. Cuando la API envía `Retry-After`, se usa esa espera en su lugar. Un `Retry-After` más largo que `maxDelay` no se espera: el error se lanza de inmediato, con su `retryAfter` en segundos.
 
-Cada escritura de esta API fija un valor, así que enviar una dos veces da el mismo resultado. Por eso también se reintentan las escrituras.
+Las escrituras que fijan un valor, en una misión o una conversación, dan el mismo resultado si se envían dos veces: también se reintentan. Enviar un mensaje o una propuesta de intercambio nunca se reintenta, sea cual sea el fallo, porque llegaría dos veces. Tras un tiempo de espera agotado en ese caso, comprueba antes de volver a enviar.
 
 ```ts
 // Para todo el cliente.
@@ -116,7 +116,7 @@ try {
 
 ## Los argumentos se comprueban primero
 
-Lo que se puede saber que es incorrecto sin preguntar a la API se rechaza en local, con `INVALID_ARGUMENT`: un slug vacío, una cantidad negativa, una búsqueda de menos de 3 caracteres, una fecha con un formato incorrecto. No se gasta ninguna solicitud.
+Lo que se puede saber que es incorrecto sin preguntar a la API se rechaza en local, con `INVALID_ARGUMENT`: un slug vacío, una cantidad negativa, una búsqueda de menos de 3 caracteres, una fecha con un formato incorrecto, un mensaje de más de 1000 caracteres, una propuesta sin monstruos. No se gasta ninguna solicitud.
 
 ## Referencia
 

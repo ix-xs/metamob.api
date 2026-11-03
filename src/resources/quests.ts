@@ -67,7 +67,8 @@ export type MonsterQuantities = readonly { readonly monster: MonsterLike; readon
 const BATCH = 200;
 const FLAGS = ["never_offer_normal", "never_want_normal", "never_offer_boss", "never_want_boss", "never_offer_arch", "never_want_arch"] as const;
 
-function entries(quantities: MonsterQuantities): [MonsterLike, number][] {
+/** @internal The pairs of monster and quantity, whatever the shape they came in. */
+export function entries(quantities: MonsterQuantities): [MonsterLike, number][] {
   if (Array.isArray(quantities)) return (quantities as readonly { monster: MonsterLike; quantity: number }[]).map((entry) => [entry?.monster, entry?.quantity]);
   if (quantities instanceof Map) return [...quantities];
   if (quantities && typeof quantities === "object") return Object.entries(quantities as Record<string, number>);
@@ -190,6 +191,11 @@ export class Quests {
    * The id of a monster of a quest. A few archmonsters share their name
    * across versions of the game: for those, the quest says which one is meant.
    */
+  /** @internal The id of a monster, read in the quest template of one of your quests. */
+  monsterIn(slug: string, monster: MonsterLike, options: RequestOptions | undefined): Promise<number> {
+    return this.#monster(slug, monster, options);
+  }
+
   async #monster(slug: string, monster: MonsterLike, options: RequestOptions | undefined): Promise<number> {
     const { resolve } = this.#context;
     const hint = resolve.isAmbiguous(monster) ? { template: await this.#template(slug, options) } : undefined;

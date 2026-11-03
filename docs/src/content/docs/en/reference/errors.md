@@ -29,18 +29,18 @@ From the API, as a `MetamobApiError`:
 | --- | --- | --- | --- |
 | `BAD_REQUEST` | 400, 422 | A parameter the API refuses. The library checks most of them before sending | No |
 | `UNAUTHORIZED` | 401 | The key is missing, invalid or was revoked | No |
-| `FORBIDDEN` | 403 | The key may not do this | No |
+| `FORBIDDEN` | 403 | The key may not do this: sending is not opened on the account, or one of the two players blocked the other | No |
 | `NOT_FOUND` | 404 | It does not exist, or it is not yours: a quest of another account, a hidden quest, a deleted player | No |
-| `RATE_LIMITED` | 429 | More than 60 requests in a minute with this key | Yes |
-| `SERVER_ERROR` | 500 and up | The API failed | 502, 503, 504: yes. 500: reads only |
+| `RATE_LIMITED` | 429 | More than 60 requests in a minute with this key, or the anti-spam limits of the site on a message or a proposal | Yes, except a message or a proposal |
+| `SERVER_ERROR` | 500 and up | The API failed | 502, 503, 504: yes, except a message or a proposal. 500: reads only |
 | `API_ERROR` | any other | An error status the library has no name for | No |
 
 From the request, as a `MetamobRequestError`:
 
 | Code | Cause | Retried |
 | --- | --- | --- |
-| `TIMEOUT` | One attempt got no answer within `timeout`, 30 seconds by default | Yes |
-| `NETWORK` | The request could not be made: no connection, DNS, TLS | Yes |
+| `TIMEOUT` | One attempt got no answer within `timeout`, 30 seconds by default | Yes, except a message or a proposal |
+| `NETWORK` | The request could not be made: no connection, DNS, TLS | Yes, except a message or a proposal |
 | `ABORTED` | Your `signal` cancelled the call | No |
 | `PARSE_ERROR` | The API answered 200 with something that is not JSON | No |
 
@@ -49,7 +49,7 @@ From the library, as a `MetamobArgumentError`, before anything is sent:
 | Code | Cause |
 | --- | --- |
 | `MISSING_API_KEY` | No key in the options of the client, in the options of the call or in `METAMOB_API_KEY` |
-| `INVALID_ARGUMENT` | An argument that cannot be right: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format, an empty batch |
+| `INVALID_ARGUMENT` | An argument that cannot be right: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format, an empty batch, a message longer than 1000 characters, a proposal without monsters |
 | `UNKNOWN_NAME` | No monster, zone, subzone, server, version or kind has this name. `suggestions` holds the closest ones |
 
 ## MetamobError

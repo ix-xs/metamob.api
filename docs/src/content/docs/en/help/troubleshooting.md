@@ -78,7 +78,7 @@ The request did not get through, after 3 retries. Check the connection of the ma
 
 The API failed on its side. Reads were retried. If it lasts, the site may be under maintenance: wait rather than loop.
 
-On a write, it can also be a value the API did not expect, which it answers with a 500 and no message: a `current_step` beyond the last step of the quest, for instance. Check what you sent before trying again.
+A message or a trade proposal is not retried: after a `SERVER_ERROR` there, look at the conversation or at `tradeProposals.list()` before sending it again, it may have gone through.
 
 ## It works on my server and fails in the browser
 

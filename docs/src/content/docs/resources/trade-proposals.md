@@ -1,6 +1,6 @@
 ---
 title: Propositions d'échange
-description: Suivez les propositions d'échange que vous avez envoyées et reçues sur toutes vos quêtes, filtrez-les par sens, par état, par quête ou par date, et voyez ce que vous possédez de chaque monstre avant de répondre.
+description: Suivez les propositions d'échange que vous avez envoyées et reçues sur toutes vos quêtes, filtrez-les par sens, par état, par quête ou par date, voyez ce que vous possédez de chaque monstre avant de répondre, et proposez un échange.
 sidebar:
   order: 8
 ---
@@ -13,7 +13,7 @@ for (const proposal of waiting) {
 }
 ```
 
-Une proposition d'échange se fait sur le site, depuis une quête, à destination d'un autre joueur. L'API les lit : elle n'en crée, n'en confirme et n'en annule aucune. Chacune apparaît aussi dans la [conversation](/resources/conversations/#trade-proposals) avec ce joueur.
+Une proposition d'échange se fait depuis une quête, à destination d'un autre joueur. L'API les lit, et en crée de nouvelles quand l'envoi est ouvert sur le compte. Les confirmer ou les annuler se fait sur le site. Chacune apparaît aussi dans la [conversation](/resources/conversations/#trade-proposals) avec ce joueur.
 
 ## Lister les propositions
 
@@ -70,6 +70,27 @@ for (const monster of proposal.monsters_given) {
 
 `owned` est la quantité actuelle, pas celle du jour où la proposition a été faite : une fois l'échange appliqué, elle en tient déjà compte. Il vaut `null` quand vous n'avez pas de quête de ce type sur ce serveur.
 
+## Faire une proposition
+
+`tradeProposals.create()` propose un échange depuis l'une de vos quêtes. Elle prend les mêmes noms que ceux que l'API renvoie en lecture : `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` et `monsters_received`. Les monstres s'écrivent sous les formes qu'accepte [`quests.setMonsters()`](/resources/quests/#recording-many-monsters), désignés par leur identifiant ou par leur nom dans n'importe quelle langue.
+
+```ts
+const proposal = await metamob.tradeProposals.create({
+  recipient: "Ix-xs",
+  sender_quest: slug,
+  monsters_given: { "Tofu Maléfique": 1 },
+  monsters_received: { "Bouftou Royal": 1 },
+});
+
+console.log(proposal.id, proposal.status); // "pending"
+```
+
+`sender_quest` est obligatoire. `recipient_quest` est le slug de la quête de l'autre joueur, quand vous le connaissez. Une proposition demande au moins un monstre, d'un côté ou de l'autre, et en accepte 200 au plus de chaque côté. Ce que trouve `quests.matches()` est un bon point de départ : chaque correspondance nomme le joueur et ce qui peut s'échanger dans les deux sens.
+
+L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande, et l'API répond `FORBIDDEN` sans cela. Les règles sont celles du site : `FORBIDDEN` quand l'un des deux joueurs a bloqué l'autre, `RATE_LIMITED` au-delà de ses limites anti-spam.
+
+Une proposition n'est jamais réessayée, quel que soit l'échec : envoyée deux fois, elle existerait en double. Après un délai dépassé ou une coupure réseau, consultez `list({ direction: "sent" })` avant de proposer à nouveau.
+
 ## Surveiller les nouvelles propositions
 
 En interrogeant la liste toutes les quelques minutes avec `since`, vous savez ce qui est arrivé entre-temps, par exemple pour un bot qui vous prévient.
@@ -89,7 +110,8 @@ setInterval(async () => {
 
 ## Limites et erreurs
 
-- L'API ne crée, ne confirme et n'annule pas de propositions.
+- Confirmer ou annuler une proposition se fait sur le site.
+- `create()` refuse avant l'envoi une proposition sans aucun monstre, une quantité inférieure à 1, un monstre nommé deux fois du même côté, ou plus de 200 monstres d'un même côté. L'API répond `BAD_REQUEST` pour un monstre qui n'est pas dans la quête ou pour une quantité hors limites.
 - `NOT_FOUND` pour une proposition qui n'existe pas ou qui n'est pas la vôtre.
 - `BAD_REQUEST` pour une `quest` qui n'est pas l'une de vos quêtes, et pour un `direction` ou un `status` que l'API ne connaît pas.
 - Un identifiant, une quête ou une date invalide est refusé avant d'être envoyé.
@@ -101,6 +123,7 @@ setInterval(async () => {
 | --- | --- |
 | `tradeProposals.list({ direction, status, quest, since, limit, beforeId }, options?)` | une liste de `TradeProposal`, par curseur |
 | `tradeProposals.get(id, options?)` | `TradeProposalDetail` |
+| `tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received }, options?)` | `TradeProposal` |
 
 Une `TradeProposal` :
 

@@ -78,7 +78,7 @@ La solicitud no pasó, tras 3 reintentos. Comprueba la conexión de la máquina,
 
 La API falló por su lado. Las lecturas se reintentaron. Si dura, puede que el sitio esté en mantenimiento: espera en lugar de insistir en bucle.
 
-En una escritura, también puede ser un valor que la API no esperaba, al que responde con un 500 sin mensaje: un `current_step` más allá de la última etapa de la misión, por ejemplo. Comprueba lo que has enviado antes de volver a intentarlo.
+Un mensaje o una propuesta de intercambio no se reintenta: tras un `SERVER_ERROR` ahí, mira la conversación o `tradeProposals.list()` antes de volver a enviarlo, puede que haya llegado.
 
 ## Funciona en mi servidor y falla en el navegador
 

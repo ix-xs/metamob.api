@@ -457,6 +457,8 @@ export interface Conversation {
   message_count: number;
   /** Messages received and not read yet, trade proposals included. */
   unread_count: number;
+  /** A flag the site sets on what is unread. Metamob does not document it yet. */
+  has_priority_unread?: boolean;
   /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   last_message_at: string;
 }

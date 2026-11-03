@@ -126,7 +126,7 @@ for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) 
 
 ## Propuestas
 
-Una propuesta de intercambio entre dos jugadores se hace en el sitio. La API muestra las que has enviado y recibido con [`tradeProposals.list()`](/resources/trade-proposals/), y dentro de tus [conversaciones](/resources/conversations/#trade-proposals), pero no las crea ni las confirma.
+La API muestra las propuestas de intercambio que has enviado y recibido con [`tradeProposals.list()`](/resources/trade-proposals/), y dentro de tus [conversaciones](/resources/conversations/#trade-proposals). [`tradeProposals.create()`](/resources/trade-proposals/#making-a-proposal) crea una, una vez abierto el envío en la cuenta. Confirmarla o cancelarla se hace en el sitio.
 
 ## Límites y errores
 

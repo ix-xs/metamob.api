@@ -1,6 +1,6 @@
 ---
 title: Conversations
-description: Read the private conversations of the account and, inside each one, the messages and the trade proposals exchanged with a player, see what is unread and mark it as read. The API does not send messages.
+description: Read the private conversations of the account and, inside each one, the messages and the trade proposals exchanged with a player, see what is unread, mark it as read, and send a message.
 sidebar:
   order: 7
 ---
@@ -109,11 +109,23 @@ const { marked_count } = await metamob.conversations.markAsRead(username);
 console.log(`${marked_count} marked as read`);
 ```
 
-It is the only write of conversations: the API does not send messages.
+## Sending a message
+
+`conversations.send()` sends a private message to a player, 1000 characters at most, and answers it as it now appears in the conversation.
+
+```ts
+const message = await metamob.conversations.send(username, "Salut, ton Tofu Maléfique est toujours dispo ?");
+console.log(message.id, message.created_at);
+```
+
+Sending is closed by default: Metamob opens it account by account, on request. Without it, the API answers `FORBIDDEN`. The rules are the ones of the site: `FORBIDDEN` too when one of the two players blocked the other, and `RATE_LIMITED` past its anti-spam limits.
+
+A message is never retried, whatever the failure: sent twice, it would arrive twice. After a timeout or a network failure, read the conversation before sending it again.
 
 ## Limits and errors
 
-- The API does not send messages, and does not create, confirm or cancel proposals.
+- Sending a message or a proposal needs sending opened on the account, see above. Confirming or cancelling a proposal is done on the site.
+- An empty message, or one longer than 1000 characters, is refused before being sent.
 - `markAsRead()` answers `NOT_FOUND` for a username that does not exist.
 - A correspondent may have no profile left: a deleted account keeps its conversations readable for 30 days, while `users.get()` answers `NOT_FOUND`.
 - Conversations belong to the account of the key. Nothing here is cached by default.
@@ -125,6 +137,7 @@ It is the only write of conversations: the API does not send messages.
 | `conversations.list({ status, limit, offset }, options?)` | a list of `Conversation` |
 | `conversations.messages(username, { limit, beforeId }, options?)` | a list of `ConversationItem`, by cursor |
 | `conversations.markAsRead(username, options?)` | `{ marked_count }` |
+| `conversations.send(username, content, options?)` | `ConversationMessage` |
 
 A `Conversation`:
 

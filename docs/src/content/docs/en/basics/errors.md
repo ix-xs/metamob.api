@@ -79,7 +79,7 @@ Before an error reaches you, the library has already tried again when trying aga
 
 By default there are up to 3 more attempts. The delay starts at 500 ms and doubles each time, up to 60 seconds. When the API sends `Retry-After`, that wait is used instead. A `Retry-After` longer than `maxDelay` is not waited for: the error is thrown at once, with its `retryAfter` in seconds.
 
-Every write of this API sets a value, so sending one twice gives the same result. That is why writes are retried too.
+The writes that set a value, on a quest or a conversation, give the same result when sent twice: they are retried too. Sending a message or a trade proposal is never retried, whatever the failure, since it would arrive twice. After a timeout there, look before sending again.
 
 ```ts
 // For the whole client.
@@ -116,7 +116,7 @@ try {
 
 ## Arguments are checked first
 
-What can be known to be wrong without asking the API is refused locally, with `INVALID_ARGUMENT`: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format. No request is spent.
+What can be known to be wrong without asking the API is refused locally, with `INVALID_ARGUMENT`: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format, a message longer than 1000 characters, a proposal without monsters. No request is spent.
 
 ## Reference
 

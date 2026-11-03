@@ -51,7 +51,7 @@ for await (const monster of metamob.quests.monsters(quest.slug, { status: "neede
 await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 ```
 
-La bibliothèque couvre les 38 points d'accès de l'[API Metamob](https://www.metamob.fr/help/api) : compte, quêtes, monstres, zones, partenaires d'échange, événements Kralamoure, messages privés, propositions d'échange et toutes les données de référence, pour Dofus, Dofus Retro et Dofus Touch.
+La bibliothèque couvre les 40 points d'accès de l'[API Metamob](https://www.metamob.fr/help/api) : compte, quêtes, monstres, zones, partenaires d'échange, événements Kralamoure, messages privés, propositions d'échange et toutes les données de référence, pour Dofus, Dofus Retro et Dofus Touch.
 
 > **[Metamob](https://www.metamob.fr)** est le site où les joueurs de Dofus suivent leurs quêtes d'archimonstres et trouvent avec qui échanger. Il est gratuit et tenu par une seule personne. Cette bibliothèque ne fait qu'appeler [son API](https://www.metamob.fr/help/api) : rien de tout cela n'existerait sans lui.
 
@@ -132,6 +132,10 @@ for await (const item of metamob.conversations.messages("Ix-xs")) {
 
 // Les propositions d'échange qui attendent votre réponse.
 const waiting = await metamob.tradeProposals.list({ direction: "received", status: "pending" }).all();
+
+// Envoyer, une fois que Metamob l'a ouvert sur le compte.
+await metamob.conversations.send("Ix-xs", "Salut, ton Tofu Maléfique est toujours dispo ?");
+await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, monsters_given: { "Tofu Maléfique": 1 } });
 ```
 
 ## Vos quêtes
@@ -208,7 +212,7 @@ metamob.on("rateLimit", ({ method, delay }) => console.log(`${method} waited ${d
 metamob.on("retry", ({ method, attempt, error }) => console.warn(method, attempt, error.message));
 ```
 
-Un 429, une erreur du serveur ou une panne réseau donne lieu à une nouvelle tentative, avec un délai exponentiel et en respectant `Retry-After`. Chaque écriture de cette API fixe une valeur, donc en rejouer une ne change rien.
+Un 429, une erreur du serveur ou une panne réseau donne lieu à une nouvelle tentative, avec un délai exponentiel et en respectant `Retry-After`. Les écritures qui fixent une valeur sont rejouées sans risque ; l'envoi d'un message ou d'une proposition d'échange n'est jamais rejoué, il ne peut donc pas arriver deux fois.
 
 Les données de référence sont gardées en cache pendant 10 minutes. Ce qui est lié à un compte ne l'est pas, sauf si vous le demandez :
 

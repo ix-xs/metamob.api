@@ -158,7 +158,7 @@ Un monstre est `validated` quand son étape est déjà passée, `completed` quan
 
 - Toutes les méthodes répondent `NOT_FOUND` pour une quête qui n'est pas la vôtre, qu'elle existe ou non.
 - Les quantités vont de 0 à 99. En dehors, l'API répond `BAD_REQUEST`.
-- Un `current_step` au-delà de la dernière étape de la quête revient en `SERVER_ERROR`, pas en `BAD_REQUEST` : le nombre d'étapes est `quest_template.step_count`.
+- `current_step` va de 1 à `quest_template.step_count`, plus un pour une quête terminée : de 1 à 19 pour les 18 étapes de l'Ocre sur Dofus, de 1 à 35 sur Retro et Touch. En dehors, l'API répond `BAD_REQUEST`.
 - Une écriture vide ce que le client avait mis en cache pour votre clé : la lecture suivante est donc à jour.
 - Créer et supprimer une quête ne font pas partie de l'API : faites-le sur le site.
 
@@ -180,7 +180,7 @@ Ce que `update` accepte :
 | --- | --- | --- |
 | `character_name` | `string` | 200 caractères au plus |
 | `parallel_quests` | `number` | À partir de 1 |
-| `current_step` | `number` | De 1 à la dernière étape de la quête |
+| `current_step` | `number` | De 1 à `step_count`, `step_count + 1` une fois la quête terminée |
 | `show_trades` | `boolean` | Affichée sur le profil public |
 | `trade_mode` | `0 \| 1` | Automatique ou expert |
 | `trade_offer_threshold`, `trade_want_threshold` | `number \| null` | Mode expert, de 0 à 30 |

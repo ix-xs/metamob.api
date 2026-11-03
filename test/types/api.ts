@@ -97,11 +97,21 @@ export async function results() {
   expect<Equal<typeof proposal.status, "pending" | "half_applied" | "completed" | "cancelled">>();
   // @ts-expect-error the deprecated fields are gone
   void proposal.server_id;
+
+  // Sending answers what reading shows.
+  const sent = await metamob.conversations.send("Ix-xs", "Salut !");
+  expect<Equal<typeof sent.kind, "message">>();
+  const made = await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, monsters_given: { "Tofu Maléfique": 1 } });
+  expect<Equal<typeof made, TradeProposal>>();
   // @ts-expect-error the quest type is read from quest_template
   void proposal.quest_type;
 }
 
 export async function refused() {
+  // @ts-expect-error a proposal says who it is for
+  metamob.tradeProposals.create({ sender_quest: slug, monsters_given: { Tofu: 1 } });
+  // @ts-expect-error a message is text
+  metamob.conversations.send("Ix-xs", 42);
   // @ts-expect-error `direction` is received, sent or all
   metamob.tradeProposals.list({ direction: "inbox" });
   // @ts-expect-error `status` of a proposal takes four values

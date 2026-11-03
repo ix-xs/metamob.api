@@ -51,7 +51,7 @@ for await (const monster of metamob.quests.monsters(quest.slug, { status: "neede
 await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 ```
 
-It covers the 38 endpoints of the [Metamob API](https://www.metamob.fr/help/api): account, quests, monsters, zones, trade partners, Kralamoure events, private messages, trade proposals and all the reference data, for Dofus, Dofus Retro and Dofus Touch.
+It covers the 40 endpoints of the [Metamob API](https://www.metamob.fr/help/api): account, quests, monsters, zones, trade partners, Kralamoure events, private messages, trade proposals and all the reference data, for Dofus, Dofus Retro and Dofus Touch.
 
 > **[Metamob](https://www.metamob.fr)** is the site where Dofus players track their archmonster quests and find who to trade with. It is free and run by one person. This library only calls [its API](https://www.metamob.fr/help/api): none of this would exist without it.
 
@@ -132,6 +132,10 @@ for await (const item of metamob.conversations.messages("Ix-xs")) {
 
 // The trade proposals waiting for your answer.
 const waiting = await metamob.tradeProposals.list({ direction: "received", status: "pending" }).all();
+
+// Sending, once Metamob opened it on the account.
+await metamob.conversations.send("Ix-xs", "Salut, ton Tofu Maléfique est toujours dispo ?");
+await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, monsters_given: { "Tofu Maléfique": 1 } });
 ```
 
 ## Your quests
@@ -208,7 +212,7 @@ metamob.on("rateLimit", ({ method, delay }) => console.log(`${method} waited ${d
 metamob.on("retry", ({ method, attempt, error }) => console.warn(method, attempt, error.message));
 ```
 
-A 429, a server error or a network failure is retried with exponential backoff, honouring `Retry-After`. Every write of this API sets a value, so replaying one changes nothing.
+A 429, a server error or a network failure is retried with exponential backoff, honouring `Retry-After`. The writes that set a value are replayed safely; sending a message or a trade proposal is never replayed, so it cannot arrive twice.
 
 Reference data is cached for 10 minutes. Anything tied to an account is not, unless you ask:
 

@@ -1,6 +1,6 @@
 ---
 title: Trade proposals
-description: Follow the trade proposals you sent and received on every quest, filter them by direction, state, quest or date, and see what you own of each monster before answering.
+description: Follow the trade proposals you sent and received on every quest, filter them by direction, state, quest or date, see what you own of each monster before answering, and propose a trade.
 sidebar:
   order: 8
 ---
@@ -13,7 +13,7 @@ for (const proposal of waiting) {
 }
 ```
 
-A trade proposal is made on the site, from a quest, to another player. The API reads them: it does not create, confirm or cancel any. Each one also appears in the [conversation](/resources/conversations/#trade-proposals) with that player.
+A trade proposal is made from a quest, to another player. The API reads them, and makes new ones when sending is opened on the account. Confirming or cancelling one is done on the site. Each one also appears in the [conversation](/resources/conversations/#trade-proposals) with that player.
 
 ## Listing proposals
 
@@ -70,6 +70,27 @@ for (const monster of proposal.monsters_given) {
 
 `owned` is the count of now, not of the day the proposal was made: once the trade is applied, it already includes it. It is `null` when you have no quest of that kind on that server.
 
+## Making a proposal
+
+`tradeProposals.create()` proposes a trade from one of your quests. It takes the same names the API reads back: `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` and `monsters_received`. The monsters come in the shapes [`quests.setMonsters()`](/resources/quests/#recording-many-monsters) takes, named by id or by name in any language.
+
+```ts
+const proposal = await metamob.tradeProposals.create({
+  recipient: "Ix-xs",
+  sender_quest: slug,
+  monsters_given: { "Tofu Maléfique": 1 },
+  monsters_received: { "Bouftou Royal": 1 },
+});
+
+console.log(proposal.id, proposal.status); // "pending"
+```
+
+`sender_quest` is required. `recipient_quest` is the slug of the quest of the other player, when you know it. A proposal needs at least one monster, on either side, and takes 200 at most on each side. What `quests.matches()` finds is a good place to start: each match names the player and what can go both ways.
+
+Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. The rules are the ones of the site: `FORBIDDEN` when one of the two players blocked the other, `RATE_LIMITED` past its anti-spam limits.
+
+A proposal is never retried, whatever the failure: sent twice, it would exist twice. After a timeout or a network failure, look at `list({ direction: "sent" })` before proposing again.
+
 ## Watching for new proposals
 
 Asked every few minutes with `since`, the list tells you what arrived in between, for a bot that warns you for instance.
@@ -89,7 +110,8 @@ setInterval(async () => {
 
 ## Limits and errors
 
-- The API does not create, confirm or cancel proposals.
+- Confirming or cancelling a proposal is done on the site.
+- `create()` refuses before sending a proposal without any monster, a quantity under 1, a monster named twice on one side, or more than 200 on one side. The API answers `BAD_REQUEST` for a monster that is not in the quest or a quantity out of bounds.
 - `NOT_FOUND` for a proposal that does not exist or is not yours.
 - `BAD_REQUEST` for a `quest` that is not one of your quests, and for a `direction` or `status` the API does not know.
 - An invalid id, quest or date is refused before being sent.
@@ -101,6 +123,7 @@ setInterval(async () => {
 | --- | --- |
 | `tradeProposals.list({ direction, status, quest, since, limit, beforeId }, options?)` | a list of `TradeProposal`, by cursor |
 | `tradeProposals.get(id, options?)` | `TradeProposalDetail` |
+| `tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received }, options?)` | `TradeProposal` |
 
 A `TradeProposal`:
 

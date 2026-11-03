@@ -181,7 +181,7 @@ async function refused(code: string, run: () => Promise<unknown>): Promise<void>
 await step("conversations: list, messages, unread_count, markAsRead", async () => {
   const page = await metamob.conversations.list({ limit: 10 });
   for (const conversation of page.items) {
-    shape("Conversation", conversation, ["username", "message_count", "unread_count", "last_message_at"]);
+    shape("Conversation", conversation, ["username", "message_count", "unread_count", "last_message_at"], ["has_priority_unread"]);
     date("Conversation.last_message_at", conversation.last_message_at);
     if (!Number.isInteger(conversation.unread_count) || conversation.unread_count < 0) problems.push(`Conversation.unread_count: ${conversation.unread_count}`);
   }
@@ -212,6 +212,42 @@ await step("tradeProposals: list, get, filters", async () => {
   const detail = await metamob.tradeProposals.get(page.items[0]);
   proposal("TradeProposalDetail", detail as unknown as Record<string, unknown>);
   for (const monster of [...detail.monsters_given, ...detail.monsters_received]) shape("ProposalMonsterDetail", monster, ["monster_id", "quantity", "owned"]);
+});
+
+await step("errors: the message is in messages.error", async () => {
+  const cases: [string, () => Promise<unknown>][] = [
+    ["404", () => metamob.monsters.get(999_999)],
+    ["401", () => new Metamob({ apiKey: "0".repeat(64), cache: false, retry: false }).me()],
+  ];
+  for (const [status, run] of cases) {
+    try {
+      await run();
+      problems.push(`${status}: the call succeeded`);
+    } catch (error) {
+      if (!(error instanceof MetamobApiError)) throw error;
+      if (!error.messages.error) console.log(`      ${status}: not in the single error format yet (${error.message})`);
+    }
+  }
+});
+
+await step("sending: closed, or addressed to nobody", async () => {
+  // Addressed to a player who does not exist: whatever the account may do, nothing is sent.
+  const nobody = "zz-nobody-zz-0000";
+  const attempts: [string, () => Promise<unknown>][] = [
+    ["conversations.send", () => metamob.conversations.send(nobody, "test")],
+    ["tradeProposals.create", () => metamob.tradeProposals.create({ recipient: nobody, sender_quest: config.METAMOB_QUEST_SLUG ?? "a1b2c3d4", monsters_given: [{ monster: 301, quantity: 1 }] })],
+  ];
+  for (const [name, run] of attempts) {
+    try {
+      await run();
+      problems.push(`${name} to a player who does not exist succeeded`);
+    } catch (error) {
+      if (!(error instanceof MetamobApiError)) throw error;
+      if (error.code === "FORBIDDEN") console.log(`      ${name}: sending is not opened on this account (${error.message})`);
+      else if (error.code === "NOT_FOUND" && error.messages.error) console.log(`      ${name}: sending is opened, ${error.messages.error}`);
+      else problems.push(`${name}: expected FORBIDDEN or NOT_FOUND with a message, got ${error.status} ${error.code} ${JSON.stringify(error.messages)}`);
+    }
+  }
 });
 
 const own = await step("quests: list, get, monsters, matches, zones", async () => {

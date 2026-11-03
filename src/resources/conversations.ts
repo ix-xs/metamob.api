@@ -1,8 +1,12 @@
+import { MetamobArgumentError } from "../core/errors.js";
 import { ListRequest, topLevel } from "../core/pagination.js";
 import { type Context, type PageParams, text } from "../core/resource.js";
 import type { RequestOptions } from "../core/rest.js";
 import { METHODS } from "../generated/methods.js";
-import type { Conversation, ConversationItem, MarkAsReadResult } from "../types.js";
+import type { Conversation, ConversationItem, ConversationMessage, MarkAsReadResult } from "../types.js";
+
+/** Longest message the API takes, in characters. */
+const MESSAGE_LENGTH = 1000;
 
 /** Filters of {@link Conversations.list}. */
 export interface ConversationListParams extends PageParams {
@@ -80,5 +84,29 @@ export class Conversations {
   async markAsRead(username: string, options?: RequestOptions): Promise<MarkAsReadResult> {
     const path = { username: text(username, "username") };
     return (await this.#context.rest.request<{ data: MarkAsReadResult }>(METHODS["conversations.markAsRead"], { path }, options)).data;
+  }
+
+  /**
+   * Sends a private message to a user, and answers it as it now appears in
+   * the conversation. 1000 characters at most.
+   *
+   * Sending is closed by default: Metamob opens it account by account, on
+   * request. Without it, the API answers `FORBIDDEN`, and so it does when one
+   * of the two players blocked the other. Past the anti-spam limits of the
+   * site, it answers `RATE_LIMITED`.
+   *
+   * A message is never retried, whatever the failure: sent twice, it would
+   * arrive twice. After a timeout or a network failure, read the conversation
+   * before sending it again.
+   *
+   * @example
+   * await metamob.conversations.send("Ix-xs", "Salut, ton Tofu Maléfique est toujours dispo ?");
+   */
+  async send(username: string, content: string, options?: RequestOptions): Promise<ConversationMessage> {
+    const path = { username: text(username, "username") };
+    if (typeof content !== "string" || !content.trim()) throw new MetamobArgumentError("`content` must be a non-empty string.");
+    const length = [...content].length;
+    if (length > MESSAGE_LENGTH) throw new MetamobArgumentError(`\`content\` is ${length} characters long: a message takes ${MESSAGE_LENGTH} at most.`);
+    return (await this.#context.rest.request<{ data: ConversationMessage }>(METHODS["conversations.send"], { path, body: { content } }, options)).data;
   }
 }

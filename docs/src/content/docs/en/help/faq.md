@@ -13,7 +13,7 @@ No. `@ix-xs/metamob.api` is an independent open-source project under the MIT lic
 
 ## Does it cover the whole API?
 
-Yes, the 38 endpoints. [Every method](/reference/methods/) lists them next to the method that calls each one.
+Yes, the 40 endpoints. [Every method](/reference/methods/) lists them next to the method that calls each one.
 
 ## Do I need an API key?
 
@@ -61,7 +61,7 @@ Read it, then set it: `setMonster` sets a quantity. The snippet is in [Troublesh
 
 ## Does it retry on its own?
 
-Yes: rate limits, server errors on reads, timeouts and network failures, up to 3 times with growing delays. See [Errors](/basics/errors/#what-is-retried).
+Yes: rate limits, server errors on reads, timeouts and network failures, up to 3 times with growing delays. Sending a message or a proposal is the exception: it is never retried. See [Errors](/basics/errors/#what-is-retried).
 
 ## I used version 4. What changes?
 

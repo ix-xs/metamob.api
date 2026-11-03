@@ -126,7 +126,7 @@ for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) 
 
 ## Proposals
 
-A trade proposal between two players is made on the site. The API shows the ones you sent and received with [`tradeProposals.list()`](/resources/trade-proposals/), and inside your [conversations](/resources/conversations/#trade-proposals), but does not create or confirm them.
+The API shows the trade proposals you sent and received with [`tradeProposals.list()`](/resources/trade-proposals/), and inside your [conversations](/resources/conversations/#trade-proposals). [`tradeProposals.create()`](/resources/trade-proposals/#making-a-proposal) makes one, once sending is opened on the account. Confirming or cancelling it is done on the site.
 
 ## Limits and errors
 

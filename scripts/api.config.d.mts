@@ -8,6 +8,8 @@ export interface MethodConfig {
   summary: string;
   guide: string;
   paged?: { max: number; cursor?: boolean };
+  /** A write that creates something: sending it twice would create it twice, so it is never retried. */
+  once?: boolean;
 }
 
 export declare const methods: MethodConfig[];

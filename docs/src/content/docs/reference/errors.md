@@ -29,18 +29,18 @@ Venant de l'API, sous forme de `MetamobApiError` :
 | --- | --- | --- | --- |
 | `BAD_REQUEST` | 400, 422 | Un paramètre que l'API refuse. La bibliothèque vérifie la plupart d'entre eux avant l'envoi | Non |
 | `UNAUTHORIZED` | 401 | La clé est absente, invalide ou a été révoquée | Non |
-| `FORBIDDEN` | 403 | La clé n'a pas le droit de faire cela | Non |
+| `FORBIDDEN` | 403 | La clé n'a pas le droit de faire cela : l'envoi n'est pas ouvert sur le compte, ou l'un des deux joueurs a bloqué l'autre | Non |
 | `NOT_FOUND` | 404 | Cela n'existe pas, ou ce n'est pas à vous : une quête d'un autre compte, une quête masquée, un joueur supprimé | Non |
-| `RATE_LIMITED` | 429 | Plus de 60 requêtes en une minute avec cette clé | Oui |
-| `SERVER_ERROR` | 500 et plus | L'API a échoué | 502, 503, 504 : oui. 500 : lectures seulement |
+| `RATE_LIMITED` | 429 | Plus de 60 requêtes en une minute avec cette clé, ou les limites anti-spam du site sur un message ou une proposition | Oui, sauf un message ou une proposition |
+| `SERVER_ERROR` | 500 et plus | L'API a échoué | 502, 503, 504 : oui, sauf un message ou une proposition. 500 : lectures seulement |
 | `API_ERROR` | tout autre | Un statut d'erreur pour lequel la bibliothèque n'a pas de nom | Non |
 
 Venant de la requête, sous forme de `MetamobRequestError` :
 
 | Code | Cause | Retentée |
 | --- | --- | --- |
-| `TIMEOUT` | Une tentative n'a reçu aucune réponse dans le délai `timeout`, 30 secondes par défaut | Oui |
-| `NETWORK` | La requête n'a pas pu être faite : pas de connexion, DNS, TLS | Oui |
+| `TIMEOUT` | Une tentative n'a reçu aucune réponse dans le délai `timeout`, 30 secondes par défaut | Oui, sauf un message ou une proposition |
+| `NETWORK` | La requête n'a pas pu être faite : pas de connexion, DNS, TLS | Oui, sauf un message ou une proposition |
 | `ABORTED` | Votre `signal` a annulé l'appel | Non |
 | `PARSE_ERROR` | L'API a répondu 200 avec autre chose que du JSON | Non |
 
@@ -49,7 +49,7 @@ Venant de la bibliothèque, sous forme de `MetamobArgumentError`, avant tout env
 | Code | Cause |
 | --- | --- |
 | `MISSING_API_KEY` | Aucune clé dans les options du client, ni dans les options de l'appel, ni dans `METAMOB_API_KEY` |
-| `INVALID_ARGUMENT` | Un argument qui ne peut pas être correct : un slug vide, une quantité négative, une recherche de moins de 3 caractères, une date au mauvais format, un lot vide |
+| `INVALID_ARGUMENT` | Un argument qui ne peut pas être correct : un slug vide, une quantité négative, une recherche de moins de 3 caractères, une date au mauvais format, un lot vide, un message de plus de 1000 caractères, une proposition sans monstres |
 | `UNKNOWN_NAME` | Aucun monstre, zone, sous-zone, serveur, version ou type ne porte ce nom. `suggestions` contient les plus proches |
 
 ## MetamobError

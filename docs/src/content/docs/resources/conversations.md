@@ -1,6 +1,6 @@
 ---
 title: Conversations
-description: Lisez les conversations privées du compte et, dans chacune, les messages et les propositions d'échange échangés avec un joueur, voyez ce qui n'est pas lu et marquez-le comme lu. L'API n'envoie pas de messages.
+description: Lisez les conversations privées du compte et, dans chacune, les messages et les propositions d'échange échangés avec un joueur, voyez ce qui n'est pas lu, marquez-le comme lu et envoyez un message.
 sidebar:
   order: 7
 ---
@@ -109,11 +109,23 @@ const { marked_count } = await metamob.conversations.markAsRead(username);
 console.log(`${marked_count} marked as read`);
 ```
 
-C'est la seule écriture des conversations : l'API n'envoie pas de messages.
+## Envoyer un message
+
+`conversations.send()` envoie un message privé à un joueur, de 1000 caractères au plus, et le renvoie tel qu'il apparaît désormais dans la conversation.
+
+```ts
+const message = await metamob.conversations.send(username, "Salut, ton Tofu Maléfique est toujours dispo ?");
+console.log(message.id, message.created_at);
+```
+
+L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande. Sans cela, l'API répond `FORBIDDEN`. Les règles sont celles du site : `FORBIDDEN` aussi quand l'un des deux joueurs a bloqué l'autre, et `RATE_LIMITED` au-delà de ses limites anti-spam.
+
+Un message n'est jamais réessayé, quel que soit l'échec : envoyé deux fois, il arriverait deux fois. Après un délai dépassé ou une coupure réseau, lisez la conversation avant de le renvoyer.
 
 ## Limites et erreurs
 
-- L'API n'envoie pas de messages. Elle ne crée, ne confirme et n'annule pas non plus de propositions.
+- Envoyer un message ou une proposition demande que l'envoi soit ouvert sur le compte, voir plus haut. Confirmer ou annuler une proposition se fait sur le site.
+- Un message vide, ou de plus de 1000 caractères, est refusé avant d'être envoyé.
 - `markAsRead()` répond `NOT_FOUND` pour un pseudo qui n'existe pas.
 - Un correspondant peut ne plus avoir de profil : un compte supprimé garde ses conversations lisibles pendant 30 jours, alors que `users.get()` répond `NOT_FOUND`.
 - Les conversations appartiennent au compte de la clé. Rien ici n'est mis en cache par défaut.
@@ -125,6 +137,7 @@ C'est la seule écriture des conversations : l'API n'envoie pas de messages.
 | `conversations.list({ status, limit, offset }, options?)` | une liste de `Conversation` |
 | `conversations.messages(username, { limit, beforeId }, options?)` | une liste de `ConversationItem`, par curseur |
 | `conversations.markAsRead(username, options?)` | `{ marked_count }` |
+| `conversations.send(username, content, options?)` | `ConversationMessage` |
 
 Une `Conversation` :
 

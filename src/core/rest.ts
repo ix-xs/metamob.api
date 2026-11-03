@@ -19,6 +19,11 @@ export interface MethodSpec {
   readonly scope: "public" | "account";
   /** For a list the API paginates: its largest page, and whether it walks with a cursor. */
   readonly paged?: { readonly max: number; readonly cursor?: boolean };
+  /**
+   * A write that creates something, a message or a trade proposal: sent twice,
+   * it would exist twice. It is never retried, whatever the failure.
+   */
+  readonly once?: boolean;
 }
 
 /** Retry policy. */
@@ -407,7 +412,8 @@ export class Rest {
         const error = timer.timedOut()
           ? new MetamobRequestError("TIMEOUT", spec.id, `no answer after ${timeout} ms.`, { cause })
           : new MetamobRequestError("NETWORK", spec.id, cause instanceof Error ? cause.message : String(cause), { cause });
-        if (attempt >= retry.attempts) throw error;
+        // The request may have reached the API: a message or a proposal would be sent twice.
+        if (spec.once || attempt >= retry.attempts) throw error;
         const delay = Math.min(retry.maxDelay, retry.delay * 2 ** attempt);
         events.emit("retry", { method: spec.id, attempt: attempt + 1, delay, error });
         await this.#pause(delay, signal, spec.id);
@@ -429,8 +435,11 @@ export class Rest {
       }
 
       const error = apiError(spec, url, response, text);
+      // A message or a proposal is never sent twice. A 429 there can also be the
+      // anti-spam limit of the site, which says nothing about the other calls.
+      if (spec.once) throw error;
       const status = response.status;
-      // Every write of this API sets a value, so sending one twice is harmless.
+      // The other writes set a value, so sending one twice is harmless.
       // A plain 500 on a write is not retried: it is more likely to be the request itself.
       const retryable = status === 429 || status === 502 || status === 503 || status === 504 || (status === 500 && spec.verb === "GET");
       let delay = Math.min(retry.maxDelay, retry.delay * 2 ** attempt);

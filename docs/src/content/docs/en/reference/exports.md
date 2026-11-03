@@ -27,7 +27,7 @@ The package has one entry point, `@ix-xs/metamob.api`, for ES modules and Common
 | `Page` | One page of a list | [Lists](/basics/lists/#one-page) |
 | `MemoryCache` | The built-in cache store | [Caching](/basics/caching/) |
 | `normalizeName` | The name comparison the library uses | [Names and ids](/basics/names-and-ids/#how-a-name-is-matched) |
-| `METHODS` | The 38 endpoints, by method name | [Every method](/reference/methods/) |
+| `METHODS` | The 40 endpoints, by method name | [Every method](/reference/methods/) |
 | `VERSION` | The version of the package | |
 
 ## urls
@@ -58,7 +58,7 @@ A description of each endpoint, keyed by the name of its method. It is what the 
 
 ```ts
 METHODS["quests.setMonster"]; // { id, verb: "PATCH", path: "/quests/{slug}/monsters/{monsterId}", scope: "account" }
-Object.keys(METHODS).length; // 38
+Object.keys(METHODS).length; // 40
 ```
 
 ## Types of the client
@@ -89,7 +89,7 @@ Object.keys(METHODS).length; // 38
 | `KraloveListParams` | Filters of `kralove.list()` |
 | `UserSearchParams`, `PublicQuestParams` | Filters of `users.search()` and `users.quest()` |
 | `ConversationListParams`, `MessagesParams` | Filters of the conversations |
-| `TradeProposalListParams` | Filters of `tradeProposals.list()` |
+| `TradeProposalListParams`, `NewTradeProposal` | Filters of `tradeProposals.list()`, what `tradeProposals.create()` takes |
 | `OwnQuestMonstersParams`, `MatchesParams`, `QuestZonesParams` | Filters of `quests.monsters()`, `quests.matches()`, `quests.zones()` |
 | `QuestUpdate`, `TradeOverride`, `MonsterQuantities` | What `quests.update()`, `quests.setTrade()` and `quests.setMonsters()` take |
 

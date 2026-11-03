@@ -138,14 +138,12 @@ describe("normalizeName", () => {
     expect(normalizeName("Île de Pandala")).toBe("ile de pandala");
   });
 
-  it("finds a name written with a long dash from the same name typed with a hyphen", () => {
-    // As the API writes it: a non-breaking space, then an en dash.
-    const written = `Expedition${String.fromCharCode(0xa0, 0x2013)} Scaraleaf Dungeon`;
-    expect(normalizeName(written)).toBe("expedition - scaraleaf dungeon");
-    expect(data.subzone("Expedition - Scaraleaf Dungeon")?.id).toBe(201);
-    // The record keeps the name exactly as the API gives it.
-    expect(data.subzone(201)?.name.en).toBe(written);
-    expect(data.subzone(written)?.id).toBe(201);
+  it("finds a name typed with a long dash from the same name written with a hyphen", () => {
+    // As it is pasted from some pages: a non-breaking space, then an en dash.
+    const pasted = `Expedition${String.fromCharCode(0xa0, 0x2013)} Scaraleaf Dungeon`;
+    expect(normalizeName(pasted)).toBe("expedition - scaraleaf dungeon");
+    expect(data.subzone(201)?.name.en).toBe("Expedition - Scaraleaf Dungeon");
+    expect(data.subzone(pasted)?.id).toBe(201);
   });
 });
 

@@ -3,7 +3,28 @@ import { ListRequest, topLevel } from "../core/pagination.js";
 import { type Context, text } from "../core/resource.js";
 import type { RequestOptions } from "../core/rest.js";
 import { METHODS } from "../generated/methods.js";
-import type { TradeProposal, TradeProposalDetail } from "../types.js";
+import type { ProposalMonster, TradeProposal, TradeProposalDetail } from "../types.js";
+import { entries, type MonsterQuantities, type Quests } from "./quests.js";
+
+/** What {@link TradeProposals.create} sends: the same names the API reads back. */
+export interface NewTradeProposal {
+  /** Username of the player the proposal is made to. */
+  recipient: string;
+  /** Slug of your quest the trade is about. */
+  sender_quest: string;
+  /** Slug of the recipient's quest, when you know which one. */
+  recipient_quest?: string | null | undefined;
+  /**
+   * What you give, in the shapes `quests.setMonsters()` takes: a list of
+   * `{ monster, quantity }`, an object keyed by monster name, or a `Map`.
+   */
+  monsters_given?: MonsterQuantities | undefined;
+  /** What you receive, in the same shapes. */
+  monsters_received?: MonsterQuantities | undefined;
+}
+
+/** Most monsters in one list of a proposal. */
+const PROPOSAL_MONSTERS = 200;
 
 /** Filters of {@link TradeProposals.list}. */
 export interface TradeProposalListParams {
@@ -47,15 +68,17 @@ function proposalId(value: number | string | { readonly id: number }): number {
 
 /**
  * The trade proposals of the account: the ones you sent and the ones you
- * received, on every quest. Making, confirming or cancelling a proposal is
- * done on the site.
+ * received, on every quest, and new ones to send. Confirming or cancelling a
+ * proposal is done on the site.
  */
 export class TradeProposals {
   readonly #context: Context;
+  readonly #quests: Quests;
 
   /** @internal */
-  constructor(context: Context) {
+  constructor(context: Context, quests: Quests) {
     this.#context = context;
+    this.#quests = quests;
   }
 
   /**
@@ -106,5 +129,62 @@ export class TradeProposals {
   async get(id: number | string | { readonly id: number }, options?: RequestOptions): Promise<TradeProposalDetail> {
     const path = { id: proposalId(id) };
     return (await this.#context.rest.request<{ data: TradeProposalDetail }>(METHODS["tradeProposals.get"], { path }, options)).data;
+  }
+
+  /**
+   * Proposes a trade to a player, from one of your quests, and answers the
+   * proposal as `list()` shows it. Monsters are named like everywhere else:
+   * an id, a name in any language, or a monster.
+   *
+   * The rules are the ones of the site. Sending is closed by default: Metamob
+   * opens it account by account, on request, and the API answers `FORBIDDEN`
+   * without it, or when one of the two players blocked the other. Past the
+   * anti-spam limits, it answers `RATE_LIMITED`. A monster that is not in the
+   * quest, or a quantity out of bounds, is a `BAD_REQUEST`.
+   *
+   * A proposal is never retried, whatever the failure: sent twice, it would
+   * exist twice. After a timeout or a network failure, look at `list()` before
+   * proposing again.
+   *
+   * @example
+   * await metamob.tradeProposals.create({
+   *   recipient: "Ix-xs",
+   *   sender_quest: "21b0a742",
+   *   monsters_given: { "Tofu Maléfique": 1 },
+   *   monsters_received: { "Bouftou Royal": 1 },
+   * });
+   */
+  async create(proposal: NewTradeProposal, options?: RequestOptions): Promise<TradeProposal> {
+    if (!proposal || typeof proposal !== "object") throw new MetamobArgumentError("`proposal` must be an object with `recipient`, `sender_quest` and monsters.");
+    const quest = text(proposal.sender_quest, "sender_quest");
+    const recipient = text(proposal.recipient, "recipient");
+    // Left out rather than sent as null when it is not known.
+    const theirs = proposal.recipient_quest === undefined || proposal.recipient_quest === null ? {} : { recipient_quest: text(proposal.recipient_quest, "recipient_quest") };
+    const body = {
+      recipient,
+      sender_quest: quest,
+      ...theirs,
+      monsters_given: await this.#monsters(quest, proposal.monsters_given, "monsters_given", options),
+      monsters_received: await this.#monsters(quest, proposal.monsters_received, "monsters_received", options),
+    };
+    if (!body.monsters_given.length && !body.monsters_received.length) throw new MetamobArgumentError("A proposal needs at least one monster, given or received.");
+    return (await this.#context.rest.request<{ data: TradeProposal }>(METHODS["tradeProposals.create"], { body }, options)).data;
+  }
+
+  /** One side of a proposal, as the API takes it. A monster named twice is refused rather than guessed. */
+  async #monsters(quest: string, quantities: MonsterQuantities | undefined, name: string, options: RequestOptions | undefined): Promise<ProposalMonster[]> {
+    if (quantities === undefined) return [];
+    const list = entries(quantities);
+    if (list.length > PROPOSAL_MONSTERS) throw new MetamobArgumentError(`\`${name}\` has ${list.length} monsters: a proposal takes ${PROPOSAL_MONSTERS} at most on each side.`);
+    for (const [, quantity] of list) {
+      if (typeof quantity !== "number" || !Number.isInteger(quantity) || quantity < 1) throw new MetamobArgumentError(`Each quantity of \`${name}\` must be a whole number, 1 or more.`);
+    }
+    const ids = await Promise.all(list.map(([monster]) => this.#quests.monsterIn(quest, monster, options)));
+    const seen = new Set<number>();
+    for (const id of ids) {
+      if (seen.has(id)) throw new MetamobArgumentError(`\`${name}\` names the monster ${id} twice: give it once, with the total quantity.`);
+      seen.add(id);
+    }
+    return ids.map((monster_id, index) => ({ monster_id, quantity: list[index]![1] }));
   }
 }

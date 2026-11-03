@@ -26,6 +26,8 @@
   "Marks as read every message received from a user, and says how many were.": "Marque comme lus tous les messages reçus d'un joueur, et dit combien il y en avait.",
   "The trade proposals the account sent and received, most recent first, filtered by direction, status, quest or date.": "Les propositions d'échange envoyées et reçues par le compte, la plus récente en premier, filtrées par sens, état, quête ou date.",
   "One trade proposal, with how many of each monster you own now.": "Une proposition d'échange, avec combien vous possédez de chaque monstre en ce moment.",
+  "Sends a private message to a user. Sending is opened account by account by Metamob.": "Envoie un message privé à un joueur. L'envoi est ouvert compte par compte par Metamob.",
+  "Proposes a trade to a user from one of your quests. Sending is opened account by account by Metamob.": "Propose un échange à un joueur depuis l'une de vos quêtes. L'envoi est ouvert compte par compte par Metamob.",
   "The conversations of the account, one per correspondent, most recent first.": "Les conversations du compte, une par correspondant, la plus récente en premier.",
   "The messages and trade proposals exchanged with a user, most recent first.": "Les messages et propositions d'échange échangés avec un utilisateur, les plus récents en premier.",
   "Every quest of the account, hidden ones included. This is where slugs come from.": "Toutes les quêtes du compte, y compris les quêtes masquées. C'est de là que viennent les slugs.",

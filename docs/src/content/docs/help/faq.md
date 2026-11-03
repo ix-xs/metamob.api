@@ -13,7 +13,7 @@ Non. `@ix-xs/metamob.api` est un projet open source indépendant, sous licence M
 
 ## Couvre-t-il toute l'API ?
 
-Oui, les 38 points d'accès. [Toutes les méthodes](/reference/methods/) les liste, avec la méthode qui appelle chacun.
+Oui, les 40 points d'accès. [Toutes les méthodes](/reference/methods/) les liste, avec la méthode qui appelle chacun.
 
 ## Ai-je besoin d'une clé API ?
 
@@ -61,7 +61,7 @@ Lisez-la, puis fixez-la : `setMonster` fixe une quantité. L'extrait de code se 
 
 ## Fait-il de nouvelles tentatives tout seul ?
 
-Oui : limites de requêtes, erreurs du serveur sur les lectures, délais dépassés et échecs réseau, jusqu'à 3 fois avec des délais croissants. Voir [Erreurs](/basics/errors/#what-is-retried).
+Oui : limites de requêtes, erreurs du serveur sur les lectures, délais dépassés et échecs réseau, jusqu'à 3 fois avec des délais croissants. L'envoi d'un message ou d'une proposition fait exception : il n'est jamais réessayé. Voir [Erreurs](/basics/errors/#what-is-retried).
 
 ## J'utilisais la version 4. Qu'est-ce qui change ?
 

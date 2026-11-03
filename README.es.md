@@ -51,7 +51,7 @@ for await (const monster of metamob.quests.monsters(quest.slug, { status: "neede
 await metamob.quests.setMonster(quest.slug, "Bouflet le Puéril", 1);
 ```
 
-Cubre los 38 endpoints de la [API de Metamob](https://www.metamob.fr/help/api): cuenta, misiones, monstruos, zonas, socios de intercambio, eventos Kralamar, mensajes privados, propuestas de intercambio y todos los datos de referencia, para Dofus, Dofus Retro y Dofus Touch.
+Cubre los 40 endpoints de la [API de Metamob](https://www.metamob.fr/help/api): cuenta, misiones, monstruos, zonas, socios de intercambio, eventos Kralamar, mensajes privados, propuestas de intercambio y todos los datos de referencia, para Dofus, Dofus Retro y Dofus Touch.
 
 > **[Metamob](https://www.metamob.fr)** es el sitio donde los jugadores de Dofus siguen sus misiones de archimonstruos y encuentran con quién intercambiar. Es gratuito y lo mantiene una sola persona. Esta biblioteca solo llama a [su API](https://www.metamob.fr/help/api): nada de esto existiría sin él.
 
@@ -132,6 +132,10 @@ for await (const item of metamob.conversations.messages("Ix-xs")) {
 
 // Las propuestas de intercambio que esperan tu respuesta.
 const waiting = await metamob.tradeProposals.list({ direction: "received", status: "pending" }).all();
+
+// Enviar, una vez que Metamob lo haya abierto en la cuenta.
+await metamob.conversations.send("Ix-xs", "Salut, ton Tofu Maléfique est toujours dispo ?");
+await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, monsters_given: { "Tofu Maléfique": 1 } });
 ```
 
 ## Tus misiones
@@ -208,7 +212,7 @@ metamob.on("rateLimit", ({ method, delay }) => console.log(`${method} waited ${d
 metamob.on("retry", ({ method, attempt, error }) => console.warn(method, attempt, error.message));
 ```
 
-Un 429, un error del servidor o un fallo de red se reintenta con una espera que se duplica en cada intento, respetando `Retry-After`. Cada escritura de esta API fija un valor, así que repetir una no cambia nada.
+Un 429, un error del servidor o un fallo de red se reintenta con una espera que se duplica en cada intento, respetando `Retry-After`. Las escrituras que fijan un valor se repiten sin riesgo; el envío de un mensaje o de una propuesta de intercambio nunca se repite, así que no puede llegar dos veces.
 
 Los datos de referencia se guardan en caché durante 10 minutos. Lo que depende de una cuenta no, salvo que lo pidas:
 

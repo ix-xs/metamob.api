@@ -282,6 +282,16 @@ export const methods = [
     summary: "Marks as read every message received from a user, and says how many were.",
     guide: "/resources/conversations/",
   },
+  {
+    id: "conversations.send",
+    verb: "POST",
+    path: "/conversations/{username}/messages",
+    scope: "account",
+    call: "metamob.conversations.send(username, content)",
+    summary: "Sends a private message to a user. Sending is opened account by account by Metamob.",
+    guide: "/resources/conversations/",
+    once: true,
+  },
 
   // Trade proposals
   {
@@ -302,6 +312,16 @@ export const methods = [
     call: "metamob.tradeProposals.get(id)",
     summary: "One trade proposal, with how many of each monster you own now.",
     guide: "/resources/trade-proposals/",
+  },
+  {
+    id: "tradeProposals.create",
+    verb: "POST",
+    path: "/trade-proposals",
+    scope: "account",
+    call: "metamob.tradeProposals.create({ recipient, sender_quest, monsters_given, monsters_received })",
+    summary: "Proposes a trade to a user from one of your quests. Sending is opened account by account by Metamob.",
+    guide: "/resources/trade-proposals/",
+    once: true,
   },
 
   // Your own quests

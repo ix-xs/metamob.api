@@ -13,7 +13,7 @@ No. `@ix-xs/metamob.api` es un proyecto independiente de código abierto, bajo l
 
 ## ¿Cubre toda la API?
 
-Sí, los 38 endpoints. [Todos los métodos](/reference/methods/) los enumera junto al método que llama a cada uno.
+Sí, los 40 endpoints. [Todos los métodos](/reference/methods/) los enumera junto al método que llama a cada uno.
 
 ## ¿Necesito una clave API?
 
@@ -61,7 +61,7 @@ Léela y luego fíjala: `setMonster` fija una cantidad. El fragmento de código 
 
 ## ¿Reintenta por sí sola?
 
-Sí: límites de solicitudes, errores del servidor en las lecturas, tiempos de espera agotados y fallos de red, hasta 3 veces con esperas crecientes. Ver [Errores](/basics/errors/#what-is-retried).
+Sí: límites de solicitudes, errores del servidor en las lecturas, tiempos de espera agotados y fallos de red, hasta 3 veces con esperas crecientes. Enviar un mensaje o una propuesta es la excepción: nunca se reintenta. Ver [Errores](/basics/errors/#what-is-retried).
 
 ## Usaba la versión 4. ¿Qué cambia?
 

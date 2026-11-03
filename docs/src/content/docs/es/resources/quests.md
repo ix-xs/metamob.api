@@ -158,7 +158,7 @@ Un monstruo está `validated` cuando su etapa ya se ha superado, `completed` cua
 
 - Todos los métodos responden `NOT_FOUND` para una misión que no es tuya, exista o no.
 - Las cantidades van de 0 a 99. Fuera de ese rango, la API responde `BAD_REQUEST`.
-- Un `current_step` más allá de la última etapa de la misión vuelve como `SERVER_ERROR`, no como `BAD_REQUEST`: el número de etapas es `quest_template.step_count`.
+- `current_step` va de 1 a `quest_template.step_count`, más uno para una misión terminada: de 1 a 19 para las 18 etapas del Ocre en Dofus, de 1 a 35 en Retro y Touch. Fuera de eso, la API responde `BAD_REQUEST`.
 - Una escritura borra lo que el cliente tenía en caché para tu clave, así que la siguiente lectura es fresca.
 - Crear y eliminar una misión no forma parte de la API: hazlo en el sitio.
 
@@ -180,7 +180,7 @@ Lo que acepta `update`:
 | --- | --- | --- |
 | `character_name` | `string` | 200 caracteres como máximo |
 | `parallel_quests` | `number` | A partir de 1 |
-| `current_step` | `number` | De 1 a la última etapa de la misión |
+| `current_step` | `number` | De 1 a `step_count`, `step_count + 1` una vez terminada la misión |
 | `show_trades` | `boolean` | Visible en el perfil público |
 | `trade_mode` | `0 \| 1` | Automático o experto |
 | `trade_offer_threshold`, `trade_want_threshold` | `number \| null` | Modo experto, de 0 a 30 |

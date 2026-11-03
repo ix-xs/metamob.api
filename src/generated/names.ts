@@ -843,7 +843,9 @@ export type MonsterNameFr =
   | "Krokille Vénérable Insipide"
   | "Krokobure la Maudite"
   | "Krokille Vénérable Sèche"
-  | "Krokrane la Distordue";
+  | "Krokrane la Distordue"
+  | "Apprenti Ratmane"
+  | "Milimilou";
 
 /** Name of a monster, in English. */
 export type MonsterNameEn =
@@ -1683,7 +1685,9 @@ export type MonsterNameEn =
   | "Insipid Venerable Sauroshell"
   | "Eyesaur the Repulsive"
   | "Dry Venerable Sauroshell"
-  | "Tyranno the Despotic";
+  | "Tyranno the Despotic"
+  | "Ratworm Apprentice"
+  | "Snoowolf";
 
 /** Name of a monster, in Spanish. */
 export type MonsterNameEs =
@@ -2485,7 +2489,7 @@ export type MonsterNameEs =
   | "Lasoberaña"
   | "Kodámade"
   | "Funoroshi"
-  | "Volver a la lista"
+  | "Fantastle Vániante, el Matavampiros"
   | "Dragkuín el Magnífico"
   | "Ratatouille el Cocinero"
   | "Cascasaurio joven fangoso"
@@ -2527,7 +2531,9 @@ export type MonsterNameEs =
   | "Cascasaurio venerable insípido"
   | "Cascoburio el Maldito"
   | "Cascasaurio venerable seco"
-  | "CasCoCrane-o el Retorcido";
+  | "CasCoCrane-o el Retorcido"
+  | "Aprendiz ratamán"
+  | "Minilubo Albino";
 
 /** Name of a zone, in French. */
 export type ZoneNameFr =
@@ -2973,14 +2979,14 @@ export type SubzoneNameEn =
   | "Bworker's Cave"
   | "Soft Oak Clearing"
   | "Cross Strich's Aviary"
-  | "Expedition\u00a0\u2013 Scaraleaf Dungeon"
-  | "Daring Expedition\u00a0\u2013 Minotot Room"
-  | "Bravery Expedition\u00a0\u2013 Minotot Room"
-  | "Expedition\u00a0\u2013 Koolich Cavern"
-  | "Daring Expedition\u00a0\u2013 Kanigrula's Cave"
-  | "Bravery Expedition\u00a0\u2013 Kanigrula's Cave"
-  | "Daring Expedition\u00a0\u2013 Bworker's Cave"
-  | "Bravery Expedition\u00a0\u2013 Bworker's Cave"
+  | "Expedition - Scaraleaf Dungeon"
+  | "Daring Expedition - Minotot Room"
+  | "Bravery Expedition - Minotot Room"
+  | "Expedition - Koolich Cavern"
+  | "Daring Expedition - Kanigrula's Cave"
+  | "Bravery Expedition - Kanigrula's Cave"
+  | "Daring Expedition - Bworker's Cave"
+  | "Bravery Expedition - Bworker's Cave"
   | "Lair of the Rac Queen"
   | "Sylvan Refuge"
   | "Magik Riktus Big Top"

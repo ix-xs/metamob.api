@@ -1,6 +1,6 @@
 ---
 title: Conversaciones
-description: Lee las conversaciones privadas de la cuenta y, dentro de cada una, los mensajes y las propuestas de intercambio cruzados con un jugador, ve lo que está sin leer y márcalo como leído. La API no envía mensajes.
+description: Lee las conversaciones privadas de la cuenta y, dentro de cada una, los mensajes y las propuestas de intercambio cruzados con un jugador, ve lo que está sin leer, márcalo como leído y envía un mensaje.
 sidebar:
   order: 7
 ---
@@ -109,11 +109,23 @@ const { marked_count } = await metamob.conversations.markAsRead(username);
 console.log(`${marked_count} marked as read`);
 ```
 
-Es la única escritura de las conversaciones: la API no envía mensajes.
+## Enviar un mensaje
+
+`conversations.send()` envía un mensaje privado a un jugador, de 1000 caracteres como máximo, y lo devuelve tal como aparece ahora en la conversación.
+
+```ts
+const message = await metamob.conversations.send(username, "Salut, ton Tofu Maléfique est toujours dispo ?");
+console.log(message.id, message.created_at);
+```
+
+El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petición. Sin él, la API responde `FORBIDDEN`. Las reglas son las del sitio: también `FORBIDDEN` cuando uno de los dos jugadores ha bloqueado al otro, y `RATE_LIMITED` al superar sus límites antispam.
+
+Un mensaje nunca se reintenta, sea cual sea el fallo: enviado dos veces, llegaría dos veces. Tras un tiempo de espera agotado o un fallo de red, lee la conversación antes de volver a enviarlo.
 
 ## Límites y errores
 
-- La API no envía mensajes, y no crea, confirma ni cancela propuestas.
+- Enviar un mensaje o una propuesta requiere que el envío esté abierto en la cuenta, ver más arriba. Confirmar o cancelar una propuesta se hace en el sitio.
+- Un mensaje vacío, o de más de 1000 caracteres, se rechaza antes de enviarse.
 - `markAsRead()` responde `NOT_FOUND` para un nombre de usuario que no existe.
 - Un interlocutor puede no tener ya perfil: las conversaciones de una cuenta eliminada siguen siendo legibles durante 30 días, mientras que `users.get()` responde `NOT_FOUND`.
 - Las conversaciones pertenecen a la cuenta de la clave. Nada de esto se guarda en caché por defecto.
@@ -125,6 +137,7 @@ Es la única escritura de las conversaciones: la API no envía mensajes.
 | `conversations.list({ status, limit, offset }, options?)` | una lista de `Conversation` |
 | `conversations.messages(username, { limit, beforeId }, options?)` | una lista de `ConversationItem`, por cursor |
 | `conversations.markAsRead(username, options?)` | `{ marked_count }` |
+| `conversations.send(username, content, options?)` | `ConversationMessage` |
 
 Una `Conversation`:
 

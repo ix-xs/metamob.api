@@ -3,6 +3,28 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## 5.2.0
+
+Follows the update of the Metamob API of November 2026: 40 endpoints.
+
+### Added
+
+- `metamob.conversations.send(username, content)`: sends a private message,
+  1000 characters at most.
+- `metamob.tradeProposals.create({ recipient, sender_quest, ... })`: proposes
+  a trade from one of your quests, with the monsters named by id or by name.
+- Type `NewTradeProposal`, and `has_priority_unread` on a conversation.
+- Sending is opened account by account by Metamob: without it, both methods
+  throw `FORBIDDEN`.
+
+### Changed
+
+- A message or a trade proposal is never retried, whatever the failure, so it
+  cannot arrive twice. The other writes are still retried as before.
+- The documentation follows the limits Metamob now states: `current_step` goes
+  up to the number of steps plus one, and a bad value is a `BAD_REQUEST`.
+- The embedded data is refreshed.
+
 ## 5.1.0
 
 Follows the update of the Metamob API of October 2026: 38 endpoints.
