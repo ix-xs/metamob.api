@@ -302,26 +302,28 @@ describe("sending messages and proposals", () => {
     await expect(metamob.conversations.send("Ix-xs", "Salut !")).rejects.toMatchObject({ code: "FORBIDDEN", message: expect.stringContaining("not enabled") });
   });
 
-  it("builds a proposal from names, leaves out an unknown recipient quest, and refuses what the API would", async () => {
+  it("builds a proposal from names, and refuses what the API would before sending it", async () => {
     const proposal = { id: 58, sender: "Ix-xs", recipient: "Other", status: "pending" };
     const { metamob, calls } = client({ data: proposal });
-    expect(await metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, monsters_given: new Map([["Tofu", 1]]) })).toEqual(proposal);
-    expect(calls[0]!.body).toEqual({ recipient: "Other", sender_quest: SLUG, monsters_given: [{ monster_id: 20, quantity: 1 }], monsters_received: [] });
+    expect(await metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: new Map([["Tofu", 1]]) })).toEqual(proposal);
+    expect(calls[0]!.body).toEqual({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: [{ monster_id: 20, quantity: 1 }], monsters_received: [] });
 
-    const base = { recipient: "Other", sender_quest: SLUG };
+    const base = { recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8" };
     await expect(metamob.tradeProposals.create(base)).rejects.toThrow(/at least one monster/);
     await expect(metamob.tradeProposals.create({ ...base, monsters_given: {} })).rejects.toThrow(/at least one monster/);
-    await expect(metamob.tradeProposals.create({ ...base, monsters_given: { Tofu: 0 } })).rejects.toThrow(/1 or more/);
+    await expect(metamob.tradeProposals.create({ ...base, monsters_given: { Tofu: 0 } })).rejects.toThrow(/from 1 to 99/);
+    await expect(metamob.tradeProposals.create({ ...base, monsters_given: { Tofu: 100 } })).rejects.toThrow(/from 1 to 99/);
     await expect(metamob.tradeProposals.create({ ...base, monsters_given: [{ monster: "Tofu", quantity: 1 }, { monster: 20, quantity: 2 }] })).rejects.toThrow(/twice/);
     await expect(metamob.tradeProposals.create({ ...base, monsters_given: monsters(201).map((m) => ({ monster: m.id, quantity: 1 })) })).rejects.toThrow(/201 monsters/);
     await expect(metamob.tradeProposals.create({ ...base, sender_quest: " " , monsters_given: { Tofu: 1 } })).rejects.toThrow(/sender_quest/);
     await expect(metamob.tradeProposals.create({ ...base, recipient: "", monsters_given: { Tofu: 1 } })).rejects.toThrow(/recipient/);
+    await expect(metamob.tradeProposals.create({ ...base, recipient_quest: undefined as never, monsters_given: { Tofu: 1 } })).rejects.toThrow(/recipient_quest/);
     expect(calls).toHaveLength(1);
   });
 
   it("never sends a proposal twice", async () => {
     const { metamob, calls } = client([apiError(504, "timeout"), { data: {} }]);
-    await expect(metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, monsters_given: { Tofu: 1 } })).rejects.toMatchObject({ status: 504 });
+    await expect(metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: { Tofu: 1 } })).rejects.toMatchObject({ status: 504 });
     expect(calls).toHaveLength(1);
   });
 });

@@ -86,7 +86,7 @@ Voir [Propositions d'échange](/resources/trade-proposals/).
 | --- | --- |
 | `metamob.tradeProposals.list({ direction, status, quest, since })`<br />`tradeProposals.list` | Les propositions d'échange envoyées et reçues par le compte, la plus récente en premier, filtrées par sens, état, quête ou date.<br />`GET /trade-proposals`, *liste*, 50 par page, par curseur |
 | `metamob.tradeProposals.get(id)`<br />`tradeProposals.get` | Une proposition d'échange, avec combien vous possédez de chaque monstre en ce moment.<br />`GET /trade-proposals/{id}` |
-| `metamob.tradeProposals.create({ recipient, sender_quest, monsters_given, monsters_received })`<br />`tradeProposals.create` | Propose un échange à un joueur depuis l'une de vos quêtes. L'envoi est ouvert compte par compte par Metamob.<br />`POST /trade-proposals` |
+| `metamob.tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received })`<br />`tradeProposals.create` | Propose un échange à un joueur depuis l'une de vos quêtes. L'envoi est ouvert compte par compte par Metamob.<br />`POST /trade-proposals` |
 
 ## Événements Kralamoure
 

@@ -75,17 +75,22 @@ for (const monster of proposal.monsters_given) {
 `tradeProposals.create()` propose un échange depuis l'une de vos quêtes. Elle prend les mêmes noms que ceux que l'API renvoie en lecture : `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` et `monsters_received`. Les monstres s'écrivent sous les formes qu'accepte [`quests.setMonsters()`](/resources/quests/#recording-many-monsters), désignés par leur identifiant ou par leur nom dans n'importe quelle langue.
 
 ```ts
-const proposal = await metamob.tradeProposals.create({
-  recipient: "Ix-xs",
-  sender_quest: slug,
-  monsters_given: { "Tofu Maléfique": 1 },
-  monsters_received: { "Bouftou Royal": 1 },
-});
+// Un partenaire et sa quête, tels que matches() les trouve.
+const match = await metamob.quests.matches(slug).first();
 
-console.log(proposal.id, proposal.status); // "pending"
+if (match) {
+  const proposal = await metamob.tradeProposals.create({
+    recipient: match.user.username,
+    sender_quest: slug,
+    recipient_quest: match.quest.slug,
+    monsters_given: { "Tofu Maléfique": 1 },
+    monsters_received: { "Bouftou Royal": 1 },
+  });
+  console.log(proposal.id, proposal.status); // "pending"
+}
 ```
 
-`sender_quest` est obligatoire. `recipient_quest` est le slug de la quête de l'autre joueur, tel que `quests.matches()` le donne : du même type que la vôtre, sur le même serveur. Une proposition demande au moins un monstre, d'un côté ou de l'autre, et en accepte 200 au plus de chaque côté. Ce que trouve `quests.matches()` est un bon point de départ : chaque correspondance nomme le joueur et ce qui peut s'échanger dans les deux sens.
+Les trois sont obligatoires : `recipient`, votre `sender_quest`, et `recipient_quest`, le slug de la quête de l'autre joueur, tel que `quests.matches()` le donne. Les deux quêtes doivent être du même type et sur le même serveur. Une proposition demande au moins un monstre, d'un côté ou de l'autre, et en accepte 200 au plus de chaque côté. Ce que trouve `quests.matches()` est un bon point de départ : chaque correspondance nomme le joueur et ce qui peut s'échanger dans les deux sens.
 
 L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande, et l'API répond `FORBIDDEN` sans cela. Les règles sont celles du site : `FORBIDDEN` quand l'un des deux joueurs a bloqué l'autre, `RATE_LIMITED` au-delà de ses limites anti-spam.
 
@@ -111,7 +116,9 @@ setInterval(async () => {
 ## Limites et erreurs
 
 - Confirmer ou annuler une proposition se fait sur le site.
-- `create()` refuse avant l'envoi une proposition sans aucun monstre, une quantité inférieure à 1, un monstre nommé deux fois du même côté, ou plus de 200 monstres d'un même côté. L'API répond `BAD_REQUEST` pour un monstre qui n'est pas dans la quête ou pour une quantité hors limites.
+- `create()` refuse avant l'envoi une proposition sans aucun monstre, une quantité hors de 1 à 99, un monstre nommé deux fois du même côté, ou plus de 200 monstres d'un même côté.
+- L'API répond `BAD_REQUEST` pour un monstre qui n'est pas dans la quête ou pour deux quêtes de types ou de serveurs différents, et `NOT_FOUND` pour une quête qui n'existe pas ou, pour `sender_quest`, qui n'est pas la vôtre.
+- L'API ne vérifie pas que vous possédez ce que vous donnez.
 - `NOT_FOUND` pour une proposition qui n'existe pas ou qui n'est pas la vôtre.
 - `BAD_REQUEST` pour une `quest` qui n'est pas l'une de vos quêtes, et pour un `direction` ou un `status` que l'API ne connaît pas.
 - Un identifiant, une quête ou une date invalide est refusé avant d'être envoyé.

@@ -75,17 +75,22 @@ for (const monster of proposal.monsters_given) {
 `tradeProposals.create()` propone un intercambio desde una de tus misiones. Recibe los mismos nombres que la API devuelve al leer: `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` y `monsters_received`. Los monstruos llegan en las formas que acepta [`quests.setMonsters()`](/resources/quests/#recording-many-monsters), designados por identificador o por nombre en cualquier idioma.
 
 ```ts
-const proposal = await metamob.tradeProposals.create({
-  recipient: "Ix-xs",
-  sender_quest: slug,
-  monsters_given: { "Tofu Maléfique": 1 },
-  monsters_received: { "Bouftou Royal": 1 },
-});
+// Un socio y su misión, tal como los encuentra matches().
+const match = await metamob.quests.matches(slug).first();
 
-console.log(proposal.id, proposal.status); // "pending"
+if (match) {
+  const proposal = await metamob.tradeProposals.create({
+    recipient: match.user.username,
+    sender_quest: slug,
+    recipient_quest: match.quest.slug,
+    monsters_given: { "Tofu Maléfique": 1 },
+    monsters_received: { "Bouftou Royal": 1 },
+  });
+  console.log(proposal.id, proposal.status); // "pending"
+}
 ```
 
-`sender_quest` es obligatorio. `recipient_quest` es el slug de la misión del otro jugador, tal como lo da `quests.matches()`: del mismo tipo que la tuya, en el mismo servidor. Una propuesta necesita al menos un monstruo, de un lado o del otro, y acepta 200 como máximo en cada lado. Lo que encuentra `quests.matches()` es un buen punto de partida: cada coincidencia indica el jugador y lo que puede ir en un sentido y en el otro.
+Los tres son obligatorios: `recipient`, tu `sender_quest`, y `recipient_quest`, el slug de la misión del otro jugador, tal como lo da `quests.matches()`. Las dos misiones deben ser del mismo tipo y estar en el mismo servidor. Una propuesta necesita al menos un monstruo, de un lado o del otro, y acepta 200 como máximo en cada lado. Lo que encuentra `quests.matches()` es un buen punto de partida: cada coincidencia indica el jugador y lo que puede ir en un sentido y en el otro.
 
 El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petición, y sin él la API responde `FORBIDDEN`. Las reglas son las del sitio: `FORBIDDEN` cuando uno de los dos jugadores ha bloqueado al otro, `RATE_LIMITED` al superar sus límites antispam.
 
@@ -111,7 +116,9 @@ setInterval(async () => {
 ## Límites y errores
 
 - Confirmar o cancelar una propuesta se hace en el sitio.
-- `create()` rechaza antes de enviarla una propuesta sin ningún monstruo, una cantidad inferior a 1, un monstruo nombrado dos veces en un mismo lado, o más de 200 en un lado. La API responde `BAD_REQUEST` para un monstruo que no está en la misión o una cantidad fuera de los límites.
+- `create()` rechaza antes de enviarla una propuesta sin ningún monstruo, una cantidad fuera de 1 a 99, un monstruo nombrado dos veces en un mismo lado, o más de 200 en un lado.
+- La API responde `BAD_REQUEST` para un monstruo que no está en la misión o para dos misiones de tipos o servidores distintos, y `NOT_FOUND` para una misión que no existe o, para `sender_quest`, que no es tuya.
+- La API no comprueba que tengas lo que das.
 - `NOT_FOUND` para una propuesta que no existe o que no es tuya.
 - `BAD_REQUEST` para una `quest` que no es una de tus misiones, y para un `direction` o un `status` que la API no conoce.
 - Un identificador, una misión o una fecha no válidos se rechazan antes de enviarse.

@@ -3,6 +3,20 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## 5.2.1
+
+Checked against a real proposal sent through the API.
+
+- `recipient_quest` is required by `tradeProposals.create()`: the API refuses a
+  proposal without it. The type and the check before sending say so, and the
+  examples take the partner and its quest from `quests.matches()`.
+- `is_priority` on a message, a flag the API sends without documenting it yet.
+- A quantity in a proposal goes from 1 to 99, and is refused before sending
+  outside of it.
+- The documentation lists what the API answers for a monster that is not in
+  the quest, two quests that do not match, or a quest that is not yours, and
+  says that it does not check what you own before you give it.
+
 ## 5.2.0
 
 Follows the update of the Metamob API of November 2026: 40 endpoints.

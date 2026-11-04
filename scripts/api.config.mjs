@@ -318,7 +318,7 @@ export const methods = [
     verb: "POST",
     path: "/trade-proposals",
     scope: "account",
-    call: "metamob.tradeProposals.create({ recipient, sender_quest, monsters_given, monsters_received })",
+    call: "metamob.tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received })",
     summary: "Proposes a trade to a user from one of your quests. Sending is opened account by account by Metamob.",
     guide: "/resources/trade-proposals/",
     once: true,

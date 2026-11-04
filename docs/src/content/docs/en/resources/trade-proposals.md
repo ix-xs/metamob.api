@@ -75,17 +75,22 @@ for (const monster of proposal.monsters_given) {
 `tradeProposals.create()` proposes a trade from one of your quests. It takes the same names the API reads back: `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` and `monsters_received`. The monsters come in the shapes [`quests.setMonsters()`](/resources/quests/#recording-many-monsters) takes, named by id or by name in any language.
 
 ```ts
-const proposal = await metamob.tradeProposals.create({
-  recipient: "Ix-xs",
-  sender_quest: slug,
-  monsters_given: { "Tofu Maléfique": 1 },
-  monsters_received: { "Bouftou Royal": 1 },
-});
+// A partner and its quest, as matches() finds them.
+const match = await metamob.quests.matches(slug).first();
 
-console.log(proposal.id, proposal.status); // "pending"
+if (match) {
+  const proposal = await metamob.tradeProposals.create({
+    recipient: match.user.username,
+    sender_quest: slug,
+    recipient_quest: match.quest.slug,
+    monsters_given: { "Tofu Maléfique": 1 },
+    monsters_received: { "Bouftou Royal": 1 },
+  });
+  console.log(proposal.id, proposal.status); // "pending"
+}
 ```
 
-`sender_quest` is required. `recipient_quest` is the slug of the quest of the other player, as `quests.matches()` gives it: of the same kind as yours, on the same server. A proposal needs at least one monster, on either side, and takes 200 at most on each side. What `quests.matches()` finds is a good place to start: each match names the player and what can go both ways.
+All three are required: `recipient`, your `sender_quest`, and `recipient_quest`, the slug of the quest of the other player, as `quests.matches()` gives it. Both quests must be of the same kind and on the same server. A proposal needs at least one monster, on either side, and takes 200 at most on each side. What `quests.matches()` finds is a good place to start: each match names the player and what can go both ways.
 
 Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. The rules are the ones of the site: `FORBIDDEN` when one of the two players blocked the other, `RATE_LIMITED` past its anti-spam limits.
 
@@ -111,7 +116,9 @@ setInterval(async () => {
 ## Limits and errors
 
 - Confirming or cancelling a proposal is done on the site.
-- `create()` refuses before sending a proposal without any monster, a quantity under 1, a monster named twice on one side, or more than 200 on one side. The API answers `BAD_REQUEST` for a monster that is not in the quest or a quantity out of bounds.
+- `create()` refuses before sending a proposal without any monster, a quantity outside 1 to 99, a monster named twice on one side, or more than 200 on one side.
+- The API answers `BAD_REQUEST` for a monster that is not in the quest or two quests of different kinds or servers, and `NOT_FOUND` for a quest that does not exist or, for `sender_quest`, is not yours.
+- The API does not check that you own what you give.
 - `NOT_FOUND` for a proposal that does not exist or is not yours.
 - `BAD_REQUEST` for a `quest` that is not one of your quests, and for a `direction` or `status` the API does not know.
 - An invalid id, quest or date is refused before being sent.

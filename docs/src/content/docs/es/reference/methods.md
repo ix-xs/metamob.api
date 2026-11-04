@@ -86,7 +86,7 @@ Ver [Propuestas de intercambio](/resources/trade-proposals/).
 | --- | --- |
 | `metamob.tradeProposals.list({ direction, status, quest, since })`<br />`tradeProposals.list` | Las propuestas de intercambio enviadas y recibidas por la cuenta, la más reciente primero, filtradas por sentido, estado, misión o fecha.<br />`GET /trade-proposals`, *lista*, 50 por página, por cursor |
 | `metamob.tradeProposals.get(id)`<br />`tradeProposals.get` | Una propuesta de intercambio, con cuántos tienes ahora de cada monstruo.<br />`GET /trade-proposals/{id}` |
-| `metamob.tradeProposals.create({ recipient, sender_quest, monsters_given, monsters_received })`<br />`tradeProposals.create` | Propone un intercambio a un jugador desde una de tus misiones. Metamob abre el envío cuenta por cuenta.<br />`POST /trade-proposals` |
+| `metamob.tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received })`<br />`tradeProposals.create` | Propone un intercambio a un jugador desde una de tus misiones. Metamob abre el envío cuenta por cuenta.<br />`POST /trade-proposals` |
 
 ## Eventos Kralamar
 

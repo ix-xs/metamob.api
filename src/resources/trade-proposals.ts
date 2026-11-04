@@ -12,8 +12,11 @@ export interface NewTradeProposal {
   recipient: string;
   /** Slug of your quest the trade is about. */
   sender_quest: string;
-  /** Slug of the recipient's quest, of the same kind as yours and on the same server, as `quests.matches()` gives it. */
-  recipient_quest?: string | null | undefined;
+  /**
+   * Slug of the recipient's quest: of the same kind as yours, on the same
+   * server. `quests.matches()` gives it for each partner it finds.
+   */
+  recipient_quest: string;
   /**
    * What you give, in the shapes `quests.setMonsters()` takes: a list of
    * `{ monster, quantity }`, an object keyed by monster name, or a `Map`.
@@ -25,6 +28,8 @@ export interface NewTradeProposal {
 
 /** Most monsters in one list of a proposal. */
 const PROPOSAL_MONSTERS = 200;
+/** Largest quantity of one monster in a proposal. */
+const MAX_QUANTITY = 99;
 
 /** Filters of {@link TradeProposals.list}. */
 export interface TradeProposalListParams {
@@ -139,31 +144,34 @@ export class TradeProposals {
    * The rules are the ones of the site. Sending is closed by default: Metamob
    * opens it account by account, on request, and the API answers `FORBIDDEN`
    * without it, or when one of the two players blocked the other. Past the
-   * anti-spam limits, it answers `RATE_LIMITED`. A monster that is not in the
-   * quest, or a quantity out of bounds, is a `BAD_REQUEST`.
+   * anti-spam limits, it answers `RATE_LIMITED`. Two quests of different kinds
+   * or servers, a monster that is not in the quest, or a quantity out of
+   * bounds, is a `BAD_REQUEST`.
    *
    * A proposal is never retried, whatever the failure: sent twice, it would
    * exist twice. After a timeout or a network failure, look at `list()` before
    * proposing again.
    *
    * @example
-   * await metamob.tradeProposals.create({
-   *   recipient: "Ix-xs",
-   *   sender_quest: "21b0a742",
-   *   monsters_given: { "Tofu Maléfique": 1 },
-   *   monsters_received: { "Bouftou Royal": 1 },
-   * });
+   * // The partner and its quest, as matches() finds them.
+   * const best = await metamob.quests.matches("21b0a742").first();
+   * if (best) {
+   *   await metamob.tradeProposals.create({
+   *     recipient: best.user.username,
+   *     sender_quest: "21b0a742",
+   *     recipient_quest: best.quest.slug,
+   *     monsters_given: { "Tofu Maléfique": 1 },
+   *     monsters_received: { "Bouftou Royal": 1 },
+   *   });
+   * }
    */
   async create(proposal: NewTradeProposal, options?: RequestOptions): Promise<TradeProposal> {
-    if (!proposal || typeof proposal !== "object") throw new MetamobArgumentError("`proposal` must be an object with `recipient`, `sender_quest` and monsters.");
+    if (!proposal || typeof proposal !== "object") throw new MetamobArgumentError("`proposal` must be an object with `recipient`, `sender_quest`, `recipient_quest` and monsters.");
     const quest = text(proposal.sender_quest, "sender_quest");
-    const recipient = text(proposal.recipient, "recipient");
-    // Left out rather than sent as null when it is not known.
-    const theirs = proposal.recipient_quest === undefined || proposal.recipient_quest === null ? {} : { recipient_quest: text(proposal.recipient_quest, "recipient_quest") };
     const body = {
-      recipient,
+      recipient: text(proposal.recipient, "recipient"),
       sender_quest: quest,
-      ...theirs,
+      recipient_quest: text(proposal.recipient_quest, "recipient_quest"),
       monsters_given: await this.#monsters(quest, proposal.monsters_given, "monsters_given", options),
       monsters_received: await this.#monsters(quest, proposal.monsters_received, "monsters_received", options),
     };
@@ -177,7 +185,7 @@ export class TradeProposals {
     const list = entries(quantities);
     if (list.length > PROPOSAL_MONSTERS) throw new MetamobArgumentError(`\`${name}\` has ${list.length} monsters: a proposal takes ${PROPOSAL_MONSTERS} at most on each side.`);
     for (const [, quantity] of list) {
-      if (typeof quantity !== "number" || !Number.isInteger(quantity) || quantity < 1) throw new MetamobArgumentError(`Each quantity of \`${name}\` must be a whole number, 1 or more.`);
+      if (typeof quantity !== "number" || !Number.isInteger(quantity) || quantity < 1 || quantity > MAX_QUANTITY) throw new MetamobArgumentError(`Each quantity of \`${name}\` must be a whole number from 1 to ${MAX_QUANTITY}.`);
     }
     const ids = await Promise.all(list.map(([monster]) => this.#quests.monsterIn(quest, monster, options)));
     const seen = new Set<number>();

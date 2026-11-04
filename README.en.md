@@ -135,7 +135,7 @@ const waiting = await metamob.tradeProposals.list({ direction: "received", statu
 
 // Sending, once Metamob opened it on the account.
 await metamob.conversations.send("Ix-xs", "Salut, ton Tofu Maléfique est toujours dispo ?");
-await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, monsters_given: { "Tofu Maléfique": 1 } });
+await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, recipient_quest: "e5f6a7b8", monsters_given: { "Tofu Maléfique": 1 } });
 ```
 
 ## Your quests

@@ -473,6 +473,8 @@ export interface ConversationMessage {
   created_at: string;
   /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`, or `null`. */
   read_at: string | null;
+  /** A flag the site sets on a message. Metamob does not document it yet. */
+  is_priority?: boolean;
 }
 
 /** A quantity of a monster in a trade proposal. `monsters.get()` or `data.monster()` gives the monster. */

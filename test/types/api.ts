@@ -101,7 +101,7 @@ export async function results() {
   // Sending answers what reading shows.
   const sent = await metamob.conversations.send("Ix-xs", "Salut !");
   expect<Equal<typeof sent.kind, "message">>();
-  const made = await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, monsters_given: { "Tofu Maléfique": 1 } });
+  const made = await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, recipient_quest: "e5f6a7b8", monsters_given: { "Tofu Maléfique": 1 } });
   expect<Equal<typeof made, TradeProposal>>();
   // @ts-expect-error the quest type is read from quest_template
   void proposal.quest_type;
@@ -109,7 +109,9 @@ export async function results() {
 
 export async function refused() {
   // @ts-expect-error a proposal says who it is for
-  metamob.tradeProposals.create({ sender_quest: slug, monsters_given: { Tofu: 1 } });
+  metamob.tradeProposals.create({ sender_quest: slug, recipient_quest: "e5f6a7b8", monsters_given: { Tofu: 1 } });
+  // @ts-expect-error and which of their quests
+  metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, monsters_given: { Tofu: 1 } });
   // @ts-expect-error a message is text
   metamob.conversations.send("Ix-xs", 42);
   // @ts-expect-error `direction` is received, sent or all

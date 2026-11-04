@@ -86,7 +86,7 @@ Explained in [Trade proposals](/resources/trade-proposals/).
 | --- | --- |
 | `metamob.tradeProposals.list({ direction, status, quest, since })`<br />`tradeProposals.list` | The trade proposals the account sent and received, most recent first, filtered by direction, status, quest or date.<br />`GET /trade-proposals`, *list*, 50 per page, by cursor |
 | `metamob.tradeProposals.get(id)`<br />`tradeProposals.get` | One trade proposal, with how many of each monster you own now.<br />`GET /trade-proposals/{id}` |
-| `metamob.tradeProposals.create({ recipient, sender_quest, monsters_given, monsters_received })`<br />`tradeProposals.create` | Proposes a trade to a user from one of your quests. Sending is opened account by account by Metamob.<br />`POST /trade-proposals` |
+| `metamob.tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received })`<br />`tradeProposals.create` | Proposes a trade to a user from one of your quests. Sending is opened account by account by Metamob.<br />`POST /trade-proposals` |
 
 ## Kralamoure events
 

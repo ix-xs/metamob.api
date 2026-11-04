@@ -196,7 +196,7 @@ await step("conversations: list, messages, unread_count, markAsRead", async () =
   const items = await metamob.conversations.messages(page.items[0].username, { limit: 5 });
   for (const item of items) {
     date(`${item.kind}.created_at`, item.created_at);
-    if (item.kind === "message") shape("ConversationMessage", item, ["kind", "id", "content", "sender", "created_at", "read_at"]);
+    if (item.kind === "message") shape("ConversationMessage", item, ["kind", "id", "content", "sender", "created_at", "read_at"], ["is_priority"]);
     // The API still sends the two deprecated fields for a while.
     else proposal("ConversationProposal", item as unknown as Record<string, unknown>, ["kind"], ["server_id", "quest_type"]);
   }
@@ -235,7 +235,7 @@ await step("sending: closed, or addressed to nobody", async () => {
   const nobody = "zz-nobody-zz-0000";
   const attempts: [string, () => Promise<unknown>][] = [
     ["conversations.send", () => metamob.conversations.send(nobody, "test")],
-    ["tradeProposals.create", () => metamob.tradeProposals.create({ recipient: nobody, sender_quest: config.METAMOB_QUEST_SLUG ?? "a1b2c3d4", monsters_given: [{ monster: 301, quantity: 1 }] })],
+    ["tradeProposals.create", () => metamob.tradeProposals.create({ recipient: nobody, sender_quest: config.METAMOB_QUEST_SLUG ?? "a1b2c3d4", recipient_quest: "zzzzzzzz", monsters_given: [{ monster: 301, quantity: 1 }] })],
   ];
   for (const [name, run] of attempts) {
     try {
