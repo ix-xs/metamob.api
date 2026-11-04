@@ -209,7 +209,7 @@ export interface QuestBase {
   /** Identifier of the quest, the one in the URL of its page. */
   slug: string;
   character_name: string;
-  /** Step the character is at, from 1 to 34. */
+  /** Step the character is at, from 1 to `step_count` of the quest template, `step_count + 1` once the quest is over. */
   current_step: number;
   /** How many times the quest is being done in parallel: the number of each monster to own. */
   parallel_quests: number;
@@ -287,27 +287,27 @@ export interface QuestUpdate {
   character_name?: string | undefined;
   /** Quests done in parallel, from 1. The site sets the upper bound. */
   parallel_quests?: number | undefined;
-  /** Step the character is at, from 1 to 34. */
+  /** Step the character is at, from 1 to `step_count` of the quest template, `step_count + 1` once the quest is over. */
   current_step?: number | undefined;
   /** The "Show on my public profile" setting. */
   show_trades?: boolean | undefined;
   /** 0 is automatic, 1 is expert mode. */
   trade_mode?: 0 | 1 | undefined;
-  /** Expert mode: offer a monster from this quantity up, 0 to 30. */
+  /** Expert mode: offer a monster from this quantity up, 0 to 99. */
   trade_offer_threshold?: number | null | undefined;
-  /** Expert mode: look for a monster up to this quantity, 0 to 30. */
+  /** Expert mode: look for a monster up to this quantity, 0 to 99. */
   trade_want_threshold?: number | null | undefined;
-  /** Never offer monsters (steps 1 to 16). */
+  /** Never offer normal monsters. */
   never_offer_normal?: boolean | undefined;
-  /** Never look for monsters (steps 1 to 16). */
+  /** Never look for normal monsters. */
   never_want_normal?: boolean | undefined;
-  /** Never offer bosses (steps 17 to 19). */
+  /** Never offer bosses. */
   never_offer_boss?: boolean | undefined;
-  /** Never look for bosses (steps 17 to 19). */
+  /** Never look for bosses. */
   never_want_boss?: boolean | undefined;
-  /** Never offer archmonsters (steps 20 and up). */
+  /** Never offer archmonsters. */
   never_offer_arch?: boolean | undefined;
-  /** Never look for archmonsters (steps 20 and up). */
+  /** Never look for archmonsters. */
   never_want_arch?: boolean | undefined;
   /**
    * The same filters in the shape the API reads them back in. Only the kinds

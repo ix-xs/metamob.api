@@ -85,7 +85,7 @@ const proposal = await metamob.tradeProposals.create({
 console.log(proposal.id, proposal.status); // "pending"
 ```
 
-`sender_quest` es obligatorio. `recipient_quest` es el slug de la misión del otro jugador, cuando lo conoces. Una propuesta necesita al menos un monstruo, de un lado o del otro, y acepta 200 como máximo en cada lado. Lo que encuentra `quests.matches()` es un buen punto de partida: cada coincidencia indica el jugador y lo que puede ir en un sentido y en el otro.
+`sender_quest` es obligatorio. `recipient_quest` es el slug de la misión del otro jugador, tal como lo da `quests.matches()`: del mismo tipo que la tuya, en el mismo servidor. Una propuesta necesita al menos un monstruo, de un lado o del otro, y acepta 200 como máximo en cada lado. Lo que encuentra `quests.matches()` es un buen punto de partida: cada coincidencia indica el jugador y lo que puede ir en un sentido y en el otro.
 
 El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petición, y sin él la API responde `FORBIDDEN`. Las reglas son las del sitio: `FORBIDDEN` cuando uno de los dos jugadores ha bloqueado al otro, `RATE_LIMITED` al superar sus límites antispam.
 

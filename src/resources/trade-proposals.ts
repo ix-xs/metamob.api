@@ -12,7 +12,7 @@ export interface NewTradeProposal {
   recipient: string;
   /** Slug of your quest the trade is about. */
   sender_quest: string;
-  /** Slug of the recipient's quest, when you know which one. */
+  /** Slug of the recipient's quest, of the same kind as yours and on the same server, as `quests.matches()` gives it. */
   recipient_quest?: string | null | undefined;
   /**
    * What you give, in the shapes `quests.setMonsters()` takes: a list of

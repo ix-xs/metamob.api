@@ -66,6 +66,9 @@ export type MonsterQuantities = readonly { readonly monster: MonsterLike; readon
 /** Most monsters the API takes in one batch. */
 const BATCH = 200;
 const FLAGS = ["never_offer_normal", "never_want_normal", "never_offer_boss", "never_want_boss", "never_offer_arch", "never_want_arch"] as const;
+const THRESHOLDS = ["trade_offer_threshold", "trade_want_threshold"] as const;
+/** Largest quantity the API takes, for a monster as for a threshold. */
+const MAX_QUANTITY = 99;
 
 /** @internal The pairs of monster and quantity, whatever the shape they came in. */
 export function entries(quantities: MonsterQuantities): [MonsterLike, number][] {
@@ -134,6 +137,13 @@ export class Quests {
     if (!Object.keys(body).length) throw new MetamobArgumentError("`changes` is empty: there is nothing to update.");
     // The flat flags are documented as 0 or 1.
     for (const flag of FLAGS) if (typeof body[flag] === "boolean") body[flag] = body[flag] ? 1 : 0;
+    // Out of bounds, a threshold is dropped by the API without a word, while the rest is saved.
+    for (const threshold of THRESHOLDS) {
+      const value = body[threshold];
+      if (value !== undefined && value !== null && (typeof value !== "number" || !Number.isInteger(value) || value < 0 || value > MAX_QUANTITY)) {
+        throw new MetamobArgumentError(`\`${threshold}\` must be a whole number from 0 to ${MAX_QUANTITY}, or null.`);
+      }
+    }
     return (await this.#context.rest.request<{ data: QuestUpdateResult }>(METHODS["quests.update"], { path, body }, options)).data;
   }
 

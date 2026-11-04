@@ -159,6 +159,7 @@ A monster is `validated` when its step is already passed, `completed` when you o
 - Every method answers `NOT_FOUND` for a quest that is not yours, whether it exists or not.
 - Quantities go from 0 to 99. Outside, the API answers `BAD_REQUEST`.
 - `current_step` goes from 1 to `quest_template.step_count`, plus one for a quest that is over: 1 to 19 for the 18 steps of the Ochre on Dofus, 1 to 35 on Retro and Touch. Outside, the API answers `BAD_REQUEST`.
+- A threshold of the expert mode goes from 0 to 99. Outside, it is refused before being sent: the API would drop it without saying so and save the rest.
 - A write drops what the client cached for your key, so the next read is fresh.
 - Creating and deleting a quest are not in the API: do it on the site.
 
@@ -183,7 +184,7 @@ What `update` accepts:
 | `current_step` | `number` | From 1 to `step_count`, `step_count + 1` once the quest is over |
 | `show_trades` | `boolean` | Shown on the public profile |
 | `trade_mode` | `0 \| 1` | Automatic or expert |
-| `trade_offer_threshold`, `trade_want_threshold` | `number \| null` | Expert mode, 0 to 30 |
+| `trade_offer_threshold`, `trade_want_threshold` | `number \| null` | Expert mode, 0 to 99 |
 | `never_offer_normal`, `never_want_normal` | `boolean` | Monsters |
 | `never_offer_boss`, `never_want_boss` | `boolean` | Bosses |
 | `never_offer_arch`, `never_want_arch` | `boolean` | Archmonsters |

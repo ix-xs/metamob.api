@@ -327,6 +327,17 @@ describe("sending messages and proposals", () => {
 });
 
 describe("quests", () => {
+  it("refuses a threshold out of 0 to 99, which the API would drop without a word", async () => {
+    const { metamob, calls } = client({ data: { slug: SLUG } });
+    for (const bad of [100, -1, 2.5, "3"]) {
+      await expect(metamob.quests.update(SLUG, { current_step: 1, trade_offer_threshold: bad as number })).rejects.toThrow(/trade_offer_threshold/);
+    }
+    await expect(metamob.quests.update(SLUG, { trade_want_threshold: 100 })).rejects.toThrow(/trade_want_threshold/);
+    expect(calls).toHaveLength(0);
+    await metamob.quests.update(SLUG, { trade_offer_threshold: 99, trade_want_threshold: null });
+    expect(calls[0]!.body).toEqual({ trade_offer_threshold: 99, trade_want_threshold: null });
+  });
+
   it("accepts quantities as a list, an object or a Map, and keeps the last value of a monster given twice", async () => {
     const answer = { data: { updated_count: 2, monsters: [] } };
     const expected = { monsters: [{ monster_id: 20, quantity: 4 }, { monster_id: 472, quantity: 1 }] };

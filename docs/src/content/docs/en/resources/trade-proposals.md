@@ -85,7 +85,7 @@ const proposal = await metamob.tradeProposals.create({
 console.log(proposal.id, proposal.status); // "pending"
 ```
 
-`sender_quest` is required. `recipient_quest` is the slug of the quest of the other player, when you know it. A proposal needs at least one monster, on either side, and takes 200 at most on each side. What `quests.matches()` finds is a good place to start: each match names the player and what can go both ways.
+`sender_quest` is required. `recipient_quest` is the slug of the quest of the other player, as `quests.matches()` gives it: of the same kind as yours, on the same server. A proposal needs at least one monster, on either side, and takes 200 at most on each side. What `quests.matches()` finds is a good place to start: each match names the player and what can go both ways.
 
 Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. The rules are the ones of the site: `FORBIDDEN` when one of the two players blocked the other, `RATE_LIMITED` past its anti-spam limits.
 

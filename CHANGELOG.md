@@ -21,8 +21,12 @@ Follows the update of the Metamob API of November 2026: 40 endpoints.
 
 - A message or a trade proposal is never retried, whatever the failure, so it
   cannot arrive twice. The other writes are still retried as before.
-- The documentation follows the limits Metamob now states: `current_step` goes
-  up to the number of steps plus one, and a bad value is a `BAD_REQUEST`.
+- `quests.update()` refuses a threshold of the expert mode outside 0 to 99
+  before sending it: the API drops such a value without a word and saves the
+  rest.
+- The documentation and the doc comments follow the limits Metamob now
+  states: quantities and thresholds from 0 to 99, `current_step` up to the
+  number of steps plus one, filters by kind of monster rather than by step.
 - The embedded data is refreshed.
 
 ## 5.1.0
