@@ -146,6 +146,7 @@ A `Conversation`:
 | `username` | `string`, the correspondent |
 | `message_count` | `number`, proposals included |
 | `unread_count` | `number`, received and not read yet |
+| `has_priority_unread` | `boolean`, a priority message from the Metamob staff is unread |
 | `last_message_at` | `string` |
 
 A message:
@@ -158,6 +159,7 @@ A message:
 | `sender` | `string`, a username |
 | `created_at` | `string` |
 | `read_at` | `string \| null` |
+| `is_priority` | `boolean`, a priority message from the Metamob staff, shown by the site in a golden popup until it is read |
 
 A proposal:
 

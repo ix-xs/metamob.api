@@ -3,6 +3,12 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+- The doc comments and the documentation say what `has_priority_unread` and
+  `is_priority` mean: priority messages from the Metamob staff, which the site
+  shows in a golden popup. Only the staff can send one.
+
 ## 5.2.1
 
 Checked against a real proposal sent through the API.

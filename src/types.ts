@@ -457,7 +457,10 @@ export interface Conversation {
   message_count: number;
   /** Messages received and not read yet, trade proposals included. */
   unread_count: number;
-  /** A flag the site sets on what is unread. Metamob does not document it yet. */
+  /**
+   * Whether a priority message from the Metamob staff is among the unread
+   * ones: the site shows those in a golden popup.
+   */
   has_priority_unread?: boolean;
   /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
   last_message_at: string;
@@ -473,7 +476,10 @@ export interface ConversationMessage {
   created_at: string;
   /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`, or `null`. */
   read_at: string | null;
-  /** A flag the site sets on a message. Metamob does not document it yet. */
+  /**
+   * A priority message from the Metamob staff, which the site shows in a
+   * golden popup until it is read. Only the staff can send one.
+   */
   is_priority?: boolean;
 }
 
