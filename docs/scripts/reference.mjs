@@ -4,11 +4,9 @@
 //   node scripts/reference.mjs            write the pages
 //   node scripts/reference.mjs --check    fail when a page is out of date
 //
-// The sentences that describe a method are written once, in English, in the
-// config. Their French and their Spanish are in `scripts/reference.fr.json`
-// and `scripts/reference.es.json`, keyed by the English sentence: after adding
-// or rewording one, this script stops and lists what is left to translate. An
-// entry that translates nothing any more must go.
+// Summaries are written in English in the config and translated in
+// `scripts/reference.fr.json` and `scripts/reference.es.json`, keyed by the
+// English sentence. Missing or unused translations stop the script.
 
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -21,9 +19,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const content = path.resolve(here, "..", "src", "content", "docs");
 const check = process.argv.includes("--check");
 
-/** Every language of the site, the original first. */
 const LANGUAGES = [SOURCE, ...[ROOT_LANGUAGE, ...LOCALES].filter((language) => language !== SOURCE)];
-/** Where the pages of a language are: the root for one of them, a folder for the others. */
 const folder = (language) => path.join(content, language === ROOT_LANGUAGE ? "" : language);
 
 const sentences = {};
@@ -31,7 +27,6 @@ for (const language of LANGUAGES) {
   if (language !== SOURCE) sentences[language] = JSON.parse(await readFile(path.join(here, `reference.${language}.json`), "utf8"));
 }
 
-/** The groups of the page, in order, with the methods whose id starts with each prefix. */
 const GROUPS = [
   { en: "Account", fr: "Compte", es: "Cuenta", prefixes: ["me."] },
   { en: "Your quests", fr: "Vos quêtes", es: "Tus misiones", prefixes: ["quests."] },
@@ -67,8 +62,6 @@ const WORDS = {
       ["`metamob.withKey(apiKey)`", "A client for another key, sharing the cache, the listeners and the settings of this one."],
       ["`data.monster(name)` and the rest of `data`", "The reference data that ships with the package, answered from memory."],
     ],
-    seeAlso: "See also",
-    links: ["[All exports](/reference/exports/)", "[Error codes](/reference/errors/)", "[The data in the package](/basics/embedded-data/)"],
   },
   fr: {
     title: "Toutes les méthodes",
@@ -92,8 +85,6 @@ const WORDS = {
       ["`metamob.withKey(apiKey)`", "Un client pour une autre clé, qui partage le cache, les écouteurs et les réglages de celui-ci."],
       ["`data.monster(name)` et le reste de `data`", "Les données de référence livrées avec le paquet, lues en mémoire."],
     ],
-    seeAlso: "Voir aussi",
-    links: ["[Tous les exports](/reference/exports/)", "[Codes d'erreur](/reference/errors/)", "[Les données du paquet](/basics/embedded-data/)"],
   },
   es: {
     title: "Todos los métodos",
@@ -117,15 +108,12 @@ const WORDS = {
       ["`metamob.withKey(apiKey)`", "Un cliente para otra clave, que comparte la caché, los oyentes y los ajustes de este."],
       ["`data.monster(name)` y el resto de `data`", "Los datos de referencia que vienen con el paquete, leídos en memoria."],
     ],
-    seeAlso: "Ver también",
-    links: ["[Todas las exportaciones](/reference/exports/)", "[Códigos de error](/reference/errors/)", "[Los datos del paquete](/basics/embedded-data/)"],
   },
 };
 
-/** The title of a docs page, in a language, to name the guide of a method. */
 async function titleOf(guide, language) {
   const slug = guide.replace(/^\/|\/$/g, "");
-  // A page that is not translated yet is named as its original is.
+  // An untranslated page falls back on its original.
   const source = [language, SOURCE].map((candidate) => path.join(folder(candidate), `${slug}.md`)).find((file) => existsSync(file));
   if (!source) throw new Error(`${guide}: the guide of a method has no page (${slug}.md)`);
   const match = /^title:\s*"?(.+?)"?\s*$/m.exec(await readFile(source, "utf8"));
@@ -143,7 +131,6 @@ for (const [language, table] of Object.entries(sentences)) {
 }
 if (incomplete) process.exit(1);
 
-/** Text made safe for a cell of a Markdown table: backslashes first, then the pipes that would end the cell. */
 const cell = (text) => text.replace(/\\/g, "\\\\").replace(/\|/g, "\\|");
 
 async function page(language) {
@@ -167,7 +154,6 @@ async function page(language) {
   const missing = methods.filter((method) => !listed.has(method.id));
   if (missing.length) throw new Error(`No group for: ${missing.map((method) => method.id).join(", ")}`);
   out.push(`## ${words.also}`, "", words.alsoIntro, "", "| | |", "| --- | --- |", ...words.extras.map(([name, text]) => `| ${cell(name)} | ${text} |`), "");
-  out.push(`## ${words.seeAlso}`, "", ...words.links.map((link) => `- ${link}`), "");
   return out.join("\n");
 }
 

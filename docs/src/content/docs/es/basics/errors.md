@@ -1,9 +1,11 @@
 ---
 title: Errores
-description: "Una llamada devuelve los datos o lanza un error. Cada error tiene un código tipado, y los que vienen de la API llevan además el estado y el mensaje que envió. Esta página muestra cómo distinguirlos y qué se reintenta por ti."
+description: "Una llamada devuelve los datos o lanza un error. Los tipos de error, sus códigos, y lo que se reintenta."
 sidebar:
   order: 3
 ---
+
+Una llamada devuelve los datos pedidos, o lanza un error cuando falla. Cada error lleva un `code` que comprobar:
 
 ```ts
 try {
@@ -14,19 +16,19 @@ try {
 }
 ```
 
-## Tres tipos de errores
+## Tres tipos de error
 
-| Clase | Cuándo | Extra |
+| Clase | Cuándo | Además |
 | --- | --- | --- |
 | `MetamobApiError` | La API respondió con un estado de error | `status`, `messages`, `retryAfter`, `body`, `method`, `url` |
-| `MetamobRequestError` | Ninguna respuesta utilizable: fallo de red, tiempo de espera agotado, cancelación, JSON no válido | `method`, `cause` |
-| `MetamobArgumentError` | La llamada se rechazó antes de enviarse: argumento incorrecto, nombre desconocido, falta la clave | `suggestions` |
+| `MetamobRequestError` | Ninguna respuesta utilizable: fallo de red, tiempo agotado, cancelación, JSON no válido | `method`, `cause` |
+| `MetamobArgumentError` | La llamada se rechazó antes de enviarse: argumento incorrecto, nombre desconocido, sin clave | `suggestions` |
 
 Las tres extienden `MetamobError`, que tiene un `code`.
 
 ## Comprobar un error
 
-`isMetamobError(error)` indica si un error viene de la biblioteca. Con un código, comprueba también el código.
+`isMetamobError(error)` indica si un error viene de la biblioteca. Con un código, también comprueba el código.
 
 ```ts
 try {
@@ -37,14 +39,14 @@ try {
   } else if (isMetamobError(error, "NOT_FOUND")) {
     // la misión no existe, o no es tuya
   } else if (isMetamobError(error, "UNAUTHORIZED")) {
-    // la clave fue revocada
+    // la clave se ha revocado
   } else {
     throw error;
   }
 }
 ```
 
-Un error de la API tiene atajos para los tres que más compruebas:
+Un error de la API también tiene atajos para los casos más comunes:
 
 ```ts
 try {
@@ -60,37 +62,39 @@ try {
 }
 ```
 
-## Qué significa un 404
+## Lo que significa un 404
 
 La API responde 404 para lo que no existe y para lo que no es tuyo. `quests.get()`, `quests.monsters()` y todas las escrituras responden `NOT_FOUND` en una misión de otra cuenta, exista o no. `users.quest()` responde `NOT_FOUND` en una misión oculta.
 
-## Qué se reintenta
+## Lo que se reintenta
 
-Antes de que un error llegue hasta ti, la biblioteca ya ha vuelto a intentarlo cuando volver a intentarlo puede servir.
+Algunos fallos son pasajeros. En esos casos, la biblioteca reenvía la solicitud antes de lanzar el error:
 
 | Fallo | Se reintenta |
 | --- | --- |
 | 429, límite de solicitudes | Sí, tras la espera que pide la API |
 | 502, 503, 504 | Sí |
 | 500 | Solo en las lecturas |
-| Fallo de red, tiempo de espera agotado | Sí |
+| Fallo de red, tiempo agotado | Sí |
 | 400, 401, 403, 404 | No |
-| Cancelada con tu `signal` | No |
+| Cancelado con tu `signal` | No |
 
-Por defecto hay hasta 3 intentos más. La espera empieza en 500 ms y se duplica cada vez, hasta 60 segundos. Cuando la API envía `Retry-After`, se usa esa espera en su lugar. Un `Retry-After` más largo que `maxDelay` no se espera: el error se lanza de inmediato, con su `retryAfter` en segundos.
+Por defecto, hay hasta 3 intentos más. La espera empieza en 500 ms y se duplica cada vez, hasta 60 segundos. Cuando la API envía `Retry-After`, se usa esa espera. Un `Retry-After` más largo que `maxDelay` no se espera: el error se lanza enseguida, con su `retryAfter` en segundos.
 
-Las escrituras que fijan un valor, en una misión o una conversación, dan el mismo resultado si se envían dos veces: también se reintentan. Enviar un mensaje o una propuesta de intercambio nunca se reintenta, sea cual sea el fallo, porque llegaría dos veces. Tras un tiempo de espera agotado en ese caso, comprueba antes de volver a enviar.
+Las escrituras que fijan un valor, en una misión o en una conversación, dan el mismo resultado si se envían dos veces: también se reintentan. El envío de un mensaje o de una propuesta de intercambio nunca se reintenta, ya que llegaría dos veces. Después de un tiempo agotado, comprueba que no ha salido antes de reenviarlo.
+
+El número de intentos se ajusta para el cliente o para una llamada:
 
 ```ts
 // Para todo el cliente.
 const patient = new Metamob({ retry: { attempts: 5, delay: "1s", maxDelay: "2m" } });
 const strict = new Metamob({ retry: false });
 
-// Para una llamada.
+// Para una sola llamada.
 await metamob.quests.get(slug, { retry: false });
 ```
 
-Para ver los reintentos a medida que ocurren:
+Para ver los reintentos en el momento en que ocurren:
 
 ```ts
 metamob.on("retry", ({ method, attempt, delay, error }) => {
@@ -100,7 +104,7 @@ metamob.on("retry", ({ method, attempt, delay, error }) => {
 
 ## Tiempos de espera y cancelación
 
-Un intento dispone de 30 segundos por defecto. `timeout` lo cambia, para el cliente o para una llamada. Un `signal` cancela una llamada desde fuera, incluso mientras espera al limitador.
+Un intento dispone de 30 segundos por defecto. `timeout` cambia ese tiempo, para el cliente o para una llamada. Un `signal` cancela una llamada desde fuera, incluso mientras espera al limitador.
 
 ```ts
 const controller = new AbortController();
@@ -116,7 +120,7 @@ try {
 
 ## Los argumentos se comprueban primero
 
-Lo que se puede saber que es incorrecto sin preguntar a la API se rechaza en local, con `INVALID_ARGUMENT`: un slug vacío, una cantidad negativa, una búsqueda de menos de 3 caracteres, una fecha con un formato incorrecto, un mensaje de más de 1000 caracteres, una propuesta sin monstruos. No se gasta ninguna solicitud.
+Un argumento que la API rechazaría con seguridad se rechaza antes del envío, con `INVALID_ARGUMENT`: un slug vacío, una cantidad negativa, una búsqueda de menos de 3 caracteres, una fecha con un formato incorrecto, un mensaje de más de 1000 caracteres, una propuesta sin monstruos.
 
 ## Referencia
 
@@ -126,22 +130,15 @@ Lo que se puede saber que es incorrecto sin preguntar a la API se rechaza en loc
 | `UNAUTHORIZED` | 401: clave ausente, no válida o revocada |
 | `FORBIDDEN` | 403 |
 | `NOT_FOUND` | 404: no existe, o no es tuyo |
-| `RATE_LIMITED` | 429, tras los reintentos |
-| `SERVER_ERROR` | 5xx, tras los reintentos |
+| `RATE_LIMITED` | 429, después de los reintentos |
+| `SERVER_ERROR` | 5xx, después de los reintentos |
 | `API_ERROR` | Cualquier otro estado de error |
 | `TIMEOUT` | Sin respuesta a tiempo |
 | `NETWORK` | No se pudo hacer la solicitud |
-| `ABORTED` | Cancelada con tu `signal` |
+| `ABORTED` | Cancelado con tu `signal` |
 | `PARSE_ERROR` | La respuesta no era JSON válido |
-| `MISSING_API_KEY` | Ninguna clave en las opciones, la llamada o el entorno |
+| `MISSING_API_KEY` | No hay clave en las opciones, la llamada ni el entorno |
 | `INVALID_ARGUMENT` | Un argumento es incorrecto |
-| `UNKNOWN_NAME` | Ningún monstruo, zona o servidor tiene este nombre |
+| `UNKNOWN_NAME` | Ningún monstruo, zona o servidor tiene ese nombre |
 
-[Códigos de error](/reference/errors/) detalla las propiedades de cada clase.
-
-## Ver también
-
-- [El límite de solicitudes](/basics/rate-limit/)
-- [Nombres e identificadores](/basics/names-and-ids/)
-- [Configuración](/basics/configuration/)
-- [Solución de problemas](/help/troubleshooting/)
+[Códigos de error](/reference/errors/) lista las propiedades de cada clase.

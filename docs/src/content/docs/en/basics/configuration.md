@@ -1,9 +1,11 @@
 ---
 title: Configuration
-description: Every option of the client and of a single call, with its default. Nothing is required but an API key, and the defaults suit a script as well as a bot.
+description: "The options of the client and of a call, with their defaults."
 sidebar:
   order: 8
 ---
+
+Every option is optional. The defaults suit a script as well as a bot:
 
 ```ts
 const metamob = new Metamob({
@@ -17,7 +19,7 @@ const metamob = new Metamob({
 
 ## The client
 
-Every option is optional. The key alone can be passed as a string.
+The key alone can also be passed as a string:
 
 ```ts
 const fromEnvironment = new Metamob();
@@ -25,11 +27,11 @@ const fromString = new Metamob(apiKey);
 const fromOptions = new Metamob({ apiKey });
 ```
 
-Create one client and keep it: the rate limiter and the cache live in it. Two clients for the same key count their requests separately and can go over the limit together.
+Create one client and keep it: it holds the request count and the cache. Two clients for the same key count separately, and together they can go over the limit.
 
 ## One call
 
-Every method takes its own arguments first, then an options object for that call only.
+Every method takes its own arguments first, then an options object for that call only:
 
 ```ts
 await metamob.monsters.get("Tofu", {}, { timeout: "5s", cache: false });
@@ -41,7 +43,7 @@ When a method has filters, they come before the options: `monsters.get(monster, 
 
 ## Listening to the client
 
-The client emits what it does. `on` returns a function that stops listening.
+The client emits an event at each step of a call. `on` returns a function that stops listening:
 
 ```ts
 const stop = metamob.on("request", ({ method, verb, url, attempt }) => {
@@ -61,7 +63,7 @@ stop();
 | `response` | An answer arrived, or came from the cache | `method`, `status`, `duration`, `cached` |
 | `retry` | A request will be tried again | `method`, `attempt`, `delay`, `error` |
 | `rateLimit` | A call waited for its turn | `method`, `delay` |
-| `error` | A listener or a cache store threw | the error |
+| `error` | A listener or a cache store threw an error | the error |
 
 A URL in an event never contains the key.
 
@@ -71,7 +73,7 @@ Wherever a duration is expected, write a number of milliseconds or a string with
 
 ## Another fetch, another host
 
-`fetch` replaces the global one: to go through a proxy, to record requests in tests, or on a runtime that has none.
+`fetch` replaces the global fetch: to go through a proxy, to watch requests in tests, or on a runtime that has none.
 
 ```ts
 const calls: string[] = [];
@@ -119,17 +121,10 @@ Members of the client:
 | Member | Meaning |
 | --- | --- |
 | `me()` | The account of the key |
-| `quests`, `monsters`, `zones`, `users`, `conversations`, `kralove` | The resources |
+| `quests`, `monsters`, `zones`, `users`, `conversations`, `tradeProposals`, `kralove` | The parts of the API |
 | `gameVersions`, `servers`, `monsterTypes`, `questTypes`, `questTemplates` | The reference lists |
 | `data` | [The data in the package](/basics/embedded-data/) |
 | `withKey(apiKey)` | A client for another key |
 | `rateLimit` | Where the key stands against the limit |
 | `on`, `once`, `off` | Events |
 | `clearCache()` | Empties the cache |
-
-## See also
-
-- [Errors](/basics/errors/)
-- [Caching](/basics/caching/)
-- [The rate limit](/basics/rate-limit/)
-- [Runtimes](/reference/runtimes/)

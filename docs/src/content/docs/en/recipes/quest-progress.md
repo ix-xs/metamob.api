@@ -1,11 +1,13 @@
 ---
 title: A progress report
-description: A script that prints where one of your quests stands, what is left to find in each zone, and which zone to hunt in next. Three requests, whatever the size of the quest.
+description: "A script that prints where a quest stands and which zones to hunt in next, in three requests."
 sidebar:
   order: 2
 ---
 
 ## What you get
+
+A script that prints the progress of a quest and the zones where the most monsters are missing:
 
 ```text
 Ix on Tylezia, step 12 of 18
@@ -19,7 +21,7 @@ Hunt next:
 
 ## The script
 
-```ts
+```ts title="progress.ts"
 import { Metamob } from "@ix-xs/metamob.api";
 
 const metamob = new Metamob(); // reads METAMOB_API_KEY
@@ -29,20 +31,22 @@ if (!slug) throw new Error("This account has no quest.");
 
 // 1 request: the quest itself.
 const quest = await metamob.quests.get(slug);
-console.log(`${quest.character_name} on ${quest.server?.name}, step ${quest.current_step} of ${quest.quest_template.step_count}`);
+const steps = quest.quest_template.step_count;
+console.log(`${quest.character_name} on ${quest.server?.name}, step ${quest.current_step} of ${steps}`);
 
 // 1 request: how many monsters are still missing.
 const total = quest.quest_template.monster_count;
-const missing = (await metamob.quests.monsters(slug, { status: "needed" }).count()) ?? 0;
+const needed = metamob.quests.monsters(slug, { status: "needed" });
+const missing = (await needed.count()) ?? 0;
 const done = total - missing;
 console.log(`${done} of ${total} monsters, ${Math.round((done / total) * 100)} %\n`);
 
-// 1 request: everything by zone.
+// 1 request: everything, by zone.
 const zones = await metamob.quests.zones(slug);
 
 const report = zones
   .map((zone) => {
-    // A monster shows up in each subzone it lives in: count it once per zone.
+    // A monster is in each subzone it lives in: a Set counts it once.
     const names = new Set();
     for (const subzone of zone.subzones) {
       for (const monster of subzone.monsters) {
@@ -57,27 +61,28 @@ const report = zones
 console.log("Hunt next:");
 for (const { zone, names } of report.slice(0, 5)) {
   const shown = names.slice(0, 3).join(", ") + (names.length > 3 ? ", ..." : "");
-  console.log(`  ${zone.padEnd(24)} ${String(names.length).padStart(3)} missing   ${shown}`);
+  const count = String(names.length).padStart(3);
+  console.log(`  ${zone.padEnd(24)} ${count} missing   ${shown}`);
 }
 ```
 
-Run it with the slug of a quest, or with nothing to take the first quest of the account:
+Run it with the slug of a quest, or with no argument for the first quest of the account:
 
 ```bash
-METAMOB_API_KEY=your-key node progress.mjs 21b0a742
+node --env-file=.env progress.js 21b0a742
 ```
 
 ## Why three requests
 
-- `count()` asks for one item and reads the total, instead of paging through hundreds of monsters to count them.
-- `quests.zones()` answers the whole quest at once, already grouped.
-- The names of zones and monsters come back in the answers. Nothing has to be looked up.
+- `count()` only asks for the total, not the list of monsters.
+- `quests.zones()` returns the whole quest in one answer, already grouped by zone.
+- The names of zones and monsters are in the answers.
 
-Listing every monster and grouping them yourself would work too, in more requests: a quest of 600 monsters is three pages of 200.
+Listing every monster and grouping them yourself would work too, with more requests: 600 monsters make three pages of 200.
 
 ## Only archmonsters, only one zone
 
-`quests.zones()` filters on the server side, which makes the answer smaller.
+`quests.zones()` accepts filters, which make the answer smaller:
 
 ```ts
 const archmonsters = await metamob.quests.zones(slug, { type: "archimonstre" });
@@ -86,7 +91,7 @@ const amakna = await metamob.quests.zones(slug, { zone: "Amakna" });
 
 ## What you can trade away
 
-The same quest, seen from the other side: what you own in excess, and what the quest really offers after your trade settings.
+The same quest, on the trading side: what you own in excess, and what the quest offers of it once your settings are applied:
 
 ```ts
 const quest = await metamob.quests.get(slug);
@@ -94,24 +99,17 @@ const spares = await metamob.quests.monsters(slug, { status: "excess" }).all();
 
 for (const monster of spares) {
   const kept = monster.quantity - quest.parallel_quests - monster.offer;
-  console.log(monster.name.fr, `offers ${monster.offer}`, kept > 0 ? `(keeps ${kept} back)` : "");
+  console.log(monster.name.fr, `offers ${monster.offer}, keeps ${kept}`);
 }
 ```
 
 ## For someone else
 
-With the key of a player who gave it to you, the same script runs as them:
+With the key a player gave you, the same script runs on their behalf:
 
 ```ts
 const theirs = metamob.withKey(theirKey);
 const quests = await theirs.quests.list();
 ```
 
-Without their key, a public quest still shows what its owner looks for, through [`users.quest()`](/resources/users/#the-monsters-of-a-public-quest).
-
-## See also
-
-- [Your quests](/resources/quests/)
-- [Lists](/basics/lists/)
-- [Trading](/resources/trading/)
-- [The rate limit](/basics/rate-limit/)
+Without their key, [`users.quest()`](/resources/users/#the-monsters-of-a-public-quest) still shows what a public quest is looking for.

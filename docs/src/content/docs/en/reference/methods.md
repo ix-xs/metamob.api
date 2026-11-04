@@ -125,9 +125,3 @@ A few methods send no request of their own:
 | `metamob.quests.resetTrade(slug, monster)` | `quests.setTrade` with both values handed back to the automatic calculation. |
 | `metamob.withKey(apiKey)` | A client for another key, sharing the cache, the listeners and the settings of this one. |
 | `data.monster(name)` and the rest of `data` | The reference data that ships with the package, answered from memory. |
-
-## See also
-
-- [All exports](/reference/exports/)
-- [Error codes](/reference/errors/)
-- [The data in the package](/basics/embedded-data/)

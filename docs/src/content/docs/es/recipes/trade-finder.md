@@ -1,11 +1,13 @@
 ---
 title: Un buscador de intercambios
-description: "Un script que encuentra quién puede darte un monstruo que te falta y lo que podrías darle a cambio, listo para pegar en un mensaje."
+description: "Un script que encuentra quién puede darte un monstruo, y lo que podrías darle a cambio."
 sidebar:
   order: 3
 ---
 
 ## Lo que obtienes
+
+Un script que toma un monstruo que te falta, y lista los jugadores que lo ofrecen:
 
 ```text
 Looking for Bouflet le Puéril
@@ -18,7 +20,7 @@ PlayerName (score 14, seen 2026-10-13)
 
 ## El script
 
-```ts
+```ts title="trade.ts"
 import { Metamob, data, urls } from "@ix-xs/metamob.api";
 
 const metamob = new Metamob(); // lee METAMOB_API_KEY
@@ -27,60 +29,65 @@ const [slug, ...words] = process.argv.slice(2);
 const wanted = data.monster(words.join(" "));
 if (!slug || !wanted) {
   const close = data.suggest("monster", words.join(" "));
-  throw new Error(close.length ? `Did you mean ${close.join(", ")}?` : "Usage: node trade.mjs <slug> <monster>");
+  if (close.length) throw new Error(`Did you mean ${close.join(", ")}?`);
+  throw new Error("Usage: node trade.js <slug> <monster>");
 }
 
 console.log(`Looking for ${wanted.name.fr}\n`);
 
 let found = 0;
-// Socios con los que algo puede ir en ambos sentidos, la mejor coincidencia primero.
-for await (const match of metamob.quests.matches(slug, { onlyPossibleTrades: true })) {
-  const offer = match.matches.they_have_you_want.find((monster) => monster.id === wanted.id);
+const partners = metamob.quests.matches(slug, { onlyPossibleTrades: true });
+
+for await (const { user, matches, match_score } of partners) {
+  const offer = matches.they_have_you_want.find((monster) => monster.id === wanted.id);
   if (!offer) continue;
 
-  console.log(`${match.user.username} (score ${match.match_score}, seen ${match.user.last_active.slice(0, 10)})`);
+  const wants = matches.you_have_they_want.map((monster) => monster.name.fr);
+  console.log(`${user.username} (score ${match_score}, seen ${user.last_active.slice(0, 10)})`);
   console.log(`  has ${offer.available} available`);
-  console.log(`  wants from you: ${match.matches.you_have_they_want.map((monster) => monster.name.fr).join(", ")}`);
-  console.log(`  ${urls.profile(match.user)}\n`);
+  console.log(`  wants from you: ${wants.join(", ")}`);
+  console.log(`  ${urls.profile(user)}\n`);
 
-  // Salir del bucle detiene las solicitudes: solo se pidieron las páginas que se leyeron.
-  if (++found === 5) break;
+  if (++found === 5) break; // ya no se pide ninguna página más
 }
 
 if (!found) console.log("Nobody offers it right now among your matches.");
 ```
 
 ```bash
-METAMOB_API_KEY=your-key node trade.mjs 21b0a742 bouflet le pueril
+node --env-file=.env trade.js 21b0a742 bouflet le pueril
 ```
 
 ## Por qué cuesta poco
 
-El monstruo se encuentra en [los datos del paquete](/basics/embedded-data/), sin ninguna solicitud, y una errata se detecta antes de enviar nada.
+El monstruo se busca en [los datos del paquete](/basics/embedded-data/), sin solicitud: una errata se detecta antes de cualquier envío.
 
-Las coincidencias llegan a razón de 50 por página. El bucle las lee en orden y se detiene en el quinto socio, así que un monstruo común cuesta una solicitud y uno raro, unas pocas. Sin el `break`, se leerían todas las páginas.
+Los socios llegan en páginas de 50, y el bucle se detiene en el quinto encontrado. Un monstruo común cuesta, por tanto, una solicitud, y un monstruo raro unas pocas.
 
 ## Comprobar un socio antes de escribirle
 
-Una coincidencia dice lo que un jugador ofrece hoy. Su misión pública dice el resto: cuántos ejemplares posee y qué más busca.
+La misión pública de un socio dice qué más busca:
 
 ```ts
 const match = await metamob.quests.matches(slug).first();
 
 if (match) {
-  const theirs = await metamob.users.quest(match.user.username, match.quest.slug, { status: "wanted" }).all();
+  const { user, quest } = match;
+  const theirs = await metamob.users.quest(user.username, quest.slug, { status: "wanted" }).all();
   console.log(theirs.map((monster) => `${monster.name.fr} x${monster.want}`));
 }
 ```
 
-## Todo lo que podrías conseguir de una pasada
+## Todo lo que podrías obtener de una sola pasada
 
-Dale la vuelta a la pregunta: para cada monstruo que te falta, quién lo tiene.
+En el otro sentido: para cada monstruo que te falta, quién lo ofrece.
 
 ```ts
 const sources = new Map<string, string[]>();
 
-for await (const page of metamob.quests.matches(slug, { onlyPossibleTrades: true }).pages({ limit: 100 })) {
+const partners = metamob.quests.matches(slug, { onlyPossibleTrades: true });
+
+for await (const page of partners.pages({ limit: 100 })) {
   for (const partner of page.items) {
     for (const monster of partner.matches.they_have_you_want) {
       const players = sources.get(monster.name.fr) ?? [];
@@ -90,26 +97,19 @@ for await (const page of metamob.quests.matches(slug, { onlyPossibleTrades: true
   }
 }
 
-// Los más raros primero: los monstruos que solo ofrecen uno o dos jugadores.
+// Los más raros primero: los que ofrecen pocos jugadores.
 const rarest = [...sources].sort((a, b) => a[1].length - b[1].length).slice(0, 10);
 for (const [monster, players] of rarest) console.log(monster, players.join(", "));
 ```
 
-`pages({ limit: 100 })` se detiene tras las páginas que contienen 100 socios: dos solicitudes.
+`pages({ limit: 100 })` se detiene después de 100 socios, es decir, dos solicitudes.
 
 ## Reservar un monstruo para un amigo
 
-Una vez acordado un intercambio, deja el monstruo fuera de los demás intercambios con un ajuste manual y libéralo después.
+Una vez acordado un intercambio, retira el monstruo de los demás intercambios con un ajuste manual, y luego devuélvelo al cálculo:
 
 ```ts
 await metamob.quests.setTrade(slug, "Tofuldebeu l'Explosif", { trade_offer: 0 });
 // ... el intercambio se hace en el juego ...
 await metamob.quests.resetTrade(slug, "Tofuldebeu l'Explosif");
 ```
-
-## Ver también
-
-- [Intercambios](/resources/trading/)
-- [Otros jugadores](/resources/users/)
-- [Listas](/basics/lists/)
-- [Conversaciones](/resources/conversations/)

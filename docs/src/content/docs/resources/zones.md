@@ -1,17 +1,15 @@
 ---
 title: Zones
-description: Le monde du jeu est découpé en zones et en sous-zones. Lisez-les, cherchez-les par nom et listez les monstres qui vivent dans une sous-zone.
+description: "Lire les zones et les sous-zones du jeu, et les monstres qui vivent dans une sous-zone."
 sidebar:
   order: 5
 ---
 
-```ts
-const monsters = await metamob.zones.monsters("Coin des Bouftous");
-
-console.log(monsters.map((monster) => monster.name.fr));
-```
+Le monde du jeu est découpé en zones, elles-mêmes découpées en sous-zones.
 
 ## Zones
+
+`zones.list()` liste les zones, et `zones.get()` en lit une avec ses sous-zones :
 
 ```ts
 const zones = await metamob.zones.list();
@@ -33,7 +31,7 @@ const subzone = await metamob.zones.subzone("Coin des Bouftous");
 subzone.zone.name.fr; // "Amakna"
 ```
 
-L'API désigne une sous-zone en passant par sa zone. Vous n'avez pas à le faire : la bibliothèque sait dans quelle zone se trouve chaque sous-zone du paquet.
+L'API lit une sous-zone à travers sa zone. Pour les sous-zones du paquet, la bibliothèque retrouve la zone elle-même.
 
 Pour une sous-zone ajoutée au jeu après la publication du paquet, donnez aussi la zone :
 
@@ -43,6 +41,8 @@ await metamob.zones.subzone("Coin des Bouftous", { zone: "Amakna" });
 
 ## Les monstres d'une sous-zone
 
+`zones.monsters()` renvoie les monstres d'une sous-zone, en un seul tableau :
+
 ```ts
 const monsters = await metamob.zones.monsters("Coin des Bouftous");
 
@@ -50,13 +50,11 @@ const archmonsters = monsters.filter((monster) => monster.type?.id === 3);
 console.log(archmonsters.map((monster) => monster.name.fr));
 ```
 
-La réponse est un simple tableau : une sous-zone ne contient qu'une poignée de monstres.
-
-Pour aller dans l'autre sens, d'un monstre vers ses zones, lisez [`monsters.get()`](/resources/monsters/#reading-one-monster).
+Dans l'autre sens, d'un monstre vers ses zones, voir [`monsters.get()`](/resources/monsters/#reading-one-monster).
 
 ## Parcourir une zone
 
-Passez les objets eux-mêmes plutôt que leurs identifiants :
+Les objets renvoyés peuvent être passés tels quels aux appels suivants :
 
 ```ts
 const zone = await metamob.zones.get("Amakna");
@@ -67,19 +65,20 @@ for (const subzone of zone.subzones) {
 }
 ```
 
-Cela fait une requête par sous-zone. Le même parcours ne coûte rien avec [les données du paquet](/basics/embedded-data/) :
+Cela fait une requête par sous-zone. Le même parcours se fait sans requête avec [les données du paquet](/basics/embedded-data/) :
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
 
 for (const subzone of data.zone("Amakna")?.subzones ?? []) {
-  console.log(`${subzone.name.fr}: ${data.monstersInSubzone(subzone).length}`);
+  const count = data.monstersInSubzone(subzone).length;
+  console.log(`${subzone.name.fr}: ${count}`);
 }
 ```
 
 ## Votre progression dans une zone
 
-L'avancement de l'une de vos quêtes dans chaque zone est un autre appel, [`quests.zones()`](/resources/quests/#progress-by-zone).
+L'avancement d'une de vos quêtes zone par zone se lit avec [`quests.zones()`](/resources/quests/#progress-by-zone).
 
 ## Limites et erreurs
 
@@ -99,10 +98,3 @@ L'avancement de l'une de vos quêtes dans chaque zone est un autre appel, [`ques
 | `zones.monsters(subzone, { zone }?, options?)` | `Monster[]` |
 
 Une zone et une sous-zone ont toutes deux un `id` et un `name` dans trois langues.
-
-## Voir aussi
-
-- [Monstres](/resources/monsters/)
-- [Vos quêtes](/resources/quests/)
-- [Les données du paquet](/basics/embedded-data/)
-- [Noms et identifiants](/basics/names-and-ids/)

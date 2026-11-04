@@ -1,6 +1,6 @@
 ---
 title: Dépannage
-description: "Les problèmes les plus fréquents, chacun avec ce qu'il signifie et comment le corriger. Partez du code d'erreur ou de ce que vous observez."
+description: "Les problèmes les plus fréquents, ce qu'ils signifient et comment les corriger."
 ---
 
 ## MISSING_API_KEY
@@ -13,7 +13,7 @@ Aucune clé n'est parvenue au client. Vérifiez, dans cet ordre :
 
 ## UNAUTHORIZED
 
-L'API n'accepte pas la clé. Elle a été mal saisie, coupée lors de la copie, ou révoquée parce qu'une nouvelle a été créée. Créez de nouveau une clé sur metamob.fr, dans Paramètres > Clé API, et vérifiez-la avec `metamob.me()`.
+L'API n'accepte pas la clé : mal copiée, ou révoquée parce qu'une nouvelle a été créée. Générez-en une sur metamob.fr, dans Paramètres > Clé API, et vérifiez-la avec `metamob.me()`.
 
 ```ts
 try {
@@ -25,7 +25,7 @@ try {
 
 ## NOT_FOUND sur l'une de mes quêtes
 
-L'API répond 404 pour ce qui n'est pas à vous, exactement comme pour ce qui n'existe pas.
+L'API répond 404 pour ce qui n'est pas à vous, comme pour ce qui n'existe pas.
 
 - Le slug appartient à une quête d'un autre compte. `quests.list()` donne les slugs de la clé utilisée.
 - Vous utilisez la clé d'un autre joueur avec votre slug, ou l'inverse. Avec [`withKey()`](/basics/many-keys/), les slugs vont avec leur clé.
@@ -34,8 +34,8 @@ L'API répond 404 pour ce qui n'est pas à vous, exactement comme pour ce qui n'
 ## UNKNOWN_NAME pour un nom qui existe
 
 - Vérifiez l'orthographe à l'aide de `error.suggestions`. Les accents et la casse sont pardonnés, une lettre manquante ou en trop ne l'est pas.
-- Le monstre est peut-être plus récent que votre version du paquet. La bibliothèque interroge alors l'API, ce qui fonctionne pour tout sauf une sous-zone donnée seule : l'API ne cherche une sous-zone qu'à l'intérieur d'une zone. Passez `{ zone }`, voir [Zones](/resources/zones/#subzones).
-- Mettez le paquet à jour : chaque version livre les noms actuels.
+- Le nom est peut-être plus récent que votre version du paquet. La bibliothèque le cherche alors dans l'API, sauf pour une sous-zone donnée seule, que l'API ne cherche que dans une zone : passez `{ zone }`, voir [Zones](/resources/zones/#subzones).
+- Mettez le paquet à jour : chaque version inclut les noms du moment.
 
 ## Le mauvais monstre pour un nom partagé
 
@@ -43,21 +43,21 @@ Six paires de monstres, surtout des archimonstres, partagent un nom dans au moin
 
 ## Mon script est lent
 
-Il attend à cause de la limite de requêtes : 60 requêtes par minute. Écoutez l'événement `rateLimit` pour le confirmer.
+Il attend sans doute à cause de la limite de 60 requêtes par minute. L'événement `rateLimit` le confirme :
 
 ```ts
 metamob.on("rateLimit", ({ method, delay }) => console.log(`${method} waited ${delay} ms`));
 ```
 
-Dépensez ensuite moins de requêtes : un seul `setMonsters()` au lieu de nombreux `setMonster()`, `count()` au lieu de compter des pages, [`data`](/basics/embedded-data/) au lieu des appels de référence. Voir [La limite de requêtes](/basics/rate-limit/#spending-fewer-requests).
+Pour envoyer moins de requêtes : un `setMonsters()` plutôt que plusieurs `setMonster()`, `count()` plutôt que compter des pages, [`data`](/basics/embedded-data/) plutôt que les appels de référence. Voir [La limite de requêtes](/basics/rate-limit/#spending-fewer-requests).
 
 ## RATE_LIMITED alors que le limiteur est actif
 
-Le limiteur compte ce que ce client envoie. La clé est aussi utilisée ailleurs : un autre processus, une autre instance de votre serveur, un second client créé dans le même programme. Créez un seul client et partagez-le, ou abaissez la limite de chacun avec `rateLimit: { requests: 30 }`.
+Le client ne compte que ses propres requêtes. La clé sert sans doute aussi ailleurs : un autre processus, une autre instance du serveur, un second client dans le même programme. Partagez un seul client, ou baissez la limite de chacun avec `rateLimit: { requests: 30 }`.
 
 ## Une valeur que je viens d'écrire se relit inchangée
 
-Les lectures liées au compte ne sont pas mises en cache, sauf si vous l'avez demandé. Si vous avez donné une durée de fraîcheur à `quests.get` ou à `quests.monsters` dans `cache.methods`, une écriture faite avec le même client l'efface, mais pas une écriture faite ailleurs, sur le site par exemple. Passez `{ cache: false }` à la lecture, ou raccourcissez la durée de fraîcheur.
+Les lectures liées au compte ne sont mises en cache que si vous l'avez demandé. Avec une durée pour `quests.get` ou `quests.monsters` dans `cache.methods`, une écriture faite avec le même client vide le cache, mais pas une écriture faite ailleurs, sur le site par exemple. Passez `{ cache: false }` à la lecture, ou raccourcissez la durée.
 
 ## setMonster n'a pas ajouté un exemplaire
 
@@ -65,24 +65,25 @@ Elle fixe la quantité, elle n'y ajoute rien. Lisez, puis écrivez :
 
 ```ts
 const tofu = data.monster("Tofu Maléfique");
-const owned = (await metamob.quests.monsters(slug).all()).find((monster) => monster.id === tofu?.id)?.quantity ?? 0;
+const monsters = await metamob.quests.monsters(slug).all();
+const owned = monsters.find((monster) => monster.id === tofu?.id)?.quantity ?? 0;
 
 await metamob.quests.setMonster(slug, "Tofu Maléfique", owned + 1);
 ```
 
 ## TIMEOUT ou NETWORK
 
-La requête n'est pas passée, après 3 nouvelles tentatives. Vérifiez la connexion de la machine, puis si metamob.fr lui-même répond. Derrière un proxy, donnez au client un `fetch` qui l'utilise, voir [Configuration](/basics/configuration/#another-fetch-another-host).
+La requête n'est pas passée, même après 3 nouvelles tentatives. Vérifiez la connexion de la machine, puis que metamob.fr répond. Derrière un proxy, donnez au client un `fetch` qui l'utilise, voir [Configuration](/basics/configuration/#another-fetch-another-host).
 
 ## SERVER_ERROR
 
-L'API a échoué de son côté. Les lectures ont été retentées. Si cela dure, le site est peut-être en maintenance : attendez plutôt que de boucler.
+L'API a échoué de son côté, et les lectures ont déjà été retentées. Si cela dure, le site est peut-être en maintenance : attendez plutôt que de boucler.
 
-Un message ou une proposition d'échange n'est pas réessayé : après un `SERVER_ERROR` dans ce cas, consultez la conversation ou `tradeProposals.list()` avant de le renvoyer, il est peut-être passé.
+Un message ou une proposition n'est pas retenté : après un `SERVER_ERROR`, consultez la conversation ou `tradeProposals.list()` avant de le renvoyer, il est peut-être passé.
 
 ## Cela fonctionne sur mon serveur et échoue dans le navigateur
 
-Une page ne peut appeler qu'une API qui autorise son origine. Appelez Metamob depuis votre serveur et faites dialoguer la page avec votre serveur. Cela garde aussi la clé hors de la page. Voir [Environnements d'exécution](/reference/runtimes/#browsers).
+Une page ne peut appeler qu'une API qui autorise son origine. Appelez Metamob depuis votre serveur, et faites appeler votre serveur par la page : la clé reste aussi hors de la page. Voir [Environnements d'exécution](/reference/runtimes/#browsers).
 
 ## require() renvoie quelque chose sans Metamob
 
@@ -91,10 +92,3 @@ La version 5 a des exports nommés. `const MetamobAPI = require("@ix-xs/metamob.
 ## Toujours bloqué
 
 Ouvrez une issue sur [GitHub](https://github.com/ix-xs/metamob.api/issues) avec la version du paquet, votre environnement d'exécution, `error.code` et le plus petit code qui montre le problème. Retirez votre clé API de tout ce que vous collez.
-
-## Voir aussi
-
-- [Codes d'erreur](/reference/errors/)
-- [Erreurs](/basics/errors/)
-- [FAQ](/help/faq/)
-- [Environnements d'exécution](/reference/runtimes/)

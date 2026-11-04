@@ -1,21 +1,13 @@
 ---
 title: Monstres
-description: Cherchez les monstres du jeu par leur nom dans trois langues, filtrez-les par type, et lisez-en un avec les zones où il vit et, pour un archimonstre, le monstre dont il est la version rare.
+description: "Lire un monstre avec ses zones, lister les monstres par type et les chercher par nom."
 sidebar:
   order: 4
 ---
 
-```ts
-const tofu = await metamob.monsters.get("Tofu Maléfique");
-
-console.log(tofu.name.en); // "Evil Tofu"
-console.log(tofu.level_min, tofu.level_max);
-console.log(tofu.zones.map((zone) => zone.name.fr)); // ["Amakna"]
-```
-
 ## Lire un monstre
 
-`monsters.get()` prend un nom, un identifiant ou un objet, voir [Noms et identifiants](/basics/names-and-ids/). En plus de ce que donne une liste, la réponse contient les zones et les sous-zones où l'on trouve le monstre.
+`monsters.get()` prend un nom, un identifiant ou un objet, voir [Noms et identifiants](/basics/names-and-ids/). La réponse contient aussi les zones et sous-zones où vit le monstre :
 
 ```ts
 const monster = await metamob.monsters.get("Bouflet le Puéril");
@@ -29,7 +21,7 @@ for (const zone of monster.zones) {
 }
 ```
 
-Quelques archimonstres portent le même nom dans deux versions du jeu. Une indication dit lequel vous voulez, ici une version du jeu, ou un modèle de quête avec `{ template }` :
+Quelques archimonstres portent le même nom dans deux versions du jeu. Précisez lequel avec une version du jeu, ou un modèle de quête avec `{ template }` :
 
 ```ts
 await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" });
@@ -37,7 +29,7 @@ await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" })
 
 ## Lister et filtrer
 
-`monsters.list()` est une [liste](/basics/lists/), de 200 monstres par page au plus.
+`monsters.list()` est une [liste](/basics/lists/) de 200 monstres par page au plus :
 
 ```ts
 // Une page de boss.
@@ -54,11 +46,11 @@ for await (const monster of metamob.monsters.list({ type: "archimonstre" })) {
 
 ## Chercher par nom
 
-Une recherche porte sur une partie du nom, en français, en anglais ou en espagnol. Elle demande au moins 3 caractères.
+`monsters.search()` cherche une partie du nom, en français, en anglais ou en espagnol, à partir de 3 caractères :
 
 ```ts
 const found = await metamob.monsters.search("bouf").all();
-const archmonsters = await metamob.monsters.search("tofu", { type: "archimonstre" }).all();
+const arch = await metamob.monsters.search("tofu", { type: "archimonstre" }).all();
 
 // La même chose, écrite avec list().
 await metamob.monsters.list({ query: "bouf" });
@@ -66,7 +58,7 @@ await metamob.monsters.list({ query: "bouf" });
 
 ## Sans requête
 
-Pour les noms, les niveaux, les types et les endroits où vit un monstre, [les données du paquet](/basics/embedded-data/) répondent depuis la mémoire. C'est le bon outil pour une autocomplétion, où une requête par frappe épuiserait la limite de requêtes en quelques secondes.
+Les noms, les niveaux, les types et les zones des monstres sont aussi dans [les données du paquet](/basics/embedded-data/). Pour une autocomplétion, qui cherche à chaque frappe, c'est ce qu'il faut utiliser : une requête par frappe atteindrait vite la limite.
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -76,15 +68,15 @@ data.monster("Tofu Maléfique")?.level_max;
 data.zonesOf("Tofu Maléfique");
 ```
 
-Interrogez l'API quand vous avez besoin de l'état du jeu à l'instant présent, par exemple juste après une mise à jour du jeu.
+Passez par l'API pour les données du jour, par exemple juste après une mise à jour du jeu.
 
 ## Les monstres d'une quête
 
-Quels monstres une quête demande, et à quelle étape, relève des [modèles de quête](/resources/reference-data/#quest-templates). Ce que vous en possédez se trouve dans [Vos quêtes](/resources/quests/#the-monsters-of-a-quest).
+Les monstres que demande une quête, étape par étape, viennent des [modèles de quête](/resources/reference-data/#quest-templates). Ce que vous en possédez se lit dans [Vos quêtes](/resources/quests/#the-monsters-of-a-quest).
 
 ## Limites et erreurs
 
-- Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT` avant qu'une requête soit dépensée.
+- Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT` avant l'envoi.
 - Un identifiant qui n'existe pas répond `NOT_FOUND`. Un nom qui n'existe pas lève `UNKNOWN_NAME`, avec des suggestions.
 - Les réponses sont [mises en cache](/basics/caching/) pendant 10 minutes par défaut.
 
@@ -107,10 +99,3 @@ Un `Monster` :
 | `type` | `MonsterType \| null` | `{ id, name }` : monstre, boss ou archimonstre |
 | `reference` | `{ id, name }` ou absent | Pour un archimonstre, son monstre de base |
 | `zones` | `ZoneDetail[]` | Seulement avec `get()` : les zones, chacune avec les sous-zones concernées |
-
-## Voir aussi
-
-- [Noms et identifiants](/basics/names-and-ids/)
-- [Les données du paquet](/basics/embedded-data/)
-- [Zones](/resources/zones/)
-- [Données de référence](/resources/reference-data/)

@@ -1,22 +1,15 @@
 ---
 title: Tus misiones
-description: Lee las misiones de la cuenta, cambia sus ajustes, registra los monstruos que posees uno a uno o por lotes, y sigue el progreso zona por zona. Todo lo de esta página funciona solo con tus propias misiones.
+description: "Leer y modificar las misiones de la cuenta, registrar los monstruos que posees y seguir el progreso por zona."
 sidebar:
   order: 2
 ---
 
-```ts
-const [quest] = await metamob.quests.list();
-
-if (quest) {
-  const missing = await metamob.quests.monsters(quest.slug, { status: "needed" }).count();
-  console.log(`${quest.character_name}: ${missing} monsters to go`);
-}
-```
+Todos los métodos de `metamob.quests` actúan sobre las misiones de la cuenta de la clave, y solo sobre ellas. Para las misiones de otros jugadores, consulta [Otros jugadores](/resources/users/).
 
 ## Listar tus misiones
 
-`quests.list()` devuelve todas las misiones de la cuenta, las favoritas primero, incluidas las que están ocultas en el perfil público. De aquí salen los slugs: todos los demás métodos reciben uno.
+`quests.list()` devuelve todas las misiones de la cuenta, las favoritas primero, incluidas las que están ocultas en el perfil público. Los demás métodos toman el slug de una de esas misiones.
 
 ```ts
 for (const quest of await metamob.quests.list()) {
@@ -24,15 +17,15 @@ for (const quest of await metamob.quests.list()) {
   console.log(quest.character_name, quest.server?.name);
   console.log(quest.quest_template.quest_type.name.fr); // "Ocre"
   console.log(`step ${quest.current_step} of ${quest.quest_template.step_count}`);
-  console.log(quest.parallel_quests); // misiones en paralelo: cuántos ejemplares de cada monstruo hacen falta
+  console.log(quest.parallel_quests); // ejemplares que reunir de cada monstruo
 }
 ```
 
-Un slug es también la última parte de la dirección de una misión en metamob.fr.
+Un slug también es la última parte de la dirección de una misión en metamob.fr.
 
 ## Leer los ajustes de una misión
 
-`quests.get()` añade lo que solo ve el propietario: el modo de intercambio, sus umbrales y los filtros por tipo de monstruo.
+`quests.get()` añade lo que solo ve el propietario: el modo de intercambio, sus umbrales y los filtros por tipo de monstruo:
 
 ```ts
 const quest = await metamob.quests.get(slug);
@@ -43,27 +36,31 @@ quest.trade_offer_threshold; // modo experto: ofrecer a partir de esta cantidad
 quest.type_filters["3"]?.never_want; // no buscar nunca archimonstruos
 ```
 
-`type_filters` está indexado por el identificador del tipo de monstruo: `"1"` monstruos, `"2"` jefes, `"3"` archimonstruos.
+Las claves de `type_filters` son los identificadores de los tipos de monstruo: `"1"` para los monstruos, `"2"` para los jefes, `"3"` para los archimonstruos.
 
-## Cambiar los ajustes
+## Modificar los ajustes
 
-Envía solo lo que cambia. La respuesta contiene el slug y los campos que has cambiado, nada más.
+`quests.update()` solo toma lo que cambia. La respuesta contiene el slug y los campos modificados:
 
 ```ts
 await metamob.quests.update(slug, { current_step: 12, parallel_quests: 2 });
 await metamob.quests.update(slug, { character_name: "Ix", show_trades: false });
 
 // Modo de intercambio experto, con sus umbrales.
-await metamob.quests.update(slug, { trade_mode: 1, trade_offer_threshold: 3, trade_want_threshold: 1 });
+await metamob.quests.update(slug, {
+  trade_mode: 1,
+  trade_offer_threshold: 3,
+  trade_want_threshold: 1,
+});
 
-// No ofrecer nunca archimonstruos. Dos formas de decirlo.
+// No ofrecer nunca archimonstruos, de dos formas.
 await metamob.quests.update(slug, { never_offer_arch: true });
 await metamob.quests.update(slug, { type_filters: { "3": { never_offer: true } } });
 ```
 
 ## Los monstruos de una misión
 
-`quests.monsters()` lista lo que pide la misión, junto con lo que posees. Es una [lista](/basics/lists/): espérala para obtener una página, recórrela para obtenerlo todo.
+`quests.monsters()` lista lo que pide la misión, con lo que posees. Es una [lista](/basics/lists/): `await` da una página, `for await` lo recorre todo.
 
 ```ts
 for await (const monster of metamob.quests.monsters(slug, { step: 4 })) {
@@ -72,44 +69,46 @@ for await (const monster of metamob.quests.monsters(slug, { step: 4 })) {
 }
 ```
 
-`status` hace dos preguntas distintas:
+`status` plantea dos preguntas distintas:
 
 | `status` | Pregunta | Significado |
 | --- | --- | --- |
-| `needed` | Progreso | Posees menos ejemplares de los que necesita la misión |
-| `ok` | Progreso | Posees exactamente los necesarios |
-| `excess` | Progreso | Tienes ejemplares de sobra |
+| `needed` | Progreso | Posees menos de los que pide la misión |
+| `ok` | Progreso | Posees exactamente los suficientes |
+| `excess` | Progreso | Posees ejemplares de sobra |
 | `wanted` | Intercambio | La misión lo busca, una vez aplicados tus ajustes de intercambio |
 | `offered` | Intercambio | La misión lo ofrece, una vez aplicados tus ajustes de intercambio |
 
 Un monstruo en `excess` no siempre está `offered`: un filtro o un umbral puede retenerlo.
 
-Este `status` es un filtro. Dos respuestas, más abajo, tienen su propio `status`: un número tras una escritura, y una de tres palabras en el progreso por zonas.
+Este `status` es un filtro. Más abajo, dos respuestas también tienen un campo `status`, con otro sentido: un número después de una escritura, y una de tres palabras en el progreso por zona.
 
 ```ts
-const toCatch = await metamob.quests.monsters(slug, { type: "archimonstre", status: "needed" }).all();
+const archmonsters = { type: "archimonstre", status: "needed" } as const;
+
+const toCatch = await metamob.quests.monsters(slug, archmonsters).all();
 const spares = await metamob.quests.monsters(slug, { status: "excess" }).all();
-const overridden = await metamob.quests.monsters(slug, { trade: "manual" }).all();
+const manual = await metamob.quests.monsters(slug, { trade: "manual" }).all();
 ```
 
 ## Registrar un monstruo
 
-`setMonster` fija cuántos ejemplares de un monstruo posees. No es un incremento: lee primero el valor si quieres sumar uno.
+`setMonster` fija el número de ejemplares de un monstruo que posees. No es una suma: para añadir uno, lee primero la cantidad actual.
 
 ```ts
 const result = await metamob.quests.setMonster(slug, "Tofu Maléfique", 2);
 
 result.owned; // 2
-result.status; // lo que posees menos las misiones en paralelo: negativo significa que faltan
+result.status; // poseídos menos misiones en paralelo, negativo si faltan
 result.effective_offer; // lo que la misión ofrece ahora
 result.effective_want; // lo que la misión busca ahora
 ```
 
-El monstruo es un nombre, un identificador o un objeto, ver [Nombres e identificadores](/basics/names-and-ids/). Un nombre que no coincide con nada lanza `UNKNOWN_NAME` y no se escribe nada.
+El monstruo es un nombre, un identificador o un objeto, consulta [Nombres e identificadores](/basics/names-and-ids/). Un nombre desconocido lanza `UNKNOWN_NAME`, y no se escribe nada.
 
-## Registrar muchos monstruos
+## Registrar varios monstruos
 
-`setMonsters` acepta un lote entero, en la forma que tengas a mano.
+`setMonsters` toma un lote, en la forma que más te convenga:
 
 ```ts
 // Un objeto indexado por nombre.
@@ -127,41 +126,43 @@ const result = await metamob.quests.setMonsters(slug, caught);
 result.updated_count;
 ```
 
-La API acepta 200 monstruos por solicitud. Un lote más largo se divide, las partes se envían una tras otra y las respuestas se fusionan. Todos los nombres se comprueban antes de la primera solicitud: una sola errata y no se escribe nada.
+La API acepta 200 monstruos por solicitud: un lote más largo se envía en varias solicitudes, cuyas respuestas se unen. Todos los nombres se comprueban antes de la primera: si hay una errata, no se escribe nada.
 
 Cuando el mismo monstruo aparece dos veces, gana la última cantidad.
 
-## Progreso por zonas
+## Progreso por zona
 
-`quests.zones()` organiza una misión según dónde viven los monstruos, con las subzonas menos avanzadas primero. Un monstruo aparece en cada subzona en la que vive.
+`quests.zones()` ordena una misión según el lugar donde viven los monstruos, las subzonas menos avanzadas primero. Un monstruo aparece en cada subzona donde vive.
 
 ```ts
 for (const zone of await metamob.quests.zones(slug, { type: "archimonstre" })) {
   console.log(`${zone.name.fr}: ${zone.completed}/${zone.total}`);
 
   for (const subzone of zone.subzones) {
-    const missing = subzone.monsters.filter((monster) => monster.status === "incomplete");
-    if (missing.length) console.log(`  ${subzone.name.fr}: ${missing.map((monster) => monster.name.fr).join(", ")}`);
+    const missing = subzone.monsters
+      .filter((monster) => monster.status === "incomplete")
+      .map((monster) => monster.name.fr);
+    if (missing.length) console.log(`  ${subzone.name.fr}: ${missing.join(", ")}`);
   }
 }
 ```
 
-La respuesta no está paginada y puede ser grande. Redúcela con `zone`, `subzone` y `type`:
+La respuesta no está paginada y puede ser larga. `zone`, `subzone` y `type` la reducen:
 
 ```ts
 const amakna = await metamob.quests.zones(slug, { zone: "Amakna" });
 ```
 
-Un monstruo está `validated` cuando su etapa ya se ha superado, `completed` cuando posees suficientes ejemplares, e `incomplete` en los demás casos.
+Un monstruo está `validated` cuando su etapa ya ha pasado, `completed` cuando posees suficientes, `incomplete` en los demás casos.
 
 ## Límites y errores
 
 - Todos los métodos responden `NOT_FOUND` para una misión que no es tuya, exista o no.
 - Las cantidades van de 0 a 99. Fuera de ese rango, la API responde `BAD_REQUEST`.
-- `current_step` va de 1 a `quest_template.step_count`, más uno para una misión terminada: de 1 a 19 para las 18 etapas del Ocre en Dofus, de 1 a 35 en Retro y Touch. Fuera de eso, la API responde `BAD_REQUEST`.
-- Un umbral del modo experto va de 0 a 99. Fuera de eso, se rechaza antes de enviarse: la API lo ignoraría sin avisar y guardaría el resto.
-- Una escritura borra lo que el cliente tenía en caché para tu clave, así que la siguiente lectura es fresca.
-- Crear y eliminar una misión no forma parte de la API: hazlo en el sitio.
+- `current_step` va de 1 a `quest_template.step_count`, más uno para una misión terminada: de 1 a 19 para las 18 etapas del Ocre en Dofus, de 1 a 35 en Retro y Touch. Fuera de ese rango, la API responde `BAD_REQUEST`.
+- Un umbral del modo experto va de 0 a 99. Fuera de ese rango, se rechaza antes del envío.
+- Después de una escritura, la lectura siguiente está al día: la caché de tu clave se olvida.
+- La API no crea ni borra misiones: eso se hace en el sitio.
 
 ## Referencia
 
@@ -190,11 +191,4 @@ Lo que acepta `update`:
 | `never_offer_arch`, `never_want_arch` | `boolean` | Archimonstruos |
 | `type_filters` | `{ "1" \| "2" \| "3": { never_offer, never_want } }` | Los mismos filtros, por tipo |
 
-La parte de intercambio de una misión, `setTrade`, `resetTrade` y `matches`, está en [Intercambios](/resources/trading/).
-
-## Ver también
-
-- [Intercambios](/resources/trading/)
-- [Listas](/basics/lists/)
-- [Nombres e identificadores](/basics/names-and-ids/)
-- [Un informe de progreso](/recipes/quest-progress/)
+El lado de intercambio de una misión, `setTrade`, `resetTrade` y `matches`, se describe en [Intercambios](/resources/trading/).

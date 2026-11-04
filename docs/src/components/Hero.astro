@@ -1,6 +1,4 @@
 ---
-// The landing page's opening: what this is, one line to install it, two ways
-// in. Nothing else: the playground right under it does the showing.
 import { LinkButton } from "@astrojs/starlight/components";
 import { href, useT } from "../i18n";
 
@@ -8,12 +6,11 @@ const { entry, locale } = Astro.locals.starlightRoute;
 const t = useT(locale);
 const { data } = entry;
 const { title = data.title, tagline, actions = [] } = data.hero ?? {};
-const install = "npm i @ix-xs/metamob.api";
+const install = "npm install @ix-xs/metamob.api";
 ---
 
 <div class="at-hero">
-  <p class="at-eyebrow">{t("hero.eyebrow")}</p>
-  <h1 id="_top" data-page-title set:html={title} />
+  <h1 id="_top" class="at-title" data-page-title set:html={title} />
   {tagline && <p class="at-lead" set:html={tagline} />}
   <div class="at-install">
     <code>{install}</code>
@@ -29,7 +26,4 @@ const install = "npm i @ix-xs/metamob.api";
       ))}
     </div>
   )}
-  <ul class="at-facts">
-    {t("hero.facts").split("|").map((fact) => <li>{fact}</li>)}
-  </ul>
 </div>

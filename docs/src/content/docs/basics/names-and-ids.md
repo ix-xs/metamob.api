@@ -1,9 +1,11 @@
 ---
 title: Noms et identifiants
-description: "Partout où l'API attend un identifiant numérique, vous pouvez écrire le nom, l'identifiant, ou passer l'objet qu'un autre appel a renvoyé. Cette page indique ce qui est accepté, comment les noms sont comparés et ce qui se passe quand l'un d'eux est inconnu."
+description: "Les monstres, les zones, les serveurs et le reste se désignent par leur identifiant, leur nom ou un objet. Ce qui est accepté, et ce qui se passe quand un nom est inconnu."
 sidebar:
   order: 1
 ---
+
+Un monstre peut être donné par son identifiant ou par son nom, dans l'une des trois langues du site :
 
 ```ts
 await metamob.monsters.get(21);
@@ -32,7 +34,7 @@ Votre éditeur complète les noms. Ce sont des types littéraux, générés à p
 
 ## Passer un objet
 
-Tout ce qui porte un `id` numérique convient, donc le résultat d'un appel alimente le suivant sans avoir à en extraire l'identifiant.
+Un objet qui porte un `id` numérique convient aussi : le résultat d'un appel peut être passé tel quel au suivant.
 
 ```ts
 const zone = await metamob.zones.get("Amakna");
@@ -47,7 +49,7 @@ for (const subzone of zone.subzones) {
 
 Un nom est comparé après suppression des accents, sans tenir compte de la casse, en traitant toutes les sortes d'apostrophes et de tirets comme une seule, et en réduisant les espaces multiples. `"TOFU  MALEFIQUE"` et `"Tofu Maléfique"` sont le même nom. Rien d'autre n'est pardonné : une lettre manquante donne un autre nom.
 
-La recherche se fait dans les données livrées avec le paquet, donc elle ne coûte aucune requête. Une chaîne composée uniquement de chiffres, comme `"21"`, est lue comme un identifiant.
+La recherche se fait dans les données incluses dans le paquet, sans requête. Une chaîne composée uniquement de chiffres, comme `"21"`, est lue comme un identifiant.
 
 ## Quand un nom est inconnu
 
@@ -65,9 +67,9 @@ try {
 }
 ```
 
-L'écriture n'est jamais envoyée : une faute de frappe ne peut pas modifier le mauvais monstre.
+Dans ce cas, rien n'est envoyé à l'API.
 
-Pour proposer vous-même des suggestions, avant tout appel :
+Pour proposer des suggestions vous-même, avant tout appel :
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -80,7 +82,7 @@ data.searchMonsters("tofu", { limit: 5 }); // les monstres dont le nom contient 
 
 Six paires de monstres, surtout des archimonstres, partagent un nom dans au moins une langue, sur deux versions du jeu, avec deux identifiants différents. « Crognan le Barbare » est un monstre sur Dofus (Unity) et un autre sur Dofus Retro et Dofus Touch.
 
-Quand vous écrivez dans une quête, c'est la quête qui décide. La bibliothèque lit quel modèle la quête suit, une seule fois, et choisit le monstre de ce modèle.
+Quand vous écrivez dans une quête, c'est la quête qui décide. La bibliothèque lit une fois le modèle que suit la quête, et prend le monstre de ce modèle.
 
 ```ts
 // Le bon "Crognan le Barbare" pour cette quête, quelle que soit sa version du jeu.
@@ -90,26 +92,28 @@ await metamob.quests.setMonster(slug, "Crognan le Barbare", 1);
 Ailleurs, précisez lequel vous voulez :
 
 ```ts
-const unity = await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus (Unity)" });
-const touch = await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" });
+const name = "Crognan le Barbare";
+
+const unity = await metamob.monsters.get(name, { gameVersion: "Dofus (Unity)" });
+const touch = await metamob.monsters.get(name, { gameVersion: "Dofus Touch" });
 
 // Ou par modèle de quête.
 const ochreOnRetro = { questType: "ocre", gameVersion: "Dofus Retro (1.29)" } as const;
-const retro = await metamob.monsters.get("Crognan le Barbare", { template: ochreOnRetro });
+const retro = await metamob.monsters.get(name, { template: ochreOnRetro });
 ```
 
 Sans indication, c'est le monstre du modèle de quête au plus petit identifiant qui est renvoyé. `data.monstersNamed(name)` liste tous les monstres qui répondent à un nom.
 
 ## Les sous-zones et leur zone
 
-L'API accède à une sous-zone à travers sa zone. La bibliothèque trouve la zone pour vous quand la sous-zone est dans le paquet :
+L'API demande la zone d'une sous-zone pour la lire. Quand la sous-zone est dans le paquet, la bibliothèque retrouve sa zone :
 
 ```ts
 const subzone = await metamob.zones.subzone("Coin des Bouftous");
 subzone.zone.name.fr; // "Amakna"
 ```
 
-Une sous-zone ajoutée au jeu après la publication du paquet n'est pas encore connue, et a besoin de sa zone :
+Une sous-zone ajoutée au jeu après la publication du paquet n'y est pas encore : donnez sa zone.
 
 ```ts
 await metamob.zones.monsters("Coin des Bouftous", { zone: "Amakna" });
@@ -126,10 +130,3 @@ await metamob.zones.monsters("Coin des Bouftous", { zone: "Amakna" });
 | `QuestTypeLike` | `number`, un slug, un nom, `{ id }` |
 | `QuestTemplateLike` | `number`, `{ id }`, `{ questType, gameVersion }` |
 | `MonsterHint` | `{ gameVersion }`, `{ template }` |
-
-## Voir aussi
-
-- [Les données du paquet](/basics/embedded-data/)
-- [Monstres](/resources/monsters/)
-- [Erreurs](/basics/errors/)
-- [Données de référence](/resources/reference-data/)

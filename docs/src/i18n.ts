@@ -1,29 +1,18 @@
-// The words of the site's own interface (header, search, landing page), in
-// each language. Starlight translates its own; page content is translated in
-// `src/content/docs/<language>/`.
 import { ROOT_LANGUAGE, withBase, withLocale } from "../plugins/base-links.mjs";
 
 const en = {
-  // Header
-  "nav.sections": "Sections",
-  "nav.docs": "Docs",
-  "nav.recipes": "Recipes",
-  "nav.reference": "Reference",
   "nav.github": "GitHub repository",
   "nav.theme": "Switch between dark and light",
   "nav.language": "Language",
 
-  // Foot of every page
   "footer.credit": "Everything here rests on <a href=\"https://www.metamob.fr\">Metamob</a>, the site of archmonster hunters, and on its API. An independent project, not affiliated with Metamob or Ankama.",
 
-  // Names of the parts of the documentation, as the sidebar writes them
   "area.start": "Start",
   "area.basics": "Basics",
   "area.resources": "Resources",
   "area.recipes": "Recipes",
   "area.reference": "Reference",
 
-  // Search
   "search.recent": "Recently opened",
   "search.clear": "Clear",
   "search.start": "Start here",
@@ -33,12 +22,8 @@ const en = {
   "search.open": "open",
   "search.close": "close",
 
-  // Landing page
-  "hero.eyebrow": "A Metamob API client for JavaScript and TypeScript",
   "hero.copy": "Copy the install command",
-  "hero.facts": "Open source, MIT|No dependency|Node, Bun, Deno, browsers, edge",
 
-  // The playground of the landing page
   "finder.trials": "Trials",
   "finder.tab.name": "A name",
   "finder.tab.search": "Autocomplete",
@@ -92,10 +77,6 @@ const en = {
 export type UiKey = keyof typeof en;
 
 const fr: Record<UiKey, string> = {
-  "nav.sections": "Rubriques",
-  "nav.docs": "Docs",
-  "nav.recipes": "Recettes",
-  "nav.reference": "Référence",
   "nav.github": "Dépôt GitHub",
   "nav.theme": "Basculer entre sombre et clair",
   "nav.language": "Langue",
@@ -117,9 +98,7 @@ const fr: Record<UiKey, string> = {
   "search.open": "ouvrir",
   "search.close": "fermer",
 
-  "hero.eyebrow": "Un client de l'API Metamob pour JavaScript et TypeScript",
   "hero.copy": "Copier la commande d'installation",
-  "hero.facts": "Open source, MIT|Aucune dépendance|Node, Bun, Deno, navigateurs, edge",
 
   "finder.trials": "Essais",
   "finder.tab.name": "Un nom",
@@ -172,10 +151,6 @@ const fr: Record<UiKey, string> = {
 };
 
 const es: Record<UiKey, string> = {
-  "nav.sections": "Secciones",
-  "nav.docs": "Docs",
-  "nav.recipes": "Recetas",
-  "nav.reference": "Referencia",
   "nav.github": "Repositorio de GitHub",
   "nav.theme": "Cambiar entre oscuro y claro",
   "nav.language": "Idioma",
@@ -197,9 +172,7 @@ const es: Record<UiKey, string> = {
   "search.open": "abrir",
   "search.close": "cerrar",
 
-  "hero.eyebrow": "Un cliente de la API de Metamob para JavaScript y TypeScript",
   "hero.copy": "Copiar el comando de instalación",
-  "hero.facts": "Código abierto, MIT|Sin dependencias|Node, Bun, Deno, navegadores, edge",
 
   "finder.trials": "Pruebas",
   "finder.tab.name": "Un nombre",
@@ -253,24 +226,18 @@ const es: Record<UiKey, string> = {
 
 const DICTIONARIES: Record<string, Record<UiKey, string>> = { en, fr, es };
 
-/** The languages of the site, in the order the switch lists them. `locale` is the folder and URL prefix. */
 export const LANGUAGES = [
   { locale: undefined, code: "fr", label: "Français" },
   { locale: "en", code: "en", label: "English" },
   { locale: "es", code: "es", label: "Español" },
 ] as const;
 
-/**
- * The translator for a page: `t("search.clear")`. `locale` is Starlight's
- * (`undefined` for French, the language at the root).
- */
 export function useT(locale: string | undefined) {
   const dictionary = DICTIONARIES[locale ?? ROOT_LANGUAGE] ?? en;
   return (key: UiKey, values: Record<string, string> = {}): string =>
     (dictionary[key] ?? en[key]).replace(/\{(\w+)\}/g, (whole, name: string) => values[name] ?? whole);
 }
 
-/** A link written without a language ("/start/quick-start/"), for a page in `locale` and the site's base path. */
 export function href(path: string, locale: string | undefined): string {
   return withBase(withLocale(path, locale), import.meta.env.BASE_URL);
 }

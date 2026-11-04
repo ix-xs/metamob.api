@@ -1,6 +1,3 @@
-// The two syntax themes of the site. Restrained on purpose: violet for the
-// language's own words, sage for strings, a warm tone for numbers, and the
-// text colour for everything you named yourself.
 
 function theme(name, type, c) {
   return {

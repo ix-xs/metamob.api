@@ -1,11 +1,8 @@
 ---
-// The head of a documentation page: which part of the docs this is, the title,
-// and the page's description as a lead paragraph.
 import type { StarlightRouteData } from "@astrojs/starlight/route-data";
 
 type Entry = StarlightRouteData["sidebar"][number];
 
-/** The labels of the groups that contain the current page, outermost first. */
 function trail(entries: Entry[], path: string[] = []): string[] | undefined {
   for (const entry of entries) {
     if (entry.type === "link") {
@@ -22,7 +19,6 @@ const { entry, sidebar } = Astro.locals.starlightRoute;
 const groups = trail(sidebar) ?? [];
 const lead = entry.data.description;
 ---
-
 {groups.length > 0 && <p class="at-eyebrow">{groups.join(" / ")}</p>}
 <h1 id="_top" class="at-title">{entry.data.title}</h1>
 {lead && <p class="at-lead">{lead}</p>}

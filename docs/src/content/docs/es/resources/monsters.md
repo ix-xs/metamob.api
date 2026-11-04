@@ -1,21 +1,13 @@
 ---
 title: Monstruos
-description: Busca los monstruos del juego por nombre en tres idiomas, fíltralos por tipo y lee uno con las zonas donde vive y, si es un archimonstruo, el monstruo del que es la versión rara.
+description: "Leer un monstruo con sus zonas, listar los monstruos por tipo y buscarlos por nombre."
 sidebar:
   order: 4
 ---
 
-```ts
-const tofu = await metamob.monsters.get("Tofu Maléfique");
-
-console.log(tofu.name.en); // "Evil Tofu"
-console.log(tofu.level_min, tofu.level_max);
-console.log(tofu.zones.map((zone) => zone.name.fr)); // ["Amakna"]
-```
-
 ## Leer un monstruo
 
-`monsters.get()` acepta un nombre, un identificador o un objeto, ver [Nombres e identificadores](/basics/names-and-ids/). Además de lo que da una lista, la respuesta incluye las zonas y subzonas donde se puede encontrar el monstruo.
+`monsters.get()` toma un nombre, un identificador o un objeto, consulta [Nombres e identificadores](/basics/names-and-ids/). La respuesta también contiene las zonas y subzonas donde vive el monstruo:
 
 ```ts
 const monster = await metamob.monsters.get("Bouflet le Puéril");
@@ -29,7 +21,7 @@ for (const zone of monster.zones) {
 }
 ```
 
-Algunos archimonstruos tienen el mismo nombre en dos versiones del juego. Una indicación dice a cuál te refieres: aquí una versión del juego, o bien una plantilla de misión con `{ template }`:
+Algunos archimonstruos tienen el mismo nombre en dos versiones del juego. Indica cuál con una versión del juego, o con una plantilla de misión con `{ template }`:
 
 ```ts
 await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" });
@@ -37,7 +29,7 @@ await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" })
 
 ## Listar y filtrar
 
-`monsters.list()` es una [lista](/basics/lists/), de 200 monstruos por página como máximo.
+`monsters.list()` es una [lista](/basics/lists/) de 200 monstruos por página como máximo:
 
 ```ts
 // Una página de jefes.
@@ -50,23 +42,23 @@ for await (const monster of metamob.monsters.list({ type: "archimonstre" })) {
 }
 ```
 
-`type` es `"monstre"`, `"boss"` o `"archimonstre"`, sus nombres en inglés o en español, o bien 1, 2 o 3.
+`type` vale `"monstre"`, `"boss"` o `"archimonstre"`, sus nombres en inglés o en español, o también 1, 2 o 3.
 
 ## Buscar por nombre
 
-Una búsqueda coincide con una parte del nombre, en francés, inglés o español. Necesita 3 caracteres como mínimo.
+`monsters.search()` busca una parte del nombre, en francés, en inglés o en español, a partir de 3 caracteres:
 
 ```ts
 const found = await metamob.monsters.search("bouf").all();
-const archmonsters = await metamob.monsters.search("tofu", { type: "archimonstre" }).all();
+const arch = await metamob.monsters.search("tofu", { type: "archimonstre" }).all();
 
 // Lo mismo, escrito con list().
 await metamob.monsters.list({ query: "bouf" });
 ```
 
-## Sin ninguna solicitud
+## Sin solicitud
 
-Para los nombres, los niveles, los tipos y dónde vive un monstruo, [los datos del paquete](/basics/embedded-data/) responden desde la memoria. Es la herramienta adecuada para un autocompletado, donde una solicitud por cada tecla agotaría el límite de solicitudes en segundos.
+Los nombres, los niveles, los tipos y las zonas de los monstruos también están en [los datos del paquete](/basics/embedded-data/). Para un autocompletado, que busca en cada pulsación de tecla, es lo que hay que usar: una solicitud por pulsación alcanzaría pronto el límite.
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -76,17 +68,17 @@ data.monster("Tofu Maléfique")?.level_max;
 data.zonesOf("Tofu Maléfique");
 ```
 
-Pregunta a la API cuando necesites el estado del juego en este momento, por ejemplo justo después de una actualización del juego.
+Pasa por la API para los datos del día, por ejemplo justo después de una actualización del juego.
 
-## Monstruos de una misión
+## Los monstruos de una misión
 
-Qué monstruos pide una misión, y en qué etapa, es cosa de las [plantillas de misión](/resources/reference-data/#quest-templates). Lo que posees de ellos está en [Tus misiones](/resources/quests/#the-monsters-of-a-quest).
+Los monstruos que pide una misión, etapa por etapa, vienen de las [plantillas de misión](/resources/reference-data/#quest-templates). Lo que posees de ellos se lee en [Tus misiones](/resources/quests/#the-monsters-of-a-quest).
 
 ## Límites y errores
 
-- Una búsqueda de menos de 3 caracteres lanza `INVALID_ARGUMENT` antes de gastar una solicitud.
+- Una búsqueda de menos de 3 caracteres lanza `INVALID_ARGUMENT` antes del envío.
 - Un identificador que no existe responde `NOT_FOUND`. Un nombre que no existe lanza `UNKNOWN_NAME`, con sugerencias.
-- Las respuestas se guardan en [caché](/basics/caching/) durante 10 minutos por defecto.
+- Las respuestas se [guardan en caché](/basics/caching/) durante 10 minutos por defecto.
 
 ## Referencia
 
@@ -102,15 +94,8 @@ Un `Monster`:
 | --- | --- | --- |
 | `id` | `number` | |
 | `name` | `{ fr, en, es }` | El nombre en tres idiomas |
-| `image` | `string` | Nombre de archivo de la imagen, ver `urls.monsterImage()` |
+| `image` | `string` | Nombre de archivo de la imagen, consulta `urls.monsterImage()` |
 | `level_min`, `level_max` | `number` | |
 | `type` | `MonsterType \| null` | `{ id, name }`: monstruo, jefe o archimonstruo |
-| `reference` | `{ id, name }` o ausente | Para un archimonstruo, su monstruo de base |
+| `reference` | `{ id, name }` o ausente | Para un archimonstruo, su monstruo base |
 | `zones` | `ZoneDetail[]` | Solo con `get()`: las zonas, cada una con las subzonas correspondientes |
-
-## Ver también
-
-- [Nombres e identificadores](/basics/names-and-ids/)
-- [Los datos del paquete](/basics/embedded-data/)
-- [Zonas](/resources/zones/)
-- [Datos de referencia](/resources/reference-data/)

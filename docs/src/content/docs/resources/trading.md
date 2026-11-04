@@ -1,33 +1,23 @@
 ---
 title: Échanges
-description: Trouvez les joueurs qui ont ce qui manque à l'une de vos quêtes et qui recherchent ce qu'elle a en trop, et décidez monstre par monstre combien vous en proposez et combien vous en recherchez.
+description: "Trouver des partenaires d'échange pour une quête, et régler monstre par monstre ce qu'elle propose et recherche."
 sidebar:
   order: 3
 ---
 
-```ts
-const page = await metamob.quests.matches(slug, { onlyPossibleTrades: true });
-
-for (const match of page.items) {
-  const gives = match.matches.they_have_you_want.map((monster) => monster.name.fr);
-  const wants = match.matches.you_have_they_want.map((monster) => monster.name.fr);
-  console.log(match.user.username, { gives, wants });
-}
-```
-
 ## Comment une quête échange
 
-Pour chaque monstre, une quête en propose un certain nombre et en recherche un certain nombre. Par défaut, le site calcule les deux à partir de ce que vous possédez et de `parallel_quests` : les exemplaires en trop sont proposés, ce qui manque est recherché. Trois réglages modifient ce calcul :
+Pour chaque monstre, une quête en propose et en recherche un certain nombre. Par défaut, le site calcule les deux à partir de ce que vous possédez et de `parallel_quests` : les exemplaires en trop sont proposés, ce qui manque est recherché. Trois réglages changent ce calcul :
 
 1. Le mode d'échange de la quête. En mode expert, deux seuils disent à partir de quelle quantité un monstre est proposé et jusqu'à quelle quantité il est recherché.
 2. Les filtres par type : ne jamais proposer, ou ne jamais rechercher, les monstres, les boss ou les archimonstres.
 3. Un réglage manuel sur un monstre, qui l'emporte sur tout le reste.
 
-Les deux premiers sont des réglages de la quête, modifiés avec [`quests.update()`](/resources/quests/#changing-settings). Le troisième est décrit plus bas. Ce qui ressort des trois est ce que voient les autres joueurs : `want` et `offer` sur chaque monstre.
+Les deux premiers se modifient avec [`quests.update()`](/resources/quests/#changing-settings), le troisième est décrit plus bas. Le résultat est ce que voient les autres joueurs : `want` et `offer` sur chaque monstre.
 
 ## Trouver des partenaires
 
-`quests.matches()` classe les joueurs avec qui vous pourriez échanger, comme l'option « Meilleur matching » de la page Communauté du site : même serveur, même type de quête, actifs au cours des deux derniers mois. Le classement privilégie l'équilibre : les partenaires avec qui autant de monstres vont dans un sens que dans l'autre arrivent en premier. L'API examine au plus les 500 joueurs actifs le plus récemment.
+`quests.matches()` classe les joueurs avec qui vous pourriez échanger, comme l'option « Meilleur matching » de la page Communauté du site : même serveur, même type de quête, actifs au cours des deux derniers mois. Les échanges équilibrés, avec autant de monstres dans chaque sens, passent en premier. L'API examine au plus les 500 joueurs actifs le plus récemment.
 
 ```ts
 const best = await metamob.quests.matches(slug).take(10);
@@ -45,18 +35,18 @@ Chaque correspondance liste les monstres dans les deux sens, avec les quantités
 const match = await metamob.quests.matches(slug).first();
 
 for (const monster of match?.matches.they_have_you_want ?? []) {
-  console.log(monster.name.fr, `${monster.available} available, you need ${monster.needed}`);
-  if (monster.covers_need) console.log("  covers everything you need");
+  console.log(monster.name.fr, `${monster.available} available`);
+  console.log(`you need ${monster.needed}`, monster.covers_need ? "(covered)" : "");
 }
 ```
 
-Deux filtres :
+Deux filtres réduisent la liste :
 
 ```ts
-// Seulement les partenaires avec qui un échange peut se faire dans les deux sens.
+// Un échange possible dans les deux sens.
 await metamob.quests.matches(slug, { onlyPossibleTrades: true });
 
-// Seulement les partenaires qui mènent au moins deux quêtes en parallèle.
+// Au moins deux quêtes menées en parallèle.
 await metamob.quests.matches(slug, { minParallelQuests: 2 });
 ```
 
@@ -64,13 +54,14 @@ C'est une [liste](/basics/lists/), de 50 partenaires par page au plus.
 
 ## Qui possède un monstre donné
 
-Pour chercher un seul monstre plutôt que le meilleur partenaire d'ensemble, filtrez vous-même les correspondances :
+Pour un seul monstre, filtrez les partenaires vous-même :
 
 ```ts
 const wanted = data.monster("Bouflet le Puéril");
 
 for await (const match of metamob.quests.matches(slug)) {
-  if (match.matches.they_have_you_want.some((monster) => monster.id === wanted?.id)) {
+  const offers = match.matches.they_have_you_want;
+  if (offers.some((monster) => monster.id === wanted?.id)) {
     console.log(match.user.username);
   }
 }
@@ -78,18 +69,18 @@ for await (const match of metamob.quests.matches(slug)) {
 
 ## Regarder la quête d'un joueur
 
-Une fois que vous avez un partenaire, sa quête est publique. `status` la réduit à ce qu'il propose ou à ce qu'il recherche.
+La quête d'un partenaire est publique. `status` la réduit à ce qu'il propose ou à ce qu'il recherche :
 
 ```ts
 const offered = await metamob.users.quest(username, slug, { status: "offered" }).all();
-const wanted = await metamob.users.quest(username, slug, { status: "wanted", type: "archimonstre" }).all();
+const wanted = await metamob.users.quest(username, slug, { status: "wanted" }).all();
 ```
 
 Voir [Autres joueurs](/resources/users/).
 
 ## Poser un réglage manuel sur un monstre
 
-`setTrade` impose le nombre d'exemplaires d'un monstre que la quête propose, recherche, ou les deux.
+`setTrade` impose le nombre d'exemplaires d'un monstre que la quête propose, recherche, ou les deux :
 
 ```ts
 // En proposer un seul, quel que soit le nombre d'exemplaires en trop.
@@ -103,7 +94,7 @@ const result = await metamob.quests.setTrade(slug, "Bouftou Royal", { trade_want
 result.effective_want; // ce que la quête recherche désormais
 ```
 
-`null` n'est pas 0. `0` impose « aucun ». `null` retire le réglage manuel et rend la valeur au calcul.
+`0` et `null` n'ont pas le même sens : `0` impose « aucun », `null` retire le réglage manuel et rend la valeur au calcul.
 
 ```ts
 await metamob.quests.setTrade(slug, "Tofu Maléfique", { trade_offer: null });
@@ -118,7 +109,7 @@ Un champ que vous omettez n'est pas touché.
 
 ```ts
 for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) {
-  console.log(monster.name.fr, { offer: monster.trade_offer, want: monster.trade_want });
+  console.log(monster.name.fr, monster.trade_offer, monster.trade_want);
 }
 ```
 
@@ -126,7 +117,7 @@ for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) 
 
 ## Propositions
 
-L'API montre les propositions d'échange que vous avez envoyées et reçues avec [`tradeProposals.list()`](/resources/trade-proposals/), et dans vos [conversations](/resources/conversations/#trade-proposals). [`tradeProposals.create()`](/resources/trade-proposals/#making-a-proposal) en fait une, une fois l'envoi ouvert sur le compte. La confirmer ou l'annuler se fait sur le site.
+Les propositions envoyées et reçues se lisent avec [`tradeProposals.list()`](/resources/trade-proposals/), et apparaissent aussi dans vos [conversations](/resources/conversations/#trade-proposals). [`tradeProposals.create()`](/resources/trade-proposals/#making-a-proposal) en envoie une, quand l'envoi est ouvert sur le compte. Les confirmer ou les annuler se fait sur le site.
 
 ## Limites et erreurs
 
@@ -151,14 +142,6 @@ Un `TradeMatch` :
 | `quest` | `slug`, `character_name`, `parallel_quests` de sa quête |
 | `matches.they_have_you_want` | Ce qu'il peut vous donner |
 | `matches.you_have_they_want` | Ce que vous pouvez lui donner |
-| `match_score` | Nombre de monstres différents que vous pouvez donner, plus nombre de monstres différents que vous pouvez recevoir. Le classement ne suit pas cette somme : l'équilibre passe d'abord |
+| `match_score` | Nombre de monstres différents que vous pouvez donner, plus ceux que vous pouvez recevoir. Le classement privilégie l'équilibre, pas cette somme |
 
 Chaque monstre d'une correspondance a `id`, `name`, `available`, `needed` et `covers_need`.
-
-## Voir aussi
-
-- [Vos quêtes](/resources/quests/)
-- [Autres joueurs](/resources/users/)
-- [Propositions d'échange](/resources/trade-proposals/)
-- [Conversations](/resources/conversations/)
-- [Un chercheur d'échanges](/recipes/trade-finder/)

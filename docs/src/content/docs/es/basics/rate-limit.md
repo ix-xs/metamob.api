@@ -1,35 +1,27 @@
 ---
 title: El límite de solicitudes
-description: "Metamob permite 60 solicitudes por minuto por clave API. El cliente las cuenta y hace que la siguiente llamada espere su turno, así que un bucle largo va más despacio en lugar de fallar. Esta página muestra cómo vigilar el límite, ajustarlo y gastar menos solicitudes."
+description: "Metamob acepta 60 solicitudes por minuto por clave. Cómo las cuenta el cliente, y cómo seguir y ajustar el límite."
 sidebar:
   order: 4
 ---
 
-```ts
-metamob.rateLimit; // { limit: 60, remaining: 41, resetsIn: 38211 }
-
-metamob.on("rateLimit", ({ method, delay }) => {
-  console.log(`${method} waited ${delay} ms for its turn`);
-});
-```
-
 ## Lo que permite la API
 
-60 solicitudes por minuto, contadas por clave API. Más allá, la API responde 429 con un encabezado `Retry-After`.
+60 solicitudes por minuto, contadas por clave API. Por encima, la API responde 429 con una cabecera `Retry-After`.
 
-Metamob es un servicio gratuito que mantiene una sola persona. El límite es lo que lo mantiene disponible para todos: quédate por debajo y no busques formas de esquivarlo.
+El límite mantiene el sitio disponible para todo el mundo: quédate por debajo, y no intentes eludirlo.
 
 ## Lo que hace el cliente
 
-El limitador está activado por defecto. Guarda, para cada clave, la hora de las solicitudes enviadas en el último minuto. Cuando se han enviado 60, la siguiente llamada espera hasta que la más antigua tenga un minuto, y entonces sale. Las llamadas conservan su orden.
+El cliente cuenta las solicitudes enviadas con cada clave durante el último minuto. Cuando han salido 60, la llamada siguiente espera a que la más antigua tenga un minuto, y luego sale. Las llamadas conservan su orden.
 
-Nada falla y nada se pierde: un bucle de 300 solicitudes tarda unos cuatro minutos en lugar de lanzar un error después de la número 60.
+Un bucle de 300 solicitudes tarda, por tanto, unos cinco minutos, sin errores.
 
-Si aun así llega un 429, por ejemplo porque otro programa usa la misma clave, el cliente retiene todas las llamadas de esa clave durante el tiempo que pide la API, y luego reintenta. Consulta [qué se reintenta](/basics/errors/#what-is-retried).
+Si aun así llega un 429, por ejemplo porque otro programa usa la misma clave, el cliente espera el tiempo que pide la API, y vuelve a intentarlo. Consulta [lo que se reintenta](/basics/errors/#what-is-retried).
 
 ## Vigilarlo
 
-`metamob.rateLimit` indica en qué punto está la clave del cliente, según el recuento de este cliente: no sabe nada de las solicitudes hechas en otro lugar con la misma clave.
+`metamob.rateLimit` indica en qué punto está la clave del cliente, según la cuenta de ese cliente: no sabe nada de las solicitudes hechas en otro sitio con la misma clave.
 
 ```ts
 const state = metamob.rateLimit;
@@ -38,24 +30,30 @@ if (state && state.remaining < 5) {
 }
 ```
 
-El evento `rateLimit` se emite cada vez que una llamada tuvo que esperar, con la duración de la espera.
+El evento `rateLimit` se emite cada vez que una llamada ha tenido que esperar, con la duración de la espera:
+
+```ts
+metamob.on("rateLimit", ({ method, delay }) => {
+  console.log(`${method} waited ${delay} ms for its turn`);
+});
+```
 
 ## Gastar menos solicitudes
 
-El límite cuenta solicitudes, no elementos. La mayor parte del ahorro ya está hecha por ti:
+El límite cuenta las solicitudes, no los elementos. El cliente ya envía las menos posibles:
 
-- Recorrer una lista usa la página más grande que acepta la API, ver [Listas](/basics/lists/).
+- Recorrer una lista usa la página más grande que acepta la API, consulta [Listas](/basics/lists/).
 - `count()` y `first()` piden un elemento en lugar de una página.
 - Los datos de referencia se [guardan en caché](/basics/caching/), y dos llamadas idénticas en curso comparten una sola solicitud.
-- Los nombres se resuelven con [los datos del paquete](/basics/embedded-data/), sin ninguna solicitud.
-- `quests.setMonsters()` escribe hasta 200 monstruos en una solicitud, donde `setMonster()` en un bucle enviaría 200.
+- Los nombres se resuelven a partir de los [datos del paquete](/basics/embedded-data/), sin solicitud.
+- `quests.setMonsters()` escribe hasta 200 monstruos en una solicitud.
 
-Lo que queda en tus manos:
+Por tu parte:
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
 
-// Leer datos de referencia: pregunta al paquete, no a la API.
+// Leer datos de referencia: consulta el paquete, no la API.
 const monster = data.monster("Tofu Maléfique"); // ninguna solicitud
 const fromApi = await metamob.monsters.get("Tofu Maléfique"); // 1 solicitud, con las zonas
 
@@ -66,18 +64,18 @@ await metamob.quests.setMonsters(slug, { "Tofu Maléfique": 2, "Bouftou Royal": 
 ## Ajustarlo
 
 ```ts
-// Quédate muy por debajo del límite, para dejar sitio a otro programa con la misma clave.
+// Por debajo del límite, para dejar sitio a otro programa.
 const gentle = new Metamob({ rateLimit: { requests: 30, per: "1m" } });
 
-// Desactivado. Una ráfaga recibe entonces errores 429, que se reintentan tras la espera que pide la API.
+// Desactivado: una ráfaga recibe 429, reintentados tras la espera pedida.
 const unlimited = new Metamob({ rateLimit: false });
 ```
 
-Subir `requests` por encima de 60 no sube lo que permite la API: solo traslada la espera del cliente a las respuestas 429.
+Subir `requests` por encima de 60 no aumenta lo que permite la API: solo traslada la espera del cliente a respuestas 429.
 
 ## Varias claves
 
-Cada clave tiene su propia ventana. Un cliente creado con [`withKey()`](/basics/many-keys/) comparte el limitador del cliente del que procede, que mantiene una ventana por clave. Así, un bot que sirve a diez jugadores nunca mezcla sus recuentos.
+Cada clave tiene su propia ventana. Un cliente creado con [`withKey()`](/basics/many-keys/) comparte el limitador del cliente del que viene, que cuenta cada clave por separado.
 
 ## Cancelar una espera
 
@@ -91,19 +89,12 @@ await metamob.monsters.get("Tofu", {}, { signal: AbortSignal.timeout(10_000) });
 
 | Opción | Por defecto | Significado |
 | --- | --- | --- |
-| `rateLimit` | activado | `false` desactiva el limitador |
+| `rateLimit` | activo | `false` desactiva el limitador |
 | `rateLimit.requests` | `60` | Solicitudes permitidas por ventana, por clave |
 | `rateLimit.per` | `"1m"` | Duración de la ventana |
 
 | `metamob.rateLimit` | Significado |
 | --- | --- |
 | `limit` | Solicitudes permitidas por ventana |
-| `remaining` | Solicitudes que quedan en la ventana actual |
-| `resetsIn` | Milisegundos hasta que vuelva a haber una solicitud libre, 0 cuando ya hay una |
-
-## Ver también
-
-- [Caché](/basics/caching/)
-- [Errores](/basics/errors/)
-- [Actuar por otros jugadores](/basics/many-keys/)
-- [Listas](/basics/lists/)
+| `remaining` | Solicitudes restantes en la ventana actual |
+| `resetsIn` | Milisegundos hasta que una solicitud vuelva a estar libre, 0 cuando ya hay una |

@@ -1,21 +1,9 @@
 ---
 title: Codes d'erreur
-description: "Tous les codes d'erreur que la bibliothèque lève, leur cause, si une nouvelle tentative a déjà eu lieu, et les propriétés de chaque classe d'erreur. Servez-vous-en pour savoir ce que signifie un échec."
+description: "Les codes d'erreur, leur cause, s'ils sont retentés, et les propriétés de chaque classe d'erreur."
 ---
 
-```ts
-try {
-  await metamob.quests.setMonster(slug, "Tofu Maléfique", 2);
-} catch (error) {
-  if (error instanceof MetamobError) {
-    error.code; // défini par la bibliothèque, par exemple "NOT_FOUND"
-    error.message; // "quests.setMonster: Quest not found"
-  }
-  throw error;
-}
-```
-
-Toutes les erreurs étendent `MetamobError` et portent un `code`. [Erreurs](/basics/errors/) explique comment les traiter. Cette page est la table où les retrouver.
+Toutes les erreurs étendent `MetamobError` et portent un `code`. [Erreurs](/basics/errors/) explique comment les traiter ; cette page les liste.
 
 ## Codes
 
@@ -27,13 +15,13 @@ Venant de l'API, sous forme de `MetamobApiError` :
 
 | Code | Statut | Cause | Retentée |
 | --- | --- | --- | --- |
-| `BAD_REQUEST` | 400, 422 | Un paramètre que l'API refuse. La bibliothèque vérifie la plupart d'entre eux avant l'envoi | Non |
+| `BAD_REQUEST` | 400, 422 | Un paramètre que l'API refuse | Non |
 | `UNAUTHORIZED` | 401 | La clé est absente, invalide ou a été révoquée | Non |
 | `FORBIDDEN` | 403 | La clé n'a pas le droit de faire cela : l'envoi n'est pas ouvert sur le compte, ou l'un des deux joueurs a bloqué l'autre | Non |
 | `NOT_FOUND` | 404 | Cela n'existe pas, ou ce n'est pas à vous : une quête d'un autre compte, une quête masquée, un joueur supprimé | Non |
 | `RATE_LIMITED` | 429 | Plus de 60 requêtes en une minute avec cette clé, ou les limites anti-spam du site sur un message ou une proposition | Oui, sauf un message ou une proposition |
 | `SERVER_ERROR` | 500 et plus | L'API a échoué | 502, 503, 504 : oui, sauf un message ou une proposition. 500 : lectures seulement |
-| `API_ERROR` | tout autre | Un statut d'erreur pour lequel la bibliothèque n'a pas de nom | Non |
+| `API_ERROR` | tout autre | Un autre statut d'erreur | Non |
 
 Venant de la requête, sous forme de `MetamobRequestError` :
 
@@ -77,7 +65,7 @@ La base des trois.
 | `isUnauthorized` | `boolean` | `status === 401` |
 | `isRateLimited` | `boolean` | `status === 429` |
 
-L'API formule ses erreurs de trois façons selon le point d'accès. La bibliothèque les lit toutes dans `message` et `messages` : vous n'avez donc jamais à analyser `body` vous-même.
+Le message d'erreur de l'API se retrouve dans `message` et `messages`.
 
 ## MetamobRequestError
 
@@ -102,10 +90,3 @@ function handle(error: unknown) {
 ```
 
 C'est un garde de type : dans la branche, `error` est une `MetamobError`.
-
-## Voir aussi
-
-- [Erreurs](/basics/errors/)
-- [Dépannage](/help/troubleshooting/)
-- [La limite de requêtes](/basics/rate-limit/)
-- [Tous les exports](/reference/exports/)

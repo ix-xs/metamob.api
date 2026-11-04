@@ -1,16 +1,7 @@
 ---
 title: Inicio rápido
-description: "Instala el paquete, consigue tu clave API y luego lee tus misiones, averigua lo que aún le falta a una de ellas y registra un monstruo que acabas de capturar."
+description: "Instalar el paquete, crear un cliente y hacer las primeras llamadas: leer tus misiones, ver lo que les falta y registrar un monstruo."
 ---
-
-```ts
-import { Metamob } from "@ix-xs/metamob.api";
-
-const metamob = new Metamob({ apiKey: process.env.METAMOB_API_KEY });
-
-const me = await metamob.me();
-console.log(`Signed in as ${me.username}`);
-```
 
 ## Instalar
 
@@ -18,9 +9,7 @@ console.log(`Signed in as ${me.username}`);
 npm install @ix-xs/metamob.api
 ```
 
-Necesita Node.js 20 o posterior y no tiene dependencias. Para Bun, Deno, los navegadores y los entornos edge, consulta [Entornos de ejecución](/reference/runtimes/).
-
-Los dos sistemas de módulos funcionan:
+Necesita Node.js 20 o posterior. El paquete no tiene dependencias, y se importa con los dos sistemas de módulos:
 
 ```ts
 import { Metamob } from "@ix-xs/metamob.api";
@@ -30,21 +19,32 @@ import { Metamob } from "@ix-xs/metamob.api";
 const { Metamob } = require("@ix-xs/metamob.api");
 ```
 
-## Consigue tu clave API
+## Crear el cliente
 
-Cada llamada necesita una clave. Crea la tuya en [metamob.fr](https://www.metamob.fr), en **Configuración > Clave API**.
+Cada llamada a la API necesita una clave. Crea la tuya en [metamob.fr](https://www.metamob.fr), en **Configuración > Clave API**, y ponla en la variable de entorno `METAMOB_API_KEY`:
 
-No dejes la clave en tu código. Ponla en una variable de entorno llamada `METAMOB_API_KEY`: el cliente la lee cuando no pasas `apiKey`.
-
-```ts
-const metamob = new Metamob(); // usa process.env.METAMOB_API_KEY
+```bash title=".env"
+METAMOB_API_KEY=your-key
 ```
 
-[Tu clave API](/start/api-key/) explica a qué da acceso una clave y cómo guardarla.
+El cliente lee esta variable cuando no le pasas ninguna clave:
 
-## Lee tus misiones
+```ts title="index.ts"
+import { Metamob } from "@ix-xs/metamob.api";
 
-Una misión se conoce por su slug, el identificador corto que aparece en la dirección de su página. `quests.list()` da los slugs de la cuenta.
+const metamob = new Metamob();
+
+const me = await metamob.me();
+console.log(`Signed in as ${me.username}`);
+```
+
+:::note
+Node.js no lee los archivos `.env` por sí solo: lanza el script con `node --env-file=.env index.js`, o pasa la clave con `new Metamob({ apiKey })`. [Tu clave API](/start/api-key/) da los detalles.
+:::
+
+## Leer tus misiones
+
+Una misión se designa por su slug, el identificador corto al final de la dirección de su página. `quests.list()` devuelve las misiones de la cuenta, con su slug:
 
 ```ts
 const quests = await metamob.quests.list();
@@ -55,35 +55,37 @@ for (const quest of quests) {
 }
 ```
 
-## Averigua lo que aún le falta a una misión
+## Ver lo que le falta a una misión
 
-Una lista se puede esperar para obtener una página, o recorrer hasta el final con `for await`. Las páginas se piden a medida que avanzas.
+`quests.monsters()` lista los monstruos de una misión. Con `status: "needed"`, solo conserva los que aún faltan:
 
 ```ts
-for await (const monster of metamob.quests.monsters(slug, { status: "needed" })) {
-  console.log(`step ${monster.step}: ${monster.name.fr} (${monster.quantity} owned)`);
+const needed = metamob.quests.monsters(slug, { status: "needed" });
+
+for await (const monster of needed) {
+  console.log(`step ${monster.step}: ${monster.name.fr}`);
 }
 
-// Solo el número, en una única solicitud pequeña.
-const left = await metamob.quests.monsters(slug, { status: "needed" }).count();
+const left = await needed.count();
 ```
 
-[Listas](/basics/lists/) trata las páginas, los límites y el recuento.
+`for await` recorre todas las páginas de la lista, una solicitud por página. `count()` solo pide el total. [Listas](/basics/lists/) explica las otras formas de leer una lista.
 
-## Registra un monstruo
+## Registrar un monstruo
 
-Un monstruo se designa por su nombre en francés, inglés o español, por su identificador o por un objeto que tenga su identificador. Los acentos y las mayúsculas no importan.
+`quests.setMonster()` fija el número de ejemplares que posees. El monstruo se puede dar por su identificador o por su nombre, en francés, en inglés o en español:
 
 ```ts
 const result = await metamob.quests.setMonster(slug, "Bouflet le Puéril", 1);
 
 console.log(result.owned); // 1
-console.log(result.status); // lo que posees menos las misiones en paralelo: 0 significa «suficiente»
 ```
 
-Un nombre con una errata no se envía a tu misión. La llamada lanza un error, y el error indica los nombres más parecidos:
+Si el nombre no corresponde a ningún monstruo, la llamada lanza un error `UNKNOWN_NAME` que propone los nombres más parecidos, y no se envía nada:
 
 ```ts
+import { isMetamobError } from "@ix-xs/metamob.api";
+
 try {
   await metamob.quests.setMonster(slug, "Bouflet le Pueril!", 1);
 } catch (error) {
@@ -91,11 +93,11 @@ try {
 }
 ```
 
-[Nombres e identificadores](/basics/names-and-ids/) explica lo que se acepta, y [Errores](/basics/errors/) lo que se puede lanzar.
+[Nombres e identificadores](/basics/names-and-ids/) detalla lo que se acepta, y [Errores](/basics/errors/) lo que se puede lanzar.
 
-## Consulta algo sin enviar una solicitud
+## Buscar sin solicitud
 
-Los monstruos, las zonas y los servidores vienen con el paquete. `data` responde desde la memoria, que es lo que necesita un autocompletado.
+Los monstruos, las zonas y los servidores vienen incluidos en el paquete. `data` busca directamente en ellos, sin llamar a la API:
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -105,13 +107,6 @@ data.searchMonsters("bouf", { limit: 5 }).map((monster) => monster.name.fr);
 data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 ```
 
-## Ten en cuenta el límite de solicitudes
+## El límite de solicitudes
 
-Metamob permite 60 solicitudes por minuto por clave. El cliente las cuenta y hace esperar a la siguiente llamada en lugar de fallar, así que no tienes que hacer nada. [El límite de solicitudes](/basics/rate-limit/) muestra cómo vigilarlo.
-
-## Ver también
-
-- [Tus misiones](/resources/quests/)
-- [Intercambios](/resources/trading/)
-- [Los datos del paquete](/basics/embedded-data/)
-- [Desde la versión 4](/start/migrating-from-v4/)
+Metamob acepta 60 solicitudes por minuto por clave. El cliente las cuenta: por encima de ese número, hace esperar a las llamadas siguientes en lugar de enviarlas. [El límite de solicitudes](/basics/rate-limit/) muestra cómo seguir en qué punto estás.

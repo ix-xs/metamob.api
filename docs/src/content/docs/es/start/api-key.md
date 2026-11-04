@@ -1,80 +1,68 @@
 ---
 title: Tu clave API
-description: "De dónde sale una clave API de Metamob, a qué da acceso, cómo pasársela al cliente y cómo protegerla."
+description: "Crear una clave API de Metamob, dársela al cliente, comprobarla y mantenerla segura."
 ---
-
-```ts
-// Lee la variable de entorno METAMOB_API_KEY.
-const metamob = new Metamob();
-
-// O pásala tú mismo.
-const explicit = new Metamob({ apiKey });
-const short = new Metamob(apiKey);
-```
 
 ## Crear una clave
 
-Inicia sesión en [metamob.fr](https://www.metamob.fr), abre **Configuración** y, en la sección **Clave API**, genera una clave. Cópiala enseguida: el sitio solo la muestra una vez. La clave es una cadena larga de letras y cifras. Pertenece a tu cuenta, y cada llamada hecha con ella se hace en tu nombre.
+Inicia sesión en [metamob.fr](https://www.metamob.fr), abre **Configuración** y luego la sección **Clave API**, y genera una clave. Cópiala enseguida: el sitio solo la muestra una vez.
 
-Una clave no se puede limitar a la lectura: siempre da acceso completo.
+La clave pertenece a tu cuenta. Cada llamada hecha con ella se hace en tu nombre, y siempre da acceso completo: no existen claves de solo lectura.
 
-## A qué da acceso una clave
+## Lo que permite una clave
 
 | Con cualquier clave | Solo con la clave de la cuenta |
 | --- | --- |
 | Monstruos, zonas, servidores, plantillas de misión | `metamob.me()` |
-| Perfiles públicos y misiones públicas de cualquier jugador | `metamob.quests`: ajustes, monstruos, coincidencias, progreso y todas las escrituras |
-| Eventos Kralamar | `metamob.conversations` y `metamob.tradeProposals`: mensajes privados y propuestas de intercambio. Metamob abre su envío cuenta por cuenta |
+| Perfiles y misiones públicos de cualquier jugador | `metamob.quests`: ajustes, monstruos, coincidencias, progreso y escrituras |
+| Eventos Kralamar | `metamob.conversations` y `metamob.tradeProposals`. Metamob abre el envío de mensajes y de propuestas cuenta por cuenta |
 
-No hay ninguna llamada sin clave, ni siquiera para los datos públicos.
+La API pide una clave para cada llamada, incluso para los datos públicos.
 
 ## Dar la clave al cliente
 
-Por orden de preferencia:
+El cliente busca la clave en tres sitios, del más general al más preciso:
 
-1. La variable de entorno `METAMOB_API_KEY`. Nada que escribir, nada que pueda filtrarse en un commit.
-2. La opción `apiKey` del cliente.
-3. `{ apiKey }` como último argumento de una llamada, o [`metamob.withKey()`](/basics/many-keys/), cuando actúas por otro jugador.
+1. la variable de entorno `METAMOB_API_KEY`;
+2. la opción `apiKey` del cliente;
+3. `{ apiKey }` como último argumento de una llamada, o [`metamob.withKey()`](/basics/many-keys/), para actuar con la clave de otro jugador.
 
-```bash
-# .env, fuera de git
+```bash title=".env"
 METAMOB_API_KEY=your-key
 ```
 
 ```ts
+const metamob = new Metamob(); // lee METAMOB_API_KEY
+
+const explicit = new Metamob({ apiKey });
+const short = new Metamob(apiKey);
+
 const quests = await metamob.quests.list({ apiKey: theirKey });
 ```
 
-Sin clave en ningún sitio, la primera llamada lanza un error con el código `MISSING_API_KEY`.
+Sin clave, la primera llamada lanza un error `MISSING_API_KEY`.
 
 ## Comprobar una clave
 
-`metamob.me()` es la forma más barata de saber si una clave funciona y de quién es.
+`metamob.me()` es la llamada más sencilla para saber si una clave funciona y a quién pertenece:
 
 ```ts
 try {
   const account = await metamob.withKey(theirKey).me();
   console.log(`This key belongs to ${account.username}`);
 } catch (error) {
-  if (isMetamobError(error, "UNAUTHORIZED")) console.log("This key is not valid, or was revoked.");
-  else throw error;
+  if (!isMetamobError(error, "UNAUTHORIZED")) throw error;
+  console.log("This key is not valid, or was revoked.");
 }
 ```
 
-## Protegerla
+## Mantenerla segura
 
-- Nunca incluyas una clave en un commit, ni la pegues en una issue, ni la escribas en un registro. La biblioteca nunca la pone en una URL, un error o un evento.
-- Una clave en un navegador queda a la vista de quien abra la página. Llama a la API desde tu servidor, salvo que la página solo la use el dueño de la clave.
-- Cuando los jugadores te den su clave, guárdala como una contraseña: cifrada, y borrada cuando se vayan.
-- Si una clave se filtra, crea una nueva en la misma página de metamob.fr. La antigua deja de funcionar.
+- Nunca publiques una clave: ni en un commit, ni en una issue, ni en un registro. La biblioteca nunca la pone en una URL, un error o un evento.
+- En una página web, una clave queda a la vista de todos los que abren la página. Llama a la API desde un servidor, salvo en una página que solo usa el dueño de la clave.
+- Si unos jugadores te confían su clave, trátala como una contraseña: cifrada, y borrada cuando se vayan.
+- Si una clave se filtra, genera una nueva en metamob.fr: la antigua deja de funcionar.
 
-## El límite de solicitudes va con la clave
+## Un límite por clave
 
-Cada clave tiene sus propias 60 solicitudes por minuto. Eso es lo que hace posible un bot para muchos jugadores, cada uno con su clave. No es una invitación a reunir claves para ir más rápido: el límite protege un servidor que mantiene una sola persona. Consulta [El límite de solicitudes](/basics/rate-limit/).
-
-## Ver también
-
-- [Inicio rápido](/start/quick-start/)
-- [Actuar por otros jugadores](/basics/many-keys/)
-- [Cuenta](/resources/account/)
-- [Errores](/basics/errors/)
+Cada clave tiene sus propias 60 solicitudes por minuto. Así, un bot puede actuar por varios jugadores, cada uno con su clave. Usar varias claves para ir más rápido no es el objetivo: el límite protege el servidor de Metamob. Consulta [El límite de solicitudes](/basics/rate-limit/).

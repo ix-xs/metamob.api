@@ -1,7 +1,9 @@
 ---
 title: Depuis la version 4
-description: "La version 5 est une réécriture. Les points d'accès sont les mêmes, la façon de les appeler est plus courte. Cette page fait correspondre chaque méthode de la version 4 à sa remplaçante."
+description: "Ce qui change en passant de la version 4 à la version 5, et la méthode qui remplace chaque ancienne méthode."
 ---
+
+La version 5 est une réécriture. Elle appelle les mêmes points d'accès, mais les méthodes ont changé de nom et de forme :
 
 ```ts
 // Version 4
@@ -30,7 +32,7 @@ console.log(monster.name.fr);
 | Un ou plusieurs | `getX({ idOrName })` ou `getX()` | `x.get(ref)` et `x.list()` |
 | La clé d'un autre joueur | `{ api_key }` dans les options | `{ apiKey }` en dernier argument, ou [`withKey()`](/basics/many-keys/) |
 | Données embarquées | `client.cache` | [`data`](/basics/embedded-data/), avec recherche |
-| Limite de requêtes | à gérer vous-même | [gérée](/basics/rate-limit/) |
+| Limite de requêtes | non comptée | [comptée par le client](/basics/rate-limit/) |
 | Dépendances | `@ix-xs/node-comfort` | aucune |
 | Node.js | 18 | 20 ou plus récent |
 
@@ -134,15 +136,11 @@ data.monster("Tofu Maléfique")?.id;
 
 La version 4 livrait 50 des 192 sous-zones. La version 5 les livre toutes, donc `zones.subzone("...")` et `zones.monsters("...")` reconnaissent maintenant chaque sous-zone par son nom.
 
-## Ce qui est plus strict
+## Ce qui est refusé plus tôt
 
 - Un nom que la bibliothèque ne trouve pas lève `UNKNOWN_NAME` avec des suggestions. La version 4 renvoyait `{ ok: false }`.
 - Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT` avant qu'une requête soit dépensée. L'API la refuse de toute façon.
 - Six paires de monstres, surtout des archimonstres, partagent un nom entre deux versions du jeu. La version 4 prenait le premier. La version 5 choisit celui de la quête dans laquelle vous écrivez, voir [Noms et identifiants](/basics/names-and-ids/#monsters-that-share-a-name).
 
-## Voir aussi
 
-- [Démarrage rapide](/start/quick-start/)
-- [Toutes les méthodes](/reference/methods/)
-- [Configuration](/basics/configuration/)
-- [Le journal des modifications](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md)
+Le [journal des modifications](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md) liste tous les changements, version par version.

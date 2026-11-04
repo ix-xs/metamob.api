@@ -1,11 +1,4 @@
 ---
-// The landing page's playground: four trials of what the library does with
-// the data it ships. Each one shows the call you would write next to what
-// comes back. It runs on the library's own data set, in the page: nothing is
-// sent anywhere.
-//
-// Without scripts the first trial is rendered as is, and the others stay
-// closed.
 import { data } from "../../../src/data/dataset.js";
 import { type FinderLabels, questView, searchView, view, whereView } from "./name-finder";
 import { ROOT_LANGUAGE } from "../../plugins/base-links.mjs";
@@ -15,15 +8,10 @@ const { locale } = Astro.locals.starlightRoute;
 const t = useT(locale);
 const language = (locale ?? ROOT_LANGUAGE) as FinderLabels["language"];
 
-// Development only: FINDER_START sets what the first box holds when the page
-// opens, to look at the long, shared, unknown and empty cases without typing
-// them. A normal build ignores it.
 const start = process.env.FINDER_START ?? "tofu malefique";
 
-/** Examples are checked against the data: one that stopped existing is left out. */
 const known = (names: string[]) => names.filter((name) => data.monster(name));
 const TRIALS = [
-  // No accent, English, Spanish, a typo, a name two monsters share, an id.
   { id: "name", start, examples: ["tofu malefique", "Royal Gobball", "jalató real", "Tofu Malefik", "Crognan le Barbare", "397"] },
   { id: "search", start: "bouf", examples: ["bouf", "tofu", "dragon", "wab", "kani"] },
   { id: "where", start: "Bouflet le Puéril", examples: known(["Bouflet le Puéril", "Minotoror", "Wabbit", "Tofu Maléfique", "Chêne Mou"]) },
@@ -68,7 +56,6 @@ const templates = data.questTemplates.map((template) => ({
 const firstTemplate = data.questTemplates[0];
 const firstStep = Math.min(4, firstTemplate?.step_count ?? 1);
 
-// What each trial shows before anything is touched.
 const first = {
   name: view(start, data, labels),
   search: searchView("bouf", "", data, labels),
@@ -77,7 +64,6 @@ const first = {
 };
 const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[language] ?? kind) : t("finder.anyKind"));
 ---
-
 <name-finder class="nf" data-labels={JSON.stringify(labels)}>
   <div class="nf-tabs" role="tablist" aria-label={t("finder.trials")}>
     {TRIALS.map((trial, index) => (
@@ -176,12 +162,9 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
       const time = this.querySelector<HTMLElement>("[data-nf-time]")!;
       const reduced = matchMedia("(prefers-reduced-motion: reduce)");
 
-      // The data set is the library's own, about 30 kB compressed. It is
-      // fetched when the reader shows interest, not with the page.
       let loading: Promise<Library> | undefined;
       const load = () => (loading ??= import("../../../src/data/dataset.js"));
 
-      /** What a trial shows, from the state of its own controls. */
       const compute = (panel: HTMLElement, { data }: Library): FinderView => {
         const text = panel.querySelector<HTMLInputElement>("[data-nf-input]")?.value ?? "";
         switch (panel.dataset.nfTrial) {
@@ -200,15 +183,9 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
       };
 
       let latest = 0;
-      /**
-       * Shows what a trial answers. `fresh` is for a change the reader made in
-       * one go (an example, a filter, another trial): the rows then come in one
-       * after the other. While typing or dragging, nothing moves.
-       */
       const render = async (panel: HTMLElement, fresh: boolean) => {
         const turn = ++latest;
         const library = await load();
-        // A slower load must not overwrite what was typed since.
         if (turn !== latest) return;
         const started = performance.now();
         const next = compute(panel, library);
@@ -217,26 +194,22 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
         panel.querySelector<HTMLElement>("[data-nf-code]")!.innerHTML = next.code;
         result.innerHTML = next.result;
         result.toggleAttribute("data-nf-fresh", fresh);
-        // Written the way the language of the page writes a number.
         time.textContent = (time.dataset.text ?? "").replace("{time}", Math.max(elapsed, 0.1).toLocaleString(labels.language, { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
         time.hidden = false;
       };
 
-      // ---- The trials: tabs with one marker that slides between them.
       const marker = document.createElement("span");
       marker.className = "nf-marker";
       marker.setAttribute("aria-hidden", "true");
       list.append(marker);
       list.setAttribute("data-nf-marker", "");
 
-      /** Puts the marker under the selected tab: sliding there, or at once. */
       const place = (slide: boolean) => {
         const active = tabs.find((tab) => tab.getAttribute("aria-selected") === "true");
         if (!active || active.offsetWidth === 0) return;
         if (!slide) marker.style.transition = "none";
         marker.style.transform = `translateX(${active.offsetLeft}px) scaleX(${active.offsetWidth / 100})`;
         if (!slide) {
-          // Apply the jump before the transition comes back.
           void marker.offsetWidth;
           marker.style.transition = "";
         }
@@ -251,24 +224,19 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
           panels[position]!.hidden = !active;
         });
         if (focus) tabs[index]!.focus();
-        // On a narrow screen the row of trials scrolls: the chosen one comes into view.
         const chosen = tabs[index]!;
         if (chosen.offsetLeft < list.scrollLeft || chosen.offsetLeft + chosen.offsetWidth > list.scrollLeft + list.clientWidth) {
           list.scrollTo({ left: Math.max(0, chosen.offsetLeft - 16), behavior: slide && !reduced.matches ? "smooth" : "auto" });
         }
         place(slide);
-        // A trial is rendered again when it opens: its controls may have been
-        // restored by the browser to something else than what was rendered.
         void render(panels[index]!, slide);
       };
 
       place(false);
       addEventListener("resize", () => place(false));
-      // Fonts arriving change the width of the tabs.
       void document.fonts?.ready.then(() => place(false));
 
       tabs.forEach((tab, index) => {
-        // `detail` is 0 when the click comes from the keyboard: no slide then.
         tab.addEventListener("click", (event) => select(index, false, event.detail > 0));
         tab.addEventListener("keydown", (event) => {
           const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
@@ -279,7 +247,6 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
         });
       });
 
-      // ---- The controls of each trial.
       for (const panel of panels) {
         const input = panel.querySelector<HTMLInputElement>("[data-nf-input]");
         input?.addEventListener("input", () => {
@@ -290,7 +257,6 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
 
         for (const radio of panel.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
           radio.addEventListener("change", () => {
-            // Another quest has another number of steps.
             const range = panel.querySelector<HTMLInputElement>("[data-nf-step]");
             if (range && radio.dataset.steps) {
               range.max = radio.dataset.steps;
@@ -307,23 +273,17 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
           void render(panel, false);
         });
 
-        // Examples and suggestions write themselves in the box.
         panel.addEventListener("click", (event) => {
           const button = (event.target as Element | null)?.closest<HTMLElement>("[data-nf-fill]");
           if (!button || !input) return;
           stopDemo();
           input.value = button.dataset.nfFill ?? "";
           void render(panel, true);
-          // A pointer keeps its place; the keyboard goes back to the box to carry on typing.
           if ((event as MouseEvent).detail === 0) input.focus();
         });
       }
       this.addEventListener("pointerenter", load, { once: true });
 
-      // ---- The demonstration: the first time the playground comes into view,
-      // the first box types its own example, so the answer is seen forming.
-      // It runs once, stops at the first sign of the reader, and is skipped
-      // for whoever asked for less motion.
       let demo: number | undefined;
       const stopDemo = () => {
         if (demo === undefined) return;
@@ -340,7 +300,6 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
             if (!entries.some((entry) => entry.isIntersecting)) return;
             watcher.disconnect();
             void load().then(() => {
-              // Someone already took over, or moved to another trial.
               if (first.hidden || box.value !== text || document.activeElement === box) return;
               this.setAttribute("data-nf-demo", "");
               let length = 0;
@@ -361,7 +320,6 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
         watcher.observe(first.querySelector(".nf-panes")!);
         for (const kind of ["pointerdown", "keydown", "focusin"] as const) {
           this.addEventListener(kind, () => {
-            // Interrupted half way, the box gets its whole example back.
             if (demo !== undefined && box.value !== text && document.activeElement !== box) {
               box.value = text;
               void render(first, false);
@@ -371,7 +329,6 @@ const kindLabel = (kind: string) => (kind ? (data.monsterType(kind)?.name[langua
         }
       }
 
-      // A form restored by the browser can hold something else than what was rendered.
       const open = panels.find((panel) => !panel.hidden) ?? first;
       const restored = [...open.querySelectorAll<HTMLInputElement>("input")].some((control) => (control.type === "radio" ? control.checked !== control.defaultChecked : control.value !== control.defaultValue));
       if (restored) void render(open, false);

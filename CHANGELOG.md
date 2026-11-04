@@ -8,6 +8,12 @@ adheres to [Semantic Versioning](https://semver.org).
 - The doc comments and the documentation say what `has_priority_unread` and
   `is_priority` mean: priority messages from the Metamob staff, which the site
   shows in a golden popup. Only the staff can send one.
+- The documentation site is laid out as a guide: an introduction page, a plain
+  sidebar, and pages that explain before they show code. The playground has a
+  page of its own.
+- The READMEs and the documentation are shorter and plainer, and the FAQ no
+  longer says that messages and proposals cannot be sent.
+- The doc comments are shorter: the internal code keeps only what it needs.
 
 ## 5.2.1
 

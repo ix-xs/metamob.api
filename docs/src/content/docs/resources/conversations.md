@@ -1,26 +1,19 @@
 ---
 title: Conversations
-description: Lisez les conversations privées du compte et, dans chacune, les messages et les propositions d'échange échangés avec un joueur, voyez ce qui n'est pas lu, marquez-le comme lu et envoyez un message.
+description: "Lire les conversations privées du compte, les marquer comme lues et envoyer un message."
 sidebar:
   order: 7
 ---
 
-```ts
-for await (const item of metamob.conversations.messages(username)) {
-  if (item.kind === "message") console.log(`${item.sender}: ${item.content}`);
-  else console.log(`${item.sender} proposed a trade (${item.status})`);
-}
-```
-
 ## Lister les conversations
 
-Il y a une conversation par correspondant, la plus récente en premier. C'est une [liste](/basics/lists/), de 50 par page au plus.
+`conversations.list()` donne une conversation par correspondant, la plus récente en premier. C'est une [liste](/basics/lists/) de 50 par page au plus :
 
 ```ts
 const page = await metamob.conversations.list();
 
-for (const conversation of page.items) {
-  console.log(conversation.username, `${conversation.unread_count} unread of ${conversation.message_count}`);
+for (const { username, unread_count } of page.items) {
+  console.log(username, `${unread_count} unread`);
 }
 
 const archived = await metamob.conversations.list({ status: "archived" }).all();
@@ -30,7 +23,7 @@ Sans `status`, ce sont les conversations actives qui sont listées.
 
 ## Lire une conversation
 
-`conversations.messages()` donne ce qui a été échangé avec un joueur, du plus récent au plus ancien. Deux sortes d'éléments arrivent mélangés, et `kind` les distingue.
+`conversations.messages()` donne ce qui a été échangé avec un joueur, du plus récent au plus ancien. Les messages et les propositions d'échange arrivent ensemble, et `kind` les distingue :
 
 ```ts
 const latest = await metamob.conversations.messages(username).take(10);
@@ -44,7 +37,7 @@ for (const item of latest) {
 }
 ```
 
-Pour les afficher dans l'ordre de lecture, inversez ce que vous avez récupéré :
+Pour les afficher dans l'ordre de lecture, inversez le tableau :
 
 ```ts
 const thread = (await metamob.conversations.messages(username).take(50)).reverse();
@@ -52,14 +45,14 @@ const thread = (await metamob.conversations.messages(username).take(50)).reverse
 
 ## Remonter dans le temps
 
-Les messages sont paginés avec un curseur, pas avec un décalage : chaque page fournit le curseur de la suivante. Renvoyez-le tel quel : ce n'est pas l'identifiant d'un message. L'itération le fait pour vous. À la main :
+Les messages sont paginés avec un curseur : chaque page donne celui de la suivante, à renvoyer tel quel. `for await` s'en charge. À la main :
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });
 
 if (page.hasNext) {
-  const older = await metamob.conversations.messages(username, { limit: 20, beforeId: page.nextBeforeId });
-  older.items;
+  const beforeId = page.nextBeforeId;
+  const older = await metamob.conversations.messages(username, { limit: 20, beforeId });
 }
 ```
 
@@ -67,18 +60,15 @@ Il n'y a pas de total pour les messages : `page.total` et `count()` valent `unde
 
 ## Propositions d'échange
 
-Une proposition faite sur le site apparaît dans la conversation comme un élément dont `kind` vaut `"proposal"`. Pour suivre toutes les propositions du compte à la fois, filtrées par état, par quête ou par date, voir [Propositions d'échange](/resources/trade-proposals/).
+Une proposition apparaît dans la conversation comme un élément dont `kind` vaut `"proposal"`. Pour toutes les propositions du compte, filtrées par état, par quête ou par date, voir [Propositions d'échange](/resources/trade-proposals/).
 
 ```ts
 for await (const item of metamob.conversations.messages(username)) {
   if (item.kind !== "proposal") continue;
 
   console.log(`${item.sender} to ${item.recipient}: ${item.status}`);
-  for (const given of item.monsters_given) {
-    console.log(`  given: ${given.quantity} x ${data.monster(given.monster_id)?.name.fr}`);
-  }
-  for (const received of item.monsters_received) {
-    console.log(`  received: ${received.quantity} x ${data.monster(received.monster_id)?.name.fr}`);
+  for (const { monster_id, quantity } of item.monsters_given) {
+    console.log("  given:", quantity, data.monster(monster_id)?.name.fr);
   }
 }
 ```
@@ -89,7 +79,7 @@ Quand vous êtes le destinataire, vous recevez `monsters_given` et vous donnez `
 
 ## Messages non lus
 
-Chaque conversation compte, dans `unread_count`, ce que vous avez reçu et pas encore lu, propositions d'échange comprises. Dans une conversation, un élément que vous n'avez pas ouvert a `read_at` à `null`.
+`unread_count` compte ce que vous avez reçu sans l'avoir lu, propositions comprises. Dans une conversation, un élément non lu a `read_at` à `null`.
 
 ```ts
 const conversations = await metamob.conversations.list().all();
@@ -102,7 +92,7 @@ for (const conversation of waiting) {
 
 ## Marquer comme lu
 
-`conversations.markAsRead()` marque comme lus tous les messages reçus d'un joueur, propositions comprises, comme le ferait l'ouverture de la conversation sur le site. Elle renvoie le nombre d'éléments marqués : `0` quand il n'y avait rien de non lu.
+`conversations.markAsRead()` marque comme lu tout ce qui a été reçu d'un joueur, comme l'ouverture de la conversation sur le site. Elle renvoie le nombre d'éléments marqués, `0` s'il n'y en avait aucun :
 
 ```ts
 const { marked_count } = await metamob.conversations.markAsRead(username);
@@ -111,20 +101,23 @@ console.log(`${marked_count} marked as read`);
 
 ## Envoyer un message
 
-`conversations.send()` envoie un message privé à un joueur, de 1000 caractères au plus, et le renvoie tel qu'il apparaît désormais dans la conversation.
+`conversations.send()` envoie un message privé de 1000 caractères au plus, et le renvoie tel qu'il apparaît dans la conversation :
 
 ```ts
-const message = await metamob.conversations.send(username, "Salut, ton Tofu Maléfique est toujours dispo ?");
+const text = "Salut, ton Tofu Maléfique est toujours dispo ?";
+const message = await metamob.conversations.send(username, text);
 console.log(message.id, message.created_at);
 ```
 
-L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande. Sans cela, l'API répond `FORBIDDEN`. Les règles sont celles du site : `FORBIDDEN` aussi quand l'un des deux joueurs a bloqué l'autre, et `RATE_LIMITED` au-delà de ses limites anti-spam.
+:::note
+L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande, et l'API répond `FORBIDDEN` sans cela. Les règles sont celles du site : `FORBIDDEN` aussi quand l'un des deux joueurs a bloqué l'autre, `RATE_LIMITED` au-delà des limites anti-spam.
+:::
 
-Un message n'est jamais réessayé, quel que soit l'échec : envoyé deux fois, il arriverait deux fois. Après un délai dépassé ou une coupure réseau, lisez la conversation avant de le renvoyer.
+Un message n'est jamais retenté, quel que soit l'échec : envoyé deux fois, il arriverait deux fois. Après un délai dépassé ou une coupure réseau, lisez la conversation avant de le renvoyer.
 
 ## Limites et erreurs
 
-- Envoyer un message ou une proposition demande que l'envoi soit ouvert sur le compte, voir plus haut. Confirmer ou annuler une proposition se fait sur le site.
+- Confirmer ou annuler une proposition se fait sur le site.
 - Un message vide, ou de plus de 1000 caractères, est refusé avant d'être envoyé.
 - `markAsRead()` répond `NOT_FOUND` pour un pseudo qui n'existe pas.
 - Un correspondant peut ne plus avoir de profil : un compte supprimé garde ses conversations lisibles pendant 30 jours, alors que `users.get()` répond `NOT_FOUND`.
@@ -177,11 +170,3 @@ Une proposition :
 | `cancelled_at`, `cancelled_by` | `string \| null` |
 | `created_at` | `string` |
 | `read_at` | `string \| null` |
-
-## Voir aussi
-
-- [Listes](/basics/lists/)
-- [Propositions d'échange](/resources/trade-proposals/)
-- [Échanges](/resources/trading/)
-- [Autres joueurs](/resources/users/)
-- [Les données du paquet](/basics/embedded-data/)

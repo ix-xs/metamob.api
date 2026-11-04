@@ -1,7 +1,11 @@
 ---
 title: Entornos de ejecución
-description: "La biblioteca necesita fetch y nada más. Funciona en Node.js 20 y posteriores, Bun, Deno, las plataformas edge y los navegadores, como módulo ES o como CommonJS."
+description: "Node.js 20 o posterior, Bun, Deno, las plataformas edge y los navegadores, como módulo ES o en CommonJS."
 ---
+
+## Lo que necesita
+
+`fetch`, `AbortController` y `URL`, que proporcionan todos los entornos de ejecución actuales. El paquete no tiene dependencias, y nada en él es propio de Node.js. Se importa como módulo ES o en CommonJS:
 
 ```ts
 import { Metamob } from "@ix-xs/metamob.api"; // módulos ES
@@ -11,17 +15,13 @@ import { Metamob } from "@ix-xs/metamob.api"; // módulos ES
 const { Metamob } = require("@ix-xs/metamob.api"); // CommonJS
 ```
 
-## Lo que necesita
-
-`fetch`, `AbortController` y `URL`, que todos los entornos de ejecución actuales tienen. No se instala ninguna dependencia con el paquete, y nada en él es específico de Node.js.
-
-| Entorno | Funciona | Notas |
+| Entorno | Funciona | Observaciones |
 | --- | --- | --- |
-| Node.js 20 y posteriores | Sí | Módulos ES y CommonJS |
+| Node.js 20 y versiones siguientes | Sí | Módulos ES y CommonJS |
 | Bun | Sí | |
 | Deno | Sí | `import { Metamob } from "npm:@ix-xs/metamob.api"` |
-| Cloudflare Workers, Vercel Edge | Sí | Ver la nota sobre el estado más abajo |
-| Navegadores | Sí | Ver la nota sobre las claves más abajo |
+| Cloudflare Workers, Vercel Edge | Sí | Consulta la observación sobre el estado más abajo |
+| Navegadores | Sí | Consulta la observación sobre las claves más abajo |
 
 ## La clave API
 
@@ -40,52 +40,48 @@ export default {
 
 ## Navegadores
 
-Todo funciona en una página, pero una clave en una página puede leerla cualquiera que la abra. Dos casos no plantean problema:
+Todo funciona en una página web, pero una clave en ella la puede leer cualquiera que abra la página. Dos casos no plantean problemas:
 
-- Una herramienta que cada jugador usa con su propia clave, que escribe él mismo y que se queda en su dispositivo.
-- [`data`](/basics/embedded-data/) por sí solo, que no necesita clave: búsqueda, autocompletado, «dónde vive este monstruo».
+- Una herramienta que cada jugador usa con su propia clave, introducida y guardada en su dispositivo.
+- [`data`](/basics/embedded-data/) solo, que no pide ninguna clave: búsqueda, autocompletado, «dónde vive este monstruo».
 
 Para todo lo demás, llama a la API desde tu servidor.
 
-Que el navegador pueda llamar a la API desde tu dominio depende de la política CORS de metamob.fr. Si una llamada falla en una página y funciona en un servidor, ese es el motivo: pasa por tu servidor.
+Que un navegador pueda llamar a la API desde tu dominio depende de la política CORS de metamob.fr. Si una llamada falla en una página pero funciona en un servidor, esa es la razón: pasa por tu servidor.
 
 ## El estado en las plataformas serverless
 
-El limitador y la caché viven en el cliente, en memoria. En una plataforma que arranca una instancia nueva por solicitud, cada instancia empieza a contar desde cero.
+El limitador y la caché viven en el cliente, en memoria. En una plataforma que arranca una nueva instancia en cada solicitud, cada instancia vuelve a contar desde cero.
 
-- Crea el cliente fuera del manejador, para que las instancias que siguen en marcha lo reutilicen.
-- Da a la caché un almacén que sobreviva a la instancia, ver [Caché](/basics/caching/#a-cache-that-outlives-the-process).
-- Mantén las ráfagas pequeñas. Cuando varias instancias comparten una clave, la API puede responder 429 igualmente: el cliente espera el tiempo que pide y reintenta.
+- Crea el cliente fuera del manejador, para que las instancias ya arrancadas lo reutilicen.
+- Da a la caché un almacenamiento que sobreviva a la instancia, consulta [Caché](/basics/caching/#a-cache-that-outlives-the-process).
+- Evita las ráfagas. Cuando varias instancias comparten una clave, la API puede responder 429: el cliente espera el tiempo pedido, y vuelve a intentarlo.
 
 ## Tamaño del bundle
 
-El paquete es un archivo por sistema de módulos, de unos 160 kB antes de la compresión. Más de la mitad son los datos de referencia. Con un empaquetador, importar solo `data` deja fuera el cliente, e importar solo `Metamob` conserva los datos, que el cliente usa para resolver los nombres.
+El paquete ocupa un archivo por sistema de módulos, unos 160 kB antes de la compresión, de los que más de la mitad son los datos de referencia. Con un bundler, importar solo `data` deja el cliente fuera. `Metamob` conserva los datos, que le sirven para leer los nombres.
 
 ## Tipos
 
-Las declaraciones vienen con el paquete, para módulos ES y para CommonJS. Se resuelven con cualquier valor de `moduleResolution` de TypeScript. Se recomienda TypeScript 5 o posterior.
+Las declaraciones vienen con el paquete, para los módulos ES y para CommonJS. Se resuelven con todos los ajustes `moduleResolution` de TypeScript. Se recomienda TypeScript 5 o una versión más reciente.
 
-Los nombres de los monstruos son tipos unión grandes. Solo sirven para el autocompletado: si tu editor va lento en una máquina muy antigua, anotar una variable como `string` los evita.
+Los nombres de los monstruos son grandes tipos unión, que solo sirven para el completado. Si tu editor va lento, anotar una variable como `string` los evita.
 
 ## Probar tu código
 
-Da al cliente un `fetch` propio para probar sin red.
+Da al cliente tu propio `fetch` para probar sin red:
 
 ```ts
 const metamob = new Metamob({
   apiKey: "test",
   rateLimit: false,
   retry: false,
-  fetch: async () => Response.json({ data: { username: "Ix-xs", bio: "", avatar: null, last_active: "2026-10-14T09:12:45Z" } }),
+  fetch: async () =>
+    Response.json({
+      data: { username: "Ix-xs", bio: "", avatar: null, last_active: "2026-10-14T09:12:45Z" },
+    }),
 });
 
 const me = await metamob.me();
 me.username; // "Ix-xs"
 ```
-
-## Ver también
-
-- [Configuración](/basics/configuration/)
-- [Los datos del paquete](/basics/embedded-data/)
-- [Tu clave API](/start/api-key/)
-- [Solución de problemas](/help/troubleshooting/)

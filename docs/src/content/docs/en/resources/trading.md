@@ -1,33 +1,23 @@
 ---
 title: Trading
-description: Find the players who have what one of your quests needs and want what it has in spare, and decide monster by monster how many you offer and look for.
+description: "Find trade partners for a quest, and set monster by monster what it offers and looks for."
 sidebar:
   order: 3
 ---
 
-```ts
-const page = await metamob.quests.matches(slug, { onlyPossibleTrades: true });
-
-for (const match of page.items) {
-  const gives = match.matches.they_have_you_want.map((monster) => monster.name.fr);
-  const wants = match.matches.you_have_they_want.map((monster) => monster.name.fr);
-  console.log(match.user.username, { gives, wants });
-}
-```
-
 ## How a quest trades
 
-For each monster, a quest offers some and looks for some. By default the site calculates both from what you own and from `parallel_quests`: spares are offered, what is missing is wanted. Three settings bend that calculation:
+For each monster, a quest offers some copies and looks for some. By default, the site computes both from what you own and from `parallel_quests`: spare copies are offered, what is missing is looked for. Three settings change this computation:
 
-1. The trade mode of the quest. In expert mode, two thresholds say from which quantity a monster is offered and up to which it is wanted.
+1. The trade mode of the quest. In expert mode, two thresholds say from which quantity a monster is offered and up to which quantity it is looked for.
 2. The filters by kind: never offer, or never look for, monsters, bosses or archmonsters.
-3. A manual override on one monster, which wins over the rest.
+3. A manual setting on one monster, which wins over everything else.
 
-The first two are settings of the quest, changed with [`quests.update()`](/resources/quests/#changing-settings). The third is below. What comes out of all three is what other players see: `want` and `offer` on each monster.
+The first two are changed with [`quests.update()`](/resources/quests/#changing-settings), the third is described below. The result is what other players see: `want` and `offer` on each monster.
 
 ## Finding partners
 
-`quests.matches()` ranks the players you could trade with, like the "Best matching" order of the Community page of the site: same server, same kind of quest, active in the last two months. The order favours balance: partners with whom as many monsters go one way as the other come first. The API looks at the 500 most recently active players at most.
+`quests.matches()` ranks the players you could trade with, like the "Best matching" option of the Community page of the site: same server, same kind of quest, active in the last two months. Balanced trades, with as many monsters each way, come first. The API looks at the 500 most recently active players at most.
 
 ```ts
 const best = await metamob.quests.matches(slug).take(10);
@@ -39,38 +29,39 @@ for (const match of best) {
 }
 ```
 
-Each match lists the monsters both ways, with quantities:
+Each match lists the monsters both ways, with the quantities:
 
 ```ts
 const match = await metamob.quests.matches(slug).first();
 
 for (const monster of match?.matches.they_have_you_want ?? []) {
-  console.log(monster.name.fr, `${monster.available} available, you need ${monster.needed}`);
-  if (monster.covers_need) console.log("  covers everything you need");
+  console.log(monster.name.fr, `${monster.available} available`);
+  console.log(`you need ${monster.needed}`, monster.covers_need ? "(covered)" : "");
 }
 ```
 
-Two filters:
+Two filters narrow the list:
 
 ```ts
-// Only partners with whom something can go both ways.
+// A trade possible both ways.
 await metamob.quests.matches(slug, { onlyPossibleTrades: true });
 
-// Only partners doing at least two quests in parallel.
+// At least two quests done in parallel.
 await metamob.quests.matches(slug, { minParallelQuests: 2 });
 ```
 
-It is a [list](/basics/lists/), 50 partners per page at most.
+It is a [list](/basics/lists/), of 50 partners per page at most.
 
 ## Who has one monster
 
-To look for a single monster rather than the best overall partner, filter the matches yourself:
+For a single monster, filter the partners yourself:
 
 ```ts
 const wanted = data.monster("Bouflet le Puéril");
 
 for await (const match of metamob.quests.matches(slug)) {
-  if (match.matches.they_have_you_want.some((monster) => monster.id === wanted?.id)) {
+  const offers = match.matches.they_have_you_want;
+  if (offers.some((monster) => monster.id === wanted?.id)) {
     console.log(match.user.username);
   }
 }
@@ -78,32 +69,32 @@ for await (const match of metamob.quests.matches(slug)) {
 
 ## Looking at someone's quest
 
-Once you have a partner, their quest is public. `status` narrows it to what they offer or what they look for.
+The quest of a partner is public. `status` narrows it to what they offer or what they look for:
 
 ```ts
 const offered = await metamob.users.quest(username, slug, { status: "offered" }).all();
-const wanted = await metamob.users.quest(username, slug, { status: "wanted", type: "archimonstre" }).all();
+const wanted = await metamob.users.quest(username, slug, { status: "wanted" }).all();
 ```
 
 See [Other players](/resources/users/).
 
 ## Overriding one monster
 
-`setTrade` forces how many of a monster the quest offers, looks for, or both.
+`setTrade` forces the number of copies of a monster the quest offers, looks for, or both:
 
 ```ts
-// Offer a single one, however many spares there are.
+// Offer a single one, however many spare copies there are.
 await metamob.quests.setTrade(slug, "Tofu Maléfique", { trade_offer: 1 });
 
 // Offer none: keep them all.
 await metamob.quests.setTrade(slug, "Tofu Maléfique", { trade_offer: 0 });
 
-// Look for two, whatever the calculation says.
+// Look for two, whatever the computation gives.
 const result = await metamob.quests.setTrade(slug, "Bouftou Royal", { trade_want: 2 });
 result.effective_want; // what the quest now looks for
 ```
 
-`null` is not 0. `0` forces "none". `null` removes the override and hands the value back to the calculation.
+`0` and `null` do not mean the same thing: `0` forces "none", `null` removes the manual setting and gives the value back to the computation.
 
 ```ts
 await metamob.quests.setTrade(slug, "Tofu Maléfique", { trade_offer: null });
@@ -118,22 +109,22 @@ A field you leave out is not touched.
 
 ```ts
 for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) {
-  console.log(monster.name.fr, { offer: monster.trade_offer, want: monster.trade_want });
+  console.log(monster.name.fr, monster.trade_offer, monster.trade_want);
 }
 ```
 
-`trade_offer` and `trade_want` are the overrides, `null` when there is none. `offer` and `want` are the result.
+`trade_offer` and `trade_want` are the manual settings, `null` when there is none. `offer` and `want` are the result.
 
 ## Proposals
 
-The API shows the trade proposals you sent and received with [`tradeProposals.list()`](/resources/trade-proposals/), and inside your [conversations](/resources/conversations/#trade-proposals). [`tradeProposals.create()`](/resources/trade-proposals/#making-a-proposal) makes one, once sending is opened on the account. Confirming or cancelling it is done on the site.
+The proposals sent and received are read with [`tradeProposals.list()`](/resources/trade-proposals/), and also appear in your [conversations](/resources/conversations/#trade-proposals). [`tradeProposals.create()`](/resources/trade-proposals/#making-a-proposal) sends one, when sending is opened on the account. Confirming or cancelling them is done on the site.
 
 ## Limits and errors
 
 - `trade_offer` goes from 0 to the quantity you own. Beyond, the API answers `BAD_REQUEST`.
 - `trade_want` starts at 0. Keep it within what a quest can need: the API does not refuse a large value.
 - `NOT_FOUND` for a quest that is not yours.
-- An empty override, with neither field, is refused before being sent.
+- An empty manual setting, with neither field, is refused before being sent.
 
 ## Reference
 
@@ -151,14 +142,6 @@ A `TradeMatch`:
 | `quest` | `slug`, `character_name`, `parallel_quests` of their quest |
 | `matches.they_have_you_want` | What they can give you |
 | `matches.you_have_they_want` | What you can give them |
-| `match_score` | How many different monsters you can give, plus how many you can receive. The order is not this sum: balance comes first |
+| `match_score` | The number of different monsters you can give, plus those you can receive. The ranking favours balance, not this sum |
 
 Each monster of a match has `id`, `name`, `available`, `needed` and `covers_need`.
-
-## See also
-
-- [Your quests](/resources/quests/)
-- [Other players](/resources/users/)
-- [Trade proposals](/resources/trade-proposals/)
-- [Conversations](/resources/conversations/)
-- [A trade finder](/recipes/trade-finder/)

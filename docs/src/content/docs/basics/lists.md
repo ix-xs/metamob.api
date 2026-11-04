@@ -1,9 +1,11 @@
 ---
 title: Listes
-description: "Chaque méthode paginée renvoie une requête que vous pouvez attendre avec await pour une page, parcourir jusqu'au bout ou rassembler dans un tableau. Rien n'est envoyé tant que vous ne faites pas l'un des trois."
+description: "Une méthode paginée renvoie une requête : attendue, elle donne une page ; parcourue, chaque élément. Rien n'est envoyé avant."
 sidebar:
   order: 2
 ---
+
+Une méthode paginée renvoie une requête, qui se lit de trois façons :
 
 ```ts
 const request = metamob.monsters.list({ type: "archimonstre" });
@@ -52,16 +54,18 @@ const third = await metamob.monsters.list({ limit: 20, offset: 40 });
 
 ## Tout
 
-`for await` parcourt chaque élément. Les pages sont récupérées quand la boucle y arrive, donc quitter la boucle plus tôt arrête les requêtes.
+`for await` parcourt chaque élément. Une page n'est demandée que quand la boucle y arrive : sortir de la boucle arrête les requêtes.
 
 ```ts
-for await (const monster of metamob.quests.monsters(slug, { status: "needed" })) {
+const needed = metamob.quests.monsters(slug, { status: "needed" });
+
+for await (const monster of needed) {
   if (monster.step > 20) break; // plus rien n'est récupéré
   console.log(monster.name.fr);
 }
 ```
 
-Quand vous ne donnez pas de `limit`, un parcours utilise la plus grande page que le point d'accès accepte : 200 pour les monstres et les quêtes, 50 pour les utilisateurs, les conversations et les correspondances. C'est le plus petit nombre de requêtes pour les mêmes données, et la limite de requêtes compte les requêtes.
+Quand vous ne donnez pas de `limit`, un parcours utilise la plus grande page que le point d'accès accepte : 200 pour les monstres et les quêtes, 50 pour les utilisateurs, les conversations et les correspondances. Cela fait moins de requêtes pour les mêmes données.
 
 ## Tableaux
 
@@ -71,11 +75,11 @@ const first100 = await metamob.users.search("ix-").take(100);
 const capped = await metamob.quests.matches(slug).all({ limit: 30 });
 ```
 
-`all()` sans limite récupère toutes les pages : sur une recherche, donnez-en une.
+Sans limite, `all()` récupère toutes les pages : sur une recherche, donnez-en une.
 
 ## Le premier élément, ou le nombre
 
-Les deux envoient une seule requête pour un seul élément.
+Chacun n'envoie qu'une requête, d'un seul élément.
 
 ```ts
 const best = await metamob.quests.matches(slug).first(); // undefined quand il n'y en a aucune
@@ -86,7 +90,7 @@ const archmonsters = await metamob.monsters.list({ type: "archimonstre" }).count
 
 ## Page par page
 
-`pages()` produit des pages entières, pour les cas où la page elle-même compte : une barre de progression, une insertion par lots.
+`pages()` donne les pages entières, pour quand la page compte : une barre de progression, une insertion par lots.
 
 ```ts
 for await (const page of metamob.monsters.list().pages()) {
@@ -111,7 +115,7 @@ mine.slug; // le slug de la quête
 
 ## Les messages et les propositions utilisent un curseur
 
-Les messages d'une conversation et les propositions d'échange ne sont pas numérotés : l'API les pagine du plus récent vers le plus ancien, avec un curseur qu'elle fournit page après page. Les mêmes méthodes fonctionnent, et `total` et `count()` valent `undefined`.
+Les messages d'une conversation et les propositions d'échange ne sont pas numérotés : l'API les pagine du plus récent vers le plus ancien, avec un curseur qu'elle fournit page après page. Les mêmes méthodes s'appliquent, mais `total` et `count()` valent `undefined`.
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });
@@ -167,10 +171,3 @@ Les méthodes qui renvoient une requête de liste :
 | `conversations.list` | 50 |
 | `conversations.messages` | 50, par curseur |
 | `tradeProposals.list` | 50, par curseur |
-
-## Voir aussi
-
-- [La limite de requêtes](/basics/rate-limit/)
-- [Vos quêtes](/resources/quests/)
-- [Conversations](/resources/conversations/)
-- [Toutes les méthodes](/reference/methods/)

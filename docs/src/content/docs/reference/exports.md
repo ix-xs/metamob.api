@@ -1,14 +1,14 @@
 ---
 title: Tous les exports
-description: "Tout ce que le paquet exporte, valeurs et types, avec une ligne sur chacun et la page qui l'explique. Il y a un seul point d'entrée."
+description: "Tout ce que le paquet exporte, valeurs et types."
 ---
+
+Le paquet a un seul point d'entrée, `@ix-xs/metamob.api`, pour les modules ES comme pour CommonJS. Les types en sont exportés aussi :
 
 ```ts
 import { Metamob, data, urls, isMetamobError } from "@ix-xs/metamob.api";
 import type { Monster, OwnQuest, MonsterLike } from "@ix-xs/metamob.api";
 ```
-
-Le paquet a un seul point d'entrée, `@ix-xs/metamob.api`, pour les modules ES comme pour CommonJS. Tous les types en sont exportés.
 
 ## Valeurs
 
@@ -32,7 +32,7 @@ Le paquet a un seul point d'entrée, `@ix-xs/metamob.api`, pour les modules ES c
 
 ## urls
 
-Construit des adresses à partir de ce que renvoie l'API. Aucune requête n'est faite.
+Construit des adresses sur metamob.fr à partir de ce que renvoie l'API, sans requête :
 
 ```ts
 const monster = await metamob.monsters.get("Tofu Maléfique");
@@ -45,7 +45,7 @@ urls.site; // "https://www.metamob.fr"
 
 ## normalizeName
 
-La comparaison appliquée aux noms : accents retirés, casse ignorée, apostrophes et tirets unifiés, espaces réduits. Utilisez-la pour comparer ce qu'un utilisateur a tapé avec un nom, de la même façon que la bibliothèque.
+La comparaison appliquée aux noms : accents retirés, casse ignorée, apostrophes et tirets unifiés, espaces réduits. Elle sert à comparer un texte tapé à un nom, comme le fait la bibliothèque :
 
 ```ts
 normalizeName("Tofu  MALÉFIQUE"); // "tofu malefique"
@@ -54,10 +54,10 @@ normalizeName(monsters[0]?.name.fr ?? "") === normalizeName("tofu malefique");
 
 ## METHODS
 
-Une description de chaque point d'accès, rangée sous le nom de sa méthode. C'est par rapport à elle que les clés de `cache.methods` sont vérifiées.
+La description de chaque point d'accès, sous le nom de sa méthode. Les clés de `cache.methods` sont vérifiées par rapport à elle.
 
 ```ts
-METHODS["quests.setMonster"]; // { id, verb: "PATCH", path: "/quests/{slug}/monsters/{monsterId}", scope: "account" }
+METHODS["quests.setMonster"].path; // "/quests/{slug}/monsters/{monsterId}"
 Object.keys(METHODS).length; // 40
 ```
 
@@ -117,7 +117,7 @@ Les classes des ressources sont aussi exportées comme types, pour annoter un pa
 
 ## Les noms comme types
 
-Les noms connus au moment où le paquet a été construit sont des types littéraux. C'est grâce à eux que votre éditeur complète `"Tofu Maléfique"`.
+Les noms connus à la publication du paquet sont aussi des types littéraux : c'est ce qui permet à votre éditeur de compléter `"Tofu Maléfique"`.
 
 | Type | Valeurs |
 | --- | --- |
@@ -136,10 +136,3 @@ function isArchmonsterName(name: MonsterNameFr) {
 
 isArchmonsterName("Bouflet le Puéril");
 ```
-
-## Voir aussi
-
-- [Toutes les méthodes](/reference/methods/)
-- [Codes d'erreur](/reference/errors/)
-- [Configuration](/basics/configuration/)
-- [Environnements d'exécution](/reference/runtimes/)

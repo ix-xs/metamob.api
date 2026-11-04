@@ -1,22 +1,17 @@
 ---
 title: Datos de referencia
-description: Las listas a las que remite todo lo demás. Versiones del juego, servidores, tipos de monstruos, tipos de misión y las plantillas de misión, que dicen qué monstruos pide una misión en cada etapa.
+description: "Versiones del juego, servidores, tipos de monstruo, tipos de misión y plantillas de misión."
 sidebar:
   order: 10
 ---
 
-```ts
-const servers = await metamob.servers.list();
-const touch = servers.filter((server) => server.game_version?.name === "Dofus Touch");
-
-console.log(touch.map((server) => server.name));
-```
+Estas listas son aquellas a las que remite el resto de la API.
 
 ## Pregunta primero al paquete
 
-Todo esto viene con el paquete y [`data`](/basics/embedded-data/) lo lee desde la memoria: `data.servers`, `data.server("Draconiros")`, `data.questTemplates`, etc. Las llamadas de más abajo preguntan a la API, lo que solo merece una solicitud cuando necesitas lo que dice en este momento.
+Todos estos datos también vienen incluidos en el paquete, y [`data`](/basics/embedded-data/) los lee sin solicitud: `data.servers`, `data.server("Draconiros")`, `data.questTemplates`, etc. Las llamadas de abajo consultan la API, para cuando quieras los datos del día.
 
-Sus respuestas se guardan en [caché](/basics/caching/) durante 10 minutos por defecto y se comparten entre las claves.
+Sus respuestas se [guardan en caché](/basics/caching/) 10 minutos por defecto, para todas las claves.
 
 ## Versiones del juego
 
@@ -30,18 +25,19 @@ retro.id;
 
 ## Servidores
 
-Cada servidor pertenece a una versión del juego y a una comunidad.
+Cada servidor pertenece a una versión del juego y a una comunidad:
 
 ```ts
+const servers = await metamob.servers.list();
 const server = await metamob.servers.get("Draconiros");
 
 server.community; // "World" o "France"
 server.game_version?.name; // "Dofus (Unity)"
 ```
 
-## Tipos de monstruos
+## Tipos de monstruo
 
-Hay tres: monstruo, jefe y archimonstruo, con los identificadores 1, 2 y 3. Sus nombres en la API son lo que acepta cada filtro `type` de la biblioteca.
+Hay tres: monstruo, jefe y archimonstruo, con los identificadores 1, 2 y 3. Cada filtro `type` acepta sus nombres:
 
 ```ts
 const kinds = await metamob.monsterTypes.list();
@@ -52,7 +48,7 @@ arch.name; // { fr: "archimonstre", en: "archmonster", es: "archimonstruo" }
 
 ## Tipos de misión
 
-Metamob sigue dos misiones: la del Dofus Ocre, slug `ocre`, y el Dokille, slug `dokille`.
+Metamob sigue dos misiones: la del Dofus Ocre, con el slug `ocre`, y la del Dokille, con el slug `dokille`:
 
 ```ts
 const kinds = await metamob.questTypes.list();
@@ -64,11 +60,11 @@ urls.questTypeImage(ochre); // su imagen en metamob.fr
 
 ## Plantillas de misión
 
-Una misión no es igual en todas las versiones del juego: la misión del Dofus Ocre no pide los mismos monstruos en Dofus (Unity) que en Dofus Touch. Una plantilla de misión es un tipo de misión en una versión del juego.
+Una misión no es la misma en todas las versiones del juego: la del Dofus Ocre no pide los mismos monstruos en Dofus (Unity) y en Dofus Touch. Una plantilla de misión es un tipo de misión en una versión del juego.
 
 ```ts
 for (const template of await metamob.questTemplates.list()) {
-  console.log(template.id, template.quest_type?.name.fr, template.game_version?.name);
+  console.log(template.quest_type?.name.fr, template.game_version?.name);
   console.log(`${template.monster_count} monsters in ${template.step_count} steps`);
 }
 ```
@@ -82,34 +78,33 @@ const template = await metamob.questTemplates.get(ochreOnTouch);
 template.step_count;
 ```
 
-La API no tiene un endpoint para una plantilla sin sus monstruos: `get()` la saca de la lista.
+La API no tiene un punto de acceso para una plantilla sin sus monstruos: `get()` la busca en la lista.
 
 ## Los monstruos de una plantilla
 
-`questTemplates.monsters()` es una [lista](/basics/lists/) de lo que pide la misión, cada monstruo con su etapa. 200 por página como máximo.
+`questTemplates.monsters()` es una [lista](/basics/lists/) de lo que pide la misión, cada monstruo con su etapa, 200 por página como máximo:
 
 ```ts
 const ochreOnTouch = { questType: "ocre", gameVersion: "Dofus Touch" } as const;
 
 // Una etapa.
 const step4 = await metamob.questTemplates.monsters(ochreOnTouch, { step: 4 }).all();
-console.log(step4.map((monster) => monster.name.fr));
 
-// La misión entera, en orden.
+// Toda la misión, en orden.
 for await (const monster of metamob.questTemplates.monsters(ochreOnTouch)) {
   console.log(monster.step, monster.name.fr);
 }
 ```
 
-Cada página lleva también la plantilla a la que pertenecen los monstruos, en `page.template`.
+Cada página también contiene la plantilla a la que pertenecen los monstruos, en `page.template`.
 
-Las misiones de los jugadores apuntan a su plantilla: `quest.quest_template` contiene su identificador, su tipo de misión y su número de monstruos y de etapas.
+Las misiones de los jugadores apuntan a su plantilla: `quest.quest_template` contiene su identificador, su tipo de misión y sus números de monstruos y de etapas.
 
 ## Límites y errores
 
 - `NOT_FOUND` para un identificador que no existe.
-- `UNKNOWN_NAME`, con sugerencias, para un nombre que ni el paquete ni la API conocen.
-- Si no hay plantilla para un tipo de misión en una versión del juego: `UNKNOWN_NAME` también. El Dokille no existe en todas las versiones.
+- `UNKNOWN_NAME`, con sugerencias, para un nombre que no conocen ni el paquete ni la API.
+- Ninguna plantilla para un tipo de misión en una versión del juego: también `UNKNOWN_NAME`. El Dokille no existe en todas las versiones.
 
 ## Referencia
 
@@ -130,10 +125,3 @@ Las misiones de los jugadores apuntan a su plantilla: `quest.quest_template` con
 | `QuestType` | `id`, `slug`, `name` en tres idiomas, `image` |
 | `QuestTemplate` | `id`, `quest_type`, `game_version`, `monster_count`, `step_count` |
 | `TemplateMonster` | un `Monster` con su `step` |
-
-## Ver también
-
-- [Los datos del paquete](/basics/embedded-data/)
-- [Monstruos](/resources/monsters/)
-- [Tus misiones](/resources/quests/)
-- [Caché](/basics/caching/)

@@ -1,9 +1,11 @@
 ---
 title: Lists
-description: Every paginated method returns a request you can await for one page, iterate to the end, or collect into an array. Nothing is sent until you do one of the three.
+description: "A paginated method returns a request: awaited, it gives one page; iterated, every item. Nothing is sent before that."
 sidebar:
   order: 2
 ---
+
+A paginated method returns a request, which can be read in three ways:
 
 ```ts
 const request = metamob.monsters.list({ type: "archimonstre" });
@@ -22,7 +24,7 @@ const everything = await request.all();
 
 ## One page
 
-Awaiting a list gives its first page.
+Awaiting a list with `await` gives its first page.
 
 ```ts
 const page = await metamob.monsters.list({ type: "boss", limit: 20 });
@@ -31,10 +33,10 @@ page.items; // the monsters
 page.total; // how many there are with these filters
 page.limit; // 20
 page.offset; // 0
-page.hasNext; // whether there is more
+page.hasNext; // whether there are more
 ```
 
-A page is iterable, and `next()` fetches the following one. It resolves to `null` after the last.
+A page is iterable, and `next()` fetches the following one. It returns `null` after the last.
 
 ```ts
 const page = await metamob.monsters.list({ type: "boss", limit: 20 });
@@ -52,16 +54,18 @@ const third = await metamob.monsters.list({ limit: 20, offset: 40 });
 
 ## Everything
 
-`for await` walks every item. Pages are fetched as the loop reaches them, so leaving the loop early stops the requests.
+`for await` walks every item. A page is only requested when the loop reaches it: leaving the loop stops the requests.
 
 ```ts
-for await (const monster of metamob.quests.monsters(slug, { status: "needed" })) {
+const needed = metamob.quests.monsters(slug, { status: "needed" });
+
+for await (const monster of needed) {
   if (monster.step > 20) break; // nothing more is fetched
   console.log(monster.name.fr);
 }
 ```
 
-When you give no `limit`, a walk uses the largest page the endpoint accepts: 200 for monsters and quests, 50 for users, conversations and matches. That is the fewest requests for the same data, and the rate limit counts requests.
+When you give no `limit`, a walk uses the largest page the endpoint accepts: 200 for monsters and quests, 50 for users, conversations and matches. That makes fewer requests for the same data.
 
 ## Arrays
 
@@ -71,11 +75,11 @@ const first100 = await metamob.users.search("ix-").take(100);
 const capped = await metamob.quests.matches(slug).all({ limit: 30 });
 ```
 
-`all()` without a limit fetches every page: on a search, give one.
+Without a limit, `all()` fetches every page: on a search, give one.
 
 ## The first item, or the count
 
-Both send a single request for a single item.
+Each sends only one request, for a single item.
 
 ```ts
 const best = await metamob.quests.matches(slug).first(); // undefined when there is none
@@ -86,7 +90,7 @@ const archmonsters = await metamob.monsters.list({ type: "archimonstre" }).count
 
 ## Page by page
 
-`pages()` yields whole pages, for when the page itself matters: a progress bar, a batch insert.
+`pages()` gives whole pages, for when the page matters: a progress bar, a batch insert.
 
 ```ts
 for await (const page of metamob.monsters.list().pages()) {
@@ -111,7 +115,7 @@ mine.slug; // the slug of the quest
 
 ## Messages and proposals use a cursor
 
-The messages of a conversation and the trade proposals are not numbered: the API pages them from the most recent backwards, with a cursor it hands out page after page. The same methods work, and `total` and `count()` are `undefined`.
+The messages of a conversation and the trade proposals are not numbered: the API pages them from the most recent to the oldest, with a cursor it provides page after page. The same methods apply, but `total` and `count()` are `undefined`.
 
 ```ts
 const page = await metamob.conversations.messages(username, { limit: 20 });
@@ -126,7 +130,7 @@ for await (const item of metamob.conversations.messages(username)) {
 
 ## Lists that are not paginated
 
-Some endpoints answer everything at once and return a plain array: `quests.list()`, `quests.zones()`, `users.quests()`, `zones.list()`, `zones.subzones()`, `zones.monsters()`, `kralove.list()` and the reference lists (`servers.list()` and the like).
+Some endpoints answer everything at once and return a plain array: `quests.list()`, `quests.zones()`, `users.quests()`, `zones.list()`, `zones.subzones()`, `zones.monsters()`, `kralove.list()` and the reference lists (`servers.list()` and the others of the same kind).
 
 ## Reference
 
@@ -135,7 +139,7 @@ What a list request offers:
 | Member | Result | Requests |
 | --- | --- | --- |
 | `await request` | `Page` | 1 |
-| `for await (const item of request)` | each item | 1 per page, as reached |
+| `for await (const item of request)` | each item | 1 per page, when the loop reaches it |
 | `request.all({ limit })` | `T[]` | 1 per page |
 | `request.take(n)` | `T[]` of `n` items at most | 1 per page |
 | `request.first()` | `T \| undefined` | 1 |
@@ -167,10 +171,3 @@ The methods that return a list request:
 | `conversations.list` | 50 |
 | `conversations.messages` | 50, by cursor |
 | `tradeProposals.list` | 50, by cursor |
-
-## See also
-
-- [The rate limit](/basics/rate-limit/)
-- [Your quests](/resources/quests/)
-- [Conversations](/resources/conversations/)
-- [Every method](/reference/methods/)

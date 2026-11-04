@@ -1,27 +1,22 @@
 ---
 title: Propositions d'échange
-description: Suivez les propositions d'échange que vous avez envoyées et reçues sur toutes vos quêtes, filtrez-les par sens, par état, par quête ou par date, voyez ce que vous possédez de chaque monstre avant de répondre, et proposez un échange.
+description: "Lire les propositions d'échange envoyées et reçues, et en envoyer une."
 sidebar:
   order: 8
 ---
 
-```ts
-const waiting = await metamob.tradeProposals.list({ direction: "received", status: "pending" }).all();
-
-for (const proposal of waiting) {
-  console.log(`${proposal.sender} proposes a trade on ${proposal.server?.name}`);
-}
-```
-
-Une proposition d'échange se fait depuis une quête, à destination d'un autre joueur. L'API les lit, et en crée de nouvelles quand l'envoi est ouvert sur le compte. Les confirmer ou les annuler se fait sur le site. Chacune apparaît aussi dans la [conversation](/resources/conversations/#trade-proposals) avec ce joueur.
+Une proposition d'échange part d'une de vos quêtes, vers un autre joueur. L'API permet de les lire, et d'en envoyer quand l'envoi est ouvert sur le compte. Les confirmer ou les annuler se fait sur le site. Chacune apparaît aussi dans la [conversation](/resources/conversations/#trade-proposals) avec ce joueur.
 
 ## Lister les propositions
 
-`tradeProposals.list()` donne les propositions du compte, la plus récente en premier. C'est une [liste](/basics/lists/), de 50 par page au plus, paginée avec un curseur comme les messages.
+`tradeProposals.list()` donne les propositions du compte, la plus récente en premier. C'est une [liste](/basics/lists/) de 50 par page au plus, paginée avec un curseur comme les messages :
 
 ```ts
+const pending = { direction: "received", status: "pending" } as const;
+
+const waiting = await metamob.tradeProposals.list(pending).all();
 const sent = await metamob.tradeProposals.list({ direction: "sent" }).take(20);
-const onQuest = await metamob.tradeProposals.list({ quest: slug, status: "completed" }).all();
+const done = await metamob.tradeProposals.list({ quest: slug, status: "completed" });
 ```
 
 | Filtre | Valeurs |
@@ -43,7 +38,10 @@ const me = await metamob.me();
 for await (const proposal of metamob.tradeProposals.list({ status: "pending" })) {
   const mine = proposal.recipient === me.username;
   const incoming = mine ? proposal.monsters_given : proposal.monsters_received;
-  console.log(proposal.id, incoming.map((monster) => `${monster.quantity} x ${data.monster(monster.monster_id)?.name.fr}`));
+
+  for (const { monster_id, quantity } of incoming) {
+    console.log(proposal.id, quantity, data.monster(monster_id)?.name.fr);
+  }
 }
 ```
 
@@ -58,13 +56,13 @@ Une proposition désigne ses monstres par leur identifiant : [`data.monster()`](
 
 ## Lire une proposition
 
-`tradeProposals.get()` prend un identifiant, ou une proposition tirée d'une liste. Quand une proposition est lue seule, chaque monstre est accompagné de `owned` : le nombre d'exemplaires que vous en possédez maintenant, dans votre quête concernée par la proposition.
+`tradeProposals.get()` prend un identifiant, ou une proposition tirée d'une liste. Lue seule, chaque monstre de la proposition porte `owned` : le nombre d'exemplaires que vous en possédez maintenant dans votre quête concernée.
 
 ```ts
 const proposal = await metamob.tradeProposals.get(57);
 
-for (const monster of proposal.monsters_given) {
-  console.log(data.monster(monster.monster_id)?.name.fr, `${monster.owned ?? 0} owned, ${monster.quantity} in the proposal`);
+for (const { monster_id, owned, quantity } of proposal.monsters_given) {
+  console.log(data.monster(monster_id)?.name.fr, `${owned ?? 0} owned, ${quantity} more`);
 }
 ```
 
@@ -72,7 +70,7 @@ for (const monster of proposal.monsters_given) {
 
 ## Faire une proposition
 
-`tradeProposals.create()` propose un échange depuis l'une de vos quêtes. Elle prend les mêmes noms que ceux que l'API renvoie en lecture : `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` et `monsters_received`. Les monstres s'écrivent sous les formes qu'accepte [`quests.setMonsters()`](/resources/quests/#recording-many-monsters), désignés par leur identifiant ou par leur nom dans n'importe quelle langue.
+`tradeProposals.create()` envoie une proposition depuis l'une de vos quêtes. Ses champs portent les mêmes noms qu'en lecture : `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` et `monsters_received`. Les monstres s'écrivent comme pour [`quests.setMonsters()`](/resources/quests/#recording-many-monsters), par identifiant ou par nom :
 
 ```ts
 // Un partenaire et sa quête, tels que matches() les trouve.
@@ -90,23 +88,28 @@ if (match) {
 }
 ```
 
-Les trois sont obligatoires : `recipient`, votre `sender_quest`, et `recipient_quest`, le slug de la quête de l'autre joueur, tel que `quests.matches()` le donne. Les deux quêtes doivent être du même type et sur le même serveur. Une proposition demande au moins un monstre, d'un côté ou de l'autre, et en accepte 200 au plus de chaque côté. Ce que trouve `quests.matches()` est un bon point de départ : chaque correspondance nomme le joueur et ce qui peut s'échanger dans les deux sens.
+`recipient`, `sender_quest` et `recipient_quest` sont obligatoires. `recipient_quest` est le slug de la quête de l'autre joueur, que `quests.matches()` donne pour chaque partenaire. Les deux quêtes doivent être du même type et sur le même serveur. Il faut au moins un monstre, d'un côté ou de l'autre, et 200 au plus de chaque côté.
 
-L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande, et l'API répond `FORBIDDEN` sans cela. Les règles sont celles du site : `FORBIDDEN` quand l'un des deux joueurs a bloqué l'autre, `RATE_LIMITED` au-delà de ses limites anti-spam.
+:::note
+L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande, et l'API répond `FORBIDDEN` sans cela. Les règles sont celles du site : `FORBIDDEN` quand l'un des deux joueurs a bloqué l'autre, `RATE_LIMITED` au-delà des limites anti-spam.
+:::
 
-Une proposition n'est jamais réessayée, quel que soit l'échec : envoyée deux fois, elle existerait en double. Après un délai dépassé ou une coupure réseau, consultez `list({ direction: "sent" })` avant de proposer à nouveau.
+Une proposition n'est jamais retentée, quel que soit l'échec : envoyée deux fois, elle existerait en double. Après un délai dépassé ou une coupure réseau, consultez `list({ direction: "sent" })` avant de la renvoyer.
 
 ## Surveiller les nouvelles propositions
 
-En interrogeant la liste toutes les quelques minutes avec `since`, vous savez ce qui est arrivé entre-temps, par exemple pour un bot qui vous prévient.
+Interrogée régulièrement avec `since`, la liste donne ce qui est arrivé depuis la dernière fois, par exemple pour un bot qui vous prévient :
 
 ```ts
 let lastCheck = new Date();
 
 setInterval(async () => {
-  const now = new Date();
-  const fresh = await metamob.tradeProposals.list({ direction: "received", since: lastCheck }).all();
-  lastCheck = now;
+  const since = lastCheck;
+  lastCheck = new Date();
+
+  const fresh = await metamob.tradeProposals
+    .list({ direction: "received", since })
+    .all();
   for (const proposal of fresh) console.log(`New proposal from ${proposal.sender}`);
 }, 5 * 60_000);
 ```
@@ -118,7 +121,6 @@ setInterval(async () => {
 - Confirmer ou annuler une proposition se fait sur le site.
 - `create()` refuse avant l'envoi une proposition sans aucun monstre, une quantité hors de 1 à 99, un monstre nommé deux fois du même côté, ou plus de 200 monstres d'un même côté.
 - L'API répond `BAD_REQUEST` pour un monstre qui n'est pas dans la quête ou pour deux quêtes de types ou de serveurs différents, et `NOT_FOUND` pour une quête qui n'existe pas ou, pour `sender_quest`, qui n'est pas la vôtre.
-- L'API ne vérifie pas que vous possédez ce que vous donnez.
 - `NOT_FOUND` pour une proposition qui n'existe pas ou qui n'est pas la vôtre.
 - `BAD_REQUEST` pour une `quest` qui n'est pas l'une de vos quêtes, et pour un `direction` ou un `status` que l'API ne connaît pas.
 - Un identifiant, une quête ou une date invalide est refusé avant d'être envoyé.
@@ -150,10 +152,3 @@ Une `TradeProposal` :
 | `read_at` | `string \| null`, `null` tant que le destinataire ne l'a pas lue |
 
 Une `TradeProposalDetail` est identique, avec `owned: number | null` sur chaque monstre.
-
-## Voir aussi
-
-- [Conversations](/resources/conversations/)
-- [Échanges](/resources/trading/)
-- [Listes](/basics/lists/)
-- [Les données du paquet](/basics/embedded-data/)

@@ -1,21 +1,15 @@
 ---
 title: Kralamoure events
-description: Opening the lair of the Giant Kralove takes a crowd, so players plan it on Metamob. Read the coming events of a server, who signed up and what was said.
+description: "Read the Kralamoure events of a server, their participants and their messages."
 sidebar:
   order: 9
 ---
 
-```ts
-const events = await metamob.kralove.list({ server: "Draconiros" });
-
-for (const event of events) {
-  console.log(event.event_datetime, `${event.character_count} characters signed up`);
-}
-```
+Opening the lair of the Giant Kralove takes a lot of people: players organise it on Metamob, around events.
 
 ## Listing events
 
-Without filters, `kralove.list()` returns the events from today on, on every server. Past events are left out unless you ask from an earlier day.
+Without filters, `kralove.list()` returns the events from today on, on every server. `from` starts from another day:
 
 ```ts
 const everywhere = await metamob.kralove.list();
@@ -32,13 +26,13 @@ A server is a name, an id or an object, see [Names and ids](/basics/names-and-id
 for (const event of await metamob.kralove.list({ server: "Draconiros" })) {
   console.log(event.description);
   console.log(`${event.participants_count} players, ${event.character_count} characters`);
-  console.log(`${event.messages_count} messages, organised by ${event.creator ?? "a deleted account"}`);
+  console.log(`organised by ${event.creator ?? "a deleted account"}`);
 }
 ```
 
 ## Reading one event
 
-`kralove.get()` adds the participants and the messages. It takes the id of the event, or the event itself.
+`kralove.get()` adds the participants and the messages. It takes the id of the event, or the event itself:
 
 ```ts
 const [next] = await metamob.kralove.list({ server: "Draconiros" });
@@ -46,20 +40,20 @@ const [next] = await metamob.kralove.list({ server: "Draconiros" });
 if (next) {
   const event = await metamob.kralove.get(next);
 
-  for (const participant of event.participants) {
-    console.log(participant.username ?? "a deleted account", `x${participant.character_count}`);
+  for (const { username, character_count } of event.participants) {
+    console.log(username ?? "a deleted account", `x${character_count}`);
   }
-  for (const message of event.messages) {
-    console.log(`${message.username ?? "a deleted account"}: ${message.content}`);
+  for (const { username, content } of event.messages) {
+    console.log(`${username ?? "a deleted account"}: ${content}`);
   }
 }
 ```
 
 ## Names that are missing
 
-`creator`, and the `username` of a participant or of a message, can be `null`. It happens when the account was deleted for good, or when you and that player blocked each other. Handle it wherever you print a name.
+`creator`, and the `username` of a participant or of a message, can be `null`: when the account was deleted, or when one of you blocked the other. Plan for it wherever you show a name.
 
-Because blocking changes the answer from one key to another, events are not cached by default.
+Because a block changes the answer from one key to another, events are not cached by default.
 
 ## Announcing the next opening
 
@@ -67,18 +61,18 @@ Because blocking changes the answer from one key to another, events are not cach
 const [next] = await metamob.kralove.list({ server: "Draconiros" });
 
 if (next) {
-  const when = new Date(next.event_datetime);
-  await notify(`Kralamoure on ${when.toLocaleString("fr-FR")}: ${next.character_count} characters so far.`);
+  const when = new Date(next.event_datetime).toLocaleString("fr-FR");
+  await notify(`Kralamoure on ${when}: ${next.character_count} characters so far.`);
 }
 ```
 
-Checking once every few minutes is plenty. To check more often without more requests, cache the list: `cache: { methods: { "kralove.list": "5m" } }`.
+A check every few minutes is enough. To read the list more often without more requests, cache it: `cache: { methods: { "kralove.list": "5m" } }`.
 
 ## Limits and errors
 
 - The API reads events. Creating one, signing up and posting a message are done on the site.
 - `NOT_FOUND` for an event that does not exist.
-- `from` in another format than `YYYY-MM-DD` throws `INVALID_ARGUMENT` before a request is spent.
+- `from` in another format than `YYYY-MM-DD` throws `INVALID_ARGUMENT` before sending.
 
 ## Reference
 
@@ -96,13 +90,6 @@ An event:
 | `description` | `string` | What the organiser wrote |
 | `creator` | `string \| null` | The organiser |
 | `server` | `Server \| null` | Where |
-| `participants_count`, `character_count`, `messages_count` | `number` | Only from `list()` |
-| `participants` | `{ username, character_count }[]` | Only from `get()` |
-| `messages` | `{ username, content, created_at }[]` | Only from `get()` |
-
-## See also
-
-- [Reference data](/resources/reference-data/)
-- [Caching](/basics/caching/)
-- [Names and ids](/basics/names-and-ids/)
-- [Other players](/resources/users/)
+| `participants_count`, `character_count`, `messages_count` | `number` | Only with `list()` |
+| `participants` | `{ username, character_count }[]` | Only with `get()` |
+| `messages` | `{ username, content, created_at }[]` | Only with `get()` |

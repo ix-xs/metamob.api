@@ -1,9 +1,11 @@
 ---
 title: Erreurs
-description: "Un appel renvoie les données ou lève une erreur. Chaque erreur a un code typé, et celles qui viennent de l'API portent aussi le statut et le message qu'elle a envoyés. Cette page montre comment les distinguer et ce qui est retenté pour vous."
+description: "Un appel renvoie les données ou lève une erreur. Les sortes d'erreurs, leurs codes, et ce qui est retenté."
 sidebar:
   order: 3
 ---
+
+Un appel renvoie les données demandées, ou lève une erreur quand il échoue. Chaque erreur porte un `code` à tester :
 
 ```ts
 try {
@@ -44,7 +46,7 @@ try {
 }
 ```
 
-Une erreur de l'API a des raccourcis pour les trois que vous testez le plus :
+Une erreur de l'API a aussi des raccourcis pour les cas les plus courants :
 
 ```ts
 try {
@@ -66,7 +68,7 @@ L'API répond 404 pour ce qui n'existe pas et pour ce qui n'est pas à vous. `qu
 
 ## Ce qui est retenté
 
-Avant qu'une erreur vous parvienne, la bibliothèque a déjà réessayé quand réessayer peut aider.
+Certains échecs sont passagers. Dans ces cas, la bibliothèque renvoie la requête avant de lever l'erreur :
 
 | Échec | Retenté |
 | --- | --- |
@@ -79,7 +81,9 @@ Avant qu'une erreur vous parvienne, la bibliothèque a déjà réessayé quand r
 
 Par défaut, il y a jusqu'à 3 tentatives supplémentaires. Le délai commence à 500 ms et double à chaque fois, jusqu'à 60 secondes. Quand l'API envoie `Retry-After`, c'est cette attente qui est utilisée. Un `Retry-After` plus long que `maxDelay` n'est pas attendu : l'erreur est levée aussitôt, avec son `retryAfter` en secondes.
 
-Les écritures qui fixent une valeur, sur une quête ou une conversation, donnent le même résultat envoyées deux fois : elles sont réessayées elles aussi. L'envoi d'un message ou d'une proposition d'échange n'est jamais réessayé, quel que soit l'échec, puisqu'il arriverait deux fois. Après un délai dépassé dans ce cas, vérifiez avant de renvoyer.
+Les écritures qui fixent une valeur, sur une quête ou une conversation, donnent le même résultat envoyées deux fois : elles sont retentées elles aussi. L'envoi d'un message ou d'une proposition d'échange ne l'est jamais, puisqu'il arriverait deux fois. Après un délai dépassé, vérifiez qu'il n'est pas parti avant de le renvoyer.
+
+Le nombre de tentatives se règle pour le client ou pour un appel :
 
 ```ts
 // Pour tout le client.
@@ -116,7 +120,7 @@ try {
 
 ## Les arguments sont vérifiés d'abord
 
-Ce dont on peut savoir que c'est faux sans interroger l'API est refusé localement, avec `INVALID_ARGUMENT` : un slug vide, une quantité négative, une recherche de moins de 3 caractères, une date au mauvais format, un message de plus de 1000 caractères, une proposition sans monstres. Aucune requête n'est dépensée.
+Un argument que l'API refuserait à coup sûr est refusé avant l'envoi, avec `INVALID_ARGUMENT` : un slug vide, une quantité négative, une recherche de moins de 3 caractères, une date au mauvais format, un message de plus de 1000 caractères, une proposition sans monstre.
 
 ## Référence
 
@@ -138,10 +142,3 @@ Ce dont on peut savoir que c'est faux sans interroger l'API est refusé localeme
 | `UNKNOWN_NAME` | Aucun monstre, zone ou serveur ne porte ce nom |
 
 [Codes d'erreur](/reference/errors/) liste les propriétés de chaque classe.
-
-## Voir aussi
-
-- [La limite de requêtes](/basics/rate-limit/)
-- [Noms et identifiants](/basics/names-and-ids/)
-- [Configuration](/basics/configuration/)
-- [Dépannage](/help/troubleshooting/)

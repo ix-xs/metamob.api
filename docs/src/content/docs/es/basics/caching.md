@@ -1,53 +1,45 @@
 ---
 title: Caché
-description: "Los monstruos, las zonas y los servidores solo cambian cuando cambia el juego, así que sus respuestas se guardan diez minutos. Todo lo ligado a una cuenta se pide cada vez, salvo que indiques otra cosa. Esta página muestra cómo ajustar ambas cosas."
+description: "Lo que se guarda en caché, durante cuánto tiempo, y cómo ajustarlo."
 sidebar:
   order: 5
 ---
 
-```ts
-const metamob = new Metamob({
-  cache: {
-    ttl: "1h", // datos de referencia
-    methods: { "users.get": "30s", "kralove.list": "1m" }, // y lo que tú elijas
-  },
-});
-```
-
 ## Lo que se guarda en caché por defecto
 
-Los datos de referencia: versiones del juego, servidores, tipos de monstruo, tipos de misión, plantillas de misión, monstruos, zonas y subzonas. Una respuesta se guarda 10 minutos, en memoria, y se comparte entre todas las claves: es la misma para todos.
+Solo los datos de referencia: versiones del juego, servidores, tipos de monstruo, tipos de misión, plantillas de misión, monstruos, zonas y subzonas. Solo cambian con el juego. Una respuesta se guarda 10 minutos en memoria, y la comparten todas las claves, ya que es la misma para todo el mundo.
 
-Nada más. Los perfiles, las misiones, las coincidencias, las conversaciones, las propuestas de intercambio y los eventos Kralamar se leen de la API en cada llamada, porque cambian cada vez que alguien juega.
+El resto (perfiles, misiones, coincidencias, conversaciones, propuestas, eventos Kralamar) se lee de la API en cada llamada.
 
-Dos lecturas idénticas enviadas en el mismo momento siempre comparten una sola solicitud, con caché o sin ella.
+Dos lecturas idénticas enviadas al mismo tiempo comparten siempre una sola solicitud, con o sin caché.
 
 ## Guardar más en caché
 
-`methods` da una frescura a cualquier método, por su nombre en [Todos los métodos](/reference/methods/).
+`ttl` cambia la duración de los datos de referencia, y `methods` da una duración a cualquier método, por su nombre tal como figura en [Todos los métodos](/reference/methods/):
 
 ```ts
 const metamob = new Metamob({
   cache: {
+    ttl: "1h",
     methods: {
-      "users.get": "1m", // una página de perfil con muchas visitas
-      "quests.matches": "5m", // las coincidencias no cambian de un segundo a otro
-      "monsters.get": "1d", // todavía más tiempo para los datos de referencia
-      "zones.list": false, // este, nunca en caché
+      "users.get": "1m",
+      "quests.matches": "5m",
+      "monsters.get": "1d",
+      "zones.list": false, // nunca en caché
     },
   },
 });
 ```
 
-Lo que depende de la cuenta se guarda aparte para cada clave: dos jugadores nunca ven las respuestas del otro. Las entradas de una clave se eliminan en cuanto esa clave modifica una misión o marca una conversación como leída, así que una lectura después de una escritura siempre es reciente.
+Lo que depende de la cuenta se guarda aparte para cada clave: un jugador nunca ve las respuestas de otro. Las entradas de una clave se olvidan en cuanto esa clave escribe algo, para que una lectura después de una escritura esté al día.
 
-## Para una llamada
+## Para una sola llamada
 
 ```ts
-// Sin caché para esta llamada.
+// Ignorar la caché en esta llamada.
 const fresh = await metamob.servers.list({ cache: false });
 
-// Guarda esta respuesta cinco minutos, diga lo que diga el cliente.
+// Guardar esta respuesta cinco minutos, diga lo que diga el cliente.
 const profile = await metamob.users.get(username, { cache: "5m" });
 ```
 
@@ -65,7 +57,7 @@ const metamob = new Metamob({ cache: false });
 
 ## Una caché que sobrevive al proceso
 
-El almacén por defecto vive en memoria y contiene 500 entradas. Las menos usadas recientemente salen primero. Un almacén es un `get` y un `set`, que pueden ser asíncronos, más un `delete` y un `clear` opcionales: conecta Redis, un archivo o el KV de una plataforma edge.
+Por defecto, la caché vive en memoria y guarda 500 entradas. Para compartirla entre varios procesos, dale un almacenamiento: un objeto con `get` y `set`, que pueden ser asíncronos, y opcionalmente `delete` y `clear`. Por ejemplo, con Redis:
 
 ```ts
 import type { CacheEntry, CacheStore } from "@ix-xs/metamob.api";
@@ -87,30 +79,23 @@ const store: CacheStore = {
 const metamob = new Metamob({ cache: { store } });
 ```
 
-Una clave del almacén nunca contiene una clave API: las entradas ligadas a una cuenta se guardan bajo un hash de ella. Un almacén que falla no hace fallar la llamada: la solicitud se envía como si no hubiera caché, y el fallo se emite como un evento `error`.
+Las claves del almacenamiento nunca contienen una clave API, solo una huella. Si el almacenamiento falla, la llamada sigue sin caché y el fallo se emite como evento `error`.
 
-## Caché o datos del paquete
+## Caché o datos incluidos
 
-Para los datos de referencia hay algo más rápido que una caché: [los datos del paquete](/basics/embedded-data/), que no necesitan ninguna solicitud. Usa la API cuando necesites lo que el paquete no contiene, como las zonas de un monstruo tal como la API las da hoy, o cuando el juego acaba de cambiar.
+Los datos de referencia también vienen incluidos en el paquete: [`data`](/basics/embedded-data/) los lee sin solicitud. Pasa por la API cuando quieras los datos del día, por ejemplo justo después de una actualización del juego.
 
 ## Duraciones
 
-Allí donde se espera una duración, escribe un número de milisegundos o una cadena con una unidad: `"500ms"`, `"30s"`, `"10m"`, `"1h"`, `"1d"`.
+En cualquier sitio donde se espera una duración, escribe un número de milisegundos o una cadena con una unidad: `"500ms"`, `"30s"`, `"10m"`, `"1h"`, `"1d"`.
 
 ## Referencia
 
 | Opción | Por defecto | Significado |
 | --- | --- | --- |
-| `cache` | activada | `false` la desactiva |
-| `cache.ttl` | `"10m"` | Frescura de los datos de referencia |
-| `cache.methods` | ninguno | Frescura por método, o `false` |
-| `cache.max` | `500` | Entradas que contiene el almacén en memoria |
+| `cache` | activa | `false` la desactiva |
+| `cache.ttl` | `"10m"` | Tiempo de frescura de los datos de referencia |
+| `cache.methods` | ninguno | Tiempo de frescura por método, o `false` |
+| `cache.max` | `500` | Entradas que contiene el almacenamiento en memoria |
 | `cache.store` | memoria | Tu propio `CacheStore` |
 | `{ cache }` en una llamada | | Una duración, o `false` |
-
-## Ver también
-
-- [El límite de solicitudes](/basics/rate-limit/)
-- [Los datos del paquete](/basics/embedded-data/)
-- [Configuración](/basics/configuration/)
-- [Todos los métodos](/reference/methods/)

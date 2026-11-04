@@ -1,9 +1,11 @@
 ---
 title: Los datos del paquete
-description: "Los monstruos, las zonas, las subzonas, los servidores y las plantillas de misión vienen con el paquete. El objeto data los lee desde la memoria, sin solicitud ni clave API, que es lo que necesita un autocompletado o un comando de consulta."
+description: "Los monstruos, las zonas, los servidores y las plantillas de misión vienen incluidos en el paquete. data los lee en memoria, sin solicitud ni clave API."
 sidebar:
   order: 6
 ---
+
+El paquete contiene una copia de los datos de referencia de la API. El objeto `data` los consulta directamente, lo que sirve para un autocompletado o para un comando de búsqueda:
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -17,18 +19,18 @@ data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 
 ## Lo que contiene
 
-Una copia de los datos de referencia de la API, tomada cuando se publicó el paquete: cada monstruo, zona, subzona, servidor, versión del juego, tipo de monstruo, tipo de misión y plantilla de misión, con qué monstruos viven en qué subzona y qué monstruos pide cada plantilla de misión.
+Los datos de referencia de la API en el momento de la publicación del paquete: monstruos, zonas, subzonas, servidores, versiones del juego, tipos de monstruo, tipos y plantillas de misión. Con los vínculos entre ellos: los monstruos de cada subzona, y los que pide cada plantilla de misión.
 
-`data.fetchedAt` es el día en que se tomó la copia. Los registros tienen la forma que les da la API, así que lo que lees de `data` y lo que obtienes de una llamada son intercambiables.
+`data.fetchedAt` es la fecha de la copia. Los registros tienen la forma que les da la API: lo que lees en `data` tiene la misma forma que la respuesta de una llamada.
 
 El cliente también lo tiene: `metamob.data` es el mismo objeto.
 
 ## Encontrar un registro
 
-Cada tipo tiene un método que recibe un identificador, un nombre o un objeto con un identificador, y devuelve el registro o `undefined`. Ninguno lanza un error.
+Cada tipo tiene un método que toma un identificador, un nombre o un objeto con un identificador, y devuelve el registro o `undefined`. Nada lanza errores.
 
 ```ts
-data.monster("Bouftou Royal"); // por nombre, en cualquiera de los tres idiomas
+data.monster("Bouftou Royal"); // por nombre, en uno de los tres idiomas
 data.monster(305); // por identificador
 data.zone("Amakna")?.subzones.length;
 data.subzone("Coin des Bouftous")?.zone.name.fr;
@@ -40,7 +42,7 @@ data.questTemplate({ questType: "ocre", gameVersion: "Dofus Touch" })?.monster_c
 
 ## Buscar monstruos
 
-`searchMonsters` encuentra los monstruos cuyo nombre contiene un texto, en cualquier idioma, con los nombres que empiezan por él en primer lugar. Es lo bastante rápido para ejecutarse en cada pulsación de tecla.
+`searchMonsters` encuentra los monstruos cuyo nombre contiene un texto, en uno de los tres idiomas, empezando por los nombres que empiezan por ese texto. Es lo bastante rápido para ejecutarse en cada pulsación de tecla.
 
 ```ts
 data.searchMonsters("bouf"); // 25 como máximo por defecto
@@ -48,7 +50,7 @@ data.searchMonsters("bouf", { type: "archimonstre", limit: 10 });
 data.searchMonsters("gob", { gameVersion: "Dofus Touch" });
 ```
 
-Para un texto que no coincide con nada, `suggest` da los nombres más parecidos:
+Para un texto que no corresponde a nada, `suggest` da los nombres más parecidos:
 
 ```ts
 data.suggest("monster", "Tofu Malefik"); // ["Tofu Maléfique"]
@@ -56,14 +58,14 @@ data.suggest("server", "Draconirros"); // ["Draconiros"]
 data.suggest("zone", "Amakna", 5); // hasta 5 nombres
 ```
 
-## Seguir los enlaces
+## Seguir los vínculos
 
 ```ts
 // Dónde vive un monstruo.
-data.subzonesOf("Tofu Maléfique").map((subzone) => `${subzone.zone.name.fr} > ${subzone.name.fr}`);
 data.zonesOf("Tofu Maléfique");
+data.subzonesOf("Tofu Maléfique").map((subzone) => subzone.name.fr);
 
-// Lo que vive en un lugar.
+// Lo que vive en un sitio.
 data.monstersInSubzone("Coin des Bouftous");
 data.monstersInZone("Amakna");
 
@@ -72,9 +74,9 @@ data.archmonstersOf("Tofu"); // los archimonstruos que lo tienen como referencia
 data.monster("Tofuldebeu l'Explosif")?.reference?.name.fr; // "Tofu"
 ```
 
-## Plantillas de misión
+## Las plantillas de misión
 
-Una plantilla de misión es lo que pide un tipo de misión en una versión del juego: la misión del Dofus Ocre en Dofus Touch, por ejemplo.
+Una plantilla de misión es lo que un tipo de misión pide en una versión del juego: la misión Ocre en Dofus Touch, por ejemplo.
 
 ```ts
 const ochreOnTouch = { questType: "ocre", gameVersion: "Dofus Touch" } as const;
@@ -98,21 +100,21 @@ data.questTypes;
 data.questTemplates;
 ```
 
-Son arrays de solo lectura, construidos una vez en el primer uso. El conjunto de datos entero se descodifica la primera vez que se lee algo, lo que lleva unos milisegundos.
+Son arrays de solo lectura. Los datos se decodifican en la primera lectura, en unos milisegundos.
 
 ## Cuando el juego cambia
 
-Un monstruo, una zona o un servidor nuevos llegan al paquete con su siguiente versión. Mientras tanto, nada se rompe:
+Un nuevo monstruo, una nueva zona o un nuevo servidor llega al paquete con su versión siguiente. Mientras tanto:
 
-- Una llamada que recibe un nombre que el paquete no conoce pregunta a la API antes de rendirse, ver [Nombres e identificadores](/basics/names-and-ids/#when-a-name-is-unknown).
-- Un identificador siempre funciona, conocido o no.
-- `data` solo conoce lo que traía al publicarse: `data.monster("a brand new monster")` es `undefined` hasta que actualices el paquete.
+- una llamada que recibe un nombre desconocido para el paquete también lo busca en la API, consulta [Nombres e identificadores](/basics/names-and-ids/#when-a-name-is-unknown).
+- un identificador siempre funciona, lo conozca el paquete o no;
+- `data` solo conoce su copia: un monstruo más reciente vale `undefined` en él hasta la actualización del paquete.
 
-Para leer lo que dice la API ahora mismo, usa las llamadas: [`metamob.monsters`](/resources/monsters/), [`metamob.zones`](/resources/zones/) y las [listas de referencia](/resources/reference-data/).
+Para leer lo que dice la API en este momento, usa las llamadas: [`metamob.monsters`](/resources/monsters/), [`metamob.zones`](/resources/zones/) y las [listas de referencia](/resources/reference-data/).
 
 ## En un navegador
 
-`data` no necesita ni clave ni red, así que funciona en una página. Importar solo `data` deja el cliente fuera de tu bundle; el conjunto de datos pesa unos 30 kB una vez comprimido. El cuadro de búsqueda de la página de inicio de este sitio es exactamente eso.
+`data` no necesita ni clave ni red: también funciona en una página web. Importar solo `data` deja el cliente fuera de tu bundle, y los datos pesan unos 30 kB comprimidos. La página [Probar](/start/playground/) funciona así.
 
 ## Referencia
 
@@ -132,11 +134,4 @@ Para leer lo que dice la API ahora mismo, usa las llamadas: [`metamob.monsters`]
 | `templateMonsters(template, { step })` | `TemplateMonster[]` |
 | `stepOf(monster, template)` | `number \| undefined` |
 | `suggest(kind, text, limit?)` | `string[]` |
-| `fetchedAt` | `string`, con el formato `YYYY-MM-DD` |
-
-## Ver también
-
-- [Nombres e identificadores](/basics/names-and-ids/)
-- [Monstruos](/resources/monsters/)
-- [Un comando de Discord con autocompletado](/recipes/discord-command/)
-- [Caché](/basics/caching/)
+| `fetchedAt` | `string`, en formato `YYYY-MM-DD` |

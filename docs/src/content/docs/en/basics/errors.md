@@ -1,9 +1,11 @@
 ---
 title: Errors
-description: A call returns the data or throws. Every error has a typed code, and the ones that come from the API also carry the status and the message it sent. This page shows how to tell them apart and what is retried for you.
+description: "A call returns the data or throws an error. The kinds of errors, their codes, and what is retried."
 sidebar:
   order: 3
 ---
+
+A call returns the data you asked for, or throws an error when it fails. Every error carries a `code` to test:
 
 ```ts
 try {
@@ -44,7 +46,7 @@ try {
 }
 ```
 
-An API error has shortcuts for the three you test most:
+An API error also has shortcuts for the most common cases:
 
 ```ts
 try {
@@ -66,7 +68,7 @@ The API answers 404 for what does not exist and for what is not yours. `quests.g
 
 ## What is retried
 
-Before an error reaches you, the library has already tried again when trying again can help.
+Some failures are temporary. In those cases, the library sends the request again before throwing the error:
 
 | Failure | Retried |
 | --- | --- |
@@ -77,9 +79,11 @@ Before an error reaches you, the library has already tried again when trying aga
 | 400, 401, 403, 404 | No |
 | Aborted with your `signal` | No |
 
-By default there are up to 3 more attempts. The delay starts at 500 ms and doubles each time, up to 60 seconds. When the API sends `Retry-After`, that wait is used instead. A `Retry-After` longer than `maxDelay` is not waited for: the error is thrown at once, with its `retryAfter` in seconds.
+By default there are up to 3 more attempts. The delay starts at 500 ms and doubles each time, up to 60 seconds. When the API sends `Retry-After`, that wait is used. A `Retry-After` longer than `maxDelay` is not waited for: the error is thrown at once, with its `retryAfter` in seconds.
 
-The writes that set a value, on a quest or a conversation, give the same result when sent twice: they are retried too. Sending a message or a trade proposal is never retried, whatever the failure, since it would arrive twice. After a timeout there, look before sending again.
+The writes that set a value, on a quest or a conversation, give the same result when sent twice: they are retried too. Sending a message or a trade proposal never is, since it would arrive twice. After a timeout, check that it did not go out before sending it again.
+
+The number of attempts can be set for the client or for a call:
 
 ```ts
 // For the whole client.
@@ -100,7 +104,7 @@ metamob.on("retry", ({ method, attempt, delay, error }) => {
 
 ## Timeouts and cancellation
 
-One attempt has 30 seconds by default. `timeout` changes it, for the client or for a call. A `signal` cancels a call from outside, including while it waits for the rate limiter.
+One attempt has 30 seconds by default. `timeout` changes this delay, for the client or for a call. A `signal` cancels a call from outside, including while it waits for the rate limiter.
 
 ```ts
 const controller = new AbortController();
@@ -116,7 +120,7 @@ try {
 
 ## Arguments are checked first
 
-What can be known to be wrong without asking the API is refused locally, with `INVALID_ARGUMENT`: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format, a message longer than 1000 characters, a proposal without monsters. No request is spent.
+An argument the API would surely refuse is refused before sending, with `INVALID_ARGUMENT`: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format, a message longer than 1000 characters, a proposal without monsters.
 
 ## Reference
 
@@ -138,10 +142,3 @@ What can be known to be wrong without asking the API is refused locally, with `I
 | `UNKNOWN_NAME` | No monster, zone or server has this name |
 
 [Error codes](/reference/errors/) lists the properties of each class.
-
-## See also
-
-- [The rate limit](/basics/rate-limit/)
-- [Names and ids](/basics/names-and-ids/)
-- [Configuration](/basics/configuration/)
-- [Troubleshooting](/help/troubleshooting/)

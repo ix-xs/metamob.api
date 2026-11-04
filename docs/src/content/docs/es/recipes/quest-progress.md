@@ -1,11 +1,13 @@
 ---
 title: Un informe de progreso
-description: "Un script que muestra en qué punto está una de tus misiones, lo que queda por encontrar en cada zona y en qué zona cazar a continuación. Tres solicitudes, sea cual sea el tamaño de la misión."
+description: "Un script que muestra en qué punto está una misión y en qué zonas cazar a continuación, en tres solicitudes."
 sidebar:
   order: 2
 ---
 
 ## Lo que obtienes
+
+Un script que muestra el avance de una misión y las zonas donde faltan más monstruos:
 
 ```text
 Ix on Tylezia, step 12 of 18
@@ -19,7 +21,7 @@ Hunt next:
 
 ## El script
 
-```ts
+```ts title="progress.ts"
 import { Metamob } from "@ix-xs/metamob.api";
 
 const metamob = new Metamob(); // lee METAMOB_API_KEY
@@ -27,13 +29,15 @@ const metamob = new Metamob(); // lee METAMOB_API_KEY
 const slug = process.argv[2] ?? (await metamob.quests.list())[0]?.slug;
 if (!slug) throw new Error("This account has no quest.");
 
-// 1 solicitud: la misión en sí.
+// 1 solicitud: la propia misión.
 const quest = await metamob.quests.get(slug);
-console.log(`${quest.character_name} on ${quest.server?.name}, step ${quest.current_step} of ${quest.quest_template.step_count}`);
+const steps = quest.quest_template.step_count;
+console.log(`${quest.character_name} on ${quest.server?.name}, step ${quest.current_step} of ${steps}`);
 
 // 1 solicitud: cuántos monstruos faltan todavía.
 const total = quest.quest_template.monster_count;
-const missing = (await metamob.quests.monsters(slug, { status: "needed" }).count()) ?? 0;
+const needed = metamob.quests.monsters(slug, { status: "needed" });
+const missing = (await needed.count()) ?? 0;
 const done = total - missing;
 console.log(`${done} of ${total} monsters, ${Math.round((done / total) * 100)} %\n`);
 
@@ -42,7 +46,7 @@ const zones = await metamob.quests.zones(slug);
 
 const report = zones
   .map((zone) => {
-    // Un monstruo aparece en cada subzona donde vive: se cuenta una vez por zona.
+    // Un monstruo está en cada subzona donde vive: un Set lo cuenta una vez.
     const names = new Set();
     for (const subzone of zone.subzones) {
       for (const monster of subzone.monsters) {
@@ -57,27 +61,28 @@ const report = zones
 console.log("Hunt next:");
 for (const { zone, names } of report.slice(0, 5)) {
   const shown = names.slice(0, 3).join(", ") + (names.length > 3 ? ", ..." : "");
-  console.log(`  ${zone.padEnd(24)} ${String(names.length).padStart(3)} missing   ${shown}`);
+  const count = String(names.length).padStart(3);
+  console.log(`  ${zone.padEnd(24)} ${count} missing   ${shown}`);
 }
 ```
 
-Ejecútalo con el slug de una misión, o sin nada para tomar la primera misión de la cuenta:
+Lánzalo con el slug de una misión, o sin argumento para la primera misión de la cuenta:
 
 ```bash
-METAMOB_API_KEY=your-key node progress.mjs 21b0a742
+node --env-file=.env progress.js 21b0a742
 ```
 
 ## Por qué tres solicitudes
 
-- `count()` pide un solo elemento y lee el total, en lugar de recorrer cientos de monstruos página a página para contarlos.
-- `quests.zones()` responde por toda la misión de una vez, ya agrupada.
-- Los nombres de las zonas y de los monstruos vienen en las respuestas. No hay nada que buscar aparte.
+- `count()` solo pide el total, no la lista de los monstruos.
+- `quests.zones()` devuelve toda la misión en una respuesta, ya ordenada por zona.
+- Los nombres de las zonas y de los monstruos están en las respuestas.
 
-Listar todos los monstruos y agruparlos tú mismo también funcionaría, con más solicitudes: una misión de 600 monstruos son tres páginas de 200.
+Listar todos los monstruos y ordenarlos tú mismo también funcionaría, con más solicitudes: 600 monstruos son tres páginas de 200.
 
 ## Solo los archimonstruos, solo una zona
 
-`quests.zones()` filtra en el servidor, lo que reduce la respuesta.
+`quests.zones()` acepta filtros, que reducen la respuesta:
 
 ```ts
 const archmonsters = await metamob.quests.zones(slug, { type: "archimonstre" });
@@ -86,7 +91,7 @@ const amakna = await metamob.quests.zones(slug, { zone: "Amakna" });
 
 ## Lo que puedes intercambiar
 
-La misma misión, vista desde el otro lado: los ejemplares que tienes de sobra, y lo que la misión ofrece realmente una vez aplicados tus ajustes de intercambio.
+La misma misión, del lado del intercambio: lo que tienes de sobra, y lo que la misión ofrece de ello una vez aplicados tus ajustes:
 
 ```ts
 const quest = await metamob.quests.get(slug);
@@ -94,24 +99,17 @@ const spares = await metamob.quests.monsters(slug, { status: "excess" }).all();
 
 for (const monster of spares) {
   const kept = monster.quantity - quest.parallel_quests - monster.offer;
-  console.log(monster.name.fr, `offers ${monster.offer}`, kept > 0 ? `(keeps ${kept} back)` : "");
+  console.log(monster.name.fr, `offers ${monster.offer}, keeps ${kept}`);
 }
 ```
 
 ## Para otra persona
 
-Con la clave de un jugador que te la dio, el mismo script se ejecuta en su nombre:
+Con la clave que un jugador te ha confiado, el mismo script se ejecuta en su nombre:
 
 ```ts
 const theirs = metamob.withKey(theirKey);
 const quests = await theirs.quests.list();
 ```
 
-Sin su clave, una misión pública muestra igualmente lo que busca su propietario, mediante [`users.quest()`](/resources/users/#the-monsters-of-a-public-quest).
-
-## Ver también
-
-- [Tus misiones](/resources/quests/)
-- [Listas](/basics/lists/)
-- [Intercambios](/resources/trading/)
-- [El límite de solicitudes](/basics/rate-limit/)
+Sin su clave, [`users.quest()`](/resources/users/#the-monsters-of-a-public-quest) muestra de todos modos lo que busca una misión pública.

@@ -1,7 +1,9 @@
 ---
 title: Desde la versión 4
-description: "La versión 5 es una reescritura. Los endpoints son los mismos, la forma de llamarlos es más corta. Esta página relaciona cada método de la versión 4 con su sustituto."
+description: "Lo que cambia al pasar de la versión 4 a la versión 5, y el método que sustituye a cada método antiguo."
 ---
+
+La versión 5 es una reescritura. Llama a los mismos puntos de acceso, pero los métodos han cambiado de nombre y de forma:
 
 ```ts
 // Versión 4
@@ -18,25 +20,25 @@ const monster = await metamob.monsters.get("Tofu Maléfique");
 console.log(monster.name.fr);
 ```
 
-## Lo que cambió
+## Lo que ha cambiado
 
 | | Versión 4 | Versión 5 |
 | --- | --- | --- |
 | Importación | una clase por defecto, solo CommonJS | una clase con nombre `Metamob`, módulos ES y CommonJS |
 | Opciones | `api_key` | `apiKey` |
-| Resultado | `{ ok, status, statusText, data, pagination, error }` | los datos directamente |
-| Fallo | `ok: false` | un [`MetamobApiError`](/basics/errors/) lanzado |
-| Listas | una página por llamada | una solicitud que puedes [esperar o recorrer](/basics/lists/) |
+| Resultado | `{ ok, status, statusText, data, pagination, error }` | los propios datos |
+| Fallo | `ok: false` | se lanza un [`MetamobApiError`](/basics/errors/) |
+| Listas | una página por llamada | una solicitud que [esperar o recorrer](/basics/lists/) |
 | Uno o varios | `getX({ idOrName })` o `getX()` | `x.get(ref)` y `x.list()` |
 | La clave de otro jugador | `{ api_key }` en las opciones | `{ apiKey }` como último argumento, o [`withKey()`](/basics/many-keys/) |
-| Datos del paquete | `client.cache` | [`data`](/basics/embedded-data/), con búsqueda |
-| Límite de solicitudes | lo gestionabas tú | [gestionado](/basics/rate-limit/) |
+| Datos incluidos | `client.cache` | [`data`](/basics/embedded-data/), con búsqueda |
+| Límite de solicitudes | no se cuenta | [lo cuenta el cliente](/basics/rate-limit/) |
 | Dependencias | `@ix-xs/node-comfort` | ninguna |
 | Node.js | 18 | 20 o posterior |
 
 ## Resultados y errores
 
-La versión 4 nunca lanzaba errores: comprobabas `ok`. La versión 5 devuelve los datos y lanza un error cuando la API rechaza la llamada.
+La versión 4 nunca lanzaba errores: comprobabas `ok`. La versión 5 devuelve los datos y lanza un error cuando la API se niega.
 
 ```ts
 try {
@@ -48,11 +50,11 @@ try {
 }
 ```
 
-`error.status` es el estado HTTP, como antes. `error.code` es más fácil de comprobar: consulta [Errores](/basics/errors/).
+`error.status` es el estado HTTP, como antes. `error.code` es más sencillo de comprobar: consulta [Errores](/basics/errors/).
 
 ## Listas
 
-Antes, una llamada paginada devolvía `{ data, pagination }`, y hacías un bucle sobre `offset`. Ahora devuelve una solicitud. Si la esperas con `await`, da una página con `items`, `total`, `limit` y `offset`. Si la recorres, da cada elemento.
+Una llamada paginada devolvía `{ data, pagination }`, y hacías un bucle sobre `offset`. Ahora devuelve una solicitud. Esperada con `await`, da una página con `items`, `total`, `limit` y `offset`. Recorrida, da cada elemento.
 
 ```ts
 // Versión 4
@@ -105,7 +107,7 @@ for await (const monster of metamob.monsters.list()) {
 | `getQuestMatches(slug, { min_parallel_quests, only_possible_trades })` | `quests.matches(slug, { minParallelQuests, onlyPossibleTrades })` |
 | `getQuestZones(slug, { zoneIdOrName, subzoneIdOrName, monsterTypeIdOrName })` | `quests.zones(slug, { zone, subzone, type })` |
 
-Los parámetros que designan algo perdieron su sufijo `IdOrName`: `serverIdOrName` es `server`, `typeIdOrName` y `monsterTypeIdOrName` son `type`. Las opciones de la biblioteca están en camelCase. Lo que devuelve la API conserva los nombres que le da la API, en snake_case.
+Los parámetros que designan algo han perdido su sufijo `IdOrName`: `serverIdOrName` pasa a ser `server`, `typeIdOrName` y `monsterTypeIdOrName` pasan a ser `type`. Las opciones de la biblioteca están en camelCase. Lo que devuelve la API conserva los nombres que le da la API, en snake_case.
 
 ## La clave de otro jugador
 
@@ -113,7 +115,7 @@ Los parámetros que designan algo perdieron su sufijo `IdOrName`: `serverIdOrNam
 // Versión 4
 // await client.updateQuestMonster(slug, "Tofu", 2, { api_key: theirKey });
 
-// Versión 5: una llamada
+// Versión 5: una sola llamada
 await metamob.quests.setMonster(slug, "Tofu", 2, { apiKey: theirKey });
 
 // Versión 5: un cliente para ese jugador
@@ -121,9 +123,9 @@ const theirs = metamob.withKey(theirKey);
 await theirs.quests.setMonster(slug, "Tofu", 2);
 ```
 
-## Los datos del paquete
+## Los datos incluidos
 
-`client.cache.monsters` y sus hermanos son ahora `data.monsters`, `data.zones`, `data.subzones`, `data.servers`, `data.questTemplates`, `data.gameVersions`, `data.monsterTypes` y `data.questTypes`, con métodos para buscar en ellos. Consulta [Los datos del paquete](/basics/embedded-data/).
+`client.cache.monsters` y sus vecinos son ahora `data.monsters`, `data.zones`, `data.subzones`, `data.servers`, `data.questTemplates`, `data.gameVersions`, `data.monsterTypes` y `data.questTypes`, con métodos para buscar en ellos. Consulta [Los datos del paquete](/basics/embedded-data/).
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -132,17 +134,13 @@ data.monsters.length;
 data.monster("Tofu Maléfique")?.id;
 ```
 
-La versión 4 traía 50 de las 192 subzonas. La versión 5 las trae todas, así que `zones.subzone("...")` y `zones.monsters("...")` ahora reconocen cada subzona por su nombre.
+La versión 4 incluía 50 de las 192 subzonas. La versión 5 las incluye todas, así que `zones.subzone("...")` y `zones.monsters("...")` reconocen ahora cada subzona por su nombre.
 
-## Lo que es más estricto
+## Lo que se rechaza antes
 
 - Un nombre que la biblioteca no encuentra lanza `UNKNOWN_NAME` con sugerencias. La versión 4 devolvía `{ ok: false }`.
 - Una búsqueda de menos de 3 caracteres lanza `INVALID_ARGUMENT` antes de gastar una solicitud. La API la rechaza de todos modos.
-- Seis pares de monstruos, sobre todo archimonstruos, comparten un nombre entre dos versiones del juego. La versión 4 tomaba el primero. La versión 5 elige el de la misión en la que escribes, ver [Nombres e identificadores](/basics/names-and-ids/#monsters-that-share-a-name).
+- Seis pares de monstruos, sobre todo archimonstruos, comparten un nombre entre dos versiones del juego. La versión 4 tomaba el primero. La versión 5 elige el de la misión en la que escribes, consulta [Nombres e identificadores](/basics/names-and-ids/#monsters-that-share-a-name).
 
-## Ver también
 
-- [Inicio rápido](/start/quick-start/)
-- [Todos los métodos](/reference/methods/)
-- [Configuración](/basics/configuration/)
-- [El registro de cambios](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md)
+El [registro de cambios](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md) lista todos los cambios, versión por versión.

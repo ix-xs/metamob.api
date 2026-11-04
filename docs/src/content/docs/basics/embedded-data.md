@@ -1,9 +1,11 @@
 ---
 title: Les données du paquet
-description: "Les monstres, les zones, les sous-zones, les serveurs et les modèles de quête sont livrés avec le paquet. L'objet data les lit depuis la mémoire, sans requête et sans clé API, ce dont une autocomplétion ou une commande de recherche a besoin."
+description: "Les monstres, les zones, les serveurs et les modèles de quête sont inclus dans le paquet. data les lit en mémoire, sans requête ni clé API."
 sidebar:
   order: 6
 ---
+
+Le paquet contient une copie des données de référence de l'API. L'objet `data` les interroge directement, ce qui convient à une autocomplétion ou à une commande de recherche :
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -17,9 +19,9 @@ data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 
 ## Ce qu'il y a dedans
 
-Une copie des données de référence de l'API, prise au moment où le paquet a été publié : chaque monstre, zone, sous-zone, serveur, version du jeu, type de monstre, type de quête et modèle de quête, avec quels monstres vivent dans quelle sous-zone et quels monstres chaque modèle de quête demande.
+Les données de référence de l'API au moment de la publication du paquet : monstres, zones, sous-zones, serveurs, versions du jeu, types de monstres, types et modèles de quête. Avec les liens entre eux : les monstres de chaque sous-zone, et ceux que demande chaque modèle de quête.
 
-`data.fetchedAt` est le jour où la copie a été prise. Les enregistrements ont la forme que l'API leur donne, donc ce que vous lisez dans `data` et ce que vous recevez d'un appel sont interchangeables.
+`data.fetchedAt` est la date de la copie. Les enregistrements ont la forme que l'API leur donne : ce que vous lisez dans `data` a la même forme que la réponse d'un appel.
 
 Le client l'a aussi : `metamob.data` est le même objet.
 
@@ -40,7 +42,7 @@ data.questTemplate({ questType: "ocre", gameVersion: "Dofus Touch" })?.monster_c
 
 ## Chercher des monstres
 
-`searchMonsters` trouve les monstres dont le nom contient un texte, dans n'importe quelle langue, les noms qui commencent par ce texte en premier. Elle est assez rapide pour s'exécuter à chaque frappe.
+`searchMonsters` trouve les monstres dont le nom contient un texte, dans l'une des trois langues, en commençant par les noms qui commencent par ce texte. Elle est assez rapide pour tourner à chaque frappe.
 
 ```ts
 data.searchMonsters("bouf"); // 25 au plus par défaut
@@ -60,8 +62,8 @@ data.suggest("zone", "Amakna", 5); // jusqu'à 5 noms
 
 ```ts
 // Où vit un monstre.
-data.subzonesOf("Tofu Maléfique").map((subzone) => `${subzone.zone.name.fr} > ${subzone.name.fr}`);
 data.zonesOf("Tofu Maléfique");
+data.subzonesOf("Tofu Maléfique").map((subzone) => subzone.name.fr);
 
 // Ce qui vit quelque part.
 data.monstersInSubzone("Coin des Bouftous");
@@ -98,21 +100,21 @@ data.questTypes;
 data.questTemplates;
 ```
 
-Ce sont des tableaux en lecture seule, construits une fois à la première utilisation. L'ensemble des données est décodé la première fois que quelque chose est lu, ce qui prend quelques millisecondes.
+Ce sont des tableaux en lecture seule. Les données sont décodées à la première lecture, en quelques millisecondes.
 
 ## Quand le jeu change
 
-Un nouveau monstre, une nouvelle zone ou un nouveau serveur arrive dans le paquet avec sa version suivante. Entre-temps, rien ne casse :
+Un nouveau monstre, une nouvelle zone ou un nouveau serveur arrive dans le paquet avec sa version suivante. En attendant :
 
-- Un appel qui reçoit un nom que le paquet ne connaît pas interroge l'API avant d'abandonner, voir [Noms et identifiants](/basics/names-and-ids/#when-a-name-is-unknown).
-- Un identifiant fonctionne toujours, connu ou non.
-- `data` lui-même ne connaît que ce avec quoi il a été livré : `data.monster("a brand new monster")` vaut `undefined` tant que vous n'avez pas mis le paquet à jour.
+- un appel qui reçoit un nom inconnu du paquet le cherche aussi dans l'API, voir [Noms et identifiants](/basics/names-and-ids/#when-a-name-is-unknown).
+- un identifiant fonctionne toujours, connu du paquet ou non ;
+- `data` ne connaît que sa copie : un monstre plus récent y vaut `undefined` jusqu'à la mise à jour du paquet.
 
 Pour lire ce que l'API dit en ce moment, utilisez les appels : [`metamob.monsters`](/resources/monsters/), [`metamob.zones`](/resources/zones/) et les [listes de référence](/resources/reference-data/).
 
 ## Dans un navigateur
 
-`data` n'a besoin ni d'une clé ni d'un réseau, donc il fonctionne dans une page. Importer seulement `data` laisse le client hors de votre bundle ; l'ensemble des données pèse environ 30 ko une fois compressé. Le champ de recherche de la page d'accueil de ce site, c'est exactement cela.
+`data` n'a besoin ni de clé ni de réseau : il fonctionne aussi dans une page web. Importer seulement `data` laisse le client hors de votre bundle, et les données pèsent environ 30 ko compressées. La page [Essayer](/start/playground/) fonctionne ainsi.
 
 ## Référence
 
@@ -133,10 +135,3 @@ Pour lire ce que l'API dit en ce moment, utilisez les appels : [`metamob.monster
 | `stepOf(monster, template)` | `number \| undefined` |
 | `suggest(kind, text, limit?)` | `string[]` |
 | `fetchedAt` | `string`, au format `YYYY-MM-DD` |
-
-## Voir aussi
-
-- [Noms et identifiants](/basics/names-and-ids/)
-- [Monstres](/resources/monsters/)
-- [Une commande Discord avec autocomplétion](/recipes/discord-command/)
-- [Cache](/basics/caching/)

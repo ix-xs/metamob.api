@@ -1,9 +1,11 @@
 ---
 title: Nombres e identificadores
-description: "Allí donde la API espera un identificador numérico, puedes escribir el nombre, el identificador o pasar el objeto que devolvió otra llamada. Esta página explica lo que se acepta, cómo se comparan los nombres y qué ocurre cuando uno es desconocido."
+description: "Los monstruos, las zonas, los servidores y el resto se designan por su identificador, su nombre o un objeto. Lo que se acepta, y lo que ocurre cuando un nombre es desconocido."
 sidebar:
   order: 1
 ---
+
+Un monstruo se puede dar por su identificador o por su nombre, en uno de los tres idiomas del sitio:
 
 ```ts
 await metamob.monsters.get(21);
@@ -17,9 +19,9 @@ await metamob.monsters.get("Tofu maléfico"); // español
 
 | Qué | Se acepta | Dónde |
 | --- | --- | --- |
-| Un monstruo | identificador, nombre en francés, inglés o español, `{ id }` | `monsters.get`, `quests.setMonster`, `quests.setMonsters`, `quests.setTrade` |
-| Una zona | identificador, nombre en tres idiomas, `{ id }` | `zones.get`, `zones.subzones`, `quests.zones({ zone })` |
-| Una subzona | identificador, nombre en tres idiomas, `{ id }` | `zones.subzone`, `zones.monsters`, `quests.zones({ subzone })` |
+| Un monstruo | identificador, nombre en francés, en inglés o en español, `{ id }` | `monsters.get`, `quests.setMonster`, `quests.setMonsters`, `quests.setTrade` |
+| Una zona | identificador, nombre en los tres idiomas, `{ id }` | `zones.get`, `zones.subzones`, `quests.zones({ zone })` |
+| Una subzona | identificador, nombre en los tres idiomas, `{ id }` | `zones.subzone`, `zones.monsters`, `quests.zones({ subzone })` |
 | Un servidor | identificador, nombre, `{ id }` | `servers.get`, `kralove.list({ server })`, `users.search(query, { server })` |
 | Un tipo de monstruo | 1, 2, 3, o `monstre`, `boss`, `archimonstre` y sus traducciones | todos los filtros `type` |
 | Una versión del juego | identificador, nombre, `{ id }` | `gameVersions.get`, la indicación `gameVersion` |
@@ -32,7 +34,7 @@ Tu editor completa los nombres. Son tipos literales, generados a partir de los d
 
 ## Pasar un objeto
 
-Sirve cualquier cosa con un `id` numérico, así que el resultado de una llamada alimenta la siguiente sin tener que extraer el identificador.
+Un objeto con un `id` numérico también sirve: el resultado de una llamada se puede pasar tal cual a la siguiente.
 
 ```ts
 const zone = await metamob.zones.get("Amakna");
@@ -45,9 +47,9 @@ for (const subzone of zone.subzones) {
 
 ## Cómo se compara un nombre
 
-Un nombre se compara después de quitar los acentos, ignorar las mayúsculas, tratar todos los tipos de apóstrofo y de guion como iguales y reducir los espacios seguidos a uno solo. `"TOFU  MALEFIQUE"` y `"Tofu Maléfique"` son el mismo nombre. No se perdona nada más: una letra que falta es otro nombre.
+Un nombre se compara después de quitar los acentos, sin tener en cuenta las mayúsculas, tratando todos los tipos de apóstrofo y de guion como uno solo, y reduciendo los espacios seguidos. `"TOFU  MALEFIQUE"` y `"Tofu Maléfique"` son el mismo nombre. No se perdona nada más: una letra que falta da otro nombre.
 
-La búsqueda se hace en los datos que vienen con el paquete, así que no cuesta ninguna solicitud. Una cadena formada solo por cifras, como `"21"`, se lee como un identificador.
+La búsqueda se hace en los datos incluidos en el paquete, sin solicitud. Una cadena formada solo por cifras, como `"21"`, se lee como un identificador.
 
 ## Cuando un nombre es desconocido
 
@@ -65,9 +67,9 @@ try {
 }
 ```
 
-La escritura nunca se envía: una errata no puede cambiar el monstruo equivocado.
+En ese caso, no se envía nada a la API.
 
-Para ofrecer sugerencias tú mismo, antes de llamar a nada:
+Para ofrecer sugerencias tú mismo, antes de cualquier llamada:
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -76,11 +78,11 @@ data.suggest("monster", "Tofu Malefik"); // ["Tofu Maléfique"]
 data.searchMonsters("tofu", { limit: 5 }); // los monstruos cuyo nombre contiene "tofu"
 ```
 
-## Monstruos que comparten nombre
+## Los monstruos que comparten nombre
 
 Seis pares de monstruos, sobre todo archimonstruos, comparten un nombre en al menos un idioma, en dos versiones del juego, con dos identificadores distintos. «Crognan le Barbare» es un monstruo en Dofus (Unity) y otro en Dofus Retro y Dofus Touch.
 
-Cuando escribes en una misión, la misión decide. La biblioteca lee qué plantilla sigue la misión, una sola vez, y elige el monstruo de esa plantilla.
+Cuando escribes en una misión, la misión decide. La biblioteca lee una vez la plantilla que sigue la misión, y toma el monstruo de esa plantilla.
 
 ```ts
 // El «Crognan le Barbare» correcto para esta misión, sea cual sea su versión del juego.
@@ -90,26 +92,28 @@ await metamob.quests.setMonster(slug, "Crognan le Barbare", 1);
 En los demás casos, indica cuál quieres:
 
 ```ts
-const unity = await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus (Unity)" });
-const touch = await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" });
+const name = "Crognan le Barbare";
+
+const unity = await metamob.monsters.get(name, { gameVersion: "Dofus (Unity)" });
+const touch = await metamob.monsters.get(name, { gameVersion: "Dofus Touch" });
 
 // O por plantilla de misión.
 const ochreOnRetro = { questType: "ocre", gameVersion: "Dofus Retro (1.29)" } as const;
-const retro = await metamob.monsters.get("Crognan le Barbare", { template: ochreOnRetro });
+const retro = await metamob.monsters.get(name, { template: ochreOnRetro });
 ```
 
-Sin indicación, se devuelve el monstruo cuya plantilla de misión tiene el identificador más bajo. `data.monstersNamed(name)` da todos los monstruos que responden a un nombre.
+Sin indicación, se devuelve el monstruo de la plantilla de misión con el identificador más bajo. `data.monstersNamed(name)` lista todos los monstruos que responden a un nombre.
 
 ## Las subzonas y su zona
 
-La API accede a una subzona a través de su zona. La biblioteca encuentra la zona por ti cuando la subzona está en el paquete:
+La API pide la zona de una subzona para leerla. Cuando la subzona está en el paquete, la biblioteca encuentra su zona:
 
 ```ts
 const subzone = await metamob.zones.subzone("Coin des Bouftous");
 subzone.zone.name.fr; // "Amakna"
 ```
 
-Una subzona añadida al juego después de publicarse el paquete aún no se conoce, y necesita su zona:
+Una subzona añadida al juego después de la publicación del paquete aún no está en él: da su zona.
 
 ```ts
 await metamob.zones.monsters("Coin des Bouftous", { zone: "Amakna" });
@@ -126,10 +130,3 @@ await metamob.zones.monsters("Coin des Bouftous", { zone: "Amakna" });
 | `QuestTypeLike` | `number`, un slug, un nombre, `{ id }` |
 | `QuestTemplateLike` | `number`, `{ id }`, `{ questType, gameVersion }` |
 | `MonsterHint` | `{ gameVersion }`, `{ template }` |
-
-## Ver también
-
-- [Los datos del paquete](/basics/embedded-data/)
-- [Monstruos](/resources/monsters/)
-- [Errores](/basics/errors/)
-- [Datos de referencia](/resources/reference-data/)

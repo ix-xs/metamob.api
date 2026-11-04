@@ -1,27 +1,22 @@
 ---
 title: Trade proposals
-description: Follow the trade proposals you sent and received on every quest, filter them by direction, state, quest or date, see what you own of each monster before answering, and propose a trade.
+description: "Read the trade proposals sent and received, and send one."
 sidebar:
   order: 8
 ---
 
-```ts
-const waiting = await metamob.tradeProposals.list({ direction: "received", status: "pending" }).all();
-
-for (const proposal of waiting) {
-  console.log(`${proposal.sender} proposes a trade on ${proposal.server?.name}`);
-}
-```
-
-A trade proposal is made from a quest, to another player. The API reads them, and makes new ones when sending is opened on the account. Confirming or cancelling one is done on the site. Each one also appears in the [conversation](/resources/conversations/#trade-proposals) with that player.
+A trade proposal goes from one of your quests to another player. The API lets you read them, and send them when sending is opened on the account. Confirming or cancelling them is done on the site. Each one also appears in the [conversation](/resources/conversations/#trade-proposals) with that player.
 
 ## Listing proposals
 
-`tradeProposals.list()` gives the proposals of the account, the most recent first. It is a [list](/basics/lists/), 50 per page at most, paged with a cursor like messages.
+`tradeProposals.list()` gives the proposals of the account, the most recent first. It is a [list](/basics/lists/) of 50 per page at most, paged with a cursor like messages:
 
 ```ts
+const pending = { direction: "received", status: "pending" } as const;
+
+const waiting = await metamob.tradeProposals.list(pending).all();
 const sent = await metamob.tradeProposals.list({ direction: "sent" }).take(20);
-const onQuest = await metamob.tradeProposals.list({ quest: slug, status: "completed" }).all();
+const done = await metamob.tradeProposals.list({ quest: slug, status: "completed" });
 ```
 
 | Filter | Values |
@@ -29,13 +24,13 @@ const onQuest = await metamob.tradeProposals.list({ quest: slug, status: "comple
 | `direction` | `"received"`: made to you. `"sent"`: made by you. `"all"`, the default: both |
 | `status` | `"pending"`, `"half_applied"`, `"completed"`, `"cancelled"` |
 | `quest` | The slug of one of your quests |
-| `since` | A `Date`, or an ISO 8601 date with its time zone such as `"2026-01-27T14:00:00Z"`: only the proposals created from then on, included |
+| `since` | A `Date`, or an ISO 8601 date with its time zone such as `"2026-01-27T14:00:00Z"`: only the proposals created from that moment on, included |
 
-A date without time zone, or one the API would not read, is refused before any request.
+A date without a time zone, or one the API could not read, is refused before any request.
 
 ## Who gives what
 
-`monsters_given` is what the sender gives, `monsters_received` what the sender receives. When you are the recipient, read it the other way round: you receive `monsters_given` and give `monsters_received`.
+`monsters_given` is what the sender gives, `monsters_received` what the sender receives. When you are the recipient, read them the other way round: you receive `monsters_given` and give `monsters_received`.
 
 ```ts
 const me = await metamob.me();
@@ -43,7 +38,10 @@ const me = await metamob.me();
 for await (const proposal of metamob.tradeProposals.list({ status: "pending" })) {
   const mine = proposal.recipient === me.username;
   const incoming = mine ? proposal.monsters_given : proposal.monsters_received;
-  console.log(proposal.id, incoming.map((monster) => `${monster.quantity} x ${data.monster(monster.monster_id)?.name.fr}`));
+
+  for (const { monster_id, quantity } of incoming) {
+    console.log(proposal.id, quantity, data.monster(monster_id)?.name.fr);
+  }
 }
 ```
 
@@ -52,30 +50,30 @@ A proposal names its monsters by id: [`data.monster()`](/basics/embedded-data/) 
 | `status` | Meaning |
 | --- | --- |
 | `pending` | Nobody confirmed yet |
-| `half_applied` | One side confirmed: see `applications` |
-| `completed` | Both sides confirmed |
+| `half_applied` | One of the two players confirmed: see `applications` |
+| `completed` | Both players confirmed |
 | `cancelled` | Cancelled by `cancelled_by`, or expired when `cancelled_by` is `null` |
 
 ## Reading one proposal
 
-`tradeProposals.get()` takes an id, or a proposal from a list. Read on its own, each monster comes with `owned`: how many of it you own now, in your quest the proposal is about.
+`tradeProposals.get()` takes an id, or a proposal taken from a list. Read on its own, each monster of the proposal carries `owned`: the number of copies of it you own now in your quest concerned.
 
 ```ts
 const proposal = await metamob.tradeProposals.get(57);
 
-for (const monster of proposal.monsters_given) {
-  console.log(data.monster(monster.monster_id)?.name.fr, `${monster.owned ?? 0} owned, ${monster.quantity} in the proposal`);
+for (const { monster_id, owned, quantity } of proposal.monsters_given) {
+  console.log(data.monster(monster_id)?.name.fr, `${owned ?? 0} owned, ${quantity} more`);
 }
 ```
 
-`owned` is the count of now, not of the day the proposal was made: once the trade is applied, it already includes it. It is `null` when you have no quest of that kind on that server.
+`owned` is the current quantity, not the one of the day the proposal was made: once the trade is applied, it already includes it. It is `null` when you have no quest of that kind on that server.
 
 ## Making a proposal
 
-`tradeProposals.create()` proposes a trade from one of your quests. It takes the same names the API reads back: `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` and `monsters_received`. The monsters come in the shapes [`quests.setMonsters()`](/resources/quests/#recording-many-monsters) takes, named by id or by name in any language.
+`tradeProposals.create()` sends a proposal from one of your quests. Its fields have the same names as when reading: `recipient`, `sender_quest`, `recipient_quest`, `monsters_given` and `monsters_received`. The monsters are written as for [`quests.setMonsters()`](/resources/quests/#recording-many-monsters), by id or by name:
 
 ```ts
-// A partner and its quest, as matches() finds them.
+// A partner and their quest, as matches() finds them.
 const match = await metamob.quests.matches(slug).first();
 
 if (match) {
@@ -90,23 +88,28 @@ if (match) {
 }
 ```
 
-All three are required: `recipient`, your `sender_quest`, and `recipient_quest`, the slug of the quest of the other player, as `quests.matches()` gives it. Both quests must be of the same kind and on the same server. A proposal needs at least one monster, on either side, and takes 200 at most on each side. What `quests.matches()` finds is a good place to start: each match names the player and what can go both ways.
+`recipient`, `sender_quest` and `recipient_quest` are required. `recipient_quest` is the slug of the quest of the other player, which `quests.matches()` gives for each partner. Both quests must be of the same kind and on the same server. At least one monster is needed, on one side or the other, and 200 at most on each side.
 
-Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. The rules are the ones of the site: `FORBIDDEN` when one of the two players blocked the other, `RATE_LIMITED` past its anti-spam limits.
+:::note
+Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. The rules are the ones of the site: `FORBIDDEN` when one of the two players blocked the other, `RATE_LIMITED` past the anti-spam limits.
+:::
 
-A proposal is never retried, whatever the failure: sent twice, it would exist twice. After a timeout or a network failure, look at `list({ direction: "sent" })` before proposing again.
+A proposal is never retried, whatever the failure: sent twice, it would exist twice. After a timeout or a network failure, look at `list({ direction: "sent" })` before sending it again.
 
 ## Watching for new proposals
 
-Asked every few minutes with `since`, the list tells you what arrived in between, for a bot that warns you for instance.
+Asked regularly with `since`, the list gives what arrived since the last time, for example for a bot that warns you:
 
 ```ts
 let lastCheck = new Date();
 
 setInterval(async () => {
-  const now = new Date();
-  const fresh = await metamob.tradeProposals.list({ direction: "received", since: lastCheck }).all();
-  lastCheck = now;
+  const since = lastCheck;
+  lastCheck = new Date();
+
+  const fresh = await metamob.tradeProposals
+    .list({ direction: "received", since })
+    .all();
   for (const proposal of fresh) console.log(`New proposal from ${proposal.sender}`);
 }, 5 * 60_000);
 ```
@@ -116,11 +119,10 @@ setInterval(async () => {
 ## Limits and errors
 
 - Confirming or cancelling a proposal is done on the site.
-- `create()` refuses before sending a proposal without any monster, a quantity outside 1 to 99, a monster named twice on one side, or more than 200 on one side.
-- The API answers `BAD_REQUEST` for a monster that is not in the quest or two quests of different kinds or servers, and `NOT_FOUND` for a quest that does not exist or, for `sender_quest`, is not yours.
-- The API does not check that you own what you give.
-- `NOT_FOUND` for a proposal that does not exist or is not yours.
-- `BAD_REQUEST` for a `quest` that is not one of your quests, and for a `direction` or `status` the API does not know.
+- `create()` refuses before sending a proposal without any monster, a quantity outside 1 to 99, a monster named twice on the same side, or more than 200 monsters on one side.
+- The API answers `BAD_REQUEST` for a monster that is not in the quest or for two quests of different kinds or servers, and `NOT_FOUND` for a quest that does not exist or, for `sender_quest`, that is not yours.
+- `NOT_FOUND` for a proposal that does not exist or that is not yours.
+- `BAD_REQUEST` for a `quest` that is not one of your quests, and for a `direction` or a `status` the API does not know.
 - An invalid id, quest or date is refused before being sent.
 - Proposals belong to the account of the key. Nothing here is cached by default.
 
@@ -139,7 +141,7 @@ A `TradeProposal`:
 | `id` | `number` |
 | `sender`, `recipient` | `string`, usernames |
 | `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
-| `server` | `Server \| null`, with its game version |
+| `server` | `Server \| null`, with its version of the game |
 | `quest_template` | `{ id, quest_type } \| null`, `null` when the quest was deleted |
 | `sender_quest`, `recipient_quest` | `{ slug, character_name } \| null`, `null` when it is not visible |
 | `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
@@ -150,10 +152,3 @@ A `TradeProposal`:
 | `read_at` | `string \| null`, `null` while the recipient has not read it |
 
 A `TradeProposalDetail` is the same, with `owned: number | null` on each monster.
-
-## See also
-
-- [Conversations](/resources/conversations/)
-- [Trading](/resources/trading/)
-- [Lists](/basics/lists/)
-- [The data in the package](/basics/embedded-data/)

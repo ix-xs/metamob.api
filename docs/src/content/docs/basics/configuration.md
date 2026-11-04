@@ -1,9 +1,11 @@
 ---
 title: Configuration
-description: "Chaque option du client et d'un appel isolé, avec sa valeur par défaut. Rien n'est requis à part une clé API, et les valeurs par défaut conviennent à un script aussi bien qu'à un bot."
+description: "Les options du client et d'un appel, avec leurs valeurs par défaut."
 sidebar:
   order: 8
 ---
+
+Toutes les options sont facultatives. Les valeurs par défaut conviennent à un script comme à un bot :
 
 ```ts
 const metamob = new Metamob({
@@ -17,7 +19,7 @@ const metamob = new Metamob({
 
 ## Le client
 
-Toutes les options sont facultatives. La clé seule peut être passée sous forme de chaîne.
+La clé seule peut aussi être passée sous forme de chaîne :
 
 ```ts
 const fromEnvironment = new Metamob();
@@ -25,11 +27,11 @@ const fromString = new Metamob(apiKey);
 const fromOptions = new Metamob({ apiKey });
 ```
 
-Créez un seul client et gardez-le : le limiteur et le cache vivent dedans. Deux clients pour la même clé comptent leurs requêtes séparément et peuvent dépasser la limite à eux deux.
+Créez un seul client et gardez-le : c'est lui qui tient le compte des requêtes et le cache. Deux clients pour la même clé comptent séparément, et peuvent dépasser la limite à eux deux.
 
 ## Un seul appel
 
-Chaque méthode prend d'abord ses propres arguments, puis un objet d'options pour cet appel seulement.
+Chaque méthode prend d'abord ses propres arguments, puis un objet d'options pour cet appel seulement :
 
 ```ts
 await metamob.monsters.get("Tofu", {}, { timeout: "5s", cache: false });
@@ -41,7 +43,7 @@ Quand une méthode a des filtres, ils viennent avant les options : `monsters.get
 
 ## Écouter le client
 
-Le client émet ce qu'il fait. `on` renvoie une fonction qui arrête l'écoute.
+Le client émet un événement à chaque étape d'un appel. `on` renvoie une fonction qui arrête l'écoute :
 
 ```ts
 const stop = metamob.on("request", ({ method, verb, url, attempt }) => {
@@ -71,7 +73,7 @@ Partout où une durée est attendue, écrivez un nombre de millisecondes ou une 
 
 ## Un autre fetch, un autre hôte
 
-`fetch` remplace le fetch global : pour passer par un proxy, pour enregistrer les requêtes dans des tests, ou sur un environnement qui n'en a pas.
+`fetch` remplace le fetch global : pour passer par un proxy, pour observer les requêtes dans des tests, ou sur un environnement qui n'en a pas.
 
 ```ts
 const calls: string[] = [];
@@ -119,17 +121,10 @@ Membres du client :
 | Membre | Signification |
 | --- | --- |
 | `me()` | Le compte de la clé |
-| `quests`, `monsters`, `zones`, `users`, `conversations`, `kralove` | Les ressources |
+| `quests`, `monsters`, `zones`, `users`, `conversations`, `tradeProposals`, `kralove` | Les parties de l'API |
 | `gameVersions`, `servers`, `monsterTypes`, `questTypes`, `questTemplates` | Les listes de référence |
 | `data` | [Les données du paquet](/basics/embedded-data/) |
 | `withKey(apiKey)` | Un client pour une autre clé |
 | `rateLimit` | Où en est la clé par rapport à la limite |
 | `on`, `once`, `off` | Événements |
 | `clearCache()` | Vide le cache |
-
-## Voir aussi
-
-- [Erreurs](/basics/errors/)
-- [Cache](/basics/caching/)
-- [La limite de requêtes](/basics/rate-limit/)
-- [Environnements d'exécution](/reference/runtimes/)

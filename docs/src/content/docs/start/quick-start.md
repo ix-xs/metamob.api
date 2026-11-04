@@ -1,16 +1,7 @@
 ---
 title: Démarrage rapide
-description: "Installez le paquet, obtenez votre clé API, puis lisez vos quêtes, trouvez ce qui manque encore à l'une d'elles et enregistrez un monstre que vous venez de capturer."
+description: "Installer le paquet, créer un client et faire ses premiers appels : lire vos quêtes, voir ce qui leur manque et enregistrer un monstre."
 ---
-
-```ts
-import { Metamob } from "@ix-xs/metamob.api";
-
-const metamob = new Metamob({ apiKey: process.env.METAMOB_API_KEY });
-
-const me = await metamob.me();
-console.log(`Signed in as ${me.username}`);
-```
 
 ## Installer
 
@@ -18,9 +9,7 @@ console.log(`Signed in as ${me.username}`);
 npm install @ix-xs/metamob.api
 ```
 
-Il faut Node.js 20 ou plus récent, et le paquet n'a aucune dépendance. Pour Bun, Deno, les navigateurs et les environnements edge, voir [Environnements d'exécution](/reference/runtimes/).
-
-Les deux systèmes de modules fonctionnent :
+Il faut Node.js 20 ou plus récent. Le paquet n'a pas de dépendance, et s'importe avec les deux systèmes de modules :
 
 ```ts
 import { Metamob } from "@ix-xs/metamob.api";
@@ -30,21 +19,32 @@ import { Metamob } from "@ix-xs/metamob.api";
 const { Metamob } = require("@ix-xs/metamob.api");
 ```
 
-## Obtenir votre clé API
+## Créer le client
 
-Chaque appel a besoin d'une clé. Créez la vôtre sur [metamob.fr](https://www.metamob.fr), dans **Paramètres > Clé API**.
+Chaque appel à l'API demande une clé. Créez la vôtre sur [metamob.fr](https://www.metamob.fr), dans **Paramètres > Clé API**, puis placez-la dans la variable d'environnement `METAMOB_API_KEY` :
 
-Gardez la clé hors de votre code. Placez-la dans une variable d'environnement nommée `METAMOB_API_KEY` : le client la lit quand vous ne passez pas d'`apiKey`.
-
-```ts
-const metamob = new Metamob(); // utilise process.env.METAMOB_API_KEY
+```bash title=".env"
+METAMOB_API_KEY=your-key
 ```
 
-[Votre clé API](/start/api-key/) indique à quoi une clé donne accès et comment la conserver.
+Le client lit cette variable quand vous ne lui passez pas de clé :
+
+```ts title="index.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const me = await metamob.me();
+console.log(`Signed in as ${me.username}`);
+```
+
+:::note
+Node.js ne lit pas les fichiers `.env` tout seul : lancez le script avec `node --env-file=.env index.js`, ou passez la clé avec `new Metamob({ apiKey })`. [Votre clé API](/start/api-key/) donne le détail.
+:::
 
 ## Lire vos quêtes
 
-Une quête est désignée par son slug, le court identifiant qui figure dans l'adresse de sa page. `quests.list()` donne les slugs du compte.
+Une quête est désignée par son slug, le court identifiant à la fin de l'adresse de sa page. `quests.list()` renvoie les quêtes du compte, avec leur slug :
 
 ```ts
 const quests = await metamob.quests.list();
@@ -55,35 +55,37 @@ for (const quest of quests) {
 }
 ```
 
-## Trouver ce qui manque encore à une quête
+## Voir ce qui manque à une quête
 
-Une liste peut être attendue avec `await` pour une page, ou parcourue jusqu'au bout avec `for await`. Les pages sont récupérées au fil de la lecture.
+`quests.monsters()` liste les monstres d'une quête. Avec `status: "needed"`, il ne garde que ceux qui manquent encore :
 
 ```ts
-for await (const monster of metamob.quests.monsters(slug, { status: "needed" })) {
-  console.log(`step ${monster.step}: ${monster.name.fr} (${monster.quantity} owned)`);
+const needed = metamob.quests.monsters(slug, { status: "needed" });
+
+for await (const monster of needed) {
+  console.log(`step ${monster.step}: ${monster.name.fr}`);
 }
 
-// Seulement le nombre, en une seule petite requête.
-const left = await metamob.quests.monsters(slug, { status: "needed" }).count();
+const left = await needed.count();
 ```
 
-[Listes](/basics/lists/) couvre les pages, les limites et le comptage.
+`for await` parcourt toutes les pages de la liste, une requête par page. `count()` ne demande que le total. [Listes](/basics/lists/) explique les autres façons de lire une liste.
 
 ## Enregistrer un monstre
 
-Un monstre se désigne par son nom en français, en anglais ou en espagnol, par son identifiant, ou par un objet qui porte son identifiant. Les accents et la casse ne comptent pas.
+`quests.setMonster()` fixe le nombre d'exemplaires que vous possédez. Le monstre peut être donné par son identifiant ou par son nom, en français, en anglais ou en espagnol :
 
 ```ts
 const result = await metamob.quests.setMonster(slug, "Bouflet le Puéril", 1);
 
 console.log(result.owned); // 1
-console.log(result.status); // possédés moins quêtes en parallèle : 0 signifie « assez »
 ```
 
-Un nom qui contient une faute de frappe n'est pas envoyé à votre quête. L'appel lève une erreur, et celle-ci liste les noms les plus proches :
+Si le nom ne correspond à aucun monstre, l'appel lève une erreur `UNKNOWN_NAME` qui propose les noms les plus proches, et rien n'est envoyé :
 
 ```ts
+import { isMetamobError } from "@ix-xs/metamob.api";
+
 try {
   await metamob.quests.setMonster(slug, "Bouflet le Pueril!", 1);
 } catch (error) {
@@ -91,11 +93,11 @@ try {
 }
 ```
 
-[Noms et identifiants](/basics/names-and-ids/) explique ce qui est accepté, et [Erreurs](/basics/errors/) ce qui peut être levé.
+[Noms et identifiants](/basics/names-and-ids/) détaille ce qui est accepté, et [Erreurs](/basics/errors/) ce qui peut être levé.
 
-## Chercher quelque chose sans requête
+## Chercher sans requête
 
-Les monstres, les zones et les serveurs sont livrés avec le paquet. `data` répond depuis la mémoire, ce dont une autocomplétion a besoin.
+Les monstres, les zones et les serveurs sont inclus dans le paquet. `data` y cherche directement, sans appeler l'API :
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -105,13 +107,6 @@ data.searchMonsters("bouf", { limit: 5 }).map((monster) => monster.name.fr);
 data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 ```
 
-## Tenir compte de la limite de requêtes
+## La limite de requêtes
 
-Metamob autorise 60 requêtes par minute et par clé. Le client les compte et fait attendre l'appel suivant au lieu d'échouer, donc vous n'avez rien à faire. [La limite de requêtes](/basics/rate-limit/) montre comment la surveiller.
-
-## Voir aussi
-
-- [Vos quêtes](/resources/quests/)
-- [Échanges](/resources/trading/)
-- [Les données du paquet](/basics/embedded-data/)
-- [Depuis la version 4](/start/migrating-from-v4/)
+Metamob accepte 60 requêtes par minute et par clé. Le client les compte : au-delà, il fait attendre les appels suivants au lieu de les envoyer. [La limite de requêtes](/basics/rate-limit/) montre comment suivre où vous en êtes.

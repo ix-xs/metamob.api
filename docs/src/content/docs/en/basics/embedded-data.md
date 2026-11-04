@@ -1,9 +1,11 @@
 ---
 title: The data in the package
-description: Monsters, zones, subzones, servers and quest templates ship with the package. The data object reads them from memory, with no request and no API key, which is what an autocomplete or a lookup command needs.
+description: "Monsters, zones, servers and quest templates are included in the package. data reads them from memory, with no request and no API key."
 sidebar:
   order: 6
 ---
+
+The package holds a copy of the reference data of the API. The `data` object queries it directly, which suits an autocomplete or a lookup command:
 
 ```ts
 import { data } from "@ix-xs/metamob.api";
@@ -17,15 +19,15 @@ data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 
 ## What is in it
 
-A copy of the reference data of the API, taken when the package was published: every monster, zone, subzone, server, version of the game, kind of monster, kind of quest and quest template, with which monsters live in which subzone and which monsters each quest template asks for.
+The reference data of the API at the time the package was published: monsters, zones, subzones, servers, versions of the game, kinds of monsters, kinds of quests and quest templates. With the links between them: the monsters of each subzone, and those each quest template asks for.
 
-`data.fetchedAt` is the day the copy was taken. The records have the shape the API gives them, so what you read from `data` and what you get from a call are interchangeable.
+`data.fetchedAt` is the date of the copy. The records have the shape the API gives them: what you read from `data` has the same shape as the answer of a call.
 
 The client has it too: `metamob.data` is the same object.
 
 ## Finding one record
 
-Each kind has a method that takes an id, a name or an object with an id, and returns the record or `undefined`. Nothing throws.
+Each kind has a method that takes an id, a name or an object with an id, and returns the record or `undefined`. Nothing throws an error.
 
 ```ts
 data.monster("Bouftou Royal"); // by name, in any of the three languages
@@ -40,7 +42,7 @@ data.questTemplate({ questType: "ocre", gameVersion: "Dofus Touch" })?.monster_c
 
 ## Searching monsters
 
-`searchMonsters` finds the monsters whose name contains a text, in any language, names that start with it first. It is fast enough to run on every keystroke.
+`searchMonsters` finds the monsters whose name contains a text, in any of the three languages, starting with the names that begin with that text. It is fast enough to run on every keystroke.
 
 ```ts
 data.searchMonsters("bouf"); // 25 at most by default
@@ -60,8 +62,8 @@ data.suggest("zone", "Amakna", 5); // up to 5 names
 
 ```ts
 // Where a monster lives.
-data.subzonesOf("Tofu Maléfique").map((subzone) => `${subzone.zone.name.fr} > ${subzone.name.fr}`);
 data.zonesOf("Tofu Maléfique");
+data.subzonesOf("Tofu Maléfique").map((subzone) => subzone.name.fr);
 
 // What lives somewhere.
 data.monstersInSubzone("Coin des Bouftous");
@@ -74,7 +76,7 @@ data.monster("Tofuldebeu l'Explosif")?.reference?.name.fr; // "Tofu"
 
 ## Quest templates
 
-A quest template is what a kind of quest asks for in a version of the game: the Ochre quest on Dofus Touch, for instance.
+A quest template is what a kind of quest asks for in a version of the game: the Ochre quest on Dofus Touch, for example.
 
 ```ts
 const ochreOnTouch = { questType: "ocre", gameVersion: "Dofus Touch" } as const;
@@ -98,21 +100,21 @@ data.questTypes;
 data.questTemplates;
 ```
 
-They are read-only arrays, built once on first use. The whole data set is decoded the first time anything is read, which takes a few milliseconds.
+They are read-only arrays. The data is decoded the first time it is read, in a few milliseconds.
 
 ## When the game changes
 
-A new monster, zone or server reaches the package with its next release. In between, nothing breaks:
+A new monster, zone or server reaches the package with its next release. In the meantime:
 
-- A call given a name the package does not know asks the API before giving up, see [Names and ids](/basics/names-and-ids/#when-a-name-is-unknown).
-- An id always works, known or not.
-- `data` itself only knows what it shipped with: `data.monster("a brand new monster")` is `undefined` until you update the package.
+- a call given a name the package does not know also looks for it in the API, see [Names and ids](/basics/names-and-ids/#when-a-name-is-unknown);
+- an id always works, known to the package or not;
+- `data` only knows its copy: a newer monster is `undefined` there until the package is updated.
 
 To read what the API says right now, use the calls: [`metamob.monsters`](/resources/monsters/), [`metamob.zones`](/resources/zones/) and the [reference lists](/resources/reference-data/).
 
 ## In a browser
 
-`data` needs neither a key nor a network, so it runs in a page. Importing only `data` leaves the client out of your bundle; the data set itself weighs about 30 kB once compressed. The search box on the home page of this site is exactly that.
+`data` needs neither a key nor a network: it also works in a web page. Importing only `data` leaves the client out of your bundle, and the data weighs about 30 kB once compressed. The [Try it](/start/playground/) page works this way.
 
 ## Reference
 
@@ -133,10 +135,3 @@ To read what the API says right now, use the calls: [`metamob.monsters`](/resour
 | `stepOf(monster, template)` | `number \| undefined` |
 | `suggest(kind, text, limit?)` | `string[]` |
 | `fetchedAt` | `string`, as `YYYY-MM-DD` |
-
-## See also
-
-- [Names and ids](/basics/names-and-ids/)
-- [Monsters](/resources/monsters/)
-- [A Discord command with autocomplete](/recipes/discord-command/)
-- [Caching](/basics/caching/)

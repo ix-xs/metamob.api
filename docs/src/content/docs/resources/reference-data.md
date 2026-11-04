@@ -1,22 +1,17 @@
 ---
 title: Données de référence
-description: Les listes auxquelles tout le reste renvoie. Versions du jeu, serveurs, types de monstres, types de quêtes, et les modèles de quête qui disent quels monstres une quête demande à chaque étape.
+description: "Versions du jeu, serveurs, types de monstres, types de quêtes et modèles de quête."
 sidebar:
   order: 10
 ---
 
-```ts
-const servers = await metamob.servers.list();
-const touch = servers.filter((server) => server.game_version?.name === "Dofus Touch");
-
-console.log(touch.map((server) => server.name));
-```
+Ces listes sont celles auxquelles le reste de l'API renvoie.
 
 ## Demandez d'abord au paquet
 
-Tout cela est livré avec le paquet et lu depuis la mémoire par [`data`](/basics/embedded-data/) : `data.servers`, `data.server("Draconiros")`, `data.questTemplates` et ainsi de suite. Les appels ci-dessous interrogent l'API, ce qui ne vaut une requête que si vous avez besoin de ce qu'elle dit à l'instant présent.
+Toutes ces données sont aussi incluses dans le paquet, et [`data`](/basics/embedded-data/) les lit sans requête : `data.servers`, `data.server("Draconiros")`, `data.questTemplates`, etc. Les appels ci-dessous interrogent l'API, pour quand vous voulez les données du jour.
 
-Leurs réponses sont [mises en cache](/basics/caching/) pendant 10 minutes par défaut et partagées entre les clés.
+Leurs réponses sont [mises en cache](/basics/caching/) 10 minutes par défaut, pour toutes les clés.
 
 ## Versions du jeu
 
@@ -30,9 +25,10 @@ retro.id;
 
 ## Serveurs
 
-Chaque serveur appartient à une version du jeu et à une communauté.
+Chaque serveur appartient à une version du jeu et à une communauté :
 
 ```ts
+const servers = await metamob.servers.list();
 const server = await metamob.servers.get("Draconiros");
 
 server.community; // "World" ou "France"
@@ -41,7 +37,7 @@ server.game_version?.name; // "Dofus (Unity)"
 
 ## Types de monstres
 
-Il y en a trois : monstre, boss et archimonstre, avec les identifiants 1, 2 et 3. Leurs noms sont ce qu'accepte chaque filtre `type` de la bibliothèque.
+Il y en a trois : monstre, boss et archimonstre, d'identifiants 1, 2 et 3. Chaque filtre `type` accepte leurs noms :
 
 ```ts
 const kinds = await metamob.monsterTypes.list();
@@ -52,7 +48,7 @@ arch.name; // { fr: "archimonstre", en: "archmonster", es: "archimonstruo" }
 
 ## Types de quêtes
 
-Metamob suit deux quêtes : celle du Dofus Ocre, slug `ocre`, et celle du Dokille, slug `dokille`.
+Metamob suit deux quêtes : celle du Dofus Ocre, de slug `ocre`, et celle du Dokille, de slug `dokille` :
 
 ```ts
 const kinds = await metamob.questTypes.list();
@@ -64,11 +60,11 @@ urls.questTypeImage(ochre); // son image sur metamob.fr
 
 ## Modèles de quête
 
-Une quête n'est pas la même dans toutes les versions du jeu : la quête du Dofus Ocre ne demande pas les mêmes monstres sur Dofus (Unity) et sur Dofus Touch. Un modèle de quête est un type de quête dans une version du jeu.
+Une quête n'est pas la même dans toutes les versions du jeu : celle du Dofus Ocre ne demande pas les mêmes monstres sur Dofus (Unity) et sur Dofus Touch. Un modèle de quête, c'est un type de quête dans une version du jeu.
 
 ```ts
 for (const template of await metamob.questTemplates.list()) {
-  console.log(template.id, template.quest_type?.name.fr, template.game_version?.name);
+  console.log(template.quest_type?.name.fr, template.game_version?.name);
   console.log(`${template.monster_count} monsters in ${template.step_count} steps`);
 }
 ```
@@ -86,14 +82,13 @@ L'API n'a pas de point d'accès pour un modèle sans ses monstres : `get()` le r
 
 ## Les monstres d'un modèle
 
-`questTemplates.monsters()` est une [liste](/basics/lists/) de ce que la quête demande, chaque monstre avec son étape. 200 par page au plus.
+`questTemplates.monsters()` est une [liste](/basics/lists/) de ce que la quête demande, chaque monstre avec son étape, 200 par page au plus :
 
 ```ts
 const ochreOnTouch = { questType: "ocre", gameVersion: "Dofus Touch" } as const;
 
 // Une étape.
 const step4 = await metamob.questTemplates.monsters(ochreOnTouch, { step: 4 }).all();
-console.log(step4.map((monster) => monster.name.fr));
 
 // Toute la quête, dans l'ordre.
 for await (const monster of metamob.questTemplates.monsters(ochreOnTouch)) {
@@ -130,10 +125,3 @@ Les quêtes des joueurs pointent vers leur modèle : `quest.quest_template` cont
 | `QuestType` | `id`, `slug`, `name` dans trois langues, `image` |
 | `QuestTemplate` | `id`, `quest_type`, `game_version`, `monster_count`, `step_count` |
 | `TemplateMonster` | un `Monster` avec son `step` |
-
-## Voir aussi
-
-- [Les données du paquet](/basics/embedded-data/)
-- [Monstres](/resources/monsters/)
-- [Vos quêtes](/resources/quests/)
-- [Cache](/basics/caching/)

@@ -1,31 +1,26 @@
 ---
 title: Other players
-description: Search players by name, read a public profile, and look into a public quest to see what its owner offers and looks for.
+description: "Search players, read a public profile and the monsters of a public quest."
 sidebar:
   order: 6
 ---
 
-```ts
-const profile = await metamob.users.get("Ix-xs");
-
-for (const quest of profile.quests) {
-  console.log(quest.character_name, quest.server?.name, `step ${quest.current_step}`);
-}
-```
-
 ## Searching players
 
-A search matches a part of the username, among players who have at least one public quest. It needs 3 characters at least and is a [list](/basics/lists/), 50 players per page at most. Only players seen in the last 90 days are searched, unless `activeWithinDays` says otherwise, up to 365.
+`users.search()` looks for a part of the username, from 3 characters, among the players who have at least one public quest. It is a [list](/basics/lists/) of 50 players per page at most. Only players seen in the last 90 days are searched; `activeWithinDays` changes this length, up to 365.
 
 ```ts
 const page = await metamob.users.search("ix-");
 page.items.map((user) => user.username);
 
 // On one server, among players seen in the last 30 days.
-const active = await metamob.users.search("ix-", { server: "Draconiros", activeWithinDays: 30 }).all();
+const filters = { server: "Draconiros", activeWithinDays: 30 };
+const active = await metamob.users.search("ix-", filters).all();
 ```
 
 ## Reading a profile
+
+`users.get()` returns the public profile of a player, with the list of their public quests:
 
 ```ts
 const profile = await metamob.users.get(username);
@@ -36,11 +31,11 @@ profile.avatar?.name.fr;
 urls.profile(profile); // the address of the profile on metamob.fr
 ```
 
-A player is found whatever the case of the username you give, and the answer spells it the way its owner does: `"ix-xs"` finds `"Ix-xs"`. A profile lists the public quests of the player, without their monsters.
+The case of the username does not matter: `"ix-xs"` finds `"Ix-xs"`, and the answer spells it the way its owner does.
 
 ## Public quests
 
-`users.quests()` adds, for each quest, how many monsters it looks for and offers.
+`users.quests()` gives the public quests of a player, with the number of monsters each one looks for and offers:
 
 ```ts
 for (const quest of await metamob.users.quests(username)) {
@@ -51,7 +46,7 @@ for (const quest of await metamob.users.quests(username)) {
 
 ## The monsters of a public quest
 
-`users.quest()` is a [list](/basics/lists/) of the monsters of one quest, with what its owner owns, wants and offers. Each page also carries the quest itself.
+`users.quest()` is a [list](/basics/lists/) of the monsters of a quest, with what its owner owns, looks for and offers. Each page also holds the quest:
 
 ```ts
 const page = await metamob.users.quest(username, slug, { status: "offered" });
@@ -64,27 +59,27 @@ for (const monster of page.items) {
 }
 ```
 
-Filters:
+The same filters as for your quests apply:
 
 ```ts
 // What they look for among archmonsters.
 await metamob.users.quest(username, slug, { status: "wanted", type: "archimonstre" }).all();
 
-// Everything of step 12.
+// Everything at step 12.
 await metamob.users.quest(username, slug, { step: 12 }).all();
 ```
 
-`want` and `offer` are what the quest really puts on the market, after the trade settings of its owner. A player can own spares and offer none.
+`want` and `offer` are what the quest really looks for and offers, once the trade settings of its owner are applied. A player can have spare copies and offer none.
 
 ## Your own quests
 
-Through these methods your quests look the way others see them: only the public ones, without your trade settings. For the full picture, and to change anything, use [`metamob.quests`](/resources/quests/).
+With these methods, your quests appear the way others see them: only the public ones, without your settings. For the full view and to change them, use [`metamob.quests`](/resources/quests/).
 
 ## Limits and errors
 
-- `NOT_FOUND` for a player who does not exist, whose account was deleted, or for a quest that is hidden.
-- A search shorter than 3 characters throws `INVALID_ARGUMENT` before a request is spent.
-- Nothing here is cached by default. A profile page with many visitors can cache it: `cache: { methods: { "users.get": "1m" } }`, see [Caching](/basics/caching/).
+- `NOT_FOUND` for a player who does not exist, whose account was deleted, or for a hidden quest.
+- A search of fewer than 3 characters throws `INVALID_ARGUMENT` before sending.
+- Nothing here is cached by default. For a profile shown often: `cache: { methods: { "users.get": "1m" } }`, see [Caching](/basics/caching/).
 
 ## Reference
 
@@ -102,16 +97,9 @@ A public quest:
 | `slug` | Its identifier |
 | `character_name` | The character doing the quest |
 | `current_step` | The step the character is at |
-| `parallel_quests` | Quests done in parallel, which is how many of each monster is needed |
+| `parallel_quests` | Quests done in parallel, that is the number of copies of each monster to gather |
 | `server` | The server, with its version of the game |
 | `quest_template` | The kind of quest, its number of monsters and of steps |
-| `wanted_count`, `offered_count` | Only from `users.quests()` |
+| `wanted_count`, `offered_count` | Only with `users.quests()` |
 
 A monster of a public quest is a `Monster` with `step`, `quantity`, `want` and `offer`.
-
-## See also
-
-- [Trading](/resources/trading/)
-- [Your quests](/resources/quests/)
-- [Conversations](/resources/conversations/)
-- [Account](/resources/account/)

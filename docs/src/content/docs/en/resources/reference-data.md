@@ -1,22 +1,17 @@
 ---
 title: Reference data
-description: The lists everything else refers to. Versions of the game, servers, kinds of monsters, kinds of quests, and the quest templates that say which monsters a quest asks for at each step.
+description: "Versions of the game, servers, kinds of monsters, kinds of quests and quest templates."
 sidebar:
   order: 10
 ---
 
-```ts
-const servers = await metamob.servers.list();
-const touch = servers.filter((server) => server.game_version?.name === "Dofus Touch");
-
-console.log(touch.map((server) => server.name));
-```
+These lists are the ones the rest of the API refers to.
 
 ## Ask the package first
 
-All of this ships with the package and is read from memory by [`data`](/basics/embedded-data/): `data.servers`, `data.server("Draconiros")`, `data.questTemplates` and so on. The calls below ask the API, which is only worth a request when you need what it says right now.
+All of this data is also included in the package, and [`data`](/basics/embedded-data/) reads it without a request: `data.servers`, `data.server("Draconiros")`, `data.questTemplates`, and so on. The calls below ask the API, for when you want today's data.
 
-Their answers are [cached](/basics/caching/) for 10 minutes by default and shared between keys.
+Their answers are [cached](/basics/caching/) for 10 minutes by default, for every key.
 
 ## Versions of the game
 
@@ -30,9 +25,10 @@ retro.id;
 
 ## Servers
 
-Each server belongs to a version of the game and to a community.
+Each server belongs to a version of the game and to a community:
 
 ```ts
+const servers = await metamob.servers.list();
 const server = await metamob.servers.get("Draconiros");
 
 server.community; // "World" or "France"
@@ -41,7 +37,7 @@ server.game_version?.name; // "Dofus (Unity)"
 
 ## Kinds of monsters
 
-There are three: monster, boss and archmonster, with the ids 1, 2 and 3. Their names are what every `type` filter of the library accepts.
+There are three: monster, boss and archmonster, with the ids 1, 2 and 3. Every `type` filter accepts their names:
 
 ```ts
 const kinds = await metamob.monsterTypes.list();
@@ -52,7 +48,7 @@ arch.name; // { fr: "archimonstre", en: "archmonster", es: "archimonstruo" }
 
 ## Kinds of quests
 
-Metamob follows two quests: the Ochre Dofus, slug `ocre`, and the Dokille, slug `dokille`.
+Metamob follows two quests: the Ochre Dofus one, slug `ocre`, and the Dokille one, slug `dokille`:
 
 ```ts
 const kinds = await metamob.questTypes.list();
@@ -64,11 +60,11 @@ urls.questTypeImage(ochre); // its picture on metamob.fr
 
 ## Quest templates
 
-A quest is not the same in every version of the game: the Ochre quest does not ask for the same monsters on Dofus (Unity) and on Dofus Touch. A quest template is one kind of quest in one version of the game.
+A quest is not the same in every version of the game: the Ochre Dofus one does not ask for the same monsters on Dofus (Unity) and on Dofus Touch. A quest template is one kind of quest in one version of the game.
 
 ```ts
 for (const template of await metamob.questTemplates.list()) {
-  console.log(template.id, template.quest_type?.name.fr, template.game_version?.name);
+  console.log(template.quest_type?.name.fr, template.game_version?.name);
   console.log(`${template.monster_count} monsters in ${template.step_count} steps`);
 }
 ```
@@ -82,18 +78,17 @@ const template = await metamob.questTemplates.get(ochreOnTouch);
 template.step_count;
 ```
 
-The API has no endpoint for one template without its monsters: `get()` picks it out of the list.
+The API has no endpoint for a template without its monsters: `get()` finds it in the list.
 
 ## The monsters of a template
 
-`questTemplates.monsters()` is a [list](/basics/lists/) of what the quest asks for, each monster with its step. 200 per page at most.
+`questTemplates.monsters()` is a [list](/basics/lists/) of what the quest asks for, each monster with its step, 200 per page at most:
 
 ```ts
 const ochreOnTouch = { questType: "ocre", gameVersion: "Dofus Touch" } as const;
 
 // One step.
 const step4 = await metamob.questTemplates.monsters(ochreOnTouch, { step: 4 }).all();
-console.log(step4.map((monster) => monster.name.fr));
 
 // The whole quest, in order.
 for await (const monster of metamob.questTemplates.monsters(ochreOnTouch)) {
@@ -101,9 +96,9 @@ for await (const monster of metamob.questTemplates.monsters(ochreOnTouch)) {
 }
 ```
 
-Each page also carries the template the monsters belong to, as `page.template`.
+Each page also holds the template the monsters belong to, in `page.template`.
 
-The quests of players point to their template: `quest.quest_template` has its id, its kind of quest and its numbers of monsters and steps.
+The quests of players point to their template: `quest.quest_template` holds its id, its kind of quest and its numbers of monsters and steps.
 
 ## Limits and errors
 
@@ -130,10 +125,3 @@ The quests of players point to their template: `quest.quest_template` has its id
 | `QuestType` | `id`, `slug`, `name` in three languages, `image` |
 | `QuestTemplate` | `id`, `quest_type`, `game_version`, `monster_count`, `step_count` |
 | `TemplateMonster` | a `Monster` with its `step` |
-
-## See also
-
-- [The data in the package](/basics/embedded-data/)
-- [Monsters](/resources/monsters/)
-- [Your quests](/resources/quests/)
-- [Caching](/basics/caching/)

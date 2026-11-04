@@ -1,35 +1,17 @@
 ---
-// The site header: brand, the three top-level areas, search, language,
-// repository, theme.
-// On small screens only the brand and the search remain; the rest lives in the
-// navigation sheet, which Starlight opens from its own menu button.
 import Search from "virtual:starlight/components/Search";
 import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import LanguageSelect from "virtual:starlight/components/LanguageSelect";
 import SearchExtras from "./SearchExtras.astro";
 import { LOCALES, normalizeBase, switchLocale, withBase } from "../../plugins/base-links.mjs";
-import { href, useT } from "../i18n";
+import { useT } from "../i18n";
 import pkg from "../../../package.json";
 
 const { locale } = Astro.locals.starlightRoute;
 const t = useT(locale);
 const base = normalizeBase(import.meta.env.BASE_URL);
-// Where this page is, whatever its language.
-const path = switchLocale(Astro.url.pathname.slice(base.length) || "/", undefined);
-const inRecipes = path.startsWith("/recipes/");
-const inReference = path.startsWith("/reference/") || path.startsWith("/help/");
-
-const areas = [
-  // The landing page and the "not found" page belong to none of the three.
-  { label: t("nav.docs"), href: "/start/quick-start/", current: !inRecipes && !inReference && path !== "/" && !/^\/404(?:\.html|\/)?$/.test(path) },
-  { label: t("nav.recipes"), href: "/recipes/discord-command/", current: inRecipes },
-  { label: t("nav.reference"), href: "/reference/methods/", current: inReference },
-];
-// The host serves one "not found" page, the French one, whatever the address
-// asked for. Under a translation, it hands over to that language's own.
 const notFound = /^\/404(?:\.html|\/)?$/.test(Astro.url.pathname.slice(base.length) || "/");
 const translatedNotFound = LOCALES.map((code) => [withBase(`/${code}/`, base), withBase(`/${code}/404/`, base)]);
-// The published version, read from the package itself: a release redeploys the site.
 const version = pkg.version;
 ---
 
@@ -45,11 +27,6 @@ const version = pkg.version;
   <a class="at-brand" href={Astro.locals.starlightRoute.siteTitleHref} translate="no">
     <span>metamob<i>.</i>api</span><small>v{version}</small>
   </a>
-  <nav class="at-toplinks" aria-label={t("nav.sections")}>
-    {areas.map((area) => (
-      <a href={href(area.href, locale)} aria-current={area.current ? "true" : undefined}>{area.label}</a>
-    ))}
-  </nav>
   <span class="at-spacer"></span>
   <Search />
   <div class="at-actions">
@@ -63,7 +40,6 @@ const version = pkg.version;
 <SearchExtras />
 
 <script>
-  // Copy buttons outside code blocks (the install line on the landing page).
   document.addEventListener("click", (event) => {
     const button = (event.target as Element | null)?.closest<HTMLElement>("[data-copy]");
     if (!button) return;
@@ -72,8 +48,6 @@ const version = pkg.version;
     window.setTimeout(() => button.removeAttribute("data-copied"), 1600);
   });
 
-  // Sections of the landing page come into view once, as they are reached
-  // (the styles are under [data-reveal]).
   const reveals = document.querySelectorAll("[data-reveal]");
   if (reveals.length > 0) {
     const watcher = new IntersectionObserver(
@@ -89,8 +63,6 @@ const version = pkg.version;
     for (const element of reveals) watcher.observe(element);
   }
 
-  // A sliding marker under the selected tab. It slides for a pointer, and jumps
-  // for the keyboard: arrowing through tabs should never wait on an animation.
   let lastPointer = 0;
   function place(list: HTMLElement, animate: boolean): void {
     const active = list.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]');

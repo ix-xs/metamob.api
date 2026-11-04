@@ -1,11 +1,13 @@
 ---
 title: A trade finder
-description: A script that finds who can give you a monster you are missing, and what you could give them in return, ready to paste in a message.
+description: "A script that finds who can give you a monster, and what you could give them in return."
 sidebar:
   order: 3
 ---
 
 ## What you get
+
+A script that takes a monster you are missing, and lists the players who offer it:
 
 ```text
 Looking for Bouflet le Puéril
@@ -18,7 +20,7 @@ PlayerName (score 14, seen 2026-10-13)
 
 ## The script
 
-```ts
+```ts title="trade.ts"
 import { Metamob, data, urls } from "@ix-xs/metamob.api";
 
 const metamob = new Metamob(); // reads METAMOB_API_KEY
@@ -27,60 +29,65 @@ const [slug, ...words] = process.argv.slice(2);
 const wanted = data.monster(words.join(" "));
 if (!slug || !wanted) {
   const close = data.suggest("monster", words.join(" "));
-  throw new Error(close.length ? `Did you mean ${close.join(", ")}?` : "Usage: node trade.mjs <slug> <monster>");
+  if (close.length) throw new Error(`Did you mean ${close.join(", ")}?`);
+  throw new Error("Usage: node trade.js <slug> <monster>");
 }
 
 console.log(`Looking for ${wanted.name.fr}\n`);
 
 let found = 0;
-// Partners with whom something can go both ways, best match first.
-for await (const match of metamob.quests.matches(slug, { onlyPossibleTrades: true })) {
-  const offer = match.matches.they_have_you_want.find((monster) => monster.id === wanted.id);
+const partners = metamob.quests.matches(slug, { onlyPossibleTrades: true });
+
+for await (const { user, matches, match_score } of partners) {
+  const offer = matches.they_have_you_want.find((monster) => monster.id === wanted.id);
   if (!offer) continue;
 
-  console.log(`${match.user.username} (score ${match.match_score}, seen ${match.user.last_active.slice(0, 10)})`);
+  const wants = matches.you_have_they_want.map((monster) => monster.name.fr);
+  console.log(`${user.username} (score ${match_score}, seen ${user.last_active.slice(0, 10)})`);
   console.log(`  has ${offer.available} available`);
-  console.log(`  wants from you: ${match.matches.you_have_they_want.map((monster) => monster.name.fr).join(", ")}`);
-  console.log(`  ${urls.profile(match.user)}\n`);
+  console.log(`  wants from you: ${wants.join(", ")}`);
+  console.log(`  ${urls.profile(user)}\n`);
 
-  // Leaving the loop stops the requests: only the pages that were read were fetched.
-  if (++found === 5) break;
+  if (++found === 5) break; // no more pages are requested
 }
 
 if (!found) console.log("Nobody offers it right now among your matches.");
 ```
 
 ```bash
-METAMOB_API_KEY=your-key node trade.mjs 21b0a742 bouflet le pueril
+node --env-file=.env trade.js 21b0a742 bouflet le pueril
 ```
 
 ## How it stays cheap
 
-The monster is found in [the data in the package](/basics/embedded-data/), with no request, and a typo is caught before anything is sent.
+The monster is looked up in [the data in the package](/basics/embedded-data/), without a request: a typo is caught before anything is sent.
 
-Matches come 50 per page. The loop reads them in order and stops at the fifth partner, so a common monster costs one request and a rare one a few. Without the `break`, every page would be read.
+Partners come in pages of 50, and the loop stops at the fifth one found. A common monster therefore costs one request, a rare one a few.
 
 ## Checking a partner before writing to them
 
-A match says what a player offers today. Their public quest says the rest: how many they own, and what else they look for.
+The public quest of a partner says what else they are looking for:
 
 ```ts
 const match = await metamob.quests.matches(slug).first();
 
 if (match) {
-  const theirs = await metamob.users.quest(match.user.username, match.quest.slug, { status: "wanted" }).all();
+  const { user, quest } = match;
+  const theirs = await metamob.users.quest(user.username, quest.slug, { status: "wanted" }).all();
   console.log(theirs.map((monster) => `${monster.name.fr} x${monster.want}`));
 }
 ```
 
 ## Everything you could get in one pass
 
-Turn the question around: for each monster you miss, who has it.
+The other way around: for each monster you are missing, who offers it.
 
 ```ts
 const sources = new Map<string, string[]>();
 
-for await (const page of metamob.quests.matches(slug, { onlyPossibleTrades: true }).pages({ limit: 100 })) {
+const partners = metamob.quests.matches(slug, { onlyPossibleTrades: true });
+
+for await (const page of partners.pages({ limit: 100 })) {
   for (const partner of page.items) {
     for (const monster of partner.matches.they_have_you_want) {
       const players = sources.get(monster.name.fr) ?? [];
@@ -90,26 +97,19 @@ for await (const page of metamob.quests.matches(slug, { onlyPossibleTrades: true
   }
 }
 
-// The rarest first: the monsters only one or two players offer.
+// The rarest first: those few players offer.
 const rarest = [...sources].sort((a, b) => a[1].length - b[1].length).slice(0, 10);
 for (const [monster, players] of rarest) console.log(monster, players.join(", "));
 ```
 
-`pages({ limit: 100 })` stops after the pages that hold 100 partners: two requests.
+`pages({ limit: 100 })` stops after 100 partners, which is two requests.
 
 ## Keeping a monster for a friend
 
-Once a trade is agreed, keep the monster out of other trades with an override, and release it afterwards.
+Once a trade is agreed, take the monster out of other trades with a manual setting, then give it back to the computation:
 
 ```ts
 await metamob.quests.setTrade(slug, "Tofuldebeu l'Explosif", { trade_offer: 0 });
 // ... the trade happens in game ...
 await metamob.quests.resetTrade(slug, "Tofuldebeu l'Explosif");
 ```
-
-## See also
-
-- [Trading](/resources/trading/)
-- [Other players](/resources/users/)
-- [Lists](/basics/lists/)
-- [Conversations](/resources/conversations/)

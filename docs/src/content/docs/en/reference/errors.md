@@ -1,39 +1,27 @@
 ---
 title: Error codes
-description: Every error code the library throws, what causes it, whether a retry already happened, and the properties of each error class. Use it to look up what a failure means.
+description: "The error codes, their cause, whether they are retried, and the properties of each error class."
 ---
 
-```ts
-try {
-  await metamob.quests.setMonster(slug, "Tofu Maléfique", 2);
-} catch (error) {
-  if (error instanceof MetamobError) {
-    error.code; // set by the library, for example "NOT_FOUND"
-    error.message; // "quests.setMonster: Quest not found"
-  }
-  throw error;
-}
-```
-
-Every error extends `MetamobError` and carries a `code`. [Errors](/basics/errors/) explains how to handle them. This page is the lookup table.
+Every error extends `MetamobError` and carries a `code`. [Errors](/basics/errors/) explains how to handle them; this page lists them.
 
 ## Codes
 
 `code` is a `MetamobErrorCode`. There are 14 of them.
 
-"Retried" means up to 3 more attempts by default. The delay starts at 500 ms and doubles, up to 60 seconds. When the API sends a `Retry-After`, that wait is used instead, unless it is longer than `retry.maxDelay`: the error is then thrown at once, with its `retryAfter`.
+"Retried" means up to 3 more attempts by default. The delay starts at 500 ms and doubles, up to 60 seconds. When the API sends a `Retry-After`, that wait is used, unless it is longer than `retry.maxDelay`: the error is then thrown at once, with its `retryAfter`.
 
 From the API, as a `MetamobApiError`:
 
 | Code | Status | Cause | Retried |
 | --- | --- | --- | --- |
-| `BAD_REQUEST` | 400, 422 | A parameter the API refuses. The library checks most of them before sending | No |
+| `BAD_REQUEST` | 400, 422 | A parameter the API refuses | No |
 | `UNAUTHORIZED` | 401 | The key is missing, invalid or was revoked | No |
 | `FORBIDDEN` | 403 | The key may not do this: sending is not opened on the account, or one of the two players blocked the other | No |
 | `NOT_FOUND` | 404 | It does not exist, or it is not yours: a quest of another account, a hidden quest, a deleted player | No |
 | `RATE_LIMITED` | 429 | More than 60 requests in a minute with this key, or the anti-spam limits of the site on a message or a proposal | Yes, except a message or a proposal |
 | `SERVER_ERROR` | 500 and up | The API failed | 502, 503, 504: yes, except a message or a proposal. 500: reads only |
-| `API_ERROR` | any other | An error status the library has no name for | No |
+| `API_ERROR` | any other | Another error status | No |
 
 From the request, as a `MetamobRequestError`:
 
@@ -59,9 +47,9 @@ The base of all three.
 | Property | Type | Meaning |
 | --- | --- | --- |
 | `code` | `MetamobErrorCode` | One of the codes above |
-| `message` | `string` | The method, then what went wrong |
+| `message` | `string` | The method, then what failed |
 | `name` | `string` | The name of the class |
-| `cause` | `unknown` | The underlying error, when there is one |
+| `cause` | `unknown` | The original error, when there is one |
 
 ## MetamobApiError
 
@@ -71,13 +59,13 @@ The base of all three.
 | `method` | `string` | The method that failed, for example `quests.get` |
 | `url` | `string` | The address called. It never contains the key |
 | `messages` | `Record<string, string>` | What the API said, by field. Often `{ error: "..." }` |
-| `retryAfter` | `number \| undefined` | Seconds the API asked to wait, on a 429 |
+| `retryAfter` | `number \| undefined` | The number of seconds the API asked to wait, on a 429 |
 | `body` | `unknown` | The body of the answer, parsed when it is JSON |
 | `isNotFound` | `boolean` | `status === 404` |
 | `isUnauthorized` | `boolean` | `status === 401` |
 | `isRateLimited` | `boolean` | `status === 429` |
 
-The API words its errors in three ways depending on the endpoint. The library reads all of them into `message` and `messages`, so you never parse `body` yourself.
+The error message of the API ends up in `message` and `messages`.
 
 ## MetamobRequestError
 
@@ -102,10 +90,3 @@ function handle(error: unknown) {
 ```
 
 It is a type guard: inside the branch, `error` is a `MetamobError`.
-
-## See also
-
-- [Errors](/basics/errors/)
-- [Troubleshooting](/help/troubleshooting/)
-- [The rate limit](/basics/rate-limit/)
-- [All exports](/reference/exports/)
