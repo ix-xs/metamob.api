@@ -37,14 +37,12 @@ describe("cache", () => {
     await metamob.quests.list();
     expect(calls).toHaveLength(1);
 
-    // Another account never reads the first one's entries.
     await metamob.quests.list({ apiKey: "their-key" });
     expect(calls).toHaveLength(2);
 
     await metamob.quests.update("a1b2c3d4", { current_step: 3 });
     await metamob.quests.list();
     expect(calls).toHaveLength(4);
-    // The other account wrote nothing: its entry is still good.
     await metamob.quests.list({ apiKey: "their-key" });
     expect(calls).toHaveLength(4);
   });
@@ -108,7 +106,6 @@ describe("cache", () => {
     await custom.metamob.servers.list();
     expect(custom.calls).toHaveLength(1);
     expect([...entries.keys()]).toEqual(["public:https://www.metamob.fr/api/v1/servers"]);
-    // No key ever reaches the store.
     expect(JSON.stringify([...entries])).not.toContain("test-key");
 
     const broken: CacheStore = {

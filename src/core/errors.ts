@@ -1,7 +1,4 @@
-/**
- * Stable machine-readable codes carried by every error this library throws.
- * Compare against `error.code` instead of parsing messages.
- */
+/** The `code` of every error this library throws. */
 export type MetamobErrorCode =
   | "API_ERROR"
   | "BAD_REQUEST"
@@ -30,15 +27,12 @@ export class MetamobError extends Error {
   }
 }
 
-/** Details passed to {@link MetamobApiError}. */
 export interface ApiErrorInit {
   status: number;
   message: string;
   method: string;
   url: string;
-  /** The `messages` object of the error body, keyed by field name or by `error`. */
   messages?: Record<string, string> | undefined;
-  /** Seconds to wait before retrying, when the API sent `Retry-After`. */
   retryAfter?: number | undefined;
   body?: unknown;
 }
@@ -60,12 +54,9 @@ export class MetamobApiError extends MetamobError {
   readonly status: number;
   /** Method that failed, for example `users.get`. */
   readonly method: string;
-  /** Request URL. It never contains the API key, which travels in a header. */
+  /** Request URL, without the API key. */
   readonly url: string;
-  /**
-   * What the API said, keyed by the field it is about. A general error sits
-   * under `error`; a refused field of a `PATCH` sits under its own name.
-   */
+  /** What the API said, keyed by field. A general error sits under `error`. */
   readonly messages: Record<string, string>;
   /** Seconds to wait before retrying, when the API said so. */
   readonly retryAfter: number | undefined;
@@ -83,15 +74,12 @@ export class MetamobApiError extends MetamobError {
     this.body = init.body;
   }
 
-  /**
-   * The resource does not exist, or is not yours to see: an unknown user, a
-   * deleted account, a quest that belongs to someone else.
-   */
+  /** The resource does not exist, or is not yours to see. */
   get isNotFound(): boolean {
     return this.code === "NOT_FOUND";
   }
 
-  /** More than 60 requests in a minute with this key. Retrying after `retryAfter` seconds works. */
+  /** Too many requests with this key. Retry after `retryAfter` seconds. */
   get isRateLimited(): boolean {
     return this.code === "RATE_LIMITED";
   }
@@ -125,15 +113,11 @@ export class MetamobRequestError extends MetamobError {
 }
 
 /**
- * The library itself refused something before sending anything: an argument
- * that cannot be right, a missing API key, or a name that matches no monster,
- * zone or server.
+ * Thrown before any request is sent: an invalid argument, a missing API key,
+ * or a name that matches no monster, zone or server.
  */
 export class MetamobArgumentError extends MetamobError {
-  /**
-   * For an unknown name (`code === "UNKNOWN_NAME"`), the closest names that
-   * do exist, best first.
-   */
+  /** For an unknown name (`code === "UNKNOWN_NAME"`), the closest existing names, best first. */
   readonly suggestions: readonly string[];
 
   constructor(message: string, options?: { code?: "INVALID_ARGUMENT" | "UNKNOWN_NAME" | "MISSING_API_KEY"; suggestions?: readonly string[] }) {

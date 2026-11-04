@@ -1,5 +1,4 @@
-// Measures the parts of the library that run on every call, against the
-// built files. Nothing touches the network: `fetch` is a stub.
+// Measures the hot paths of the built files. `fetch` is a stub.
 //
 //   npm run build && npm run bench
 

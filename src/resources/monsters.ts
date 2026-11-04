@@ -30,7 +30,7 @@ export class Monsters {
    * const page = await metamob.monsters.list({ query: "tofu" });
    * page.items, page.total;
    *
-   * // Every archmonster, 200 per request.
+   * // Every archmonster.
    * for await (const monster of metamob.monsters.list({ type: "archimonstre" })) {
    *   console.log(monster.name.fr);
    * }
@@ -54,12 +54,9 @@ export class Monsters {
   }
 
   /**
-   * One monster, with the zones and subzones where it can be found and, for
-   * an archmonster, the monster it is the rare version of.
-   *
-   * Takes an id or a name in French, English or Spanish; accents and capitals
-   * do not matter. A few archmonsters share their name across versions of the
-   * game: pass `gameVersion` or `template` to say which one you mean.
+   * One monster, from its id or its name in French, English or Spanish, with
+   * the zones where it can be found and, for an archmonster, its base monster.
+   * When versions of the game share the name, pass `gameVersion` or `template`.
    *
    * @example
    * const monster = await metamob.monsters.get("Tofu Maléfique");

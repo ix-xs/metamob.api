@@ -1,17 +1,13 @@
-// Compiles every TypeScript sample of the documentation against the library,
-// so a page cannot show code that does not type-check.
+// Compiles every TypeScript sample of the documentation against the library.
 //
 //   node scripts/check-samples.mjs            every page
 //   node scripts/check-samples.mjs basics     only the pages whose path contains "basics"
 //
 // How a sample is read:
-// - A ```ts block is one module. Its imports from "@ix-xs/metamob.api" are
-//   pointed at the source of the library.
-// - A name the package exports can be used without importing it: the import
-//   is added for you, which keeps short samples short.
+// - A ```ts block is one module. Its imports from "@ix-xs/metamob.api" point at the source.
+// - A name the package exports can be used without importing it.
 // - `metamob` and the names declared in GLOBALS below exist everywhere.
-// - A block fenced as ```ts nocheck is skipped. Use it for fragments that are
-//   not meant to stand alone, and sparingly.
+// - A block fenced as ```ts nocheck is skipped.
 
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -21,7 +17,6 @@ import { fileURLToPath } from "node:url";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..", "..");
 const content = path.resolve(here, "..", "src", "content", "docs");
-// One folder per run, so two checks at the same time do not step on each other.
 const out = path.join(root, "node_modules", ".cache", "docs-samples", String(process.pid));
 const require = createRequire(path.join(root, "package.json"));
 const ts = require("typescript");
@@ -57,7 +52,6 @@ async function* pages(dir) {
   }
 }
 
-/** Names exported by the package, to import them on behalf of a sample. */
 function exportedNames(program, file) {
   const checker = program.getTypeChecker();
   const symbol = checker.getSymbolAtLocation(program.getSourceFile(file));
@@ -112,7 +106,6 @@ for await (const page of pages(content)) {
 
 for (const [file, sample] of samples) {
   let code = sample.code.replace(/(from\s+["'])@ix-xs\/metamob\.api(["'])/g, `$1${rel("src/index.ts")}$2`);
-  // Names the sample introduces itself: imports, declarations, parameters.
   const declared = new Set();
   for (const match of code.matchAll(/import\s+(?:type\s+)?(?:\*\s+as\s+(\w+)|\{([^}]*)\}|(\w+))/g)) {
     if (match[1]) declared.add(match[1]);
@@ -123,12 +116,12 @@ for (const [file, sample] of samples) {
     }
   }
   for (const match of code.matchAll(/\b(?:const|let|var|function|class|type|interface|enum)\s+(\w+)/g)) declared.add(match[1]);
-  // Quoted strings are skipped. Template literals are not: what sits in ${...} is code.
+  // Template literals are kept: what sits in ${...} is code.
   const used = new Set([...code.replace(/(["'])(?:\\.|(?!\1).)*\1/g, "").matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)/g)].map((match) => match[1]));
   const fromMain = [...used].filter((id) => mainExports.has(id) && !declared.has(id));
   let header = "";
   if (fromMain.length) header += `import { ${fromMain.join(", ")} } from "${rel("src/index.ts")}";`;
-  // The header stays on the first line so the sample keeps its line numbers.
+  // On the first line, so the sample keeps its line numbers.
   sample.code = `${header} export {};\n${code}`;
   await writeFile(file, sample.code);
 }
@@ -140,7 +133,6 @@ for (const diagnostic of diagnostics) {
   const sample = samples.get(path.normalize(diagnostic.file.fileName));
   const { line } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start ?? 0);
   const text = sample.code.split("\n")[line] ?? "";
-  // Line 0 of the module is the added header; line 1 is the first line of the block.
   console.error(`${sample.page}:${sample.start + line}  ${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n  ")}\n    ${text.trim()}\n`);
 }
 

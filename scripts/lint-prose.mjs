@@ -1,6 +1,4 @@
-// House style check for everything that ships or gets read: no long dashes.
-// A spaced hyphen, a comma or a new sentence reads better and survives every
-// terminal and font.
+// House style check: no long dashes in anything that ships or gets read.
 //
 //   node scripts/lint-prose.mjs
 
@@ -10,7 +8,6 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const SKIP_DIRS = new Set(["node_modules", "dist", "coverage"]);
-// Hidden folders hold tooling state, not prose. The workflows are the exception.
 const skipped = (name) => SKIP_DIRS.has(name) || (name.startsWith(".") && name !== ".github");
 const EXTENSIONS = new Set([".ts", ".mts", ".js", ".mjs", ".cjs", ".json", ".md", ".mdx", ".astro", ".css", ".yml", ".yaml", ".html", ".svg", ".txt"]);
 // Built from code points so this file passes its own check.

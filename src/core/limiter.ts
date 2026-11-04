@@ -2,7 +2,7 @@ import { type Duration, sleep, toMs } from "./time.js";
 
 /** Settings of the built-in rate limiter. */
 export interface RateLimitOptions {
-  /** Requests allowed per window, for each API key. Default 60, which is what the API allows. */
+  /** Requests allowed per window, for each API key. Default 60. */
   requests?: number | undefined;
   /** Length of the window. Default `"1m"`. */
   per?: Duration | undefined;
@@ -19,23 +19,14 @@ export interface RateLimitState {
 }
 
 interface Bucket {
-  /** Send times of the current window, oldest first. */
   sent: number[];
-  /** No request leaves before this time. Set when the API answers 429. */
   blockedUntil: number;
-  /** Waiters proceed in the order they arrived. */
   tail: Promise<unknown>;
 }
 
 const noop = () => {};
 
-/**
- * A sliding-window limiter, one window per API key. It holds calls back so
- * the limit of the API is never reached, instead of letting them fail with
- * 429 and retrying.
- *
- * @internal
- */
+/** @internal */
 export class RateLimiter {
   readonly limit: number;
   readonly window: number;
@@ -49,7 +40,6 @@ export class RateLimiter {
   #bucket(key: string): Bucket {
     let bucket = this.#buckets.get(key);
     if (!bucket) {
-      // A long-running process that sees many keys does not keep them all forever.
       if (this.#buckets.size >= 1_000) this.#sweep();
       this.#buckets.set(key, (bucket = { sent: [], blockedUntil: 0, tail: Promise.resolve() }));
     }
@@ -64,7 +54,6 @@ export class RateLimiter {
     }
   }
 
-  /** Time to wait before a request may leave, 0 when it may leave now. */
   #wait(bucket: Bucket, now: number): number {
     const floor = now - this.window;
     let stale = 0;
@@ -75,11 +64,6 @@ export class RateLimiter {
     return 0;
   }
 
-  /**
-   * Resolves when a request may be sent with `key`, and counts it. Resolves
-   * to the milliseconds spent waiting. Rejects with the signal's reason if it
-   * aborts first.
-   */
   acquire(key: string, signal?: AbortSignal | null): Promise<number> {
     const bucket = this.#bucket(key);
     const turn = bucket.tail.then(async () => {
@@ -99,7 +83,6 @@ export class RateLimiter {
     return turn;
   }
 
-  /** Holds every request of `key` back for `ms`. Called when the API says it had too many. */
   block(key: string, ms: number): void {
     const bucket = this.#bucket(key);
     bucket.blockedUntil = Math.max(bucket.blockedUntil, Date.now() + ms);

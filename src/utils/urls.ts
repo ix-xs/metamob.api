@@ -1,8 +1,7 @@
 const SITE = "https://www.metamob.fr";
 
 /**
- * Addresses on metamob.fr, built from what the API returns. Nothing is
- * fetched.
+ * Addresses on metamob.fr, built from what the API returns. Nothing is fetched.
  *
  * @example
  * import { urls } from "@ix-xs/metamob.api";
@@ -14,10 +13,7 @@ export const urls = {
   /** The site itself. */
   site: SITE,
 
-  /**
-   * The picture of a monster, from the monster (or anything with its
-   * `image`, an avatar for instance) or from the file name.
-   */
+  /** The picture of a monster, from anything with an `image` or from the file name. */
   monsterImage(monster: { readonly image: string } | string): string {
     return `${SITE}/img/monsters/${encodeURIComponent(typeof monster === "string" ? monster : monster.image)}`;
   },

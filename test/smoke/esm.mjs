@@ -1,4 +1,4 @@
-// Checks the built ES module files the way a user's `import` sees them.
+// Checks the built ES module files as `import` sees them.
 import assert from "node:assert/strict";
 import * as api from "../../dist/index.mjs";
 

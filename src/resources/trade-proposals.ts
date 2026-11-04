@@ -6,29 +6,21 @@ import { METHODS } from "../generated/methods.js";
 import type { ProposalMonster, TradeProposal, TradeProposalDetail } from "../types.js";
 import { entries, type MonsterQuantities, type Quests } from "./quests.js";
 
-/** What {@link TradeProposals.create} sends: the same names the API reads back. */
+/** What {@link TradeProposals.create} sends. */
 export interface NewTradeProposal {
   /** Username of the player the proposal is made to. */
   recipient: string;
   /** Slug of your quest the trade is about. */
   sender_quest: string;
-  /**
-   * Slug of the recipient's quest: of the same kind as yours, on the same
-   * server. `quests.matches()` gives it for each partner it finds.
-   */
+  /** Slug of the recipient's quest, of the same kind as yours and on the same server. `quests.matches()` gives it. */
   recipient_quest: string;
-  /**
-   * What you give, in the shapes `quests.setMonsters()` takes: a list of
-   * `{ monster, quantity }`, an object keyed by monster name, or a `Map`.
-   */
+  /** What you give, in the shapes `quests.setMonsters()` takes. */
   monsters_given?: MonsterQuantities | undefined;
   /** What you receive, in the same shapes. */
   monsters_received?: MonsterQuantities | undefined;
 }
 
-/** Most monsters in one list of a proposal. */
 const PROPOSAL_MONSTERS = 200;
-/** Largest quantity of one monster in a proposal. */
 const MAX_QUANTITY = 99;
 
 /** Filters of {@link TradeProposals.list}. */
@@ -39,10 +31,7 @@ export interface TradeProposalListParams {
   status?: "pending" | "half_applied" | "completed" | "cancelled" | undefined;
   /** Only the proposals about this quest of yours, by its slug. */
   quest?: string | undefined;
-  /**
-   * Only the proposals created from this moment on, included: a `Date`, or an
-   * ISO 8601 date with its time zone such as `"2026-01-27T14:00:00Z"`.
-   */
+  /** Only the proposals created from this moment on: a `Date`, or an ISO 8601 date with its time zone. */
   since?: Date | string | undefined;
   /** Items per page. Default 30, at most 50. */
   limit?: number | undefined;
@@ -50,7 +39,6 @@ export interface TradeProposalListParams {
   beforeId?: number | undefined;
 }
 
-/** An ISO 8601 date and time with a time zone, which is what the API reads. */
 const ISO_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:\d{2})$/;
 
 function since(value: Date | string): string {
@@ -64,7 +52,6 @@ function since(value: Date | string): string {
   return value;
 }
 
-/** A proposal id: a number, its digits, or the proposal itself. */
 function proposalId(value: number | string | { readonly id: number }): number {
   const id = typeof value === "object" && value !== null ? value.id : typeof value === "string" && /^\d+$/.test(value.trim()) ? Number(value) : value;
   if (typeof id !== "number" || !Number.isInteger(id) || id <= 0) throw new MetamobArgumentError("Expected a trade proposal: its id, or the proposal itself.");
@@ -89,9 +76,6 @@ export class TradeProposals {
   /**
    * The trade proposals you sent and received, most recent first. Await it
    * for one page, or iterate it to walk back in time.
-   *
-   * Asked every few minutes with `since`, it tells you about new proposals
-   * soon after they are made.
    *
    * @example
    * // What is waiting for an answer from you.
@@ -121,8 +105,7 @@ export class TradeProposals {
 
   /**
    * One trade proposal. Each monster comes with `owned`: how many of it you
-   * own now in the quest the proposal is about, so what you will have after
-   * the trade is one addition away.
+   * own now in the quest the proposal is about.
    *
    * @example
    * const proposal = await metamob.tradeProposals.get(57);
@@ -137,19 +120,14 @@ export class TradeProposals {
   }
 
   /**
-   * Proposes a trade to a player, from one of your quests, and answers the
-   * proposal as `list()` shows it. Monsters are named like everywhere else:
-   * an id, a name in any language, or a monster.
+   * Proposes a trade to a player from one of your quests, and answers the
+   * proposal as `list()` shows it. Monsters are an id, a name or a monster.
    *
-   * The rules are the ones of the site. Sending is closed by default: Metamob
-   * opens it account by account, on request, and the API answers `FORBIDDEN`
-   * without it, or when one of the two players blocked the other. Past the
-   * anti-spam limits, it answers `RATE_LIMITED`. Two quests of different kinds
-   * or servers, a monster that is not in the quest, or a quantity out of
-   * bounds, is a `BAD_REQUEST`.
-   *
-   * A proposal is never retried, whatever the failure: sent twice, it would
-   * exist twice. After a timeout or a network failure, look at `list()` before
+   * Sending is closed by default: Metamob opens it account by account, on
+   * request. Without it, or when one player blocked the other, the API answers
+   * `FORBIDDEN`. Quests of different kinds or servers, a monster not in the
+   * quest, or a quantity out of bounds give `BAD_REQUEST`. A proposal is never
+   * retried: after a timeout or a network failure, check `list()` before
    * proposing again.
    *
    * @example
@@ -179,7 +157,6 @@ export class TradeProposals {
     return (await this.#context.rest.request<{ data: TradeProposal }>(METHODS["tradeProposals.create"], { body }, options)).data;
   }
 
-  /** One side of a proposal, as the API takes it. A monster named twice is refused rather than guessed. */
   async #monsters(quest: string, quantities: MonsterQuantities | undefined, name: string, options: RequestOptions | undefined): Promise<ProposalMonster[]> {
     if (quantities === undefined) return [];
     const list = entries(quantities);

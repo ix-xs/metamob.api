@@ -1,5 +1,4 @@
-// Checks the built CommonJS files the way a user's `require` sees them.
-// Plain Node, no test runner, so it also runs on the oldest supported version.
+// Checks the built CommonJS files as `require` sees them. Plain Node, so it runs on the oldest supported version.
 const assert = require("node:assert/strict");
 const api = require("../../dist/index.js");
 

@@ -2,10 +2,7 @@
 
 import type { MethodSpec } from "../core/rest.js";
 
-/**
- * Every endpoint of the API, keyed by the name the library gives it. The
- * names are the ones used in cache settings, in events and in errors.
- */
+/** Every endpoint of the API, keyed by the name used in cache settings, events and errors. */
 export const METHODS = {
   "me.get": { id: "me.get", verb: "GET", path: "/me", scope: "account" },
   "gameVersions.list": { id: "gameVersions.list", verb: "GET", path: "/game-versions", scope: "public" },

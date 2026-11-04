@@ -38,8 +38,7 @@ jobs:
         run: npm run smoke
 
   oldest-node:
-    # The package supports Node 20, which the test tooling no longer does.
-    # The build is made on a current Node, then exercised on 20 with plain Node.
+    # The test tooling no longer runs on Node 20: build on a current Node, smoke test on 20.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

@@ -2,11 +2,9 @@ import { Metamob, type MetamobOptions } from "../src/index.js";
 
 export interface Call {
   url: URL;
-  /** Path under the API root, for example `/monsters/20`. */
   path: string;
   method: string;
   headers: Headers;
-  /** Parsed JSON body, or undefined. */
   body: unknown;
   init: RequestInit;
 }
@@ -18,15 +16,11 @@ export function json(body: unknown, status = 200, headers: Record<string, string
   return new Response(body === undefined ? null : JSON.stringify(body), { status, headers: { "content-type": "application/json", ...headers } });
 }
 
-/** An error the way the API writes most of them. */
 export function apiError(status: number, message: string, headers: Record<string, string> = {}): Response {
   return json({ status, error: status, messages: { error: message } }, status, headers);
 }
 
-/**
- * A fake `fetch`. With one responder it answers every call; with several,
- * they are used in order and the last one repeats.
- */
+// With several responders, they are used in order and the last one repeats.
 export function mockFetch(...responders: Responder[]): { fetch: typeof fetch; calls: Call[] } {
   const calls: Call[] = [];
   const fetchImpl = (async (input: string | URL | Request, init: RequestInit = {}) => {
@@ -50,16 +44,13 @@ export function mockFetch(...responders: Responder[]): { fetch: typeof fetch; ca
   return { fetch: fetchImpl, calls };
 }
 
-/** A client wired to a fake fetch: no rate limiter, retries made instant. */
 export function client(responders: Responder[] | Responder = { data: [] }, options: MetamobOptions = {}): { metamob: Metamob; calls: Call[] } {
   const { fetch, calls } = mockFetch(...(Array.isArray(responders) ? responders : [responders]));
   const metamob = new Metamob({ apiKey: "test-key", rateLimit: false, retry: { delay: 1, maxDelay: 5 }, ...options, fetch });
   return { metamob, calls };
 }
 
-/** A body of the offset-paginated lists. */
 export const page = (data: unknown[], total = data.length, offset = 0, limit = 50) => ({ data, pagination: { total, limit, offset } });
 
-/** `count` monsters, ids starting at `from`. */
 export const monsters = (count: number, from = 1) =>
   Array.from({ length: count }, (_, index) => ({ id: from + index, name: { fr: `Monstre ${from + index}`, en: `Monster ${from + index}`, es: `Monstruo ${from + index}` }, image: "m.png", level_min: 1, level_max: 2, type: { id: 1, name: { fr: "monstre", en: "monster", es: "monstruo" } } }));

@@ -9,10 +9,7 @@ import type { KraloveEvent, KraloveEventDetail } from "../types.js";
 export interface KraloveListParams {
   /** Only the events of this server. */
   server?: ServerLike | undefined;
-  /**
-   * First day to list, as `YYYY-MM-DD` or a `Date` (read in UTC). Default:
-   * today, so past events are left out.
-   */
+  /** First day to list, as `YYYY-MM-DD` or a `Date` (read in UTC). Default: today. */
   from?: string | Date | undefined;
 }
 
@@ -25,7 +22,7 @@ function day(value: string | Date): string {
   return value;
 }
 
-/** Ids are numbers everywhere in the library, also where the API writes them as strings. */
+// The API writes some of these ids as strings.
 function numericId<T extends { id: unknown }>(event: T): T {
   if (typeof event.id === "string" && /^\d+$/.test(event.id)) event.id = Number(event.id);
   return event;
@@ -43,9 +40,6 @@ export class Kralove {
   /**
    * The Kralamoure events from today on, or from another date, optionally for
    * one server.
-   *
-   * `creator` can be `null`: the account was deleted for good, or you and
-   * that user blocked each other.
    *
    * @example
    * const events = await metamob.kralove.list({ server: "Draconiros" });

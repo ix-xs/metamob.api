@@ -69,7 +69,6 @@ describe("credentials", () => {
     await metamob.me({ headers: { "x-trace": "b", Authorization: "Bearer nope" } });
     expect(calls[0]!.url.href).toBe("https://staging.example/api/v9/me");
     expect(calls[0]!.headers.get("x-trace")).toBe("b");
-    // The key always wins over a header of the same name.
     expect(calls[0]!.headers.get("authorization")).toBe("Bearer test-key");
   });
 

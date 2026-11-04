@@ -1,8 +1,7 @@
 name: Release
 
-# Creates a GitHub Release whenever a version tag (v*) is pushed, using the
-# matching section of CHANGELOG.md as the release notes. npm publishing stays
-# manual (`npm publish`); this only handles the GitHub side.
+# Creates a GitHub Release from the matching section of CHANGELOG.md when a v*
+# tag is pushed. Publishing to npm stays manual.
 
 on:
   push:

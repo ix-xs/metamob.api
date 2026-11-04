@@ -20,7 +20,6 @@ type Kind = Parameters<typeof data.suggest>[0];
 
 const LABELS: Record<Kind, string> = { monster: "monster", zone: "zone", subzone: "subzone", server: "server", gameVersion: "game version", monsterType: "monster type", questType: "quest type" };
 
-/** An id when the reference is one, the trimmed name otherwise. */
 function direct(ref: unknown, kind: Kind): number | string {
   if (typeof ref === "number") {
     if (!Number.isInteger(ref) || ref <= 0) throw new MetamobArgumentError(`Invalid ${LABELS[kind]} id: ${ref}.`);
@@ -41,21 +40,13 @@ function unknown(kind: Kind, name: string, extra = ""): MetamobArgumentError {
   return new MetamobArgumentError(`Unknown ${LABELS[kind]} "${name}".${hint}${extra}`, { code: "UNKNOWN_NAME", suggestions });
 }
 
-/** Whether a record of the API answers to a name. A record without a name answers to none. */
 function answersTo(name: LocalizedName | string | null | undefined, wanted: string): boolean {
   if (!name) return false;
   if (typeof name === "string") return normalizeName(name) === wanted;
   return [name.fr, name.en, name.es].some((written) => typeof written === "string" && normalizeName(written) === wanted);
 }
 
-/**
- * Turns what the caller wrote (a name, an id, an object) into the id the API
- * wants. Names are looked up in the embedded data first, which costs nothing.
- * A name that is not there may be newer than the package: the API is asked
- * before giving up.
- *
- * @internal
- */
+/** @internal */
 export class Resolver {
   readonly #rest: Rest;
 
@@ -82,7 +73,6 @@ export class Resolver {
     throw unknown("monster", value);
   }
 
-  /** Whether a name designates several monsters, so that a quest is needed to tell which. */
   isAmbiguous(ref: MonsterLike): boolean {
     return typeof ref === "string" && !/^\d+$/.test(ref.trim()) && data.monstersNamed(ref).length > 1;
   }
@@ -101,7 +91,6 @@ export class Resolver {
     throw unknown("zone", value);
   }
 
-  /** A subzone and the zone it sits in: the API addresses a subzone through its zone. */
   async subzone(ref: SubzoneLike, options?: RequestOptions, zoneRef?: ZoneLike): Promise<{ id: number; zone: number }> {
     const value = direct(ref, "subzone");
     const local = data.subzone(value);

@@ -29,7 +29,6 @@ describe("the embedded data", () => {
     expect(data.server("Draconiros")).toEqual({ id: 12, name: "Draconiros", community: "World", game_version: { id: 1, name: "Dofus (Unity)" } });
     expect(data.questType("ocre")).toEqual({ id: 1, slug: "ocre", name: { fr: "Ocre", en: "Ochre", es: "Ocre" }, image: "ocre.png" });
     expect(data.subzone(48)).toEqual({ id: 48, name: { fr: "Akadémie des Gobs", en: "Gob Akademy", es: "Akademia de los Goblins" }, zone: { id: 1, name: { fr: "Amakna", en: "Amakna", es: "Amakna" } } });
-    // Nothing is circular: it all survives JSON.
     expect(() => JSON.stringify([data.zones, data.subzones, data.monsters, data.questTemplates])).not.toThrow();
   });
 
@@ -61,13 +60,11 @@ describe("the embedded data", () => {
   it("tells apart the archmonsters that share a name across versions of the game", () => {
     const named = data.monstersNamed("Crognan le Barbare");
     expect(named.map((monster) => monster.id)).toEqual([416, 725]);
-    // Dofus (Unity) first when nothing says otherwise.
     expect(data.monster("Crognan le Barbare")?.id).toBe(416);
     expect(data.monster("Crognan le Barbare", { gameVersion: "Dofus Retro (1.29)" })?.id).toBe(725);
     expect(data.monster("Crognan le Barbare", { gameVersion: "Dofus Touch" })?.id).toBe(725);
     expect(data.monster("Crognan le Barbare", { template: 1 })?.id).toBe(416);
     expect(data.monster("Crognan le Barbare", { template: { questType: "ocre", gameVersion: "Dofus Touch" } })?.id).toBe(725);
-    // A hint that matches nothing falls back on the default.
     expect(data.monster("Crognan le Barbare", { template: 4 })?.id).toBe(416);
     expect(data.monstersNamed("Tofu")).toHaveLength(1);
     expect(data.monstersNamed("nope")).toEqual([]);
@@ -125,7 +122,6 @@ describe("the embedded data", () => {
     expect(data.suggest("monster", "tof", 2)).toHaveLength(2);
     expect(data.suggest("monster", "")).toEqual([]);
     expect(data.suggest("monster", "qqqqqqqqqqqqqqqq")).toEqual([]);
-    // A monster is suggested once, not once per language.
     const suggestions = data.suggest("monster", "Aboudbra", 5);
     expect(suggestions.filter((name) => data.monster(name)?.id === 472)).toHaveLength(1);
   });

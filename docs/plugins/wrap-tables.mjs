@@ -1,10 +1,7 @@
-// Wraps every Markdown table in a scroll container. A table then keeps its
-// shape on a phone and scrolls sideways, instead of squeezing its columns
-// until words break.
+// Wraps every Markdown table in a scroll container, so it scrolls sideways on a phone.
 
 import { localeOfFile } from "./base-links.mjs";
 
-/** What a screen reader calls the scrolling region, in the language of the page. */
 const LABELS = { en: "Table", fr: "Tableau" };
 
 function visit(node, fn) {
@@ -15,7 +12,6 @@ function visit(node, fn) {
   }
 }
 
-/** The rehype plugin. */
 export function rehypeWrapTables() {
   return (tree, file) => {
     const label = LABELS[localeOfFile(file?.path ?? file?.history?.[0]) ?? "en"] ?? LABELS.en;
@@ -24,7 +20,6 @@ export function rehypeWrapTables() {
       parent.children[index] = {
         type: "element",
         tagName: "div",
-        // Focusable, so a keyboard user can scroll it too.
         properties: { className: ["at-table"], tabIndex: 0, role: "region", ariaLabel: label },
         children: [node],
       };

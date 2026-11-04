@@ -1,6 +1,5 @@
 import type { MethodSpec, RequestInput, RequestOptions, Rest } from "./rest.js";
 
-/** The `pagination` object of the API, in its two shapes: offset and cursor. */
 export interface RawPagination {
   total?: number;
   limit?: number;
@@ -9,15 +8,13 @@ export interface RawPagination {
   next_before_id?: number | null;
 }
 
-/** What a list method reads out of a response body. */
 export interface Extracted<T, E> {
   items: T[];
   pagination?: RawPagination | undefined;
-  /** What the response carries next to the items, for example the quest the monsters belong to. */
   extra?: E | undefined;
 }
 
-/** Reads a list whose items sit in `data` and whose pagination sits next to it. @internal */
+/** @internal */
 export function topLevel<T>(body: unknown): Extracted<T, never> {
   const { data, pagination } = (body ?? {}) as { data?: T[]; pagination?: RawPagination };
   return { items: data ?? [], pagination };
@@ -31,19 +28,13 @@ export function topLevel<T>(body: unknown): Extracted<T, never> {
 export class Page<T> implements Iterable<T> {
   /** Items of this page. */
   readonly items: T[];
-  /**
-   * Size of the whole result set, with the filters applied. Undefined for
-   * the messages of a conversation, which the API walks with a cursor.
-   */
+  /** Size of the whole result set, with the filters applied. Undefined for the messages of a conversation. */
   readonly total: number | undefined;
   /** Page size the API used. */
   readonly limit: number | undefined;
   /** Position of the first item of this page in the whole result set. */
   readonly offset: number | undefined;
-  /**
-   * For the messages of a conversation: the cursor of the next, older page.
-   * Keep it to resume later with `{ beforeId }`. Undefined on the last page.
-   */
+  /** For the messages of a conversation: the cursor of the next, older page, for `{ beforeId }`. */
   readonly nextBeforeId: number | undefined;
   /** The response body as the API sent it. */
   readonly raw: unknown;
@@ -79,23 +70,16 @@ export class Page<T> implements Iterable<T> {
 
 /** Options of {@link ListRequest.all} and {@link ListRequest.pages}. */
 export interface CollectOptions {
-  /**
-   * Stop once this many items were fetched. Without it, every page is
-   * fetched. `pages()` yields whole pages, so the last one can go past the limit.
-   */
+  /** Stop once this many items were fetched. `pages()` yields whole pages, so the last one can go past it. */
   limit?: number | undefined;
 }
 
 /**
- * What every paginated method returns. It is lazy: nothing is sent until you
- * await it or iterate it.
+ * What every paginated method returns. Nothing is sent until you await it or iterate it.
  *
  * - `await request` resolves to the first {@link Page}.
  * - `for await (const item of request)` walks every item of every page.
  * - `request.all()` collects the items into an array, `request.take(n)` the first `n`.
- *
- * When walking pages without an explicit `limit`, the largest page the
- * endpoint accepts is used, which costs the fewest requests.
  *
  * @typeParam T - Item type.
  * @typeParam E - What each page carries next to its items.
@@ -127,7 +111,6 @@ export class ListRequest<T, E extends object = {}> implements PromiseLike<Page<T
     this.#extract = extract;
   }
 
-  /** The request, once anything it depends on (a name to resolve, for instance) is known. */
   #input(): Promise<RequestInput> {
     this.#resolved ??= typeof this.#source === "function" ? this.#source() : Promise.resolve(this.#source);
     return this.#resolved;
@@ -150,7 +133,6 @@ export class ListRequest<T, E extends object = {}> implements PromiseLike<Page<T
     return (extra ? Object.assign(page, extra) : page) as Page<T> & E;
   }
 
-  /** Page size to use while walking: the one given by the caller, or the largest allowed. */
   #walk(input: RequestInput, limit: number | undefined): RequestInput {
     const max = this.#spec.paged?.max;
     if (!max || input.query?.limit !== undefined) return input;
@@ -171,7 +153,6 @@ export class ListRequest<T, E extends object = {}> implements PromiseLike<Page<T
     while (page) {
       yield page;
       seen += page.items.length;
-      // The page that reaches the limit is the last one fetched.
       if (seen >= limit) return;
       page = await page.next();
     }
@@ -196,18 +177,14 @@ export class ListRequest<T, E extends object = {}> implements PromiseLike<Page<T
     return this.all({ limit });
   }
 
-  /** Resolves to the first item, or `undefined` when there is none. Asks the API for a single item. */
+  /** Resolves to the first item, or `undefined` when there is none. */
   async first(): Promise<T | undefined> {
     const input = await this.#input();
     const sized = this.#spec.paged && input.query?.limit === undefined ? { ...input, query: { ...input.query, limit: 1 } } : input;
     return (await this.#fetch(sized)).items[0];
   }
 
-  /**
-   * How many items the list holds with its filters, without fetching them:
-   * one request for a single item, then the total the API reports.
-   * Undefined for the messages of a conversation.
-   */
+  /** How many items the list holds with its filters. Undefined for the messages of a conversation. */
   async count(): Promise<number | undefined> {
     const input = await this.#input();
     return (await this.#fetch({ ...input, query: { ...input.query, limit: 1, offset: undefined } })).total;

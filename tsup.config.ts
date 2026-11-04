@@ -3,11 +3,9 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: { index: "src/index.ts" },
   format: ["esm", "cjs"],
-  // tsup hands `baseUrl` to the declaration build, which TypeScript 6 reports
-  // as deprecated. This silences that single report.
+  // TypeScript 6 reports the `baseUrl` that tsup hands to the declaration build.
   dts: { compilerOptions: { ignoreDeprecations: "6.0" } },
   clean: true,
-  // src/ is not published, so source maps would only add weight.
   sourcemap: false,
   treeshake: true,
   target: "es2022",
@@ -17,8 +15,7 @@ export default defineConfig({
   },
   plugins: [
     {
-      // Doc comments live in the .d.ts files, where editors read them. In the
-      // JavaScript they are dead weight.
+      // Doc comments are only needed in the .d.ts files.
       name: "strip-doc-comments",
       renderChunk(code) {
         return { code: code.replace(/^[ \t]*\/\*\*[\s\S]*?\*\/\r?\n/gm, "") };

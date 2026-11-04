@@ -6,10 +6,7 @@ import type { Monster, Subzone, SubzoneRef, Zone, ZoneDetail } from "../types.js
 
 /** Says which zone a subzone belongs to, for a subzone newer than the package. */
 export interface SubzoneParams {
-  /**
-   * The zone the subzone sits in. Only needed for a subzone that is not in
-   * the data embedded in this version of the package.
-   */
+  /** The zone the subzone sits in. Only needed for a subzone newer than the package. */
   zone?: ZoneLike | undefined;
 }
 

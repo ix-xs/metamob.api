@@ -1,5 +1,4 @@
-// Type-level tests: what the editor accepts, refuses and infers. Nothing here
-// runs; `npm run test:types` compiles it.
+// Type-level tests, compiled by `npm run test:types`.
 
 import {
   type Account,
@@ -33,7 +32,7 @@ declare function expect<T extends true>(): T;
 declare const metamob: Metamob;
 declare const slug: string;
 
-// The names known to the package are literal types, which is what makes the editor complete them.
+// The names known to the package are literal types.
 expect<"Tofu Maléfique" extends MonsterNameFr ? true : false>();
 expect<"Draconiros" extends ServerName ? true : false>();
 expect<"Dofus Touch" extends GameVersionName ? true : false>();
@@ -87,8 +86,7 @@ export async function results() {
   expect<Equal<(typeof conversations.items)[number]["unread_count"], number>>();
   expect<Equal<Awaited<ReturnType<typeof metamob.conversations.markAsRead>>, MarkAsReadResult>>();
 
-  // Proposals listed on their own have no `kind`; read one by one, each
-  // monster says what you own of it.
+  // Proposals listed on their own have no `kind`.
   const proposals = metamob.tradeProposals.list({ direction: "received", since: new Date() });
   expect<Equal<typeof proposals, ListRequest<TradeProposal>>>();
   const proposal = await metamob.tradeProposals.get(57);

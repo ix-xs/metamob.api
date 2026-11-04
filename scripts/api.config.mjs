@@ -1,20 +1,16 @@
-// Every endpoint of the Metamob API, as the library exposes it.
-//
-// This file is the single description the rest is derived from:
-// `scripts/generate.mjs` turns it into `src/generated/methods.ts`, the tests
-// check that each entry has a matching method on the client, and the docs
-// site builds its "Every method" page from it.
+// Every endpoint of the Metamob API, as the library exposes it. Feeds
+// `src/generated/methods.ts`, the tests and the "Every method" docs page.
 //
 // Fields:
 //   id       stable name of the method, also the key of cache settings and events
 //   verb     HTTP verb
 //   path     path under https://www.metamob.fr/api/v1, with {placeholders}
-//   scope    "public": the answer is the same for every API key, so it can be
-//            cached and shared. "account": the answer depends on the key.
+//   scope    "public": the same answer for every API key. "account": depends on the key.
 //   call     how the method is written with the client
 //   summary  one sentence for the reference page
 //   guide    the docs page that explains it
-//   paged    for lists the API paginates: the largest page it accepts
+//   paged    for paginated lists: the largest page the API accepts
+//   once     a write that creates something, never retried
 
 /** @typedef {{ id: string, verb: "GET" | "PATCH" | "POST", path: string, scope: "public" | "account", call: string, summary: string, guide: string, paged?: { max: number, cursor?: boolean } }} MethodConfig */
 

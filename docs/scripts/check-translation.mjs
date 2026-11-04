@@ -4,15 +4,12 @@
 //   node scripts/check-translation.mjs es/basics  only the Spanish pages under a folder
 //   node scripts/check-translation.mjs fr/basics  only the French ones (they sit at the root)
 //
-// A translation changes the prose and nothing else. For each page this checks,
-// against the English page of the same path, in src/content/docs/en:
+// Against the original page of the same path, each translation must have:
 //   - the same frontmatter keys;
-//   - the same headings, in the same order and at the same levels (the build
-//     gives a translated heading the id of its English counterpart, by position);
-//   - the same code blocks: same language and title, same code once the
-//     comments are set aside (comments may be translated);
+//   - the same headings, in the same order and at the same levels;
+//   - the same code blocks, comments aside;
 //   - the same link targets, in the same order;
-//   - no em or en dash (house style).
+//   - no long dash.
 import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
@@ -20,7 +17,7 @@ import { fileURLToPath } from "node:url";
 import { LOCALES, ROOT_LANGUAGE, SOURCE } from "../plugins/base-links.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-/** The em dash and the en dash, by code point: this file follows the rule it enforces. */
+// By code point, so this file passes its own check.
 const DASHES = new RegExp(`[${String.fromCharCode(0x2014, 0x2013)}]`);
 const root = path.resolve(here, "..", "src", "content", "docs");
 
@@ -40,7 +37,6 @@ function split(source) {
   return { frontmatter: match ? match[1] : "", body: match ? source.slice(match[0].length) : source };
 }
 
-/** Top-level keys of a YAML frontmatter, with the nested ones as "a.b". */
 function keys(frontmatter) {
   const out = [];
   const stack = [];
@@ -55,7 +51,6 @@ function keys(frontmatter) {
   return out;
 }
 
-/** Code blocks and the text around them. */
 function parts(body) {
   const blocks = [];
   let prose = "";
@@ -77,10 +72,7 @@ function parts(body) {
   return { blocks, prose };
 }
 
-/**
- * Removes every match of a pattern, again and again until none is left: one
- * pass over "<!<!---->--" would leave "<!---->" behind.
- */
+// Repeated until stable: one pass over "<!<!---->--" would leave "<!---->".
 function strip(text, pattern) {
   let previous;
   do {
@@ -90,7 +82,6 @@ function strip(text, pattern) {
   return text;
 }
 
-/** A code block without its comments and without its spacing. */
 function bare(code, info) {
   const hash = /^(bash|sh|shell|yaml|yml|env|ini|toml|dotenv|dockerfile|docker)\b/i.test(info);
   const lines = strip(code, /\/\*[\s\S]*?\*\//g)
@@ -113,14 +104,12 @@ function links(prose) {
 const filter = process.argv[2]?.replaceAll("\\", "/").replace(/^\/+|\/+$/g, "");
 const problems = [];
 let checked = 0;
-// Every language but the original: the one at the root, then the folders.
 const translations = [ROOT_LANGUAGE, ...LOCALES].filter((language) => language !== SOURCE);
 const folders = new Set(LOCALES.map((locale) => path.join(root, locale) + path.sep));
 for (const locale of translations) {
   const dir = locale === ROOT_LANGUAGE ? root : path.join(root, locale);
   if (!existsSync(dir)) continue;
   for (const file of await pages(dir)) {
-    // The pages at the root are the ones that sit in no language folder.
     if (locale === ROOT_LANGUAGE && [...folders].some((folder) => file.startsWith(folder))) continue;
     const relative = path.relative(dir, file).replaceAll("\\", "/");
     const name = `${locale}/${relative}`;

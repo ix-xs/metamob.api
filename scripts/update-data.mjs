@@ -1,14 +1,10 @@
-// Fetches the reference data of the Metamob API (monsters, zones, subzones,
-// servers, quest templates...) and pins it in `scripts/data/snapshot.json`.
-// The library embeds that data so a monster, a zone or a server can be named
-// instead of looked up.
+// Fetches the reference data of the Metamob API and pins it in `scripts/data/snapshot.json`.
 //
 //   node scripts/update-data.mjs            # fetch, write the snapshot, list what changed
 //   node scripts/update-data.mjs --check    # fetch and fail when the snapshot is out of date
 //
-// Needs METAMOB_API_KEY, from the environment or from `.env`. It sends about
-// 240 requests, paced at 44 a minute where the API allows 60, so a run takes
-// five to six minutes. Run `npm run generate` afterwards.
+// Needs METAMOB_API_KEY, from the environment or `.env`. About 240 requests at
+// 44 a minute, so five to six minutes. Run `npm run generate` afterwards.
 
 import { existsSync } from "node:fs";
 import { sleep } from "@ix-xs/node-comfort/async";
@@ -16,11 +12,11 @@ import env from "@ix-xs/node-comfort/env";
 import { diff, loadSnapshot, normalize, saveSnapshot, serialize, SNAPSHOT_URL } from "./snapshot.mjs";
 
 const BASE = "https://www.metamob.fr/api/v1";
-// One request every 1.35 s is 44 a minute, well under the 60 the API allows.
+// 44 requests a minute.
 const PACE = 1350;
 const check = process.argv.includes("--check");
 
-// node-comfort loads `.env` when it is imported; `validate` checks what came out of it.
+// node-comfort loads `.env` on import.
 function apiKey() {
   try {
     return env.validate({ METAMOB_API_KEY: { type: "string", minLength: 20 } }).METAMOB_API_KEY;
@@ -57,7 +53,6 @@ async function get(path) {
   }
 }
 
-/** Every item of a list paginated with limit and offset. `pick` finds the array and the pagination in a body. */
 async function all(path, pick = (body) => ({ items: body.data, pagination: body.pagination })) {
   const out = [];
   for (let offset = 0; ; ) {
@@ -99,7 +94,6 @@ for (const template of templateList) {
     game_version: template.game_version?.id ?? null,
     monster_count: template.monster_count,
     step_count: template.step_count,
-    // Pairs of [monster id, step], in the order of the quest.
     monsters: rows.map((row) => [row.id, row.step]).sort((a, b) => a[1] - b[1] || a[0] - b[0]),
   });
 }

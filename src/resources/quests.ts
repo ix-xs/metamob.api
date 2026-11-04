@@ -23,14 +23,9 @@ export interface OwnQuestMonstersParams extends PageParams {
   /** Only this kind of monster. */
   type?: MonsterTypeLike | undefined;
   /**
-   * Two different questions share this filter.
-   *
-   * Progress, what you own against the number of parallel quests:
-   * `needed` (not enough), `ok` (exactly enough), `excess` (spares).
-   *
-   * Trade, what the quest really puts on the market after your trade
-   * settings: `wanted`, `offered`. A monster in `excess` is not always
-   * `offered`.
+   * Progress, what you own against the number of parallel quests: `needed`,
+   * `ok`, `excess`. Trade, what the quest puts on the market after your trade
+   * settings: `wanted`, `offered`.
    */
   status?: "needed" | "ok" | "excess" | "wanted" | "offered" | undefined;
   /** `manual`: monsters with a manual trade override. `auto`: the others. */
@@ -41,7 +36,7 @@ export interface OwnQuestMonstersParams extends PageParams {
 
 /** Filters of {@link Quests.matches}. */
 export interface MatchesParams extends PageParams {
-  /** Only partners doing at least this many quests in parallel. Default 1, which filters nothing. */
+  /** Only partners doing at least this many quests in parallel. Default 1. */
   minParallelQuests?: number | undefined;
   /** Leave out partners with whom the trade can only go one way. Default false. */
   onlyPossibleTrades?: boolean | undefined;
@@ -63,14 +58,12 @@ export interface QuestZonesParams {
  */
 export type MonsterQuantities = readonly { readonly monster: MonsterLike; readonly quantity: number }[] | Readonly<Record<string, number>> | ReadonlyMap<MonsterLike, number>;
 
-/** Most monsters the API takes in one batch. */
 const BATCH = 200;
 const FLAGS = ["never_offer_normal", "never_want_normal", "never_offer_boss", "never_want_boss", "never_offer_arch", "never_want_arch"] as const;
 const THRESHOLDS = ["trade_offer_threshold", "trade_want_threshold"] as const;
-/** Largest quantity the API takes, for a monster as for a threshold. */
 const MAX_QUANTITY = 99;
 
-/** @internal The pairs of monster and quantity, whatever the shape they came in. */
+/** @internal */
 export function entries(quantities: MonsterQuantities): [MonsterLike, number][] {
   if (Array.isArray(quantities)) return (quantities as readonly { monster: MonsterLike; quantity: number }[]).map((entry) => [entry?.monster, entry?.quantity]);
   if (quantities instanceof Map) return [...quantities];
@@ -84,7 +77,6 @@ export function entries(quantities: MonsterQuantities): [MonsterLike, number][] 
  */
 export class Quests {
   readonly #context: Context;
-  /** Quest template of each quest seen, to tell apart monsters that share a name. */
   readonly #templates = new Map<string, Promise<number>>();
 
   /** @internal */
@@ -105,8 +97,8 @@ export class Quests {
   }
 
   /**
-   * The full settings of one of your quests, including what public endpoints
-   * never show: trade mode, thresholds and filters by kind of monster.
+   * The full settings of one of your quests: trade mode, thresholds and
+   * filters by kind of monster.
    *
    * @example
    * const quest = await metamob.quests.get("21b0a742");
@@ -118,11 +110,8 @@ export class Quests {
   }
 
   /**
-   * Changes settings of one of your quests. Send only what changes.
-   *
-   * The answer holds the slug and the fields you changed, nothing else, and
-   * the `never_*` flags come back grouped in `type_filters`. Use
-   * {@link Quests.get} to read the whole quest.
+   * Changes settings of one of your quests. Send only what changes. The answer
+   * holds the slug and the changed fields; {@link Quests.get} reads the whole quest.
    *
    * @example
    * await metamob.quests.update("21b0a742", { current_step: 12, parallel_quests: 2 });
@@ -137,7 +126,7 @@ export class Quests {
     if (!Object.keys(body).length) throw new MetamobArgumentError("`changes` is empty: there is nothing to update.");
     // The flat flags are documented as 0 or 1.
     for (const flag of FLAGS) if (typeof body[flag] === "boolean") body[flag] = body[flag] ? 1 : 0;
-    // Out of bounds, a threshold is dropped by the API without a word, while the rest is saved.
+    // The API silently drops an out-of-range threshold.
     for (const threshold of THRESHOLDS) {
       const value = body[threshold];
       if (value !== undefined && value !== null && (typeof value !== "number" || !Number.isInteger(value) || value < 0 || value > MAX_QUANTITY)) {
@@ -156,7 +145,7 @@ export class Quests {
    * // What is still missing.
    * const missing = await metamob.quests.monsters("21b0a742", { status: "needed" }).all();
    *
-   * // How many archmonsters are left to find, in one small request.
+   * // How many archmonsters are left to find.
    * const left = await metamob.quests.monsters("21b0a742", { type: "archimonstre", status: "needed" }).count();
    */
   monsters(slug: string, params: OwnQuestMonstersParams = {}, options?: RequestOptions): ListRequest<OwnQuestMonster, { slug: string }> {
@@ -183,7 +172,6 @@ export class Quests {
     );
   }
 
-  /** The quest template a quest follows. Asked once per quest and per key, then remembered. */
   #template(slug: string, options: RequestOptions | undefined): Promise<number> {
     const key = `${this.#context.rest.apiKey(options)}\n${slug}`;
     let pending = this.#templates.get(key);
@@ -191,17 +179,12 @@ export class Quests {
       if (this.#templates.size >= 500) this.#templates.clear();
       pending = this.get(slug, options).then((quest) => quest.quest_template.id);
       this.#templates.set(key, pending);
-      // A failure is not remembered: the next call asks again.
       pending.catch(() => this.#templates.delete(key));
     }
     return pending;
   }
 
-  /**
-   * The id of a monster of a quest. A few archmonsters share their name
-   * across versions of the game: for those, the quest says which one is meant.
-   */
-  /** @internal The id of a monster, read in the quest template of one of your quests. */
+  /** @internal */
   monsterIn(slug: string, monster: MonsterLike, options: RequestOptions | undefined): Promise<number> {
     return this.#monster(slug, monster, options);
   }
@@ -229,9 +212,8 @@ export class Quests {
   }
 
   /**
-   * Sets the quantities of many monsters at once. The API takes 200 per
-   * request: longer lists are split across requests, sent one after the
-   * other, and the answers are merged.
+   * Sets the quantities of many monsters at once. Lists of more than 200 are
+   * sent in several requests, and the answers merged.
    *
    * @example
    * await metamob.quests.setMonsters("21b0a742", { "Tofu Maléfique": 2, "Bouftou Royal": 0 });
@@ -246,7 +228,6 @@ export class Quests {
     const list = entries(quantities);
     if (!list.length) throw new MetamobArgumentError("`quantities` is empty: there is nothing to update.");
     const ids = await Promise.all(list.map(([monster, quantity]) => (count(quantity, "quantity"), this.#monster(quest, monster, options))));
-    // The same monster given twice: the last quantity wins.
     const byId = new Map<number, number>();
     ids.forEach((id, index) => byId.set(id, list[index]![1]));
     const monsters = [...byId].map(([monster_id, quantity]) => ({ monster_id, quantity }));

@@ -1,6 +1,4 @@
-// The shapes the API answers with. Field names are the API's own, so what
-// you read here is what the official documentation describes. Dates are
-// ISO 8601 strings in UTC ("2026-01-27T20:00:00Z"): pass them to `new Date()`.
+// The shapes the API answers with, under the API's own field names. Dates are ISO 8601 strings in UTC.
 
 /** A name in the three languages of the site. */
 export interface LocalizedName {
@@ -11,10 +9,6 @@ export interface LocalizedName {
 
 /** A language the site is translated in. */
 export type Language = "fr" | "en" | "es";
-
-// ---------------------------------------------------------------------------
-// Reference data
-// ---------------------------------------------------------------------------
 
 /** A version of the game: Dofus (Unity), Dofus Retro (1.29) or Dofus Touch. */
 export interface GameVersion {
@@ -51,10 +45,7 @@ export interface QuestType extends QuestTypeRef {
   image: string;
 }
 
-/**
- * A quest template: the list of monsters to capture for one kind of quest in
- * one version of the game.
- */
+/** A quest template: the monsters to capture for one kind of quest in one version of the game. */
 export interface QuestTemplate {
   id: number;
   quest_type: QuestTypeRef | null;
@@ -68,18 +59,11 @@ export interface QuestTemplate {
 /** The template a quest follows, as it appears inside a quest. */
 export interface QuestTemplateRef {
   id: number;
-  /**
-   * Kind of the quest. Two quests can trade only when they share it, on the
-   * same server.
-   */
+  /** Kind of the quest. Two quests can trade only when they share it, on the same server. */
   quest_type: QuestTypeRef;
   monster_count: number;
   step_count: number;
 }
-
-// ---------------------------------------------------------------------------
-// Monsters and zones
-// ---------------------------------------------------------------------------
 
 /** The base monster of an archmonster. */
 export interface MonsterReference {
@@ -133,14 +117,10 @@ export interface TemplateMonster extends Monster {
   step: number;
 }
 
-// ---------------------------------------------------------------------------
-// Kralamoure events
-// ---------------------------------------------------------------------------
-
 /** A Kralamoure event, as the list returns it. */
 export interface KraloveEvent {
   id: number;
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
+  /** ISO 8601 date in UTC. */
   event_datetime: string;
   description: string;
   /** `null` when the account was deleted for good, or when you and that user blocked each other. */
@@ -163,14 +143,14 @@ export interface KraloveMessage {
   /** `null` when the account was deleted for good, or when you and that user blocked each other. */
   username: string | null;
   content: string;
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
+  /** ISO 8601 date in UTC. */
   created_at: string;
 }
 
 /** A Kralamoure event with its participants and its messages. */
 export interface KraloveEventDetail {
   id: number;
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
+  /** ISO 8601 date in UTC. */
   event_datetime: string;
   description: string;
   /** `null` when the account was deleted for good, or when you and that user blocked each other. */
@@ -179,10 +159,6 @@ export interface KraloveEventDetail {
   participants: KraloveParticipant[];
   messages: KraloveMessage[];
 }
-
-// ---------------------------------------------------------------------------
-// Accounts and public quests
-// ---------------------------------------------------------------------------
 
 /** The monster a user picked as their avatar. */
 export interface Avatar {
@@ -195,7 +171,7 @@ export interface Avatar {
 export interface UserSummary {
   username: string;
   avatar: Avatar | null;
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
+  /** ISO 8601 date in UTC. */
   last_active: string;
 }
 
@@ -244,10 +220,6 @@ export interface QuestMonster extends Monster {
   /** How many the quest really offers in trades. Can be 0 even when the player owns spares. */
   offer: number;
 }
-
-// ---------------------------------------------------------------------------
-// Your own quests
-// ---------------------------------------------------------------------------
 
 /** One of your quests, as `quests.list()` returns it. */
 export interface OwnQuest extends QuestBase {
@@ -309,10 +281,7 @@ export interface QuestUpdate {
   never_offer_arch?: boolean | undefined;
   /** Never look for archmonsters. */
   never_want_arch?: boolean | undefined;
-  /**
-   * The same filters in the shape the API reads them back in. Only the kinds
-   * and flags you list change: `{ "3": { never_want: true } }`.
-   */
+  /** The same filters, keyed by kind. Only what you list changes: `{ "3": { never_want: true } }`. */
   type_filters?: Record<string, Partial<TypeFilter>> | undefined;
 }
 
@@ -442,16 +411,9 @@ export interface ZoneProgress {
   subzones: SubzoneProgress[];
 }
 
-// ---------------------------------------------------------------------------
-// Messages
-// ---------------------------------------------------------------------------
-
 /** A conversation: one per correspondent. */
 export interface Conversation {
-  /**
-   * The correspondent. Their profile may be gone: a deleted account keeps
-   * its conversations readable for 30 days while `users.get()` answers 404.
-   */
+  /** The correspondent. A deleted account stays readable here for 30 days while `users.get()` answers 404. */
   username: string;
   /** Visible messages, trade proposals included. */
   message_count: number;
@@ -462,7 +424,7 @@ export interface Conversation {
    * ones: the site shows those in a golden popup.
    */
   has_priority_unread?: boolean;
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
+  /** ISO 8601 date in UTC. */
   last_message_at: string;
 }
 
@@ -472,9 +434,9 @@ export interface ConversationMessage {
   id: number;
   content: string;
   sender: string;
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
+  /** ISO 8601 date in UTC. */
   created_at: string;
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`, or `null`. */
+  /** ISO 8601 date in UTC, or `null`. */
   read_at: string | null;
   /**
    * A priority message from the Metamob staff, which the site shows in a
@@ -492,10 +454,8 @@ export interface ProposalMonster {
 /** A monster of a trade proposal read on its own, with what you own of it now. */
 export interface ProposalMonsterDetail extends ProposalMonster {
   /**
-   * How many of this monster you own now, in your quest the proposal is
-   * about. It is the current count: once the trade is applied, it already
-   * includes the trade. `null` when you have no quest of this kind on this
-   * server.
+   * How many you own now in your quest the proposal is about, the trade included
+   * once applied. `null` when you have no quest of this kind on this server.
    */
   owned: number | null;
 }
@@ -539,11 +499,11 @@ export interface TradeProposal {
   monsters_received: ProposalMonster[];
   /** Who confirmed their side. */
   applications: { username: string; created_at: string }[];
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`, or `null`. */
+  /** ISO 8601 date in UTC, or `null`. */
   cancelled_at: string | null;
   /** Username of the player who cancelled it. `null` when it is not cancelled, or when it expired. */
   cancelled_by: string | null;
-  /** ISO 8601 date in UTC, such as `2026-01-27T14:22:00Z`. */
+  /** ISO 8601 date in UTC. */
   created_at: string;
   /** When the recipient read it, as an ISO 8601 date in UTC, or `null` while unread. */
   read_at: string | null;

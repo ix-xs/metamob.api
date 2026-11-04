@@ -1,25 +1,15 @@
-// A translated page gets the heading ids of its English original, by position.
-//
-// Ids are made from the text of a heading, so "## Typed params" and its French
-// translation would get different anchors, and every link to a section would
-// have to be rewritten by hand in every language. Giving the nth heading of a
-// translation the id of the nth English heading keeps one set of anchors for
-// the whole site: links are copied as they are, and a link shared in one
-// language lands on the same section in the other.
-//
-// `scripts/check-translation.mjs` verifies that a translation has the headings
-// of its original, in the same order.
+// A translated page gets the heading ids of its original, by position, so one
+// set of anchors works in every language.
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import GithubSlugger from "github-slugger";
 import { originalOf } from "./base-links.mjs";
 
-/** The text of a Markdown heading as a reader sees it. */
 function plain(text) {
   return text
     .replace(/\s+#+\s*$/, "")
     .split("`")
-    // Every other piece is inline code, which is kept as written.
+    // Odd pieces are inline code, kept as written.
     .map((piece, index) =>
       index % 2 === 1
         ? piece
@@ -33,7 +23,6 @@ function plain(text) {
     .trim();
 }
 
-/** The ids Astro gives the headings of a Markdown source, in order. */
 export function headingIds(source) {
   const slugger = new GithubSlugger();
   const ids = [];
@@ -57,7 +46,7 @@ function visit(node, fn) {
   if (Array.isArray(node.children)) for (const child of node.children) visit(child, fn);
 }
 
-/** The rehype plugin. It runs before Astro's own, which keeps an id that is already there. */
+// Runs before Astro's own, which keeps an id that is already there.
 export function rehypeSharedHeadingIds() {
   return (tree, file) => {
     const source = file?.path ?? file?.history?.[0];

@@ -5,7 +5,6 @@ import { apiError, type Call, client, monsters, page } from "./helpers.js";
 
 const SLUG = "a1b2c3d4";
 
-/** One call per endpoint: what is written, and what must go out. */
 const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>; path: string; query?: string; body?: unknown }> = {
   "me.get": { run: (m) => m.me(), path: "/me" },
   "gameVersions.list": { run: (m) => m.gameVersions.list(), path: "/game-versions" },
@@ -61,7 +60,6 @@ const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>;
   "quests.zones": { run: (m) => m.quests.zones(SLUG, { zone: "Amakna", subzone: "Gob Akademy", type: "monstre" }), path: `/quests/${SLUG}/zones`, query: "?zone_id=1&subzone_id=48&monster_type_id=1" },
 };
 
-/** A body most methods can read. The few that cannot fail after the request left, which is all that is checked. */
 const ANSWER = { data: { slug: SLUG, monsters: [], pagination: { total: 0, limit: 50, offset: 0 } }, pagination: { total: 0, limit: 50, offset: 0 } };
 
 describe("every endpoint", () => {
@@ -84,7 +82,6 @@ describe("every endpoint", () => {
       expect(call.path).toBe(scenario.path);
       expect(call.url.search).toBe(scenario.query ?? "");
       expect(call.body).toEqual(scenario.body);
-      // A JSON body goes with its content type, and only then.
       if (scenario.body !== undefined) expect(call.headers.get("content-type")).toBe("application/json");
       else expect(call.headers.get("content-type")).toBeNull();
       expect(METHODS[config.id as MethodId].scope).toBe(config.scope);
@@ -379,13 +376,11 @@ describe("quests", () => {
     // Template 3 is Dofus Touch, where the archmonster is #725, not #416.
     expect(calls.map((call) => `${call.method} ${call.path}`)).toEqual([`GET /quests/${SLUG}`, `PATCH /quests/${SLUG}/monsters/725`]);
 
-    // The template is remembered: no second look-up, and none at all for a plain name or an id.
     await metamob.quests.setTrade(SLUG, "Crognan le Barbare", { trade_offer: 0 });
     await metamob.quests.setMonster(SLUG, "Tofu", 1);
     await metamob.quests.setMonster(SLUG, 416, 1);
     expect(calls.slice(2).map((call) => `${call.method} ${call.path}`)).toEqual([`PATCH /quests/${SLUG}/monsters/725/trade`, `PATCH /quests/${SLUG}/monsters/20`, `PATCH /quests/${SLUG}/monsters/416`]);
 
-    // Each key has its own quests.
     await metamob.quests.setMonster("other", "Crognan le Barbare", 1, { apiKey: "their-key" });
     expect(calls[calls.length - 2]!.headers.get("authorization")).toBe("Bearer their-key");
   });

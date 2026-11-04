@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { ListRequest, Page } from "../src/index.js";
 import { type Call, client, monsters, page } from "./helpers.js";
 
-/** Serves `total` monsters, honouring `limit` and `offset` like the API. */
 const catalogue = (total: number, defaultLimit = 50) => (call: Call) => {
   const limit = Number(call.url.searchParams.get("limit") ?? defaultLimit);
   const offset = Number(call.url.searchParams.get("offset") ?? 0);

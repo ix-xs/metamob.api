@@ -166,7 +166,7 @@ export class QuestTemplates {
 
   /**
    * One quest template with its counts, from its id or from the kind of quest
-   * and the version of the game. Read from the list, which is cached.
+   * and the version of the game.
    *
    * @example
    * const template = await metamob.questTemplates.get({ questType: "ocre", gameVersion: "Dofus Touch" });

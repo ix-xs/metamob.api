@@ -1,12 +1,8 @@
 name: Data watch
 
-# Once a week, compares the reference data pinned in the repository with what
-# the Metamob API serves. The run fails when monsters, zones, servers or quest
-# templates changed, which is the cue to run `npm run data:update` and release
-# a patch version.
-#
-# It needs a repository secret named METAMOB_API_KEY, and does nothing without
-# it. The run sends about 240 requests, paced under the rate limit of the API.
+# Weekly, compares the pinned reference data with the API. A failure means:
+# run `npm run data:update` and release a patch version.
+# Needs the METAMOB_API_KEY repository secret, and does nothing without it.
 
 on:
   schedule:

@@ -20,9 +20,8 @@ import type { Account } from "./types.js";
 /** Options of the {@link Metamob} client. */
 export interface MetamobOptions {
   /**
-   * Your API key, created on metamob.fr in Settings > API key. Left out, the
-   * `METAMOB_API_KEY` environment variable is used. A call can also bring its
-   * own key, see {@link RequestOptions.apiKey}.
+   * Your API key, created on metamob.fr in Settings > API key. Default: the
+   * `METAMOB_API_KEY` environment variable.
    */
   apiKey?: string | undefined;
   /** Time allowed for one attempt of a request. Default `"30s"`. */
@@ -33,14 +32,13 @@ export interface MetamobOptions {
    */
   retry?: RetryOptions | false | undefined;
   /**
-   * Cache of reference data (monsters, zones, servers...), which changes only
-   * when the game does. On by default, for 10 minutes, in memory. `false`
-   * turns it off; an object tunes it or caches more.
+   * Cache of reference data (monsters, zones, servers...). On by default, for
+   * 10 minutes, in memory. `false` turns it off.
    */
   cache?: boolean | CacheOptions | undefined;
   /**
-   * Rate limiter. On by default at the limit of the API, 60 requests a minute
-   * per key: calls beyond it wait instead of failing. `false` turns it off.
+   * Rate limiter. On by default, at 60 requests a minute per key: calls beyond
+   * it wait instead of failing. `false` turns it off.
    */
   rateLimit?: boolean | RateLimitOptions | undefined;
   /** A `fetch` to use instead of the global one. */
@@ -91,10 +89,7 @@ export class Metamob {
   /** The quests of the account: settings, monsters, trade partners, progress. */
   readonly quests: Quests;
 
-  /**
-   * The reference data embedded in the package: monsters, zones, servers and
-   * quest templates, answered from memory without a request.
-   */
+  /** The reference data embedded in the package, answered without a request. */
   readonly data: Dataset = data;
 
   /**
@@ -122,9 +117,7 @@ export class Metamob {
   }
 
   /**
-   * The account the API key belongs to: username, bio, avatar and last
-   * activity. A key says nothing else about its owner, so call this when a
-   * user hands you their key instead of asking for their username as well.
+   * The account the API key belongs to: username, bio, avatar and last activity.
    *
    * @example
    * const me = await metamob.me();
@@ -135,12 +128,9 @@ export class Metamob {
   }
 
   /**
-   * A client that acts with another API key: the key of a user who entrusted
+   * A client that acts with another API key, the key of a user who entrusted
    * it to you. It shares this client's settings, cache, listeners and rate
-   * limiter, and each key keeps its own window of 60 requests a minute.
-   *
-   * It is meant for bots and services that manage the quests of several
-   * consenting players, not for getting around the rate limit.
+   * limiter; each key keeps its own rate limit. Not meant for getting around it.
    *
    * @example
    * const theirs = metamob.withKey(userApiKey);
@@ -152,8 +142,8 @@ export class Metamob {
   }
 
   /**
-   * Where the client's key stands against the rate limit, as counted by this
-   * client. Undefined when the limiter is turned off.
+   * Where the client's key stands against the rate limit. Undefined when the
+   * limiter is turned off.
    *
    * @example
    * const { remaining, resetsIn } = metamob.rateLimit ?? {};

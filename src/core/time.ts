@@ -8,7 +8,6 @@ export type Duration = number | `${number}${"ms" | "s" | "m" | "h" | "d"}`;
 
 const UNITS: Record<string, number> = { ms: 1, s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 };
 
-/** Converts a {@link Duration} to milliseconds. */
 export function toMs(value: Duration): number {
   if (typeof value === "number") {
     if (!Number.isFinite(value) || value < 0) throw new MetamobArgumentError(`Invalid duration: ${value}`);
@@ -19,7 +18,6 @@ export function toMs(value: Duration): number {
   return Number(match[1]) * UNITS[match[2]!]!;
 }
 
-/** Resolves after `ms` milliseconds, or rejects as soon as `signal` aborts. */
 export function sleep(ms: number, signal?: AbortSignal | null): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) return reject(signal.reason);

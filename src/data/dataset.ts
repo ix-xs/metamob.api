@@ -23,11 +23,6 @@ import type {
 import type { GameVersion, LocalizedName, Monster, MonsterType, QuestTemplate, QuestType, Server, Subzone, TemplateMonster, Zone, ZoneDetail } from "../types.js";
 import { closest, normalizeName } from "./text.js";
 
-/**
- * How a record is designated: its id, its name, or any object that carries
- * its id (a monster returned by another call, for instance). The names known
- * to the package are suggested by the editor; any other string is accepted.
- */
 type Like<Name extends string> = number | Name | (string & {}) | { readonly id: number };
 
 /** A monster: its id, its name in French, English or Spanish, or an object with its `id`. */
@@ -63,7 +58,6 @@ export interface MonsterSearchOptions extends MonsterHint {
   limit?: number | undefined;
 }
 
-/** A name stored as 0 is the same as the French one. */
 type Translation = string | 0;
 
 interface Raw {
@@ -82,7 +76,6 @@ const localized = (fr: string, en: Translation, es: Translation): LocalizedName 
 const names = (record: { name: LocalizedName }): string[] => [record.name.fr, record.name.en, record.name.es];
 const isId = (value: string): boolean => /^\d+$/.test(value);
 
-/** Records of one kind, found by id or by name. The name index is built on first use. */
 class Collection<T extends { readonly id: number }> {
   readonly list: readonly T[];
   readonly #byId = new Map<number, T>();
@@ -99,7 +92,6 @@ class Collection<T extends { readonly id: number }> {
     return this.#byId.get(id);
   }
 
-  /** Every record that answers to a name, in any language. */
   named(name: string): readonly T[] {
     if (!this.#byName) {
       const index = new Map<string, T[]>();
@@ -122,7 +114,6 @@ class Collection<T extends { readonly id: number }> {
     return ref && typeof ref.id === "number" ? this.#byId.get(ref.id) : undefined;
   }
 
-  /** Each name of each record, normalized and as written, for suggestions. */
   *written(): Generator<readonly [string, string, number, number]> {
     for (const record of this.list) {
       let rank = 0;
@@ -131,7 +122,6 @@ class Collection<T extends { readonly id: number }> {
   }
 }
 
-/** What the data set is decoded into, once. */
 interface Loaded {
   gameVersions: Collection<GameVersion>;
   monsterTypes: Collection<MonsterType>;
@@ -141,21 +131,15 @@ interface Loaded {
   zones: Collection<ZoneDetail>;
   subzones: Collection<Subzone>;
   monsters: Collection<Monster>;
-  /** Monster ids of each subzone. */
   subzoneMonsters: Map<number, readonly number[]>;
-  /** Monster ids and their steps, for each quest template. */
   templateRows: Map<number, { ids: readonly number[]; steps: readonly number[] }>;
-  /** Quest templates each monster belongs to, lowest id first. */
   monsterTemplates: Map<number, number[]>;
 }
 
 /**
- * The reference data of Metamob, embedded in the package: monsters, zones,
- * subzones, servers, game versions and quest templates. Everything here is
- * answered from memory, without a request and without an API key.
- *
- * It is a copy made on {@link Dataset.fetchedAt}. The client uses it to turn
- * names into ids; when a name is not in it, the client asks the API.
+ * The reference data of Metamob embedded in the package (monsters, zones,
+ * subzones, servers, game versions and quest templates), as of
+ * {@link Dataset.fetchedAt}. Answered from memory, without a request or an API key.
  *
  * @example
  * import { data } from "@ix-xs/metamob.api";
@@ -332,12 +316,9 @@ export class Dataset {
   }
 
   /**
-   * A monster, from its id or its name in French, English or Spanish.
-   * Accents and capitals do not matter.
-   *
-   * A few archmonsters share their name across versions of the game, under
-   * different ids. Without a hint, the one of the lowest quest template wins,
-   * Dofus (Unity) first; pass `template` or `gameVersion` to pick another.
+   * A monster, from its id or its name in French, English or Spanish, ignoring
+   * accents and capitals. When versions of the game share the name, pass
+   * `template` or `gameVersion` to pick one; otherwise Dofus (Unity) comes first.
    *
    * @example
    * data.monster("tofu malefique");
@@ -349,12 +330,11 @@ export class Dataset {
     return this.#pick(monsters.named(ref), hint);
   }
 
-  /** Every monster that answers to a name. More than one for the few names shared across versions of the game. */
+  /** Every monster that answers to a name. Several when versions of the game share it. */
   monstersNamed(name: string): Monster[] {
     return this.#rank(this.#load().monsters.named(name));
   }
 
-  /** Candidates ordered by their lowest quest template, then by id. */
   #rank(candidates: readonly Monster[]): Monster[] {
     if (candidates.length < 2) return [...candidates];
     const { monsterTemplates } = this.#load();

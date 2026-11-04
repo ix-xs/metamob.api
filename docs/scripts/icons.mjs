@@ -6,7 +6,6 @@ import sharp from "sharp";
 const svg = await readFile(new URL("../public/favicon.svg", import.meta.url), "utf8");
 const out = (name) => new URL(`../public/${name}`, import.meta.url);
 
-// A tab icon, as drawn.
 await writeFile(out("favicon-32.png"), await sharp(Buffer.from(svg), { density: 288 }).resize(32, 32).png().toBuffer());
 
 // iOS rounds the corners itself: the home-screen icon is a full square.

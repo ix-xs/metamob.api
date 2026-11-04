@@ -1,12 +1,10 @@
-// Checks the library against the real API: every read endpoint, the shape
-// of what comes back, and the embedded data against what the API serves.
+// Checks the library against the real API: every read endpoint, the shapes
+// returned, and the embedded data.
 //
 //   npm run live
 //
-// Needs METAMOB_API_KEY in `.env`. It sends about 30 requests, held at 45 a
-// minute by the client's own rate limiter. With METAMOB_QUEST_SLUG set to one of your
-// quests, it also exercises the write endpoints on a single monster and puts
-// everything back the way it was.
+// Needs METAMOB_API_KEY in `.env`. With METAMOB_QUEST_SLUG set to one of your
+// quests, it also exercises the write endpoints on one monster, then restores it.
 
 import env from "@ix-xs/node-comfort/env";
 import { Metamob, MetamobApiError, data } from "../../src/index.js";
@@ -29,7 +27,6 @@ let failures = 0;
 const ISO_DATE = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$");
 const problems: string[] = [];
 
-/** Reports what a record has beyond `expected`, and what it lacks. */
 function shape(label: string, record: unknown, expected: string[], optional: string[] = []): void {
   if (!record || typeof record !== "object") return void problems.push(`${label}: expected an object, got ${record === null ? "null" : typeof record}`);
   const keys = Object.keys(record);
@@ -41,7 +38,6 @@ function shape(label: string, record: unknown, expected: string[], optional: str
   if (id !== undefined && typeof id !== "number") problems.push(`${label}: id is a ${typeof id}`);
 }
 
-/** The API documents every date as ISO 8601 in UTC, with the Z suffix. */
 function date(label: string, value: unknown): void {
   if (typeof value !== "string" || !ISO_DATE.test(value) || Number.isNaN(Date.parse(value))) problems.push(`${label}: expected a date like 2026-01-27T20:00:00Z, got ${JSON.stringify(value)}`);
 }
@@ -158,7 +154,6 @@ void slugs;
 
 const PROPOSAL = ["id", "sender", "recipient", "status", "server", "quest_template", "sender_quest", "recipient_quest", "monsters_given", "monsters_received", "applications", "cancelled_at", "cancelled_by", "created_at", "read_at"];
 
-/** Checks a proposal against its type, wherever it comes from. */
 function proposal(label: string, item: Record<string, unknown>, extra: string[] = [], optional: string[] = []): void {
   shape(label, item, [...PROPOSAL, ...extra], optional);
   date(`${label}.created_at`, item.created_at);
@@ -167,7 +162,6 @@ function proposal(label: string, item: Record<string, unknown>, extra: string[] 
   if (item.quest_template !== null) shape(`${label}.quest_template`, item.quest_template, ["id", "quest_type"]);
 }
 
-/** Runs a call the API must refuse with this code. */
 async function refused(code: string, run: () => Promise<unknown>): Promise<void> {
   try {
     await run();
@@ -188,7 +182,6 @@ await step("conversations: list, messages, unread_count, markAsRead", async () =
   await refused("NOT_FOUND", () => metamob.conversations.markAsRead("zz-nobody-zz-0000"));
   const read = page.items.find((conversation) => conversation.unread_count === 0);
   if (read) {
-    // Nothing unread there, so marking it changes nothing.
     const result = await metamob.conversations.markAsRead(read.username);
     if (result.marked_count !== 0) problems.push(`markAsRead on a read conversation marked ${result.marked_count}`);
   }
@@ -231,7 +224,7 @@ await step("errors: the message is in messages.error", async () => {
 });
 
 await step("sending: closed, or addressed to nobody", async () => {
-  // Addressed to a player who does not exist: whatever the account may do, nothing is sent.
+  // A player who does not exist, so nothing is sent.
   const nobody = "zz-nobody-zz-0000";
   const attempts: [string, () => Promise<unknown>][] = [
     ["conversations.send", () => metamob.conversations.send(nobody, "test")],

@@ -120,7 +120,6 @@ describe("the client's rate limiter", () => {
     const second = metamob.quests.get("b");
     const other = metamob.quests.get("c", { apiKey: "other" });
     await vi.advanceTimersByTimeAsync(0);
-    // The other key went through; the blocked key waits for the 30 seconds asked.
     expect(calls.map((call) => call.path)).toEqual(["/quests/a", "/quests/c"]);
     await other;
     await vi.advanceTimersByTimeAsync(30_000);

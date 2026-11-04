@@ -1,10 +1,7 @@
 // Verifies every internal link of the built site: the target page must exist,
-// and so must the `#anchor` when there is one. Run after a build:
+// and so must the `#anchor` when there is one.
 //
 //   npm run build && npm run check-links
-//
-// A renamed heading silently breaks the anchors pointing at it, and nothing in
-// the build notices. This does.
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,7 +25,6 @@ async function htmlFiles(dir) {
 function targetFile(urlPath) {
   const relative = urlPath.slice(base.length).replace(/^\/+/, "");
   if (relative === "" || relative.endsWith("/")) return path.join(dist, relative, "index.html");
-  // "/getting-started" is served from its directory index; a real file keeps its name.
   return path.extname(relative) ? path.join(dist, relative) : path.join(dist, relative, "index.html");
 }
 
@@ -44,15 +40,13 @@ for (const file of files) {
 
 const problems = [];
 
-// A translated page shares the heading ids of its English page (see
-// plugins/heading-ids.mjs): a link to a section works in every language.
+// A translated page shares the heading ids of its original (plugins/heading-ids.mjs).
 const headingIds = (html) => [...html.matchAll(/<h[1-6][^>]*\sid="([^"]+)"/g)].map((m) => m[1]).join(" ");
 const folders = LOCALES.map((locale) => path.join(dist, locale) + path.sep);
 const source = path.join(dist, SOURCE) + path.sep;
 for (const [file, { html }] of pages) {
   if (file.startsWith(source)) continue;
   const folder = folders.find((candidate) => file.startsWith(candidate));
-  // A page of the root language has no folder to strip.
   const relative = folder ? file.slice(folder.length) : path.relative(dist, file);
   const original = pages.get(path.join(dist, SOURCE, relative));
   if (original && headingIds(original.html) !== headingIds(html)) {
@@ -66,15 +60,13 @@ for (const [file, { html }] of pages) {
     if (/^(https?:|mailto:|tel:|\/\/)/.test(href)) continue;
 
     const [rawPath, anchor] = href.split("#");
-    // A same-page anchor: "#heading".
     if (rawPath === "") {
       if (anchor && !pages.get(file).ids.has(decodeURIComponent(anchor))) {
         problems.push(`${from}: missing anchor #${anchor}`);
       }
       continue;
     }
-    // Relative links are not used in this site: anything else that is not
-    // root-relative is a mistake (a path rewritten by a shell, a typo).
+    // The site uses no relative links.
     if (!rawPath.startsWith("/")) {
       problems.push(`${from}: not a link of this site nor a full address -> ${href}`);
       continue;
@@ -88,7 +80,7 @@ for (const [file, { html }] of pages) {
     const target = path.normalize(targetFile(rawPath));
     const page = pages.get(target);
     if (!page) {
-      // Assets (css, js, images) live outside the html set; only pages are checked.
+      // Only pages are checked, not assets.
       if (!path.extname(rawPath)) problems.push(`${from}: broken link -> ${href}`);
       continue;
     }

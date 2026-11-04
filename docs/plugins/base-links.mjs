@@ -1,19 +1,11 @@
-// Internal links in the docs are written root-relative ("/api/store/"), with no
-// knowledge of where the site is hosted nor of the language of the page. This
-// remark plugin prepends the language and the configured base path at build
-// time, so moving the site (another domain, a sub-path, the root) is a
-// configuration change, and a translated page keeps the links of its original.
+// Internal links are written root-relative ("/api/store/"). This remark plugin
+// prepends the language of the page and the configured base path at build time.
 
-/** Normalises a base path to "" (root) or "/segment" with no trailing slash. */
 export function normalizeBase(base) {
   const trimmed = String(base ?? "").replace(/^\/+|\/+$/g, "");
   return trimmed ? `/${trimmed}` : "";
 }
 
-/**
- * Prefixes a root-relative URL with the base path. External URLs, anchors,
- * protocol-relative URLs and URLs that already carry the base are left alone.
- */
 export function withBase(url, base) {
   const prefix = normalizeBase(base);
   if (typeof url !== "string" || !prefix) return url;
@@ -22,39 +14,25 @@ export function withBase(url, base) {
   return prefix + url;
 }
 
-/**
- * The languages that live in a folder named after them, at the same paths.
- * French sits at the root of the content and of the site: it is what most
- * readers of this documentation speak.
- */
+// Languages in a folder of their own. French sits at the root.
 export const LOCALES = ["en", "es"];
 
-/** The language of the pages at the root. */
 export const ROOT_LANGUAGE = "fr";
 
-/**
- * The language the pages are written in first. The others are translations
- * of it: they keep its headings, its code and its links.
- */
+// The language the others are translated from.
 export const SOURCE = "en";
 
-/** The language of a content file ("en"), or undefined for a page at the root. */
 export function localeOfFile(file) {
   const match = /[\\/]content[\\/]docs[\\/]([a-z]{2}(?:-[a-z]{2})?)[\\/]/i.exec(String(file ?? ""));
   return match && LOCALES.includes(match[1].toLowerCase()) ? match[1].toLowerCase() : undefined;
 }
 
-/** The language of a site path without its base ("/fr/quick-start/"), or undefined. */
 export function localeOfPath(pathname) {
   const first = String(pathname ?? "").split("/").filter(Boolean)[0];
   return LOCALES.includes(first) ? first : undefined;
 }
 
-/**
- * Sends a root-relative link to the page of the given language. Links are
- * written once, without a language ("/data/store/"); an English page gets
- * "/en/data/store/". Files (an image, a download) have no translation.
- */
+// "/data/store/" on an English page becomes "/en/data/store/". Files are left alone.
 export function withLocale(url, locale) {
   if (!locale || typeof url !== "string") return url;
   if (!url.startsWith("/") || url.startsWith("//")) return url;
@@ -63,18 +41,13 @@ export function withLocale(url, locale) {
   return `/${locale}${url}`;
 }
 
-/** The same page in another language: "/en/data/store/" <-> "/data/store/". */
 export function switchLocale(pathname, locale) {
   const current = localeOfPath(pathname);
   const bare = current ? pathname.replace(new RegExp(`^/${current}(?=/|$)`), "") || "/" : pathname;
   return locale ? `/${locale}${bare}` : bare;
 }
 
-/**
- * The file of the original a content file translates, or undefined when the
- * file is itself an original. "docs/basics/lists.md" and
- * "docs/es/basics/lists.md" both translate "docs/en/basics/lists.md".
- */
+// "docs/basics/lists.md" and "docs/es/basics/lists.md" both translate "docs/en/basics/lists.md".
 export function originalOf(file) {
   const text = String(file ?? "");
   const locale = localeOfFile(text);
@@ -86,7 +59,6 @@ export function originalOf(file) {
   return `${folder}${separator}${SOURCE}${separator}${relative}`;
 }
 
-/** Attributes of MDX components that hold an internal link. */
 const LINK_ATTRIBUTES = new Set(["href", "link"]);
 
 function visit(node, fn) {
@@ -94,7 +66,6 @@ function visit(node, fn) {
   if (Array.isArray(node.children)) for (const child of node.children) visit(child, fn);
 }
 
-/** The remark plugin. `options.base` is the site's base path. */
 export function remarkBaseLinks(options = {}) {
   const { base } = options;
   return (tree, file) => {

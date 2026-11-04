@@ -5,24 +5,18 @@ import { MetamobApiError, MetamobArgumentError, MetamobRequestError } from "./er
 import { type RateLimitOptions, type RateLimitState, RateLimiter } from "./limiter.js";
 import { type Duration, sleep, toMs } from "./time.js";
 
-/** Static description of one endpoint. The table of all of them is generated. */
+/** Description of one endpoint. */
 export interface MethodSpec {
   /** Name of the method, for example `monsters.get`. */
   readonly id: string;
   readonly verb: "GET" | "PATCH" | "POST";
   /** Path under the base URL, with `{placeholders}`. */
   readonly path: string;
-  /**
-   * `public` when the answer is the same for every API key (reference data),
-   * `account` when it depends on the key.
-   */
+  /** `public` when the answer is the same for every API key, `account` when it depends on the key. */
   readonly scope: "public" | "account";
-  /** For a list the API paginates: its largest page, and whether it walks with a cursor. */
+  /** For a paginated list: its largest page, and whether it uses a cursor. */
   readonly paged?: { readonly max: number; readonly cursor?: boolean };
-  /**
-   * A write that creates something, a message or a trade proposal: sent twice,
-   * it would exist twice. It is never retried, whatever the failure.
-   */
+  /** A write that creates something, such as a message. Never retried. */
   readonly once?: boolean;
 }
 
@@ -33,20 +27,15 @@ export interface RetryOptions {
   /** First delay, doubled on each retry. Default `"500ms"`. */
   delay?: Duration | undefined;
   /**
-   * Upper bound of a single delay. Default `"60s"`, enough to sit out a full
-   * rate limit window. When the API asks to wait longer (`Retry-After`), the
-   * call is not retried: the error is thrown with its `retryAfter`.
+   * Upper bound of a single delay. Default `"60s"`. When `Retry-After` asks for
+   * longer, the error is thrown with its `retryAfter`.
    */
   maxDelay?: Duration | undefined;
 }
 
 /** Options accepted as the last argument of every API call. */
 export interface RequestOptions {
-  /**
-   * Sends this call with another API key than the client's: the key of a
-   * user who entrusted it to you, to act on their account. Each key has its
-   * own rate limit window; do not rotate keys to get around the limit.
-   */
+  /** Another API key for this call: the key of a user who entrusted it to you. */
   apiKey?: string | undefined;
   /** Cancels the call. */
   signal?: AbortSignal | undefined;
@@ -70,7 +59,7 @@ export interface ClientEvents {
   retry: { method: string; attempt: number; delay: number; error: Error };
   /** The rate limiter held a call back for `delay` milliseconds to stay under the limit. */
   rateLimit: { method: string; delay: number };
-  /** A listener of yours threw, or the cache store failed. Neither stops the call that was running. */
+  /** A listener threw, or the cache store failed. The running call goes on. */
   error: unknown;
 }
 
@@ -85,7 +74,6 @@ export interface RestOptions {
   headers?: Record<string, string> | undefined;
 }
 
-/** What a call sends: values of the path placeholders, query parameters and a JSON body. */
 export interface RequestInput {
   path?: Record<string, string | number> | undefined;
   query?: Record<string, string | number | undefined> | undefined;
@@ -107,17 +95,13 @@ interface ResolvedCache {
   methods: Record<string, Duration | false | undefined>;
 }
 
-/** What a client and the clients derived from it have in common. */
 interface Shared {
   fetch: typeof fetch;
   events: Emitter<ClientEvents>;
   limiter: RateLimiter | undefined;
   cache: ResolvedCache | undefined;
-  /** Identical reads in flight, so they share one request. */
   inflight: Map<string, Promise<unknown>>;
-  /** Digest of each API key seen, for cache keys. */
   identities: Map<string, string>;
-  /** Bumped when a key changes a quest: its cached account data is left behind. */
   generations: Map<string, number>;
 }
 
@@ -131,18 +115,13 @@ function resolveRetry(base: ResolvedRetry, override: RetryOptions | false | unde
   };
 }
 
-/**
- * The base URL without its trailing slashes. Walked by hand rather than with a
- * regular expression, whose cost would grow with the square of a long run of
- * slashes in a value that comes from the caller.
- */
+// A loop, not a regex: a regex would be quadratic on a long run of slashes.
 function trimSlashes(url: string): string {
   let end = url.length;
   while (end > 0 && url.charCodeAt(end - 1) === 47) end--;
   return url.slice(0, end);
 }
 
-/** Seconds to wait according to a `Retry-After` header: a number of seconds or an HTTP date. */
 export function retryAfterSeconds(header: string | null, now: number = Date.now()): number | undefined {
   if (!header) return undefined;
   const seconds = Number(header);
@@ -153,7 +132,6 @@ export function retryAfterSeconds(header: string | null, now: number = Date.now(
   return wait > 0 ? wait : undefined;
 }
 
-/** Combines the caller's signal with a timeout. */
 function withTimeout(signal: AbortSignal | undefined | null, ms: number): { signal: AbortSignal; timedOut: () => boolean; done: () => void } {
   const controller = new AbortController();
   let timedOut = false;
@@ -171,18 +149,12 @@ function withTimeout(signal: AbortSignal | undefined | null, ms: number): { sign
   };
 }
 
-/** The API key of the environment, where there is one. */
 function envKey(): string | undefined {
   const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
   return env?.METAMOB_API_KEY || undefined;
 }
 
-/**
- * The request pipeline shared by every resource: credentials, cache, rate
- * limit, timeout, retries and error mapping.
- *
- * @internal
- */
+/** @internal */
 export class Rest {
   readonly options: RestOptions;
   readonly #shared: Shared;
@@ -197,7 +169,6 @@ export class Rest {
     this.#retry = resolveRetry({ attempts: 3, delay: 500, maxDelay: 60_000 }, options.retry);
 
     if (from) {
-      // A derived client keeps the same rate limit windows, cache and listeners.
       this.#shared = from.#shared;
       return;
     }
@@ -211,7 +182,7 @@ export class Rest {
       cache = { store: config.store ?? new MemoryCache(config.max), ttl: toMs(config.ttl ?? "10m"), methods: config.methods ?? {} };
     }
     this.#shared = {
-      // Always called as a plain function: a native fetch refuses to run as a method of another object.
+      // A native fetch throws when called as a method of another object.
       fetch: custom ? (input, init) => custom(input, init) : (input, init) => globalThis.fetch(input, init),
       events: new Emitter<ClientEvents>(),
       limiter: options.rateLimit === false ? undefined : new RateLimiter(options.rateLimit === true || options.rateLimit === undefined ? {} : options.rateLimit),
@@ -230,7 +201,6 @@ export class Rest {
     return this.#shared.cache?.store;
   }
 
-  /** The key a call goes out with: the call's, the client's, or the environment's. */
   apiKey(options?: RequestOptions): string {
     const key = options?.apiKey ?? this.options.apiKey ?? envKey();
     if (typeof key !== "string" || !key.trim()) {
@@ -241,7 +211,6 @@ export class Rest {
     return key.trim();
   }
 
-  /** Where the key of a call stands against its rate limit. */
   rateLimit(options?: RequestOptions): RateLimitState | undefined {
     return this.#shared.limiter?.state(this.apiKey(options));
   }
@@ -276,11 +245,6 @@ export class Rest {
     return spec.scope === "public" ? cache.ttl : false;
   }
 
-  /**
-   * Who a cached answer belongs to: a digest of the API key, so two accounts
-   * can never share an entry and no key reaches the store. Undefined when the
-   * runtime cannot hash, in which case account data is not cached.
-   */
   async #identity(key: string): Promise<string | undefined> {
     const { identities, generations } = this.#shared;
     let id = identities.get(key);
@@ -295,7 +259,6 @@ export class Rest {
     return `${id}.${generations.get(key) ?? 0}`;
   }
 
-  /** A cache that fails must never fail the call it was meant to speed up. */
   async #cacheGet(key: string): Promise<CacheEntry | undefined> {
     try {
       return await this.#shared.cache!.store.get(key);
@@ -313,7 +276,6 @@ export class Rest {
     }
   }
 
-  /** Runs one endpoint and resolves to its parsed JSON body. */
   async request<T>(spec: MethodSpec, input: RequestInput = {}, options?: RequestOptions): Promise<T> {
     const key = this.apiKey(options);
     const url = this.url(spec, input);
@@ -321,7 +283,7 @@ export class Rest {
 
     if (spec.verb !== "GET") {
       const result = await this.#send<T>(spec, url, key, input.body, options);
-      // The account just changed: what was cached for it is out of date.
+      // Invalidates what is cached for this key.
       shared.generations.set(key, (shared.generations.get(key) ?? 0) + 1);
       return result;
     }
@@ -340,8 +302,6 @@ export class Rest {
       }
     }
 
-    // Identical reads fired at the same time share one request. Reference
-    // data is the same for every key, so it is shared across keys too.
     const shareable = !options?.signal;
     const flight = `${spec.scope === "public" ? "" : key}\n${url}`;
     if (shareable) {
@@ -362,7 +322,6 @@ export class Rest {
   #headers(key: string, hasBody: boolean, options: RequestOptions | undefined): Record<string, string> {
     const headers: Record<string, string> = { accept: "application/json", "user-agent": USER_AGENT };
     if (hasBody) headers["content-type"] = "application/json";
-    // Lower-cased, so a header given by the caller and one set here are the same key.
     for (const source of [this.options.headers, options?.headers]) {
       if (source) for (const name in source) headers[name.toLowerCase()] = source[name]!;
     }
@@ -412,7 +371,6 @@ export class Rest {
         const error = timer.timedOut()
           ? new MetamobRequestError("TIMEOUT", spec.id, `no answer after ${timeout} ms.`, { cause })
           : new MetamobRequestError("NETWORK", spec.id, cause instanceof Error ? cause.message : String(cause), { cause });
-        // The request may have reached the API: a message or a proposal would be sent twice.
         if (spec.once || attempt >= retry.attempts) throw error;
         const delay = Math.min(retry.maxDelay, retry.delay * 2 ** attempt);
         events.emit("retry", { method: spec.id, attempt: attempt + 1, delay, error });
@@ -435,18 +393,15 @@ export class Rest {
       }
 
       const error = apiError(spec, url, response, text);
-      // A message or a proposal is never sent twice. A 429 there can also be the
-      // anti-spam limit of the site, which says nothing about the other calls.
+      // A 429 here can also be the anti-spam limit of the site.
       if (spec.once) throw error;
       const status = response.status;
-      // The other writes set a value, so sending one twice is harmless.
-      // A plain 500 on a write is not retried: it is more likely to be the request itself.
+      // A 500 on a write is more likely caused by the request itself.
       const retryable = status === 429 || status === 502 || status === 503 || status === 504 || (status === 500 && spec.verb === "GET");
       let delay = Math.min(retry.maxDelay, retry.delay * 2 ** attempt);
       let held = false;
       if (status === 429) {
         const asked = error.retryAfter !== undefined ? error.retryAfter * 1000 : delay;
-        // The limiter holds this key back, for this call and for every other one.
         limiter?.block(key, asked);
         held = limiter !== undefined;
         if (asked > retry.maxDelay) throw error;
@@ -459,14 +414,13 @@ export class Rest {
   }
 }
 
-/** Builds the error for a non-2xx answer. The API has several body shapes; all of them are read. */
 function apiError(spec: MethodSpec, url: string, response: Response, text: string): MetamobApiError {
   let body: unknown = text || undefined;
   if (text) {
     try {
       body = JSON.parse(text);
     } catch {
-      // Not JSON: an HTML error page from a proxy, for instance. Kept as text.
+      // Not JSON, kept as text.
     }
   }
   const messages: Record<string, string> = {};
