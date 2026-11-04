@@ -120,7 +120,7 @@ setInterval(async () => {
 
 - Confirmar o cancelar una propuesta se hace en el sitio.
 - `create()` rechaza antes del envío una propuesta sin ningún monstruo, una cantidad fuera del rango de 1 a 99, un monstruo nombrado dos veces en el mismo lado, o más de 200 monstruos en un mismo lado.
-- La API responde `BAD_REQUEST` para un monstruo que no está en la misión o para dos misiones de tipos o servidores distintos, y `NOT_FOUND` para una misión que no existe o, en el caso de `sender_quest`, que no es tuya.
+- La API responde `BAD_REQUEST` para un monstruo que no está en la misión, para un monstruo del que das más ejemplares de los que tienes, o para dos misiones de tipos o servidores distintos, y `NOT_FOUND` para una misión que no existe o, en el caso de `sender_quest`, que no es tuya.
 - `NOT_FOUND` para una propuesta que no existe o que no es tuya.
 - `BAD_REQUEST` para una `quest` que no es una de tus misiones, y para un `direction` o un `status` que la API no conoce.
 - Un identificador, una misión o una fecha no válidos se rechazan antes de enviarse.

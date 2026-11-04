@@ -160,7 +160,7 @@ Un monstruo está `validated` cuando su etapa ya ha pasado, `completed` cuando p
 - Todos los métodos responden `NOT_FOUND` para una misión que no es tuya, exista o no.
 - Las cantidades van de 0 a 99. Fuera de ese rango, la API responde `BAD_REQUEST`.
 - `current_step` va de 1 a `quest_template.step_count`, más uno para una misión terminada: de 1 a 19 para las 18 etapas del Ocre en Dofus, de 1 a 35 en Retro y Touch. Fuera de ese rango, la API responde `BAD_REQUEST`.
-- Un umbral del modo experto va de 0 a 99. Fuera de ese rango, se rechaza antes del envío.
+- Un umbral del modo experto va de 0 a 99. Fuera de ese rango, se rechaza antes del envío. Los umbrales solo se guardan en modo experto: en modo automático, un valor válido se acepta pero no se guarda.
 - Después de una escritura, la lectura siguiente está al día: la caché de tu clave se olvida.
 - La API no crea ni borra misiones: eso se hace en el sitio.
 

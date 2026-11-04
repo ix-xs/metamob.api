@@ -120,7 +120,7 @@ setInterval(async () => {
 
 - Confirmer ou annuler une proposition se fait sur le site.
 - `create()` refuse avant l'envoi une proposition sans aucun monstre, une quantité hors de 1 à 99, un monstre nommé deux fois du même côté, ou plus de 200 monstres d'un même côté.
-- L'API répond `BAD_REQUEST` pour un monstre qui n'est pas dans la quête ou pour deux quêtes de types ou de serveurs différents, et `NOT_FOUND` pour une quête qui n'existe pas ou, pour `sender_quest`, qui n'est pas la vôtre.
+- L'API répond `BAD_REQUEST` pour un monstre qui n'est pas dans la quête, pour un monstre dont vous donnez plus d'exemplaires que vous n'en possédez, ou pour deux quêtes de types ou de serveurs différents, et `NOT_FOUND` pour une quête qui n'existe pas ou, pour `sender_quest`, qui n'est pas la vôtre.
 - `NOT_FOUND` pour une proposition qui n'existe pas ou qui n'est pas la vôtre.
 - `BAD_REQUEST` pour une `quest` qui n'est pas l'une de vos quêtes, et pour un `direction` ou un `status` que l'API ne connaît pas.
 - Un identifiant, une quête ou une date invalide est refusé avant d'être envoyé.

@@ -265,9 +265,9 @@ export interface QuestUpdate {
   show_trades?: boolean | undefined;
   /** 0 is automatic, 1 is expert mode. */
   trade_mode?: 0 | 1 | undefined;
-  /** Expert mode: offer a monster from this quantity up, 0 to 99. */
+  /** Expert mode: offer a monster from this quantity up, 0 to 99. Only saved in expert mode. */
   trade_offer_threshold?: number | null | undefined;
-  /** Expert mode: look for a monster up to this quantity, 0 to 99. */
+  /** Expert mode: look for a monster up to this quantity, 0 to 99. Only saved in expert mode. */
   trade_want_threshold?: number | null | undefined;
   /** Never offer normal monsters. */
   never_offer_normal?: boolean | undefined;

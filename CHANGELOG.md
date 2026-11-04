@@ -3,8 +3,14 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
-## Unreleased
+## 5.2.2
 
+Follows the corrections of the Metamob API of November 2026.
+
+- The documentation says that a proposal giving more copies of a monster than
+  you own is refused with `BAD_REQUEST`, and that the thresholds of the expert
+  mode are only saved in expert mode. The API now refuses an out-of-range
+  threshold itself; the library still refuses it before sending.
 - The doc comments and the documentation say what `has_priority_unread` and
   `is_priority` mean: priority messages from the Metamob staff, which the site
   shows in a golden popup. Only the staff can send one.

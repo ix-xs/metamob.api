@@ -120,7 +120,7 @@ setInterval(async () => {
 
 - Confirming or cancelling a proposal is done on the site.
 - `create()` refuses before sending a proposal without any monster, a quantity outside 1 to 99, a monster named twice on the same side, or more than 200 monsters on one side.
-- The API answers `BAD_REQUEST` for a monster that is not in the quest or for two quests of different kinds or servers, and `NOT_FOUND` for a quest that does not exist or, for `sender_quest`, that is not yours.
+- The API answers `BAD_REQUEST` for a monster that is not in the quest, for a monster you give more copies of than you own, or for two quests of different kinds or servers, and `NOT_FOUND` for a quest that does not exist or, for `sender_quest`, that is not yours.
 - `NOT_FOUND` for a proposal that does not exist or that is not yours.
 - `BAD_REQUEST` for a `quest` that is not one of your quests, and for a `direction` or a `status` the API does not know.
 - An invalid id, quest or date is refused before being sent.

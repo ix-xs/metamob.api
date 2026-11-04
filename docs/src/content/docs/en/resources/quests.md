@@ -160,7 +160,7 @@ A monster is `validated` when its step is already passed, `completed` when you o
 - Every method answers `NOT_FOUND` for a quest that is not yours, whether it exists or not.
 - Quantities go from 0 to 99. Outside, the API answers `BAD_REQUEST`.
 - `current_step` goes from 1 to `quest_template.step_count`, plus one for a finished quest: from 1 to 19 for the 18 steps of the Ochre on Dofus, from 1 to 35 on Retro and Touch. Outside, the API answers `BAD_REQUEST`.
-- A threshold of the expert mode goes from 0 to 99. Outside, it is refused before sending.
+- A threshold of the expert mode goes from 0 to 99. Outside, it is refused before sending. Thresholds are only saved in expert mode: in automatic mode, a valid value is accepted but not kept.
 - After a write, the next read is up to date: the cache of your key is dropped.
 - The API neither creates nor deletes quests: that is done on the site.
 

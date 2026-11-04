@@ -126,7 +126,6 @@ export class Quests {
     if (!Object.keys(body).length) throw new MetamobArgumentError("`changes` is empty: there is nothing to update.");
     // The flat flags are documented as 0 or 1.
     for (const flag of FLAGS) if (typeof body[flag] === "boolean") body[flag] = body[flag] ? 1 : 0;
-    // The API silently drops an out-of-range threshold.
     for (const threshold of THRESHOLDS) {
       const value = body[threshold];
       if (value !== undefined && value !== null && (typeof value !== "number" || !Number.isInteger(value) || value < 0 || value > MAX_QUANTITY)) {

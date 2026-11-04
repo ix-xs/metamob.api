@@ -218,7 +218,7 @@ await step("errors: the message is in messages.error", async () => {
       problems.push(`${status}: the call succeeded`);
     } catch (error) {
       if (!(error instanceof MetamobApiError)) throw error;
-      if (!error.messages.error) console.log(`      ${status}: not in the single error format yet (${error.message})`);
+      if (!error.messages.error) problems.push(`${status}: not in the single error format (${error.message})`);
     }
   }
 });

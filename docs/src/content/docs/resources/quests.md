@@ -160,7 +160,7 @@ Un monstre est `validated` quand son étape est déjà passée, `completed` quan
 - Toutes les méthodes répondent `NOT_FOUND` pour une quête qui n'est pas la vôtre, qu'elle existe ou non.
 - Les quantités vont de 0 à 99. En dehors, l'API répond `BAD_REQUEST`.
 - `current_step` va de 1 à `quest_template.step_count`, plus un pour une quête terminée : de 1 à 19 pour les 18 étapes de l'Ocre sur Dofus, de 1 à 35 sur Retro et Touch. En dehors, l'API répond `BAD_REQUEST`.
-- Un seuil du mode expert va de 0 à 99. En dehors, il est refusé avant l'envoi.
+- Un seuil du mode expert va de 0 à 99. En dehors, il est refusé avant l'envoi. Les seuils ne sont enregistrés qu'en mode expert : en mode automatique, une valeur valide est acceptée sans être gardée.
 - Après une écriture, la lecture suivante est à jour : le cache de votre clé est oublié.
 - L'API ne crée ni ne supprime de quête : cela se fait sur le site.
 

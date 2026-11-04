@@ -126,7 +126,8 @@ export class TradeProposals {
    * Sending is closed by default: Metamob opens it account by account, on
    * request. Without it, or when one player blocked the other, the API answers
    * `FORBIDDEN`. Quests of different kinds or servers, a monster not in the
-   * quest, or a quantity out of bounds give `BAD_REQUEST`. A proposal is never
+   * quest, more copies than you own, or a quantity out of bounds give
+   * `BAD_REQUEST`. A proposal is never
    * retried: after a timeout or a network failure, check `list()` before
    * proposing again.
    *
