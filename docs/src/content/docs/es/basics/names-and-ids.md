@@ -78,7 +78,7 @@ data.searchMonsters("tofu", { limit: 5 }); // los monstruos cuyo nombre contiene
 
 ## Monstruos que comparten nombre
 
-Diez archimonstruos tienen el mismo nombre en dos versiones del juego, con dos identificadores distintos. «Crognan le Barbare» es un monstruo en Dofus (Unity) y otro en Dofus Retro y Dofus Touch.
+Seis pares de monstruos, sobre todo archimonstruos, comparten un nombre en al menos un idioma, en dos versiones del juego, con dos identificadores distintos. «Crognan le Barbare» es un monstruo en Dofus (Unity) y otro en Dofus Retro y Dofus Touch.
 
 Cuando escribes en una misión, la misión decide. La biblioteca lee qué plantilla sigue la misión, una sola vez, y elige el monstruo de esa plantilla.
 

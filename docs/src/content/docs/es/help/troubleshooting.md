@@ -39,7 +39,7 @@ La API responde 404 para lo que no es tuyo, exactamente igual que para lo que no
 
 ## El monstruo equivocado para un nombre compartido
 
-Diez archimonstruos tienen el mismo nombre en dos versiones del juego. `monsters.get("Crognan le Barbare")` devuelve aquel cuya plantilla de misión tiene el identificador más bajo. Añade `{ gameVersion }`, o usa el identificador. Las escrituras en una misión no se ven afectadas: eligen el monstruo de esa misión. Ver [Nombres e identificadores](/basics/names-and-ids/#monsters-that-share-a-name).
+Seis pares de monstruos, sobre todo archimonstruos, comparten un nombre en al menos un idioma, en dos versiones del juego. `monsters.get("Crognan le Barbare")` devuelve aquel cuya plantilla de misión tiene el identificador más bajo. Añade `{ gameVersion }`, o usa el identificador. Las escrituras en una misión no se ven afectadas: eligen el monstruo de esa misión. Ver [Nombres e identificadores](/basics/names-and-ids/#monsters-that-share-a-name).
 
 ## Mi script es lento
 

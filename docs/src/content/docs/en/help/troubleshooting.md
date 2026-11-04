@@ -39,7 +39,7 @@ The API answers 404 for what is not yours, exactly as for what does not exist.
 
 ## The wrong monster for a shared name
 
-Ten archmonsters have the same name in two versions of the game. `monsters.get("Crognan le Barbare")` returns the one whose quest template has the lowest id. Add `{ gameVersion }`, or use the id. Writes to a quest are not affected: they pick the monster of that quest. See [Names and ids](/basics/names-and-ids/#monsters-that-share-a-name).
+Six pairs of monsters, mostly archmonsters, share a name in at least one language across two versions of the game. `monsters.get("Crognan le Barbare")` returns the one whose quest template has the lowest id. Add `{ gameVersion }`, or use the id. Writes to a quest are not affected: they pick the monster of that quest. See [Names and ids](/basics/names-and-ids/#monsters-that-share-a-name).
 
 ## My script is slow
 

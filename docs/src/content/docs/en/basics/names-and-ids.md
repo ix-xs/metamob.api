@@ -78,7 +78,7 @@ data.searchMonsters("tofu", { limit: 5 }); // monsters whose name contains "tofu
 
 ## Monsters that share a name
 
-Ten archmonsters have the same name in two versions of the game, with two different ids. "Crognan le Barbare" is one monster on Dofus (Unity) and another on Dofus Retro and Dofus Touch.
+Six pairs of monsters, mostly archmonsters, share a name in at least one language across two versions of the game, with two different ids. "Crognan le Barbare" is one monster on Dofus (Unity) and another on Dofus Retro and Dofus Touch.
 
 When you write to a quest, the quest decides. The library reads which template the quest follows, once, and picks the monster of that template.
 

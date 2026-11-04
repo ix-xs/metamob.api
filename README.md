@@ -100,7 +100,7 @@ try {
 }
 ```
 
-Dix archimonstres portent le même nom dans deux versions du jeu. Quand vous écrivez dans une quête, c'est la quête qui indique lequel est visé ; ailleurs, ajoutez `{ gameVersion }`.
+Six paires de monstres, surtout des archimonstres, partagent un nom entre deux versions du jeu. Quand vous écrivez dans une quête, c'est la quête qui indique lequel est visé ; ailleurs, ajoutez `{ gameVersion }`.
 
 ## Listes
 

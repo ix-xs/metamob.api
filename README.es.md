@@ -100,7 +100,7 @@ try {
 }
 ```
 
-Diez archimonstruos comparten su nombre entre dos versiones del juego. Cuando escribes en una misión, la misión indica de cuál se trata; en los demás casos, añade `{ gameVersion }`.
+Seis pares de monstruos, sobre todo archimonstruos, comparten un nombre entre dos versiones del juego. Cuando escribes en una misión, la misión indica de cuál se trata; en los demás casos, añade `{ gameVersion }`.
 
 ## Listas
 

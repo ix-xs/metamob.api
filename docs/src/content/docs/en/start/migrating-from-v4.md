@@ -138,7 +138,7 @@ Version 4 shipped 50 of the 192 subzones. Version 5 ships all of them, so `zones
 
 - A name the library cannot find throws `UNKNOWN_NAME` with suggestions. Version 4 resolved to `{ ok: false }`.
 - A search of fewer than 3 characters throws `INVALID_ARGUMENT` before a request is spent. The API refuses it anyway.
-- Ten archmonsters share their name between two versions of the game. Version 4 took the first one. Version 5 picks the one of the quest you write to, see [Names and ids](/basics/names-and-ids/#monsters-that-share-a-name).
+- Six pairs of monsters, mostly archmonsters, share a name between two versions of the game. Version 4 took the first one. Version 5 picks the one of the quest you write to, see [Names and ids](/basics/names-and-ids/#monsters-that-share-a-name).
 
 ## See also
 

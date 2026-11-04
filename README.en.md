@@ -100,7 +100,7 @@ try {
 }
 ```
 
-Ten archmonsters share their name between two versions of the game. When you write to a quest, the quest says which one is meant; elsewhere, add `{ gameVersion }`.
+Six pairs of monsters, mostly archmonsters, share a name between two versions of the game. When you write to a quest, the quest says which one is meant; elsewhere, add `{ gameVersion }`.
 
 ## Lists
 

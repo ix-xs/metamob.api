@@ -78,7 +78,7 @@ data.searchMonsters("tofu", { limit: 5 }); // les monstres dont le nom contient 
 
 ## Les monstres qui partagent un nom
 
-Dix archimonstres ont le même nom dans deux versions du jeu, avec deux identifiants différents. « Crognan le Barbare » est un monstre sur Dofus (Unity) et un autre sur Dofus Retro et Dofus Touch.
+Six paires de monstres, surtout des archimonstres, partagent un nom dans au moins une langue, sur deux versions du jeu, avec deux identifiants différents. « Crognan le Barbare » est un monstre sur Dofus (Unity) et un autre sur Dofus Retro et Dofus Touch.
 
 Quand vous écrivez dans une quête, c'est la quête qui décide. La bibliothèque lit quel modèle la quête suit, une seule fois, et choisit le monstre de ce modèle.
 
