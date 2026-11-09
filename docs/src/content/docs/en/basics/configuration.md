@@ -90,41 +90,17 @@ const metamob = new Metamob({
 
 `baseUrl` points the client at another host. The key is sent to that host: only use one you trust.
 
+<!-- exports:start -->
 ## Reference
 
-Options of the client:
+Each export has its page in the [reference](/reference/):
 
-| Option | Default | Meaning |
-| --- | --- | --- |
-| `apiKey` | `METAMOB_API_KEY` | The key of the client |
-| `timeout` | `"30s"` | Time allowed for one attempt |
-| `retry` | 3 retries | `{ attempts, delay, maxDelay }`, or `false`. See [Errors](/basics/errors/#what-is-retried) |
-| `cache` | on, `"10m"` | `{ ttl, methods, max, store }`, or `false`. See [Caching](/basics/caching/) |
-| `rateLimit` | on, 60 a minute | `{ requests, per }`, or `false`. See [The rate limit](/basics/rate-limit/) |
-| `fetch` | the global `fetch` | A `fetch` to use instead |
-| `baseUrl` | `https://www.metamob.fr/api/v1` | Where the API is |
-| `headers` | none | Headers added to every request |
-
-Options of a call:
-
-| Option | Meaning |
+| Export | What it is for |
 | --- | --- |
-| `apiKey` | The key for this call. See [Acting for other players](/basics/many-keys/) |
-| `signal` | An `AbortSignal` that cancels the call |
-| `timeout` | Time allowed for one attempt of this call |
-| `retry` | Retry policy of this call, or `false` |
-| `cache` | Freshness of this answer, or `false` to skip the cache |
-| `headers` | Headers added to this request |
-
-Members of the client:
-
-| Member | Meaning |
-| --- | --- |
-| `me()` | The account of the key |
-| `quests`, `monsters`, `zones`, `users`, `conversations`, `tradeProposals`, `kralove` | The parts of the API |
-| `gameVersions`, `servers`, `monsterTypes`, `questTypes`, `questTemplates` | The reference lists |
-| `data` | [The data in the package](/basics/embedded-data/) |
-| `withKey(apiKey)` | A client for another key |
-| `rateLimit` | Where the key stands against the limit |
-| `on`, `once`, `off` | Events |
-| `clearCache()` | Empties the cache |
+| [`Metamob`](/reference/metamob/) | The Metamob API client. |
+| [`VERSION`](/reference/version/) | Version of the package. |
+| [`ClientEvents`](/reference/client-events/) | Events emitted by the client, see `metamob.on()`. |
+| [`MetamobOptions`](/reference/metamob-options/) | Options of the [`Metamob`](/reference/metamob/) client. |
+| [`RequestOptions`](/reference/request-options/) | Options accepted as the last argument of every API call. |
+| [`RetryOptions`](/reference/retry-options/) | Retry policy. |
+<!-- exports:end -->

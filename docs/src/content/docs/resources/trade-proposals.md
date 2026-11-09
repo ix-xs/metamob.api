@@ -171,31 +171,23 @@ setInterval(async () => {
 - Un identifiant, une quête ou une date invalide est refusé avant d'être envoyé.
 - Les propositions appartiennent au compte de la clé. Rien ici n'est mis en cache par défaut.
 
+<!-- exports:start -->
 ## Référence
 
-| Méthode | Renvoie |
+Chaque export a sa page dans la [référence](/reference/) :
+
+| Export | À quoi il sert |
 | --- | --- |
-| `tradeProposals.list({ direction, status, quest, since, limit, beforeId }, options?)` | une liste de `TradeProposal`, par curseur |
-| `tradeProposals.get(id, options?)` | `TradeProposalDetail` |
-| `tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received }, options?)` | `TradeProposalDetail` |
-| `tradeProposals.apply(id, { allowPartial }?, options?)` | `TradeProposalDetail` |
-| `tradeProposals.cancel(id, options?)` | `TradeProposalDetail` |
-
-Une `TradeProposal` :
-
-| Champ | Type |
-| --- | --- |
-| `id` | `number` |
-| `sender`, `recipient` | `string`, des pseudos |
-| `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
-| `server` | `Server \| null`, avec sa version du jeu |
-| `quest_template` | `{ id, quest_type } \| null`, `null` quand la quête a été supprimée |
-| `sender_quest`, `recipient_quest` | `{ slug, character_name } \| null`, `null` quand elle n'est pas visible |
-| `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
-| `applications` | `{ username, created_at }[]`, qui a confirmé |
-| `cancelled_at` | `string \| null` |
-| `cancelled_by` | `string \| null`, `null` quand elle a expiré |
-| `created_at` | `string` |
-| `read_at` | `string \| null`, `null` tant que le destinataire ne l'a pas lue |
-
-Une `TradeProposalDetail` est une `TradeProposal` avec `viewer` : `role` (`"sender" | "recipient"`), `applied` (`boolean`), `clamped` (`boolean | null`), `removed` et `added` (`{ monster_id, quantity, owned }[]`, avec `applied_quantity` dans la réponse d'`apply()`).
+| [`TradeProposals`](/reference/trade-proposals/) | Les propositions d'échange du compte : celles que vous avez envoyées et celles que vous avez reçues, sur toutes les quêtes. |
+| [`ApplyProposalOptions`](/reference/apply-proposal-options/) | Options de [`TradeProposals.apply`](/reference/trade-proposals/). |
+| [`ConversationProposal`](/reference/conversation-proposal/) | Une proposition d'échange telle qu'elle apparaît dans une conversation, parmi les messages. |
+| [`NewTradeProposal`](/reference/new-trade-proposal/) | Ce qu'envoie [`TradeProposals.create`](/reference/trade-proposals/). |
+| [`ProposalMonster`](/reference/proposal-monster/) | Une quantité d'un monstre dans une proposition d'échange. |
+| [`ProposalMonsterDetail`](/reference/proposal-monster-detail/) | Un monstre qui sort de votre quête ou y entre avec une proposition d'échange, avec ce que vous en possédez maintenant. |
+| [`ProposalQuest`](/reference/proposal-quest/) | La quête d'un des deux côtés d'une proposition d'échange. |
+| [`ProposalQuestTemplate`](/reference/proposal-quest-template/) | Le modèle de quête d'une proposition d'échange : quel type de quête, dans quelle version du jeu. |
+| [`ProposalViewer`](/reference/proposal-viewer/) | Votre côté d'une proposition d'échange. |
+| [`TradeProposal`](/reference/trade-proposal/) | Une proposition d'échange entre deux joueurs. |
+| [`TradeProposalDetail`](/reference/trade-proposal-detail/) | Une proposition d'échange lue seule, avec votre côté. |
+| [`TradeProposalListParams`](/reference/trade-proposal-list-params/) | Filtres de [`TradeProposals.list`](/reference/trade-proposals/). |
+<!-- exports:end -->

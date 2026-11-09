@@ -106,22 +106,26 @@ Les quêtes des joueurs pointent vers leur modèle : `quest.quest_template` cont
 - `UNKNOWN_NAME`, avec des suggestions, pour un nom que ni le paquet ni l'API ne connaissent.
 - Aucun modèle pour un type de quête dans une version du jeu : `UNKNOWN_NAME` aussi. Le Dokille n'existe pas dans toutes les versions.
 
+<!-- exports:start -->
 ## Référence
 
-| Méthode | Renvoie |
-| --- | --- |
-| `gameVersions.list(options?)`, `gameVersions.get(version, options?)` | `GameVersion[]`, `GameVersion` |
-| `servers.list(options?)`, `servers.get(server, options?)` | `Server[]`, `Server` |
-| `monsterTypes.list(options?)`, `monsterTypes.get(type, options?)` | `MonsterType[]`, `MonsterType` |
-| `questTypes.list(options?)`, `questTypes.get(type, options?)` | `QuestType[]`, `QuestType` |
-| `questTemplates.list(options?)`, `questTemplates.get(template, options?)` | `QuestTemplate[]`, `QuestTemplate` |
-| `questTemplates.monsters(template, { step, limit, offset }, options?)` | une liste de `TemplateMonster`, avec `page.template` |
+Chaque export a sa page dans la [référence](/reference/) :
 
-| Type | Champs |
+| Export | À quoi il sert |
 | --- | --- |
-| `GameVersion` | `id`, `name` |
-| `Server` | `id`, `name`, `community`, `game_version` |
-| `MonsterType` | `id`, `name` dans trois langues |
-| `QuestType` | `id`, `slug`, `name` dans trois langues, `image` |
-| `QuestTemplate` | `id`, `quest_type`, `game_version`, `monster_count`, `step_count` |
-| `TemplateMonster` | un `Monster` avec son `step` |
+| [`GameVersions`](/reference/game-versions/) | Les versions du jeu. |
+| [`MonsterTypes`](/reference/monster-types/) | Les types de monstres. |
+| [`QuestTemplates`](/reference/quest-templates/) | Les modèles de quête : ce que demande chaque type de quête dans chaque version du jeu. |
+| [`QuestTypes`](/reference/quest-types/) | Les types de quêtes. |
+| [`Servers`](/reference/servers/) | Les serveurs de jeu. |
+| [`GameVersion`](/reference/game-version/) | Une version du jeu : Dofus (Unity), Dofus Retro (1.29) ou Dofus Touch. |
+| [`LocalizedName`](/reference/localized-name/) | Un nom dans les trois langues du site. |
+| [`QuestTemplate`](/reference/quest-template/) | Un modèle de quête : les monstres à capturer pour un type de quête dans une version du jeu. |
+| [`QuestTemplateRef`](/reference/quest-template-ref/) | Le modèle que suit une quête, tel qu'il apparaît dans une quête. |
+| [`QuestType`](/reference/quest-type/) | Un type de quête tel que le renvoie `questTypes`, avec son image. |
+| [`QuestTypeRef`](/reference/quest-type-ref/) | Un type de quête tel qu'il apparaît dans une quête : Ocre (`ocre`) ou Dokille (`dokille`). |
+| [`Server`](/reference/server/) | Un serveur de jeu. |
+| [`TemplateHeader`](/reference/template-header/) | Le modèle auquel appartient une page de monstres. |
+| [`TemplateMonstersParams`](/reference/template-monsters-params/) | Filtres de [`QuestTemplates.monsters`](/reference/quest-templates/). |
+| [`Language`](/reference/language/) | Une langue dans laquelle le site est traduit. |
+<!-- exports:end -->

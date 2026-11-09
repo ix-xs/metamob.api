@@ -1,0 +1,66 @@
+---
+title: Enregistrer un monstre
+description: "Dire à Metamob combien d'exemplaires d'un monstre vous possédez, en l'appelant par son nom."
+---
+
+import TerminalDemo from '../../../components/demo/TerminalDemo.astro';
+
+Vous venez de capturer un monstre. Plutôt que d'ouvrir le site, le script
+l'enregistre dans votre quête. Le monstre se donne par son nom, tel que vous
+l'écririez.
+
+## Le script
+
+Ce script est un nouveau fichier : il prend le nom du monstre et la quantité
+dans la commande.
+
+```ts title="record.ts"
+import { Metamob, isMetamobError } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+const [name = "", quantity = "1"] = process.argv.slice(2);
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+try {
+  const result = await metamob.quests.setMonster(quest.slug, name, Number(quantity));
+  console.log(`${name}: ${result.owned} owned`);
+} catch (error) {
+  if (!isMetamobError(error, "UNKNOWN_NAME")) throw error;
+  console.log(error.message);
+}
+```
+
+```bash
+node --env-file=.env record.ts "Pioukas la Plante" 1
+```
+
+<TerminalDemo scene="script/recording/recorded" />
+
+`metamob.quests.setMonster()` fixe le nombre d'exemplaires que vous possédez :
+il ne l'ajoute pas. Avec `0`, le monstre redevient manquant.
+
+## Les noms acceptés
+
+| Vous écrivez | Le monstre trouvé |
+| --- | --- |
+| `"Pioukas la Plante"` | Son nom français |
+| Son nom anglais ou espagnol | Le même monstre |
+| `"pioukas la plante"` | Le même : la casse et les accents ne comptent pas |
+| Un nombre | Le monstre de cet identifiant |
+
+## Une faute de frappe
+
+Si le nom ne correspond à aucun monstre, rien n'est envoyé à votre quête.
+L'appel lève une erreur `UNKNOWN_NAME`, dont le message propose les noms les
+plus proches :
+
+```bash
+node --env-file=.env record.ts "Pioukas la Plnte" 1
+```
+
+<TerminalDemo scene="script/recording/typo" />
+
+[Noms et identifiants](/basics/names-and-ids/) détaille ce qui est accepté, y
+compris pour les zones et les serveurs.

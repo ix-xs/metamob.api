@@ -119,14 +119,21 @@ Una subzona añadida al juego después de la publicación del paquete aún no es
 await metamob.zones.monsters("Coin des Bouftous", { zone: "Amakna" });
 ```
 
+<!-- exports:start -->
 ## Referencia
 
-| Tipo | Acepta |
+Cada export tiene su página en la [referencia](/reference/):
+
+| Export | Para qué sirve |
 | --- | --- |
-| `MonsterLike` | `number`, un nombre de monstruo, `{ id }` |
-| `ZoneLike`, `SubzoneLike` | `number`, un nombre, `{ id }` |
-| `ServerLike`, `GameVersionLike` | `number`, un nombre, `{ id }` |
-| `MonsterTypeLike` | `number`, un nombre, `{ id }` |
-| `QuestTypeLike` | `number`, un slug, un nombre, `{ id }` |
-| `QuestTemplateLike` | `number`, `{ id }`, `{ questType, gameVersion }` |
-| `MonsterHint` | `{ gameVersion }`, `{ template }` |
+| [`normalizeName`](/reference/normalize-name/) | La forma en la que se comparan los nombres: sin acentos, en minúsculas, un solo tipo de apóstrofo y de guion, espacios simples. |
+| [`GameVersionLike`](/reference/game-version-like/) | Una versión del juego: su identificador, su nombre, o un objeto con su `id`. |
+| [`MonsterLike`](/reference/monster-like/) | Un monstruo: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`. |
+| [`MonsterTypeLike`](/reference/monster-type-like/) | Un tipo de monstruo: su identificador (1, 2, 3), su nombre en francés, inglés o español, o un objeto con su `id`. |
+| [`QuestTemplateLike`](/reference/quest-template-like/) | Una plantilla de misión: su identificador, un objeto con su `id`, o el tipo de misión y la versión del juego a la que corresponde. |
+| [`QuestTypeLike`](/reference/quest-type-like/) | Un tipo de misión: su identificador, su slug (`ocre`, `dokille`), su nombre, o un objeto con su `id`. |
+| [`ServerLike`](/reference/server-like/) | Un servidor: su identificador, su nombre, o un objeto con su `id`. |
+| [`SubzoneLike`](/reference/subzone-like/) | Una subzona: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`. |
+| [`ZoneLike`](/reference/zone-like/) | Una zona: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`. |
+| [`GameVersionName`](/reference/game-version-name/), [`MonsterNameEn`](/reference/monster-name-en/), [`MonsterNameEs`](/reference/monster-name-es/), [`MonsterNameFr`](/reference/monster-name-fr/), [`MonsterTypeNameEn`](/reference/monster-type-name-en/), [`MonsterTypeNameEs`](/reference/monster-type-name-es/), [`MonsterTypeNameFr`](/reference/monster-type-name-fr/), [`QuestTemplateId`](/reference/quest-template-id/), [`QuestTypeNameEn`](/reference/quest-type-name-en/), [`QuestTypeNameEs`](/reference/quest-type-name-es/), [`QuestTypeNameFr`](/reference/quest-type-name-fr/), [`QuestTypeSlug`](/reference/quest-type-slug/), [`ServerName`](/reference/server-name/), [`SubzoneNameEn`](/reference/subzone-name-en/), [`SubzoneNameEs`](/reference/subzone-name-es/), [`SubzoneNameFr`](/reference/subzone-name-fr/), [`ZoneNameEn`](/reference/zone-name-en/), [`ZoneNameEs`](/reference/zone-name-es/), [`ZoneNameFr`](/reference/zone-name-fr/) | Los nombres que conoce el paquete, un tipo por idioma: monstruos, zonas, subzonas, tipos de monstruo y de misión, servidores, versiones del juego. |
+<!-- exports:end -->

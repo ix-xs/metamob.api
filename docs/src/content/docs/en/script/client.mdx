@@ -1,0 +1,65 @@
+---
+title: The client
+description: "Give your key to the client and make a first call to the Metamob API."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+Everything goes through a client: a `Metamob` object that knows your key and
+sends the requests. On this page, you create it and ask it who the key
+belongs to.
+
+## Store the key
+
+The client reads the key from the environment variable `METAMOB_API_KEY`. The
+simplest is to put it in a `.env` file, at the root of the project:
+
+```bash title=".env"
+METAMOB_API_KEY=your-key
+```
+
+Replace `your-key` with the key created at the step [Your API key](/start/api-key/).
+
+If your project is in a git repository, add this file to `.gitignore` so the
+key is never published:
+
+```text title=".gitignore"
+.env
+node_modules
+```
+
+## The first call
+
+Create `quest.ts`. This is the file you will complete throughout the guide:
+
+```ts title="quest.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const me = await metamob.me();
+console.log(`Signed in as ${me.username}`);
+```
+
+| Line | What it does |
+| --- | --- |
+| `new Metamob()` | Creates the client. With no argument, it reads `METAMOB_API_KEY` |
+| `metamob.me()` | Asks the API which account the key belongs to |
+| `await` | Waits for the answer: every call to the API takes a moment |
+
+## Run the script
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/client/signed-in" />
+
+`--env-file=.env` tells Node.js to read the `.env` file before running the
+script: that is how the key gets into `METAMOB_API_KEY`.
+
+:::note[The key somewhere else than .env]
+You can also give the key directly: `new Metamob({ apiKey })`. The client
+then takes it instead of the environment variable.
+[Configuration](/basics/configuration/) lists every option of the client.
+:::

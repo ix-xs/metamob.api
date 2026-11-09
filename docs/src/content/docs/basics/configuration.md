@@ -90,41 +90,17 @@ const metamob = new Metamob({
 
 `baseUrl` dirige le client vers un autre hôte. La clé est envoyée à cet hôte : n'en utilisez qu'un en qui vous avez confiance.
 
+<!-- exports:start -->
 ## Référence
 
-Options du client :
+Chaque export a sa page dans la [référence](/reference/) :
 
-| Option | Par défaut | Signification |
-| --- | --- | --- |
-| `apiKey` | `METAMOB_API_KEY` | La clé du client |
-| `timeout` | `"30s"` | Temps accordé à une tentative |
-| `retry` | 3 nouvelles tentatives | `{ attempts, delay, maxDelay }`, ou `false`. Voir [Erreurs](/basics/errors/#what-is-retried) |
-| `cache` | actif, `"10m"` | `{ ttl, methods, max, store }`, ou `false`. Voir [Cache](/basics/caching/) |
-| `rateLimit` | actif, 60 par minute | `{ requests, per }`, ou `false`. Voir [La limite de requêtes](/basics/rate-limit/) |
-| `fetch` | le `fetch` global | Un `fetch` à utiliser à la place |
-| `baseUrl` | `https://www.metamob.fr/api/v1` | Où se trouve l'API |
-| `headers` | aucun | En-têtes ajoutés à chaque requête |
-
-Options d'un appel :
-
-| Option | Signification |
+| Export | À quoi il sert |
 | --- | --- |
-| `apiKey` | La clé pour cet appel. Voir [Agir pour d'autres joueurs](/basics/many-keys/) |
-| `signal` | Un `AbortSignal` qui annule l'appel |
-| `timeout` | Temps accordé à une tentative de cet appel |
-| `retry` | Politique de nouvelles tentatives de cet appel, ou `false` |
-| `cache` | Durée de fraîcheur de cette réponse, ou `false` pour ignorer le cache |
-| `headers` | En-têtes ajoutés à cette requête |
-
-Membres du client :
-
-| Membre | Signification |
-| --- | --- |
-| `me()` | Le compte de la clé |
-| `quests`, `monsters`, `zones`, `users`, `conversations`, `tradeProposals`, `kralove` | Les parties de l'API |
-| `gameVersions`, `servers`, `monsterTypes`, `questTypes`, `questTemplates` | Les listes de référence |
-| `data` | [Les données du paquet](/basics/embedded-data/) |
-| `withKey(apiKey)` | Un client pour une autre clé |
-| `rateLimit` | Où en est la clé par rapport à la limite |
-| `on`, `once`, `off` | Événements |
-| `clearCache()` | Vide le cache |
+| [`Metamob`](/reference/metamob/) | Le client de l'API Metamob. |
+| [`VERSION`](/reference/version/) | Version du paquet. |
+| [`ClientEvents`](/reference/client-events/) | Événements émis par le client, voir `metamob.on()`. |
+| [`MetamobOptions`](/reference/metamob-options/) | Options du client [`Metamob`](/reference/metamob/). |
+| [`RequestOptions`](/reference/request-options/) | Options acceptées comme dernier argument de chaque appel à l'API. |
+| [`RetryOptions`](/reference/retry-options/) | Règles des nouvelles tentatives. |
+<!-- exports:end -->

@@ -122,24 +122,17 @@ try {
 
 An argument the API would surely refuse is refused before sending, with `INVALID_ARGUMENT`: an empty slug, a negative quantity, a search of fewer than 3 characters, a date in the wrong format, a message longer than 1000 characters, a proposal without monsters.
 
+<!-- exports:start -->
 ## Reference
 
-| Code | Meaning |
-| --- | --- |
-| `BAD_REQUEST` | 400: the API refused the parameters |
-| `UNAUTHORIZED` | 401: missing, invalid or revoked key |
-| `FORBIDDEN` | 403 |
-| `NOT_FOUND` | 404: does not exist, or is not yours |
-| `CONFLICT` | 409: the state does not allow it, a proposal already applied for instance |
-| `RATE_LIMITED` | 429, after the retries |
-| `SERVER_ERROR` | 5xx, after the retries |
-| `API_ERROR` | Any other error status |
-| `TIMEOUT` | No answer in time |
-| `NETWORK` | The request could not be made |
-| `ABORTED` | Cancelled with your `signal` |
-| `PARSE_ERROR` | The answer was not valid JSON |
-| `MISSING_API_KEY` | No key in the options, the call or the environment |
-| `INVALID_ARGUMENT` | An argument is wrong |
-| `UNKNOWN_NAME` | No monster, zone or server has this name |
+Each export has its page in the [reference](/reference/):
 
-[Error codes](/reference/errors/) lists the properties of each class.
+| Export | What it is for |
+| --- | --- |
+| [`MetamobApiError`](/reference/metamob-api-error/) | The API answered with an error status. |
+| [`MetamobArgumentError`](/reference/metamob-argument-error/) | Thrown before the call it is about is sent: an invalid argument, a missing API key, or a name that matches no monster, zone or server. |
+| [`MetamobError`](/reference/metamob-error/) | Base class of everything thrown by this library. |
+| [`MetamobRequestError`](/reference/metamob-request-error/) | The request never produced a usable response: timeout, network failure, abort or unreadable body. |
+| [`isMetamobError`](/reference/is-metamob-error/) | Type guard for errors thrown by this library, optionally narrowed to a code. |
+| [`MetamobErrorCode`](/reference/metamob-error-code/) | The `code` of every error this library throws. |
+<!-- exports:end -->

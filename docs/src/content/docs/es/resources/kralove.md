@@ -74,22 +74,17 @@ Basta con una comprobación cada pocos minutos. Para leer la lista más a menudo
 - `NOT_FOUND` para un evento que no existe.
 - `from` en otro formato que `YYYY-MM-DD` lanza `INVALID_ARGUMENT` antes del envío.
 
+<!-- exports:start -->
 ## Referencia
 
-| Método | Devuelve |
+Cada export tiene su página en la [referencia](/reference/):
+
+| Export | Para qué sirve |
 | --- | --- |
-| `kralove.list({ server, from }, options?)` | `KraloveEvent[]` |
-| `kralove.get(id, options?)` | `KraloveEventDetail` |
-
-Un evento:
-
-| Campo | Tipo | Significado |
-| --- | --- | --- |
-| `id` | `number` | |
-| `event_datetime` | `string` | Cuándo, en fecha ISO 8601 UTC: `2026-01-27T20:00:00Z` |
-| `description` | `string` | Lo que escribió el organizador |
-| `creator` | `string \| null` | El organizador |
-| `server` | `Server \| null` | Dónde |
-| `participants_count`, `character_count`, `messages_count` | `number` | Solo con `list()` |
-| `participants` | `{ username, character_count }[]` | Solo con `get()` |
-| `messages` | `{ username, content, created_at }[]` | Solo con `get()` |
+| [`Kralove`](/reference/kralove/) | Los eventos Kralamar: encuentros que organizan los jugadores para combatir al Kralamar. |
+| [`KraloveEvent`](/reference/kralove-event/) | Un evento Kralamar, tal como lo devuelve la lista. |
+| [`KraloveEventDetail`](/reference/kralove-event-detail/) | Un evento Kralamar con sus participantes y sus mensajes. |
+| [`KraloveListParams`](/reference/kralove-list-params/) | Filtros de [`Kralove.list`](/reference/kralove/). |
+| [`KraloveMessage`](/reference/kralove-message/) | Un mensaje publicado en un evento Kralamar. |
+| [`KraloveParticipant`](/reference/kralove-participant/) | Alguien que participa en un evento Kralamar. |
+<!-- exports:end -->

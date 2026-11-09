@@ -1,0 +1,72 @@
+---
+title: Instalación
+description: "Crear una carpeta para tu proyecto, instalar el paquete y comprobar que responde."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+Antes de llamar a la API, necesitas una carpeta para tu proyecto con el
+paquete instalado. Esta página la prepara.
+
+## Node.js
+
+La guía necesita **Node.js 22.18 o posterior**: desde esa versión, Node.js
+ejecuta los archivos TypeScript tal cual. Comprueba la tuya:
+
+```bash
+node --version
+```
+
+Si el comando no existe, o si la versión es más antigua, instala la versión
+LTS desde [nodejs.org](https://nodejs.org).
+
+:::note
+El paquete en sí funciona desde Node.js 20, y también con Bun, con Deno, en
+un navegador y en las plataformas edge. Consulta
+[Entornos de ejecución](/help/runtimes/).
+:::
+
+## Crear el proyecto
+
+En una terminal, donde guardas tus proyectos:
+
+```bash
+mkdir my-quest
+cd my-quest
+npm init -y
+npm pkg set type=module
+npm install @ix-xs/metamob.api
+```
+
+| Comando | Lo que hace |
+| --- | --- |
+| `mkdir my-quest`, `cd my-quest` | Crea la carpeta del proyecto y entra en ella |
+| `npm init -y` | Crea `package.json`, la ficha del proyecto |
+| `npm pkg set type=module` | Permite `import` y `await` directamente en tus archivos |
+| `npm install @ix-xs/metamob.api` | Instala el paquete. No tiene ninguna dependencia |
+
+## Comprobar la instalación
+
+Crea este archivo en la carpeta:
+
+```ts title="check.ts"
+import { VERSION } from "@ix-xs/metamob.api";
+
+console.log(`metamob.api ${VERSION} is installed`);
+```
+
+Y ejecútalo:
+
+```bash
+node check.ts
+```
+
+<TerminalDemo scene="start/installation/check" />
+
+El paquete está instalado. Este archivo ya no sirve: puedes borrarlo.
+
+:::tip[Tu editor]
+Node.js quita los tipos sin comprobarlos. Para que tu editor los compruebe y
+complete los nombres, instala TypeScript en el proyecto:
+`npm install --save-dev typescript @types/node`.
+:::

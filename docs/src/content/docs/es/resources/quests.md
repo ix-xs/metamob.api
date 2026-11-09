@@ -164,31 +164,29 @@ Un monstruo está `validated` cuando su etapa ya ha pasado, `completed` cuando p
 - Después de una escritura, la lectura siguiente está al día: la caché de tu clave se olvida.
 - La API no crea ni borra misiones: eso se hace en el sitio.
 
+<!-- exports:start -->
 ## Referencia
 
-| Método | Devuelve |
+Cada export tiene su página en la [referencia](/reference/):
+
+| Export | Para qué sirve |
 | --- | --- |
-| `quests.list(options?)` | `OwnQuest[]` |
-| `quests.get(slug, options?)` | `QuestSettings` |
-| `quests.update(slug, changes, options?)` | `QuestUpdateResult` |
-| `quests.monsters(slug, { type, status, trade, step, limit, offset }, options?)` | una lista de `OwnQuestMonster` |
-| `quests.setMonster(slug, monster, quantity, options?)` | `MonsterQuantityResult` |
-| `quests.setMonsters(slug, quantities, options?)` | `MonstersUpdateResult` |
-| `quests.zones(slug, { zone, subzone, type }, options?)` | `ZoneProgress[]` |
-
-Lo que acepta `update`:
-
-| Campo | Tipo | Significado |
-| --- | --- | --- |
-| `character_name` | `string` | 200 caracteres como máximo |
-| `parallel_quests` | `number` | A partir de 1 |
-| `current_step` | `number` | De 1 a `step_count`, `step_count + 1` una vez terminada la misión |
-| `show_trades` | `boolean` | Visible en el perfil público |
-| `trade_mode` | `0 \| 1` | Automático o experto |
-| `trade_offer_threshold`, `trade_want_threshold` | `number \| null` | Modo experto, de 0 a 99 |
-| `never_offer_normal`, `never_want_normal` | `boolean` | Monstruos |
-| `never_offer_boss`, `never_want_boss` | `boolean` | Jefes |
-| `never_offer_arch`, `never_want_arch` | `boolean` | Archimonstruos |
-| `type_filters` | `{ "1" \| "2" \| "3": { never_offer, never_want } }` | Los mismos filtros, por tipo |
-
-El lado de intercambio de una misión, `setTrade`, `resetTrade` y `matches`, se describe en [Intercambios](/resources/trading/).
+| [`Quests`](/reference/quests/) | Tus propias misiones: las de la cuenta a la que pertenece la clave API. |
+| [`MonsterQuantityResult`](/reference/monster-quantity-result/) | Lo que devuelve fijar una cantidad, para cada monstruo. |
+| [`MonstersUpdateResult`](/reference/monsters-update-result/) | Lo que devuelve `quests.setMonsters()`. |
+| [`OwnQuest`](/reference/own-quest/) | Una de tus misiones, tal como la devuelve `quests.list()`. |
+| [`OwnQuestMonster`](/reference/own-quest-monster/) | Un monstruo de una de tus misiones, con sus ajustes manuales de intercambio. |
+| [`OwnQuestMonstersParams`](/reference/own-quest-monsters-params/) | Filtros de [`Quests.monsters`](/reference/quests/). |
+| [`QuestBase`](/reference/quest-base/) | Lo que lleva toda misión, la mire quien la mire. |
+| [`QuestMonster`](/reference/quest-monster/) | Un monstruo de una misión, tal como cualquiera puede verlo. |
+| [`QuestSettings`](/reference/quest-settings/) | Los ajustes completos de una de tus misiones. |
+| [`QuestUpdate`](/reference/quest-update/) | Lo que `quests.update()` puede modificar. |
+| [`QuestUpdateResult`](/reference/quest-update-result/) | Lo que devuelve `quests.update()`: el slug y solo los campos que modificaste. |
+| [`QuestZonesParams`](/reference/quest-zones-params/) | Filtros de [`Quests.zones`](/reference/quests/). |
+| [`SubzoneProgress`](/reference/subzone-progress/) | El progreso de una misión en una subzona. |
+| [`TypeFilter`](/reference/type-filter/) | Filtros de intercambio de un tipo de monstruo. |
+| [`ZoneProgress`](/reference/zone-progress/) | El progreso de una misión en una zona. |
+| [`ZoneProgressMonster`](/reference/zone-progress-monster/) | Un monstruo en el progreso de una misión por zona. |
+| [`MonsterQuantities`](/reference/monster-quantities/) | Cantidades que fijar, en cualquiera de tres formas: una lista de `{ monster, quantity }`, un objeto indexado por nombre de monstruo, o un `Map`. |
+| [`TypeFilters`](/reference/type-filters/) | Filtros de intercambio por tipo de monstruo, indexados por el identificador del tipo como cadena: `"1"` monstruos, `"2"` jefes, `"3"` archimonstruos. |
+<!-- exports:end -->

@@ -1,0 +1,1794 @@
+{
+ "Metamob": {
+  "en": "The Metamob API client.",
+  "fr": "Le client de l'API Metamob."
+ },
+ "Metamob#constructor(options)": {
+  "en": "The options, or just the API key.",
+  "fr": "Les options, ou seulement la clé API."
+ },
+ "Metamob.gameVersions": {
+  "en": "The versions of the game.",
+  "fr": "Les versions du jeu."
+ },
+ "Metamob.servers": {
+  "en": "The game servers.",
+  "fr": "Les serveurs de jeu."
+ },
+ "Metamob.monsterTypes": {
+  "en": "The kinds of monsters: monster, boss, archmonster.",
+  "fr": "Les types de monstres : monstre, boss, archimonstre."
+ },
+ "Metamob.questTypes": {
+  "en": "The kinds of quests: Ochre, Grofus.",
+  "fr": "Les types de quêtes : Ocre, Dokille."
+ },
+ "Metamob.questTemplates": {
+  "en": "The quest templates: what each kind of quest asks for in each version of the game.",
+  "fr": "Les modèles de quête : ce que demande chaque type de quête dans chaque version du jeu."
+ },
+ "Metamob.monsters": {
+  "en": "The monsters.",
+  "fr": "Les monstres."
+ },
+ "Metamob.zones": {
+  "en": "The zones and subzones, and the monsters that live there.",
+  "fr": "Les zones et sous-zones, et les monstres qui y vivent."
+ },
+ "Metamob.kralove": {
+  "en": "The Kralamoure events.",
+  "fr": "Les événements Kralamoure."
+ },
+ "Metamob.users": {
+  "en": "Other players: profiles and public quests.",
+  "fr": "Les autres joueurs : profils et quêtes publiques."
+ },
+ "Metamob.conversations": {
+  "en": "The private messages of the account.",
+  "fr": "Les messages privés du compte."
+ },
+ "Metamob.tradeProposals": {
+  "en": "The trade proposals the account sent and received.",
+  "fr": "Les propositions d'échange envoyées et reçues par le compte."
+ },
+ "Metamob.quests": {
+  "en": "The quests of the account: settings, monsters, trade partners, progress.",
+  "fr": "Les quêtes du compte : réglages, monstres, partenaires d'échange, progression."
+ },
+ "Metamob.data": {
+  "en": "The reference data embedded in the package, answered without a request.",
+  "fr": "Les données de référence incluses dans le paquet, lues sans requête."
+ },
+ "Metamob.rateLimit": {
+  "en": "Where the client's key stands against the rate limit. Undefined when the\nlimiter is turned off.",
+  "fr": "Où en est la clé du client par rapport à la limite de requêtes. `undefined` quand le\nlimiteur est désactivé."
+ },
+ "Metamob.me": {
+  "en": "The account the API key belongs to: username, bio, avatar and last activity.",
+  "fr": "Le compte auquel appartient la clé API : pseudo, bio, avatar et dernière activité."
+ },
+ "Metamob.withKey": {
+  "en": "A client that acts with another API key, the key of a user who entrusted\nit to you. It shares this client's settings, cache, listeners and rate\nlimiter; each key keeps its own rate limit. Not meant for getting around it.",
+  "fr": "Un client qui agit avec une autre clé API, celle d'un joueur qui vous l'a\nconfiée. Il partage les réglages, le cache, les écouteurs et le limiteur de\nrequêtes de ce client ; chaque clé garde sa propre limite de requêtes. Ce n'est pas un moyen de la contourner."
+ },
+ "Metamob.on": {
+  "en": "Listens to what the client does: `request`, `response`, `retry`,\n`rateLimit` and `error`. Returns a function that stops listening.",
+  "fr": "Écoute ce que fait le client : `request`, `response`, `retry`,\n`rateLimit` et `error`. Renvoie une fonction qui arrête l'écoute."
+ },
+ "Metamob.once": {
+  "en": "Like [`Metamob.on`](ref:Metamob), for a single occurrence.",
+  "fr": "Comme [`Metamob.on`](ref:Metamob), pour une seule occurrence."
+ },
+ "Metamob.off": {
+  "en": "Stops a listener added with [`Metamob.on`](ref:Metamob).",
+  "fr": "Retire un écouteur ajouté avec [`Metamob.on`](ref:Metamob)."
+ },
+ "Metamob.clearCache": {
+  "en": "Empties the cache, so the next reads go to the API.",
+  "fr": "Vide le cache, pour que les lectures suivantes passent par l'API."
+ },
+ "MetamobOptions": {
+  "en": "Options of the [`Metamob`](ref:Metamob) client.",
+  "fr": "Options du client [`Metamob`](ref:Metamob)."
+ },
+ "MetamobOptions.apiKey": {
+  "en": "Your API key, created on metamob.fr in Settings > API key. Default: the\n`METAMOB_API_KEY` environment variable.",
+  "fr": "Votre clé API, créée sur metamob.fr dans Paramètres > Clé API. Par défaut : la\nvariable d'environnement `METAMOB_API_KEY`."
+ },
+ "MetamobOptions.timeout": {
+  "en": "Time allowed for one attempt of a request. Default `\"30s\"`.",
+  "fr": "Délai maximal d'une tentative de requête. Par défaut `\"30s\"`."
+ },
+ "MetamobOptions.retry": {
+  "en": "Retry policy for rate limits, server errors and network failures. Default:\n3 retries with exponential backoff. `false` turns retries off.",
+  "fr": "Règles des nouvelles tentatives en cas de limite de requêtes, d'erreur du serveur ou de panne réseau. Par défaut :\n3 nouvelles tentatives avec un délai exponentiel. `false` les désactive."
+ },
+ "MetamobOptions.cache": {
+  "en": "Cache of reference data (monsters, zones, servers...). On by default, for\n10 minutes, in memory. `false` turns it off.",
+  "fr": "Cache des données de référence (monstres, zones, serveurs...). Actif par défaut, pendant\n10 minutes, en mémoire. `false` le désactive."
+ },
+ "MetamobOptions.rateLimit": {
+  "en": "Rate limiter. On by default, at 60 requests a minute per key: calls beyond\nit wait instead of failing. `false` turns it off.",
+  "fr": "Limiteur de requêtes. Actif par défaut, à 60 requêtes par minute et par clé : les appels au-delà\nattendent au lieu d'échouer. `false` le désactive."
+ },
+ "MetamobOptions.fetch": {
+  "en": "A `fetch` to use instead of the global one.",
+  "fr": "Un `fetch` à utiliser à la place du `fetch` global."
+ },
+ "MetamobOptions.baseUrl": {
+  "en": "Base URL of the API. Default `https://www.metamob.fr/api/v1`.",
+  "fr": "URL de base de l'API. Par défaut `https://www.metamob.fr/api/v1`."
+ },
+ "MetamobOptions.headers": {
+  "en": "Headers added to every request.",
+  "fr": "En-têtes ajoutés à chaque requête."
+ },
+ "CacheEntry": {
+  "en": "What the client stores for one cached response.",
+  "fr": "Ce que le client stocke pour une réponse mise en cache."
+ },
+ "CacheEntry.value": {
+  "en": "Parsed response body.",
+  "fr": "Corps de la réponse, décodé."
+ },
+ "CacheEntry.expires": {
+  "en": "Timestamp (ms) after which the entry is stale.",
+  "fr": "Horodatage (ms) après lequel l'entrée est périmée."
+ },
+ "CacheOptions": {
+  "en": "Cache settings of the client.",
+  "fr": "Réglages du cache du client."
+ },
+ "CacheOptions.ttl": {
+  "en": "How long reference data (monsters, zones, servers...) stays fresh. Default `\"10m\"`.",
+  "fr": "Durée de fraîcheur des données de référence (monstres, zones, serveurs...). Par défaut `\"10m\"`."
+ },
+ "CacheOptions.max": {
+  "en": "Entries kept by the in-memory store before the least recently used is dropped. Default 500.",
+  "fr": "Entrées gardées par le stockage en mémoire avant que la moins récemment utilisée soit retirée. Par défaut 500."
+ },
+ "CacheOptions.store": {
+  "en": "Custom storage.",
+  "fr": "Stockage personnalisé."
+ },
+ "CacheOptions.methods": {
+  "en": "Freshness per method, for example\n`{ \"monsters.get\": \"1d\", \"users.get\": \"30s\", \"zones.list\": false }`.\nAccount data is cached only when listed here.",
+  "fr": "Durée de fraîcheur par méthode, par exemple\n`{ \"monsters.get\": \"1d\", \"users.get\": \"30s\", \"zones.list\": false }`.\nLes données du compte ne sont mises en cache que pour les méthodes listées ici."
+ },
+ "CacheStore": {
+  "en": "Where cached responses live. Implement it to keep the cache in Redis, a KV\nnamespace or a file. Methods may be synchronous or return promises.",
+  "fr": "Là où sont gardées les réponses mises en cache. Implémentez-le pour garder le cache dans Redis, un espace de noms KV\nou un fichier. Les méthodes peuvent être synchrones ou renvoyer des promesses."
+ },
+ "CacheStore.get": {
+  "en": "The entry stored under `key`, expired or not: the client checks `expires`.",
+  "fr": "L'entrée stockée sous `key`, expirée ou non : le client vérifie `expires`."
+ },
+ "CacheStore.set": {
+  "en": "Stores an entry.",
+  "fr": "Stocke une entrée."
+ },
+ "CacheStore.delete": {
+  "en": "Removes one entry. Optional, the client never calls it.",
+  "fr": "Supprime une entrée. Facultatif, le client ne l'appelle jamais."
+ },
+ "CacheStore.clear": {
+  "en": "Removes everything. Called by `metamob.clearCache()` when present.",
+  "fr": "Supprime tout. Appelée par `metamob.clearCache()` quand elle existe."
+ },
+ "MemoryCache": {
+  "en": "In-memory store that drops the least recently used entry once full.",
+  "fr": "Stockage en mémoire qui retire l'entrée la moins récemment utilisée une fois plein."
+ },
+ "MemoryCache.size": {
+  "en": "Entries currently held, expired ones included until they are replaced or evicted.",
+  "fr": "Entrées actuellement gardées, y compris les expirées tant qu'elles ne sont ni remplacées ni évincées."
+ },
+ "MemoryCache.get": {
+  "en": "The entry stored under `key`, expired or not: the client checks `expires`.",
+  "fr": "L'entrée stockée sous `key`, expirée ou non : le client vérifie `expires`."
+ },
+ "MemoryCache.set": {
+  "en": "Stores an entry.",
+  "fr": "Stocke une entrée."
+ },
+ "MemoryCache.delete": {
+  "en": "Removes one entry. Optional, the client never calls it.",
+  "fr": "Supprime une entrée. Facultatif, le client ne l'appelle jamais."
+ },
+ "MemoryCache.clear": {
+  "en": "Removes everything. Called by `metamob.clearCache()` when present.",
+  "fr": "Supprime tout. Appelée par `metamob.clearCache()` quand elle existe."
+ },
+ "MetamobApiError": {
+  "en": "The API answered with an error status.",
+  "fr": "L'API a répondu avec un statut d'erreur."
+ },
+ "MetamobApiError.status": {
+  "en": "HTTP status code.",
+  "fr": "Code de statut HTTP."
+ },
+ "MetamobApiError.method": {
+  "en": "Method that failed, for example `users.get`.",
+  "fr": "Méthode qui a échoué, par exemple `users.get`."
+ },
+ "MetamobApiError.url": {
+  "en": "Request URL, without the API key.",
+  "fr": "URL de la requête, sans la clé API."
+ },
+ "MetamobApiError.messages": {
+  "en": "What the API said, keyed by field. A general error sits under `error`.",
+  "fr": "Ce que l'API a répondu, par champ. Une erreur générale se trouve sous `error`."
+ },
+ "MetamobApiError.retryAfter": {
+  "en": "Seconds to wait before retrying, when the API said so.",
+  "fr": "Secondes à attendre avant de réessayer, quand l'API l'a indiqué."
+ },
+ "MetamobApiError.body": {
+  "en": "Parsed response body, when there was one.",
+  "fr": "Corps de la réponse décodé, quand il y en avait un."
+ },
+ "MetamobApiError.isNotFound": {
+  "en": "The resource does not exist, or is not yours to see.",
+  "fr": "La ressource n'existe pas, ou vous n'avez pas le droit de la voir."
+ },
+ "MetamobApiError.isRateLimited": {
+  "en": "Too many requests with this key. Retry after `retryAfter` seconds.",
+  "fr": "Trop de requêtes avec cette clé. Réessayez après `retryAfter` secondes."
+ },
+ "MetamobApiError.isUnauthorized": {
+  "en": "The API key is missing, wrong, revoked, or its account was deleted.",
+  "fr": "La clé API est absente, fausse, révoquée, ou son compte a été supprimé."
+ },
+ "MetamobError.code": {
+  "en": "Stable code, safe to switch on.",
+  "fr": "Code stable, utilisable sans risque dans un `switch`."
+ },
+ "MetamobArgumentError": {
+  "en": "Thrown before the call it is about is sent: an invalid argument, a missing\nAPI key, or a name that matches no monster, zone or server.",
+  "fr": "Levée avant l'envoi de l'appel qu'elle concerne : un argument invalide, une clé\nAPI absente, ou un nom qui ne correspond à aucun monstre, zone ou serveur."
+ },
+ "MetamobArgumentError.suggestions": {
+  "en": "For an unknown name (`code === \"UNKNOWN_NAME\"`), the closest existing names, best first.",
+  "fr": "Pour un nom inconnu (`code === \"UNKNOWN_NAME\"`), les noms existants les plus proches, le meilleur en premier."
+ },
+ "MetamobError": {
+  "en": "Base class of everything thrown by this library.",
+  "fr": "Classe de base de tout ce que lève cette bibliothèque."
+ },
+ "MetamobErrorCode": {
+  "en": "The `code` of every error this library throws.",
+  "fr": "Le `code` de chaque erreur levée par cette bibliothèque."
+ },
+ "MetamobRequestError": {
+  "en": "The request never produced a usable response: timeout, network failure, abort or unreadable body.",
+  "fr": "La requête n'a jamais produit de réponse exploitable : délai dépassé, panne réseau, annulation ou corps illisible."
+ },
+ "MetamobRequestError.method": {
+  "en": "Method that failed, for example `monsters.list`.",
+  "fr": "Méthode qui a échoué, par exemple `monsters.list`."
+ },
+ "isMetamobError": {
+  "en": "Type guard for errors thrown by this library, optionally narrowed to a code.",
+  "fr": "Garde de type pour les erreurs levées par cette bibliothèque, éventuellement restreinte à un code."
+ },
+ "RateLimitOptions": {
+  "en": "Settings of the built-in rate limiter.",
+  "fr": "Réglages du limiteur de requêtes intégré."
+ },
+ "RateLimitOptions.requests": {
+  "en": "Requests allowed per window, for each API key. Default 60.",
+  "fr": "Requêtes autorisées par fenêtre, pour chaque clé API. Par défaut 60."
+ },
+ "RateLimitOptions.per": {
+  "en": "Length of the window. Default `\"1m\"`.",
+  "fr": "Durée de la fenêtre. Par défaut `\"1m\"`."
+ },
+ "RateLimitState": {
+  "en": "Where an API key stands against its rate limit, as counted by this client.",
+  "fr": "Où en est une clé API par rapport à sa limite de requêtes, d'après le compte de ce client."
+ },
+ "RateLimitState.limit": {
+  "en": "Requests allowed per window.",
+  "fr": "Requêtes autorisées par fenêtre."
+ },
+ "RateLimitState.remaining": {
+  "en": "Requests that can still be sent right now without waiting.",
+  "fr": "Requêtes qui peuvent encore partir tout de suite, sans attendre."
+ },
+ "RateLimitState.resetsIn": {
+  "en": "Milliseconds until the next request can leave. 0 when one can leave now.",
+  "fr": "Millisecondes avant que la prochaine requête puisse partir. 0 quand une requête peut partir maintenant."
+ },
+ "CollectOptions": {
+  "en": "Options of [`ListRequest.all`](ref:ListRequest) and [`ListRequest.pages`](ref:ListRequest).",
+  "fr": "Options de [`ListRequest.all`](ref:ListRequest) et [`ListRequest.pages`](ref:ListRequest)."
+ },
+ "CollectOptions.limit": {
+  "en": "Stop once this many items were fetched. `pages()` yields whole pages, so the last one can go past it.",
+  "fr": "S'arrête une fois ce nombre d'éléments récupéré. `pages()` donne des pages entières, la dernière peut donc le dépasser."
+ },
+ "ListRequest": {
+  "en": "What every paginated method returns. Nothing is sent until you await it or iterate it.\n\n- `await request` resolves to the first [`Page`](ref:Page).\n- `for await (const item of request)` walks every item of every page.\n- `request.all()` collects the items into an array, `request.take(n)` the first `n`.",
+  "fr": "Ce que renvoie chaque méthode paginée. Rien n'est envoyé avant que vous ne l'attendiez ou ne la parcouriez.\n\n- `await request` donne la première [`Page`](ref:Page).\n- `for await (const item of request)` parcourt chaque élément de chaque page.\n- `request.all()` réunit les éléments dans un tableau, `request.take(n)` les `n` premiers."
+ },
+ "ListRequest.page": {
+  "en": "Fetches the first page.",
+  "fr": "Récupère la première page."
+ },
+ "ListRequest.pages": {
+  "en": "Walks the pages one by one.",
+  "fr": "Parcourt les pages une par une."
+ },
+ "ListRequest.all": {
+  "en": "Collects items across pages into an array.",
+  "fr": "Réunit dans un tableau les éléments de toutes les pages."
+ },
+ "ListRequest.take": {
+  "en": "The first `limit` items, across as many pages as it takes.",
+  "fr": "Les `limit` premiers éléments, sur autant de pages qu'il le faut."
+ },
+ "ListRequest.first": {
+  "en": "Resolves to the first item, or `undefined` when there is none.",
+  "fr": "Donne le premier élément, ou `undefined` quand il n'y en a aucun."
+ },
+ "ListRequest.count": {
+  "en": "How many items the list holds with its filters. Undefined for the messages of a conversation.",
+  "fr": "Le nombre d'éléments de la liste avec ses filtres. `undefined` pour les messages d'une conversation."
+ },
+ "ListRequest.then": {
+  "en": "Attaches callbacks for the resolution and/or rejection of the Promise.",
+  "fr": "Ajoute des fonctions de rappel pour la résolution et/ou le rejet de la promesse."
+ },
+ "Page": {
+  "en": "One page of results.",
+  "fr": "Une page de résultats."
+ },
+ "Page.items": {
+  "en": "Items of this page.",
+  "fr": "Les éléments de cette page."
+ },
+ "Page.total": {
+  "en": "Size of the whole result set, with the filters applied. Undefined for the messages of a conversation.",
+  "fr": "Taille de l'ensemble des résultats, filtres appliqués. `undefined` pour les messages d'une conversation."
+ },
+ "Page.limit": {
+  "en": "Page size the API used.",
+  "fr": "Taille de page appliquée par l'API."
+ },
+ "Page.offset": {
+  "en": "Position of the first item of this page in the whole result set.",
+  "fr": "Position du premier élément de cette page dans l'ensemble des résultats."
+ },
+ "Page.nextBeforeId": {
+  "en": "For the messages of a conversation: the cursor of the next, older page, for `{ beforeId }`.",
+  "fr": "Pour les messages d'une conversation : le curseur de la page suivante, plus ancienne, pour `{ beforeId }`."
+ },
+ "Page.raw": {
+  "en": "The response body as the API sent it.",
+  "fr": "Le corps de la réponse tel que l'API l'a envoyé."
+ },
+ "Page.hasNext": {
+  "en": "Whether another page follows.",
+  "fr": "Indique si une autre page suit."
+ },
+ "Page.next": {
+  "en": "Fetches the next page, or resolves to `null` on the last one.",
+  "fr": "Récupère la page suivante, ou donne `null` sur la dernière."
+ },
+ "PageParams": {
+  "en": "Page size and starting point of a paginated list.",
+  "fr": "Taille de page et point de départ d'une liste paginée."
+ },
+ "PageParams.limit": {
+  "en": "Items per page. Left out, a single page uses the API's default and a walk\n(`for await`, `.all()`) uses the largest page the endpoint accepts.",
+  "fr": "Éléments par page. Sans valeur, une page seule utilise la valeur par défaut de l'API et un parcours\n(`for await`, `.all()`) utilise la plus grande page que le point d'accès accepte."
+ },
+ "PageParams.offset": {
+  "en": "Items to skip before the first one. Default 0.",
+  "fr": "Éléments à sauter avant le premier. Par défaut 0."
+ },
+ "ClientEvents": {
+  "en": "Events emitted by the client, see `metamob.on()`.",
+  "fr": "Événements émis par le client, voir `metamob.on()`."
+ },
+ "ClientEvents.request": {
+  "en": "A request is about to be sent. Fires once per attempt.",
+  "fr": "Une requête va être envoyée. Émis une fois par tentative."
+ },
+ "ClientEvents.response": {
+  "en": "A call finished successfully. `cached` calls did not touch the network.",
+  "fr": "Un appel s'est terminé avec succès. Un appel `cached` n'a pas utilisé le réseau."
+ },
+ "ClientEvents.retry": {
+  "en": "A failed attempt will be retried after `delay` milliseconds.",
+  "fr": "Une tentative échouée sera retentée après `delay` millisecondes."
+ },
+ "ClientEvents.rateLimit": {
+  "en": "The rate limiter held a call back for `delay` milliseconds to stay under the limit.",
+  "fr": "Le limiteur de requêtes a retenu un appel pendant `delay` millisecondes pour rester sous la limite."
+ },
+ "ClientEvents.error": {
+  "en": "A listener threw, or the cache store failed. The running call goes on.",
+  "fr": "Un écouteur a levé une erreur, ou le stockage du cache a échoué. L'appel en cours continue."
+ },
+ "MethodSpec": {
+  "en": "Description of one endpoint.",
+  "fr": "Description d'un point d'accès."
+ },
+ "MethodSpec.id": {
+  "en": "Name of the method, for example `monsters.get`.",
+  "fr": "Nom de la méthode, par exemple `monsters.get`."
+ },
+ "MethodSpec.path": {
+  "en": "Path under the base URL, with `{placeholders}`.",
+  "fr": "Chemin sous l'URL de base, avec des `{placeholders}`."
+ },
+ "MethodSpec.scope": {
+  "en": "`public` when the answer is the same for every API key, `account` when it depends on the key.",
+  "fr": "`public` quand la réponse est la même pour toutes les clés API, `account` quand elle dépend de la clé."
+ },
+ "MethodSpec.paged": {
+  "en": "For a paginated list: its largest page, and whether it uses a cursor.",
+  "fr": "Pour une liste paginée : sa plus grande page, et si elle utilise un curseur."
+ },
+ "MethodSpec.once": {
+  "en": "A write that creates something, such as a message. Never retried.",
+  "fr": "Une écriture qui crée quelque chose, comme un message. Jamais retentée."
+ },
+ "RequestOptions": {
+  "en": "Options accepted as the last argument of every API call.",
+  "fr": "Options acceptées comme dernier argument de chaque appel à l'API."
+ },
+ "RequestOptions.apiKey": {
+  "en": "Another API key for this call: the key of a user who entrusted it to you.",
+  "fr": "Une autre clé API pour cet appel : celle d'un joueur qui vous l'a confiée."
+ },
+ "RequestOptions.signal": {
+  "en": "Cancels the call.",
+  "fr": "Annule l'appel."
+ },
+ "RequestOptions.timeout": {
+  "en": "Overrides the client's timeout for this call.",
+  "fr": "Remplace le délai maximal du client pour cet appel."
+ },
+ "RequestOptions.retry": {
+  "en": "Overrides the client's retry policy. `false` turns retries off.",
+  "fr": "Remplace les règles de nouvelle tentative du client. `false` les désactive."
+ },
+ "RequestOptions.cache": {
+  "en": "`false` skips the cache for this call, a duration overrides the freshness.",
+  "fr": "`false` ignore le cache pour cet appel, une durée remplace la durée de fraîcheur."
+ },
+ "RequestOptions.headers": {
+  "en": "Extra headers.",
+  "fr": "En-têtes supplémentaires."
+ },
+ "RetryOptions": {
+  "en": "Retry policy.",
+  "fr": "Règles des nouvelles tentatives."
+ },
+ "RetryOptions.attempts": {
+  "en": "Retries after the first attempt. Default 3. Use 0 to turn retries off.",
+  "fr": "Nouvelles tentatives après la première. Par défaut 3. Mettez 0 pour les désactiver."
+ },
+ "RetryOptions.delay": {
+  "en": "First delay, doubled on each retry. Default `\"500ms\"`.",
+  "fr": "Premier délai, doublé à chaque nouvelle tentative. Par défaut `\"500ms\"`."
+ },
+ "RetryOptions.maxDelay": {
+  "en": "Upper bound of a single delay. Default `\"60s\"`. When `Retry-After` asks for\nlonger, the error is thrown with its `retryAfter`.",
+  "fr": "Limite haute d'un délai. Par défaut `\"60s\"`. Quand `Retry-After` demande\nplus longtemps, l'erreur est levée avec son `retryAfter`."
+ },
+ "Duration": {
+  "en": "A length of time: milliseconds as a number, or a short string such as\n`\"30s\"`, `\"5m\"`, `\"2h\"` or `\"1d\"`.",
+  "fr": "Une durée : un nombre de millisecondes, ou une courte chaîne comme\n`\"30s\"`, `\"5m\"`, `\"2h\"` ou `\"1d\"`."
+ },
+ "Dataset": {
+  "en": "The reference data of Metamob embedded in the package (monsters, zones,\nsubzones, servers, game versions and quest templates), as of\n[`Dataset.fetchedAt`](ref:Dataset). Answered from memory, without a request or an API key.",
+  "fr": "Les données de référence de Metamob incluses dans le paquet (monstres, zones,\nsous-zones, serveurs, versions du jeu et modèles de quête), telles qu'au\n[`Dataset.fetchedAt`](ref:Dataset). Lues en mémoire, sans requête ni clé API."
+ },
+ "Dataset.fetchedAt": {
+  "en": "Day the data was fetched from the API, as `YYYY-MM-DD`.",
+  "fr": "Jour où les données ont été récupérées depuis l'API, au format `YYYY-MM-DD`."
+ },
+ "Dataset.gameVersions": {
+  "en": "The versions of the game.",
+  "fr": "Les versions du jeu."
+ },
+ "Dataset.monsterTypes": {
+  "en": "The kinds of monsters.",
+  "fr": "Les types de monstres."
+ },
+ "Dataset.questTypes": {
+  "en": "The kinds of quests.",
+  "fr": "Les types de quêtes."
+ },
+ "Dataset.servers": {
+  "en": "The game servers.",
+  "fr": "Les serveurs de jeu."
+ },
+ "Dataset.questTemplates": {
+  "en": "The quest templates.",
+  "fr": "Les modèles de quête."
+ },
+ "Dataset.zones": {
+  "en": "The zones, each with its subzones.",
+  "fr": "Les zones, chacune avec ses sous-zones."
+ },
+ "Dataset.subzones": {
+  "en": "The subzones, each with its zone.",
+  "fr": "Les sous-zones, chacune avec sa zone."
+ },
+ "Dataset.monsters": {
+  "en": "Every monster.",
+  "fr": "Tous les monstres."
+ },
+ "Dataset.gameVersion": {
+  "en": "A version of the game, from its id or its name.",
+  "fr": "Une version du jeu, par son identifiant ou son nom."
+ },
+ "Dataset.monsterType": {
+  "en": "A kind of monster, from its id or its name in any language.",
+  "fr": "Un type de monstre, par son identifiant ou son nom dans n'importe quelle langue."
+ },
+ "Dataset.questType": {
+  "en": "A kind of quest, from its id, its slug or its name.",
+  "fr": "Un type de quête, par son identifiant, son slug ou son nom."
+ },
+ "Dataset.server": {
+  "en": "A server, from its id or its name.",
+  "fr": "Un serveur, par son identifiant ou son nom."
+ },
+ "Dataset.zone": {
+  "en": "A zone with its subzones, from its id or its name.",
+  "fr": "Une zone avec ses sous-zones, par son identifiant ou son nom."
+ },
+ "Dataset.subzone": {
+  "en": "A subzone with its zone, from its id or its name.",
+  "fr": "Une sous-zone avec sa zone, par son identifiant ou son nom."
+ },
+ "Dataset.questTemplate": {
+  "en": "A quest template, from its id or from the kind of quest and the version\nof the game it is for.",
+  "fr": "Un modèle de quête, par son identifiant ou par le type de quête et la version\ndu jeu auxquels il correspond."
+ },
+ "Dataset.monster": {
+  "en": "A monster, from its id or its name in French, English or Spanish, ignoring\naccents and capitals. When versions of the game share the name, pass\n`template` or `gameVersion` to pick one; otherwise Dofus (Unity) comes first.",
+  "fr": "Un monstre, par son identifiant ou son nom en français, anglais ou espagnol, sans tenir compte\ndes accents ni des majuscules. Quand plusieurs versions du jeu partagent ce nom, passez\n`template` ou `gameVersion` pour en choisir une ; sinon Dofus (Unity) passe en premier."
+ },
+ "Dataset.monstersNamed": {
+  "en": "Every monster that answers to a name. Several when versions of the game share it.",
+  "fr": "Tous les monstres qui portent un nom. Plusieurs quand des versions du jeu le partagent."
+ },
+ "Dataset.searchMonsters": {
+  "en": "Monsters whose name contains `query`, in any language, best match first:\nexact names, then names that start with it, then the rest.",
+  "fr": "Les monstres dont le nom contient `query`, dans n'importe quelle langue, le plus proche en premier :\nles noms exacts, puis les noms qui commencent par la recherche, puis le reste."
+ },
+ "Dataset.monstersInSubzone": {
+  "en": "The monsters that can be found in a subzone.",
+  "fr": "Les monstres que l'on trouve dans une sous-zone."
+ },
+ "Dataset.monstersInZone": {
+  "en": "The monsters that can be found anywhere in a zone.",
+  "fr": "Les monstres que l'on trouve n'importe où dans une zone."
+ },
+ "Dataset.subzonesOf": {
+  "en": "The subzones where a monster can be found.",
+  "fr": "Les sous-zones où l'on trouve un monstre."
+ },
+ "Dataset.zonesOf": {
+  "en": "The zones where a monster can be found.",
+  "fr": "Les zones où l'on trouve un monstre."
+ },
+ "Dataset.archmonstersOf": {
+  "en": "The archmonsters of a monster: the rare versions that have it as `reference`. One per version of the game at most.",
+  "fr": "Les archimonstres d'un monstre : les versions rares qui l'ont pour `reference`. Un par version du jeu au plus."
+ },
+ "Dataset.templatesOf": {
+  "en": "The quest templates a monster belongs to.",
+  "fr": "Les modèles de quête auxquels appartient un monstre."
+ },
+ "Dataset.templateMonsters": {
+  "en": "The monsters a quest template asks for, in the order of the quest, each\nwith its step.",
+  "fr": "Les monstres que demande un modèle de quête, dans l'ordre de la quête, chacun\navec son étape."
+ },
+ "Dataset.stepOf": {
+  "en": "The step a monster belongs to in a quest template, or `undefined` when it is not part of it.",
+  "fr": "L'étape à laquelle appartient un monstre dans un modèle de quête, ou `undefined` quand il n'en fait pas partie."
+ },
+ "Dataset.suggest": {
+  "en": "The names closest to a misspelled one, best first.",
+  "fr": "Les noms les plus proches d'un nom mal orthographié, le plus proche en premier."
+ },
+ "data": {
+  "en": "The reference data embedded in the package. See [`Dataset`](ref:Dataset).",
+  "fr": "Les données de référence incluses dans le paquet. Voir [`Dataset`](ref:Dataset)."
+ },
+ "GameVersionLike": {
+  "en": "A version of the game: its id, its name, or an object with its `id`.",
+  "fr": "Une version du jeu : son identifiant, son nom, ou un objet avec son `id`."
+ },
+ "MonsterHint": {
+  "en": "What tells two monsters of the same name apart.",
+  "fr": "Ce qui distingue deux monstres de même nom."
+ },
+ "MonsterHint.template": {
+  "en": "Prefer the monster that belongs to this quest template.",
+  "fr": "Préférer le monstre qui appartient à ce modèle de quête."
+ },
+ "MonsterHint.gameVersion": {
+  "en": "Prefer the monster of this version of the game.",
+  "fr": "Préférer le monstre de cette version du jeu."
+ },
+ "MonsterLike": {
+  "en": "A monster: its id, its name in French, English or Spanish, or an object with its `id`.",
+  "fr": "Un monstre : son identifiant, son nom en français, anglais ou espagnol, ou un objet avec son `id`."
+ },
+ "MonsterSearchOptions": {
+  "en": "Options of [`Dataset.searchMonsters`](ref:Dataset).",
+  "fr": "Options de [`Dataset.searchMonsters`](ref:Dataset)."
+ },
+ "MonsterSearchOptions.type": {
+  "en": "Only this kind of monster.",
+  "fr": "Seulement ce type de monstre."
+ },
+ "MonsterSearchOptions.limit": {
+  "en": "Results to return. Default 25.",
+  "fr": "Nombre de résultats à renvoyer. Par défaut 25."
+ },
+ "MonsterTypeLike": {
+  "en": "A kind of monster: its id (1, 2, 3), its name in French, English or Spanish, or an object with its `id`.",
+  "fr": "Un type de monstre : son identifiant (1, 2, 3), son nom en français, anglais ou espagnol, ou un objet avec son `id`."
+ },
+ "QuestTemplateLike": {
+  "en": "A quest template: its id, an object with its `id`, or the kind of quest and the version of the game it is for.",
+  "fr": "Un modèle de quête : son identifiant, un objet avec son `id`, ou le type de quête et la version du jeu auxquels il correspond."
+ },
+ "QuestTypeLike": {
+  "en": "A kind of quest: its id, its slug (`ocre`, `dokille`), its name, or an object with its `id`.",
+  "fr": "Un type de quête : son identifiant, son slug (`ocre`, `dokille`), son nom, ou un objet avec son `id`."
+ },
+ "ServerLike": {
+  "en": "A server: its id, its name, or an object with its `id`.",
+  "fr": "Un serveur : son identifiant, son nom, ou un objet avec son `id`."
+ },
+ "SubzoneLike": {
+  "en": "A subzone: its id, its name in French, English or Spanish, or an object with its `id`.",
+  "fr": "Une sous-zone : son identifiant, son nom en français, anglais ou espagnol, ou un objet avec son `id`."
+ },
+ "ZoneLike": {
+  "en": "A zone: its id, its name in French, English or Spanish, or an object with its `id`.",
+  "fr": "Une zone : son identifiant, son nom en français, anglais ou espagnol, ou un objet avec son `id`."
+ },
+ "normalizeName": {
+  "en": "The form names are compared in: no accents, lower case, one kind of\napostrophe and of dash, single spaces. `\"  Tofu MALÉFIQUE \"` gives `\"tofu malefique\"`.",
+  "fr": "La forme sous laquelle les noms sont comparés : sans accents, en minuscules, une seule sorte\nd'apostrophe et de tiret, des espaces simples. `\"  Tofu MALÉFIQUE \"` donne `\"tofu malefique\"`."
+ },
+ "METHODS": {
+  "en": "Every endpoint of the API, keyed by the name used in cache settings, events and errors.",
+  "fr": "Tous les points d'accès de l'API, indexés par le nom utilisé dans les réglages du cache, les événements et les erreurs."
+ },
+ "MethodId": {
+  "en": "Name of an endpoint, for example `monsters.get`.",
+  "fr": "Nom d'un point d'accès, par exemple `monsters.get`."
+ },
+ "VERSION": {
+  "en": "Version of the package.",
+  "fr": "Version du paquet."
+ },
+ "ConversationListParams": {
+  "en": "Filters of [`Conversations.list`](ref:Conversations).",
+  "fr": "Filtres de [`Conversations.list`](ref:Conversations)."
+ },
+ "ConversationListParams.status": {
+  "en": "`active` (default) or `archived`.",
+  "fr": "`active` (par défaut) ou `archived`."
+ },
+ "Conversations": {
+  "en": "The private messages of the account the API key belongs to.",
+  "fr": "Les messages privés du compte auquel appartient la clé API."
+ },
+ "Conversations.list": {
+  "en": "The conversations of the account, one per correspondent, most recent\nfirst. Await it for one page, or iterate it for all of them.",
+  "fr": "Les conversations du compte, une par correspondant, la plus récente\nen premier. Attendez-la pour une page, ou parcourez-la pour toutes."
+ },
+ "Conversations.messages": {
+  "en": "The messages and trade proposals exchanged with a user, most recent\nfirst. Iterating walks back in time, page after page.",
+  "fr": "Les messages et propositions d'échange échangés avec un joueur, les plus récents\nen premier. Le parcours remonte le temps, page après page."
+ },
+ "Conversations.markAsRead": {
+  "en": "Marks as read every message received from a user, trade proposals\nincluded, and answers how many were marked.",
+  "fr": "Marque comme lus tous les messages reçus d'un joueur, propositions d'échange\ncomprises, et répond combien ont été marqués."
+ },
+ "Conversations.send": {
+  "en": "Sends a private message to a user, 1000 characters at most, and answers it\nas it appears in the conversation.\n\nSending is closed by default: Metamob opens it account by account, on\nrequest. Without it, or when one player blocked the other, the API answers\n`FORBIDDEN`. A message is never retried: after a timeout or a network\nfailure, read the conversation before sending it again.",
+  "fr": "Envoie un message privé à un joueur, 1000 caractères au plus, et le renvoie\ntel qu'il apparaît dans la conversation.\n\nL'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur\ndemande. Sans cela, ou quand l'un des deux joueurs a bloqué l'autre, l'API répond\n`FORBIDDEN`. Un message n'est jamais retenté : après un délai dépassé ou une coupure\nréseau, lisez la conversation avant de le renvoyer."
+ },
+ "MessagesParams": {
+  "en": "Where to start reading a conversation.",
+  "fr": "Où commencer la lecture d'une conversation."
+ },
+ "MessagesParams.limit": {
+  "en": "Items per page. Default 30, at most 50.",
+  "fr": "Éléments par page. Par défaut 30, 50 au plus."
+ },
+ "MessagesParams.beforeId": {
+  "en": "Start from older items: the `nextBeforeId` of a page you already have.",
+  "fr": "Commencer par des éléments plus anciens : le `nextBeforeId` d'une page que vous avez déjà."
+ },
+ "Kralove": {
+  "en": "The Kralamoure events: meetings players organise to fight the Kralove.",
+  "fr": "Les événements Kralamoure : des rendez-vous que les joueurs organisent pour combattre le Kralamoure."
+ },
+ "Kralove.list": {
+  "en": "The Kralamoure events from today on, or from another date, optionally for\none server.",
+  "fr": "Les événements Kralamoure à partir d'aujourd'hui, ou d'une autre date, éventuellement pour\nun seul serveur."
+ },
+ "Kralove.get": {
+  "en": "One Kralamoure event with its participants and its messages.",
+  "fr": "Un événement Kralamoure avec ses participants et ses messages."
+ },
+ "KraloveListParams": {
+  "en": "Filters of [`Kralove.list`](ref:Kralove).",
+  "fr": "Filtres de [`Kralove.list`](ref:Kralove)."
+ },
+ "KraloveListParams.server": {
+  "en": "Only the events of this server.",
+  "fr": "Seulement les événements de ce serveur."
+ },
+ "KraloveListParams.from": {
+  "en": "First day to list, as `YYYY-MM-DD` or a `Date` (read in UTC). Default: today.",
+  "fr": "Premier jour à lister, au format `YYYY-MM-DD` ou une `Date` (lue en UTC). Par défaut : aujourd'hui."
+ },
+ "MonsterListParams": {
+  "en": "Filters of [`Monsters.list`](ref:Monsters).",
+  "fr": "Filtres de [`Monsters.list`](ref:Monsters)."
+ },
+ "MonsterListParams.query": {
+  "en": "Search by name, in French, English or Spanish. At least 3 characters.",
+  "fr": "Recherche par nom, en français, anglais ou espagnol. Au moins 3 caractères."
+ },
+ "MonsterListParams.type": {
+  "en": "Only this kind of monster: `\"monstre\"`, `\"boss\"`, `\"archimonstre\"`, or its id.",
+  "fr": "Seulement ce type de monstre : `\"monstre\"`, `\"boss\"`, `\"archimonstre\"`, ou son identifiant."
+ },
+ "Monsters": {
+  "en": "The monsters of the game.",
+  "fr": "Les monstres du jeu."
+ },
+ "Monsters.list": {
+  "en": "The monsters, optionally searched by name and filtered by kind. Await it\nfor one page, or iterate it for all of them.",
+  "fr": "Les monstres, éventuellement recherchés par nom et filtrés par type. Attendez-la\npour une page, ou parcourez-la pour tous."
+ },
+ "Monsters.get": {
+  "en": "One monster, from its id or its name in French, English or Spanish, with\nthe zones where it can be found and, for an archmonster, its base monster.\nWhen versions of the game share the name, pass `gameVersion` or `template`.",
+  "fr": "Un monstre, par son identifiant ou son nom en français, anglais ou espagnol, avec\nles zones où on le trouve et, pour un archimonstre, son monstre de base.\nQuand plusieurs versions du jeu partagent ce nom, passez `gameVersion` ou `template`."
+ },
+ "Monsters.search": {
+  "en": "Shorthand for `list({ query, ...params })`.",
+  "fr": "Raccourci pour `list({ query, ...params })`."
+ },
+ "MatchesParams": {
+  "en": "Filters of [`Quests.matches`](ref:Quests).",
+  "fr": "Filtres de [`Quests.matches`](ref:Quests)."
+ },
+ "MatchesParams.minParallelQuests": {
+  "en": "Only partners doing at least this many quests in parallel. Default 1.",
+  "fr": "Seulement les partenaires qui font au moins ce nombre de quêtes en parallèle. Par défaut 1."
+ },
+ "MatchesParams.onlyPossibleTrades": {
+  "en": "Leave out partners with whom the trade can only go one way. Default false.",
+  "fr": "Écarter les partenaires avec qui l'échange ne peut aller que dans un sens. Par défaut false."
+ },
+ "MonsterQuantities": {
+  "en": "Quantities to set, in any of three shapes: a list of `{ monster, quantity }`,\nan object keyed by monster name, or a `Map`.",
+  "fr": "Les quantités à fixer, sous l'une de trois formes : une liste de `{ monster, quantity }`,\nun objet indexé par nom de monstre, ou une `Map`."
+ },
+ "OwnQuestMonstersParams": {
+  "en": "Filters of [`Quests.monsters`](ref:Quests).",
+  "fr": "Filtres de [`Quests.monsters`](ref:Quests)."
+ },
+ "OwnQuestMonstersParams.type": {
+  "en": "Only this kind of monster.",
+  "fr": "Seulement ce type de monstre."
+ },
+ "OwnQuestMonstersParams.status": {
+  "en": "Progress, what you own against the number of parallel quests: `needed`,\n`ok`, `excess`. Trade, what the quest puts on the market after your trade\nsettings: `wanted`, `offered`.",
+  "fr": "Progression, ce que vous possédez par rapport au nombre de quêtes en parallèle : `needed`,\n`ok`, `excess`. Échange, ce que la quête met sur le marché une fois vos réglages\nd'échange appliqués : `wanted`, `offered`."
+ },
+ "OwnQuestMonstersParams.trade": {
+  "en": "`manual`: monsters with a manual trade override. `auto`: the others.",
+  "fr": "`manual` : les monstres qui ont un réglage manuel. `auto` : les autres."
+ },
+ "OwnQuestMonstersParams.step": {
+  "en": "Only the monsters of this step.",
+  "fr": "Seulement les monstres de cette étape."
+ },
+ "Quests": {
+  "en": "Your own quests: the ones of the account the API key belongs to. Everything\nhere answers `NOT_FOUND` for a quest that is someone else's.",
+  "fr": "Vos propres quêtes : celles du compte auquel appartient la clé API. Tout\nici répond `NOT_FOUND` pour une quête qui appartient à quelqu'un d'autre."
+ },
+ "Quests.list": {
+  "en": "Every quest of the account, hidden ones included, favourites first. This\nis where slugs come from: the other methods all take one.",
+  "fr": "Toutes les quêtes du compte, y compris les quêtes masquées, les favorites en premier. C'est\nde là que viennent les slugs : les autres méthodes en prennent toutes un."
+ },
+ "Quests.get": {
+  "en": "The full settings of one of your quests: trade mode, thresholds and\nfilters by kind of monster.",
+  "fr": "Les réglages complets d'une de vos quêtes : mode d'échange, seuils et\nfiltres par type de monstre."
+ },
+ "Quests.update": {
+  "en": "Changes settings of one of your quests. Send only what changes. The answer\nholds the slug and the changed fields; [`Quests.get`](ref:Quests) reads the whole quest.",
+  "fr": "Modifie les réglages d'une de vos quêtes. N'envoyez que ce qui change. La réponse\ncontient le slug et les champs modifiés ; [`Quests.get`](ref:Quests) lit la quête entière."
+ },
+ "Quests.monsters": {
+  "en": "The monsters of one of your quests, with what you own, what the quest\nwants and offers, and your manual trade overrides. Works on a hidden\nquest too. Await it for one page, or iterate it for all of them.",
+  "fr": "Les monstres d'une de vos quêtes, avec ce que vous possédez, ce que la quête\nrecherche et propose, et vos réglages manuels. Fonctionne aussi sur une quête\nmasquée. Attendez-la pour une page, ou parcourez-la pour tous."
+ },
+ "Quests.setMonster": {
+  "en": "Sets how many of a monster you own in a quest, from 0 to 99. The monster\nis an id or a name in French, English or Spanish.",
+  "fr": "Fixe le nombre d'exemplaires d'un monstre que vous possédez dans une quête, de 0 à 99. Le monstre\nest un identifiant ou un nom en français, anglais ou espagnol."
+ },
+ "Quests.setMonsters": {
+  "en": "Sets the quantities of many monsters at once. Lists of more than 200 are\nsent in several requests, and the answers merged.",
+  "fr": "Fixe les quantités de nombreux monstres en une fois. Les listes de plus de 200 sont\nenvoyées en plusieurs requêtes, et les réponses réunies."
+ },
+ "Quests.setTrade": {
+  "en": "Forces how many of a monster a quest offers and wants, instead of the\nautomatic calculation. `null` hands a value back to the calculation; 0\nforces \"none\", which is not the same thing.",
+  "fr": "Impose combien d'exemplaires d'un monstre une quête propose et recherche, au lieu du\ncalcul automatique. `null` rend une valeur au calcul ; 0\nimpose « aucun », ce qui n'est pas la même chose."
+ },
+ "Quests.resetTrade": {
+  "en": "Removes the manual trade overrides of a monster: both values go back to\nthe automatic calculation.",
+  "fr": "Retire les réglages manuels d'un monstre : les deux valeurs reviennent\nau calcul automatique."
+ },
+ "Quests.matches": {
+  "en": "The best trade partners for one of your quests, ranked like the \"Best\nmatching\" option of the Community page: same server, same kind of quest,\nactive in the last two months. Await it for one page, or iterate it.",
+  "fr": "Les meilleurs partenaires d'échange pour une de vos quêtes, classés comme avec l'option « Meilleur\nmatching » de la page Communauté : même serveur, même type de quête,\nactifs dans les deux derniers mois. Attendez-la pour une page, ou parcourez-la."
+ },
+ "Quests.zones": {
+  "en": "The progress of one of your quests, organised by zone and subzone, least\nadvanced subzones first. A monster shows up in each subzone it lives in.\nThe answer is not paginated: narrow it with the filters.",
+  "fr": "La progression d'une de vos quêtes, organisée par zone et sous-zone, les sous-zones les moins\navancées en premier. Un monstre apparaît dans chaque sous-zone où il vit.\nLa réponse n'est pas paginée : réduisez-la avec les filtres."
+ },
+ "QuestZonesParams": {
+  "en": "Filters of [`Quests.zones`](ref:Quests).",
+  "fr": "Filtres de [`Quests.zones`](ref:Quests)."
+ },
+ "QuestZonesParams.zone": {
+  "en": "Only this zone.",
+  "fr": "Seulement cette zone."
+ },
+ "QuestZonesParams.subzone": {
+  "en": "Only this subzone.",
+  "fr": "Seulement cette sous-zone."
+ },
+ "QuestZonesParams.type": {
+  "en": "Only this kind of monster.",
+  "fr": "Seulement ce type de monstre."
+ },
+ "GameVersions": {
+  "en": "The versions of the game.",
+  "fr": "Les versions du jeu."
+ },
+ "GameVersions.list": {
+  "en": "Every version of the game: Dofus (Unity), Dofus Retro (1.29) and Dofus Touch.",
+  "fr": "Toutes les versions du jeu : Dofus (Unity), Dofus Retro (1.29) et Dofus Touch."
+ },
+ "GameVersions.get": {
+  "en": "One version of the game, from its id or its name.",
+  "fr": "Une version du jeu, par son identifiant ou son nom."
+ },
+ "MonsterTypes": {
+  "en": "The kinds of monsters.",
+  "fr": "Les types de monstres."
+ },
+ "MonsterTypes.list": {
+  "en": "The three kinds of monsters: monster (1), boss (2) and archmonster (3).",
+  "fr": "Les trois types de monstres : monstre (1), boss (2) et archimonstre (3)."
+ },
+ "MonsterTypes.get": {
+  "en": "One kind of monster, from its id or its name in French, English or Spanish.",
+  "fr": "Un type de monstre, par son identifiant ou son nom en français, anglais ou espagnol."
+ },
+ "QuestTemplates": {
+  "en": "The quest templates: what each kind of quest asks for in each version of the game.",
+  "fr": "Les modèles de quête : ce que demande chaque type de quête dans chaque version du jeu."
+ },
+ "QuestTemplates.list": {
+  "en": "Every quest template, with its number of monsters and of steps.",
+  "fr": "Tous les modèles de quête, avec leur nombre de monstres et d'étapes."
+ },
+ "QuestTemplates.get": {
+  "en": "One quest template with its counts, from its id or from the kind of quest\nand the version of the game.",
+  "fr": "Un modèle de quête avec ses totaux, par son identifiant ou par le type de quête\net la version du jeu."
+ },
+ "QuestTemplates.monsters": {
+  "en": "The monsters a quest template asks for, each with its step. Await it for\none page, or iterate it for all of them.",
+  "fr": "Les monstres que demande un modèle de quête, chacun avec son étape. Attendez-la pour\nune page, ou parcourez-la pour tous."
+ },
+ "QuestTypes": {
+  "en": "The kinds of quests.",
+  "fr": "Les types de quêtes."
+ },
+ "QuestTypes.list": {
+  "en": "The kinds of quests, each with its image: Ochre (`ocre`) and Grofus\n(`dokille`). Two quests can trade only when they are of the same kind.",
+  "fr": "Les types de quêtes, chacun avec son image : Ocre (`ocre`) et Dokille\n(`dokille`). Deux quêtes ne peuvent échanger que si elles sont du même type."
+ },
+ "QuestTypes.get": {
+  "en": "One kind of quest, from its id, its slug or its name.",
+  "fr": "Un type de quête, par son identifiant, son slug ou son nom."
+ },
+ "Servers": {
+  "en": "The game servers.",
+  "fr": "Les serveurs de jeu."
+ },
+ "Servers.list": {
+  "en": "Every server, with its community and its version of the game.",
+  "fr": "Tous les serveurs, avec leur communauté et leur version du jeu."
+ },
+ "Servers.get": {
+  "en": "One server, from its id or its name.",
+  "fr": "Un serveur, par son identifiant ou son nom."
+ },
+ "TemplateHeader": {
+  "en": "The template a page of monsters belongs to.",
+  "fr": "Le modèle auquel appartient une page de monstres."
+ },
+ "TemplateMonstersParams": {
+  "en": "Filters of [`QuestTemplates.monsters`](ref:QuestTemplates).",
+  "fr": "Filtres de [`QuestTemplates.monsters`](ref:QuestTemplates)."
+ },
+ "TemplateMonstersParams.step": {
+  "en": "Only the monsters of this step.",
+  "fr": "Seulement les monstres de cette étape."
+ },
+ "PublicQuestParams": {
+  "en": "Filters of [`Users.quest`](ref:Users).",
+  "fr": "Filtres de [`Users.quest`](ref:Users)."
+ },
+ "PublicQuestParams.type": {
+  "en": "Only this kind of monster.",
+  "fr": "Seulement ce type de monstre."
+ },
+ "PublicQuestParams.status": {
+  "en": "`wanted`: what the quest is looking for. `offered`: what it offers.",
+  "fr": "`wanted` : ce que la quête recherche. `offered` : ce qu'elle propose."
+ },
+ "PublicQuestParams.step": {
+  "en": "Only the monsters of this step.",
+  "fr": "Seulement les monstres de cette étape."
+ },
+ "UserSearchParams": {
+  "en": "Filters of [`Users.search`](ref:Users).",
+  "fr": "Filtres de [`Users.search`](ref:Users)."
+ },
+ "UserSearchParams.server": {
+  "en": "Only users with a quest on this server.",
+  "fr": "Seulement les joueurs qui ont une quête sur ce serveur."
+ },
+ "UserSearchParams.activeWithinDays": {
+  "en": "Only users seen in the last N days. Default 90, at most 365.",
+  "fr": "Seulement les joueurs vus dans les N derniers jours. Par défaut 90, 365 au plus."
+ },
+ "Users": {
+  "en": "Other players: their profile and their public quests.",
+  "fr": "Les autres joueurs : leur profil et leurs quêtes publiques."
+ },
+ "Users.search": {
+  "en": "Users with public quests whose name matches a search of 3 characters or\nmore. Await it for one page, or iterate it for all of them.",
+  "fr": "Les joueurs ayant des quêtes publiques dont le pseudo correspond à une recherche de 3 caractères ou\nplus. Attendez-la pour une page, ou parcourez-la pour tous."
+ },
+ "Users.get": {
+  "en": "The public profile of a user, with their public quests. The username is\nfound whatever its case. A deleted account answers with a `NOT_FOUND` error.",
+  "fr": "Le profil public d'un joueur, avec ses quêtes publiques. Le pseudo est\ntrouvé quelle que soit sa casse. Un compte supprimé répond par une erreur `NOT_FOUND`."
+ },
+ "Users.quests": {
+  "en": "The public quests of a user, with how many monsters each one is looking\nfor and offers. Hidden quests are not listed.",
+  "fr": "Les quêtes publiques d'un joueur, avec le nombre de monstres que chacune\nrecherche et propose. Les quêtes masquées ne sont pas listées."
+ },
+ "Users.quest": {
+  "en": "The monsters of a public quest, with what its owner owns, wants and\noffers. Each page also carries the quest itself as `page.quest`.",
+  "fr": "Les monstres d'une quête publique, avec ce que son propriétaire possède, recherche et\npropose. Chaque page porte aussi la quête elle-même dans `page.quest`."
+ },
+ "ApplyProposalOptions": {
+  "en": "Options of [`TradeProposals.apply`](ref:TradeProposals).",
+  "fr": "Options de [`TradeProposals.apply`](ref:TradeProposals)."
+ },
+ "ApplyProposalOptions.allowPartial": {
+  "en": "`false` (default): when you own fewer copies of a monster than you give,\nnothing is applied and the API answers `CONFLICT`. `true`: applied anyway,\nwith each quantity reduced to what you own.",
+  "fr": "`false` (par défaut) : quand vous possédez moins d'exemplaires d'un monstre que vous n'en donnez,\nrien n'est appliqué et l'API répond `CONFLICT`. `true` : appliquée quand même,\nchaque quantité réduite à ce que vous possédez."
+ },
+ "NewTradeProposal": {
+  "en": "What [`TradeProposals.create`](ref:TradeProposals) sends.",
+  "fr": "Ce qu'envoie [`TradeProposals.create`](ref:TradeProposals)."
+ },
+ "NewTradeProposal.recipient": {
+  "en": "Username of the player the proposal is made to.",
+  "fr": "Pseudo du joueur à qui la proposition est faite."
+ },
+ "NewTradeProposal.sender_quest": {
+  "en": "Slug of your quest the trade is about.",
+  "fr": "Slug de votre quête concernée par l'échange."
+ },
+ "NewTradeProposal.recipient_quest": {
+  "en": "Slug of the recipient's quest, of the same kind as yours and on the same server. `quests.matches()` gives it.",
+  "fr": "Slug de la quête du destinataire, du même type que la vôtre et sur le même serveur. `quests.matches()` le donne."
+ },
+ "NewTradeProposal.monsters_given": {
+  "en": "What you give, in the shapes `quests.setMonsters()` takes.",
+  "fr": "Ce que vous donnez, sous les formes que prend `quests.setMonsters()`."
+ },
+ "NewTradeProposal.monsters_received": {
+  "en": "What you receive, in the same shapes.",
+  "fr": "Ce que vous recevez, sous les mêmes formes."
+ },
+ "TradeProposalListParams": {
+  "en": "Filters of [`TradeProposals.list`](ref:TradeProposals).",
+  "fr": "Filtres de [`TradeProposals.list`](ref:TradeProposals)."
+ },
+ "TradeProposalListParams.direction": {
+  "en": "`received`: made to you. `sent`: made by you. `all` (default): both.",
+  "fr": "`received` : faites à vous. `sent` : faites par vous. `all` (par défaut) : les deux."
+ },
+ "TradeProposalListParams.status": {
+  "en": "Only the proposals in this state.",
+  "fr": "Seulement les propositions dans cet état."
+ },
+ "TradeProposalListParams.quest": {
+  "en": "Only the proposals about this quest of yours, by its slug.",
+  "fr": "Seulement les propositions qui concernent cette quête à vous, par son slug."
+ },
+ "TradeProposalListParams.since": {
+  "en": "Only the proposals created from this moment on: a `Date`, or an ISO 8601 date with its time zone.",
+  "fr": "Seulement les propositions créées à partir de ce moment : une `Date`, ou une date ISO 8601 avec son fuseau horaire."
+ },
+ "TradeProposalListParams.limit": {
+  "en": "Items per page. Default 30, at most 50.",
+  "fr": "Éléments par page. Par défaut 30, 50 au plus."
+ },
+ "TradeProposalListParams.beforeId": {
+  "en": "Start from older proposals: the `nextBeforeId` of a page you already have.",
+  "fr": "Commencer par des propositions plus anciennes : le `nextBeforeId` d'une page que vous avez déjà."
+ },
+ "TradeProposals": {
+  "en": "The trade proposals of the account: the ones you sent and the ones you\nreceived, on every quest. Send one, apply your side, or cancel it.",
+  "fr": "Les propositions d'échange du compte : celles que vous avez envoyées et celles que vous avez\nreçues, sur toutes les quêtes. En envoyer une, appliquer votre côté, ou l'annuler."
+ },
+ "TradeProposals.list": {
+  "en": "The trade proposals you sent and received, most recent first. Await it\nfor one page, or iterate it to walk back in time.",
+  "fr": "Les propositions d'échange que vous avez envoyées et reçues, la plus récente en premier. Attendez-la\npour une page, ou parcourez-la pour remonter le temps."
+ },
+ "TradeProposals.get": {
+  "en": "One trade proposal, with `viewer`: your side of it. `viewer.removed` is\nwhat leaves your quest and `viewer.added` what enters it, each monster\nwith what you own of it now.",
+  "fr": "Une proposition d'échange, avec `viewer` : votre côté. `viewer.removed` est\nce qui sort de votre quête et `viewer.added` ce qui y entre, chaque monstre\navec ce que vous en possédez maintenant."
+ },
+ "TradeProposals.apply": {
+  "en": "Applies your side of a proposal to your quest: what you give leaves it,\nwhat you receive enters it. Works for the sender and for the recipient.\nThe proposal is `completed` once both sides are applied.\n\nWhen you own fewer copies than you give, the API answers `CONFLICT` and\nnothing changes, unless `allowPartial` is `true`: then each quantity is\nreduced to what you own, `viewer.clamped` is `true`, and\n`applied_quantity` says what really moved. Applying twice, or a cancelled\nproposal, is a `CONFLICT` too. Never retried.",
+  "fr": "Applique votre côté d'une proposition à votre quête : ce que vous donnez en sort,\nce que vous recevez y entre. Vaut pour l'expéditeur comme pour le destinataire.\nLa proposition passe à `completed` une fois les deux côtés appliqués.\n\nQuand vous possédez moins d'exemplaires que vous n'en donnez, l'API répond `CONFLICT` et\nrien ne change, sauf si `allowPartial` vaut `true` : chaque quantité est alors\nréduite à ce que vous possédez, `viewer.clamped` vaut `true`, et\n`applied_quantity` indique ce qui a vraiment bougé. Appliquer deux fois, ou appliquer une proposition\nannulée, donne aussi `CONFLICT`. Jamais retenté."
+ },
+ "TradeProposals.cancel": {
+  "en": "Cancels a proposal you sent, or declines one you received, as long as you\nhave not applied your side, even when the other player applied theirs.\nA proposal already cancelled, or already applied by you, is a `CONFLICT`.\nNever retried.",
+  "fr": "Annule une proposition que vous avez envoyée, ou refuse une proposition reçue, tant que vous\nn'avez pas appliqué votre côté, même si l'autre joueur a appliqué le sien.\nUne proposition déjà annulée, ou déjà appliquée par vous, donne `CONFLICT`.\nJamais retenté."
+ },
+ "TradeProposals.create": {
+  "en": "Proposes a trade to a player from one of your quests, and answers the\nproposal with your side of it, like `get()`. Monsters are an id, a name or\na monster.\n\nSending is closed by default: Metamob opens it account by account, on\nrequest. Without it, or when one player blocked the other, the API answers\n`FORBIDDEN`. Quests of different kinds or servers, a monster not in the\nquest, more copies than you own, or a quantity out of bounds give\n`BAD_REQUEST`. A proposal is never\nretried: after a timeout or a network failure, check `list()` before\nproposing again.",
+  "fr": "Propose un échange à un joueur depuis l'une de vos quêtes, et renvoie la\nproposition avec votre côté, comme `get()`. Les monstres sont un identifiant, un nom ou\nun monstre.\n\nL'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur\ndemande. Sans cela, ou quand l'un des deux joueurs a bloqué l'autre, l'API répond\n`FORBIDDEN`. Des quêtes de types ou de serveurs différents, un monstre absent de la\nquête, plus d'exemplaires que vous n'en possédez, ou une quantité hors limites donnent\n`BAD_REQUEST`. Une proposition n'est jamais\nretentée : après un délai dépassé ou une coupure réseau, consultez `list()` avant\nde proposer à nouveau."
+ },
+ "SubzoneParams": {
+  "en": "Says which zone a subzone belongs to, for a subzone newer than the package.",
+  "fr": "Indique à quelle zone appartient une sous-zone, pour une sous-zone plus récente que le paquet."
+ },
+ "SubzoneParams.zone": {
+  "en": "The zone the subzone sits in. Only needed for a subzone newer than the package.",
+  "fr": "La zone où se trouve la sous-zone. Utile seulement pour une sous-zone plus récente que le paquet."
+ },
+ "Zones": {
+  "en": "The zones and subzones of the game, and the monsters that live there.",
+  "fr": "Les zones et sous-zones du jeu, et les monstres qui y vivent."
+ },
+ "Zones.list": {
+  "en": "The zones, optionally searched by name in French, English or Spanish.",
+  "fr": "Les zones, éventuellement recherchées par nom en français, anglais ou espagnol."
+ },
+ "Zones.get": {
+  "en": "One zone with its subzones, from its id or its name.",
+  "fr": "Une zone avec ses sous-zones, par son identifiant ou son nom."
+ },
+ "Zones.subzones": {
+  "en": "The subzones of a zone, optionally searched by name.",
+  "fr": "Les sous-zones d'une zone, éventuellement recherchées par nom."
+ },
+ "Zones.subzone": {
+  "en": "One subzone with the zone it belongs to. The name is enough: the zone is\nfound for you.",
+  "fr": "Une sous-zone avec la zone à laquelle elle appartient. Le nom suffit : la zone est\ntrouvée pour vous."
+ },
+ "Zones.monsters": {
+  "en": "The monsters that can be found in a subzone.",
+  "fr": "Les monstres que l'on trouve dans une sous-zone."
+ },
+ "urls": {
+  "en": "Addresses on metamob.fr, built from what the API returns. Nothing is fetched.",
+  "fr": "Des adresses sur metamob.fr, construites à partir de ce que renvoie l'API. Rien n'est récupéré."
+ },
+ "urls.site": {
+  "en": "The site itself.",
+  "fr": "Le site lui-même."
+ },
+ "urls.monsterImage": {
+  "en": "The picture of a monster, from anything with an `image` or from the file name.",
+  "fr": "L'image d'un monstre, à partir de tout objet qui a une `image` ou du nom du fichier."
+ },
+ "urls.questTypeImage": {
+  "en": "The picture of a kind of quest, from the quest type or from the file name.",
+  "fr": "L'image d'un type de quête, à partir du type de quête ou du nom du fichier."
+ },
+ "urls.profile": {
+  "en": "The public profile page of a user, from the user or from the username.",
+  "fr": "La page de profil public d'un joueur, à partir du joueur ou de son pseudo."
+ },
+ "MonsterNameFr": {
+  "en": "Name of a monster, in French.",
+  "fr": "Nom d'un monstre, en français."
+ },
+ "MonsterNameEn": {
+  "en": "Name of a monster, in English.",
+  "fr": "Nom d'un monstre, en anglais."
+ },
+ "MonsterNameEs": {
+  "en": "Name of a monster, in Spanish.",
+  "fr": "Nom d'un monstre, en espagnol."
+ },
+ "ZoneNameFr": {
+  "en": "Name of a zone, in French.",
+  "fr": "Nom d'une zone, en français."
+ },
+ "ZoneNameEn": {
+  "en": "Name of a zone, in English.",
+  "fr": "Nom d'une zone, en anglais."
+ },
+ "ZoneNameEs": {
+  "en": "Name of a zone, in Spanish.",
+  "fr": "Nom d'une zone, en espagnol."
+ },
+ "SubzoneNameFr": {
+  "en": "Name of a subzone, in French.",
+  "fr": "Nom d'une sous-zone, en français."
+ },
+ "SubzoneNameEn": {
+  "en": "Name of a subzone, in English.",
+  "fr": "Nom d'une sous-zone, en anglais."
+ },
+ "SubzoneNameEs": {
+  "en": "Name of a subzone, in Spanish.",
+  "fr": "Nom d'une sous-zone, en espagnol."
+ },
+ "MonsterTypeNameFr": {
+  "en": "Name of a kind of monster, in French.",
+  "fr": "Nom d'un type de monstre, en français."
+ },
+ "MonsterTypeNameEn": {
+  "en": "Name of a kind of monster, in English.",
+  "fr": "Nom d'un type de monstre, en anglais."
+ },
+ "MonsterTypeNameEs": {
+  "en": "Name of a kind of monster, in Spanish.",
+  "fr": "Nom d'un type de monstre, en espagnol."
+ },
+ "QuestTypeNameFr": {
+  "en": "Name of a kind of quest, in French.",
+  "fr": "Nom d'un type de quête, en français."
+ },
+ "QuestTypeNameEn": {
+  "en": "Name of a kind of quest, in English.",
+  "fr": "Nom d'un type de quête, en anglais."
+ },
+ "QuestTypeNameEs": {
+  "en": "Name of a kind of quest, in Spanish.",
+  "fr": "Nom d'un type de quête, en espagnol."
+ },
+ "QuestTypeSlug": {
+  "en": "Slug of a kind of quest.",
+  "fr": "Slug d'un type de quête."
+ },
+ "ServerName": {
+  "en": "Name of a game server.",
+  "fr": "Nom d'un serveur de jeu."
+ },
+ "GameVersionName": {
+  "en": "Name of a version of the game.",
+  "fr": "Nom d'une version du jeu."
+ },
+ "QuestTemplateId": {
+  "en": "Id of a quest template.",
+  "fr": "Identifiant d'un modèle de quête."
+ },
+ "LocalizedName": {
+  "en": "A name in the three languages of the site.",
+  "fr": "Un nom dans les trois langues du site."
+ },
+ "Language": {
+  "en": "A language the site is translated in.",
+  "fr": "Une langue dans laquelle le site est traduit."
+ },
+ "GameVersion": {
+  "en": "A version of the game: Dofus (Unity), Dofus Retro (1.29) or Dofus Touch.",
+  "fr": "Une version du jeu : Dofus (Unity), Dofus Retro (1.29) ou Dofus Touch."
+ },
+ "Server": {
+  "en": "A game server.",
+  "fr": "Un serveur de jeu."
+ },
+ "Server.community": {
+  "en": "Community of the server.",
+  "fr": "Communauté du serveur."
+ },
+ "MonsterType": {
+  "en": "A kind of monster: 1 is a monster, 2 a boss, 3 an archmonster.",
+  "fr": "Un type de monstre : 1 est un monstre, 2 un boss, 3 un archimonstre."
+ },
+ "MonsterType.name": {
+  "en": "Lower-case names: `monstre`, `boss`, `archimonstre`.",
+  "fr": "Noms en minuscules : `monstre`, `boss`, `archimonstre`."
+ },
+ "QuestTypeRef": {
+  "en": "A kind of quest as it appears inside a quest: Ochre (`ocre`) or Grofus (`dokille`).",
+  "fr": "Un type de quête tel qu'il apparaît dans une quête : Ocre (`ocre`) ou Dokille (`dokille`)."
+ },
+ "QuestType": {
+  "en": "A kind of quest as `questTypes` returns it, with its image.",
+  "fr": "Un type de quête tel que le renvoie `questTypes`, avec son image."
+ },
+ "QuestType.image": {
+  "en": "File name of the image. `urls.questTypeImage()` turns it into a URL.",
+  "fr": "Nom du fichier de l'image. `urls.questTypeImage()` le transforme en URL."
+ },
+ "QuestTemplate": {
+  "en": "A quest template: the monsters to capture for one kind of quest in one version of the game.",
+  "fr": "Un modèle de quête : les monstres à capturer pour un type de quête dans une version du jeu."
+ },
+ "QuestTemplate.monster_count": {
+  "en": "Monsters the quest asks for.",
+  "fr": "Monstres que demande la quête."
+ },
+ "QuestTemplate.step_count": {
+  "en": "Steps of the quest.",
+  "fr": "Étapes de la quête."
+ },
+ "QuestTemplateRef": {
+  "en": "The template a quest follows, as it appears inside a quest.",
+  "fr": "Le modèle que suit une quête, tel qu'il apparaît dans une quête."
+ },
+ "QuestTemplateRef.quest_type": {
+  "en": "Kind of the quest. Two quests can trade only when they share it, on the same server.",
+  "fr": "Type de la quête. Deux quêtes ne peuvent échanger que si elles ont le même, sur le même serveur."
+ },
+ "MonsterReference": {
+  "en": "The base monster of an archmonster.",
+  "fr": "Le monstre de base d'un archimonstre."
+ },
+ "Monster": {
+  "en": "A monster.",
+  "fr": "Un monstre."
+ },
+ "Monster.image": {
+  "en": "File name of the image. `urls.monsterImage()` turns it into a URL.",
+  "fr": "Nom du fichier de l'image. `urls.monsterImage()` le transforme en URL."
+ },
+ "Monster.reference": {
+  "en": "For an archmonster, the monster it is the rare version of.",
+  "fr": "Pour un archimonstre, le monstre dont il est la version rare."
+ },
+ "Zone": {
+  "en": "A zone of the game.",
+  "fr": "Une zone du jeu."
+ },
+ "SubzoneRef": {
+  "en": "A subzone as it appears in a list: its id and name.",
+  "fr": "Une sous-zone telle qu'elle apparaît dans une liste : son identifiant et son nom."
+ },
+ "ZoneDetail": {
+  "en": "A zone with its subzones.",
+  "fr": "Une zone avec ses sous-zones."
+ },
+ "Subzone": {
+  "en": "A subzone with the zone it belongs to.",
+  "fr": "Une sous-zone avec la zone à laquelle elle appartient."
+ },
+ "MonsterDetail": {
+  "en": "A monster with the places it lives in.",
+  "fr": "Un monstre avec les endroits où il vit."
+ },
+ "MonsterDetail.zones": {
+  "en": "Zones where the monster can be found, each with the subzones concerned.",
+  "fr": "Les zones où l'on trouve le monstre, chacune avec les sous-zones concernées."
+ },
+ "TemplateMonster": {
+  "en": "A monster of a quest template, with the step it belongs to.",
+  "fr": "Un monstre d'un modèle de quête, avec l'étape à laquelle il appartient."
+ },
+ "KraloveEvent": {
+  "en": "A Kralamoure event, as the list returns it.",
+  "fr": "Un événement Kralamoure, tel que la liste le renvoie."
+ },
+ "KraloveEvent.event_datetime": {
+  "en": "ISO 8601 date in UTC.",
+  "fr": "Date ISO 8601 en UTC."
+ },
+ "KraloveEvent.creator": {
+  "en": "`null` when the account was deleted for good, or when you and that user blocked each other.",
+  "fr": "`null` quand le compte a été supprimé définitivement, ou quand vous et ce joueur vous êtes bloqués mutuellement."
+ },
+ "KraloveParticipant": {
+  "en": "Someone taking part in a Kralamoure event.",
+  "fr": "Une personne qui participe à un événement Kralamoure."
+ },
+ "KraloveParticipant.username": {
+  "en": "`null` when the account was deleted for good, or when you and that user blocked each other.",
+  "fr": "`null` quand le compte a été supprimé définitivement, ou quand vous et ce joueur vous êtes bloqués mutuellement."
+ },
+ "KraloveMessage": {
+  "en": "A message posted on a Kralamoure event.",
+  "fr": "Un message publié sur un événement Kralamoure."
+ },
+ "KraloveMessage.username": {
+  "en": "`null` when the account was deleted for good, or when you and that user blocked each other.",
+  "fr": "`null` quand le compte a été supprimé définitivement, ou quand vous et ce joueur vous êtes bloqués mutuellement."
+ },
+ "KraloveMessage.created_at": {
+  "en": "ISO 8601 date in UTC.",
+  "fr": "Date ISO 8601 en UTC."
+ },
+ "KraloveEventDetail": {
+  "en": "A Kralamoure event with its participants and its messages.",
+  "fr": "Un événement Kralamoure avec ses participants et ses messages."
+ },
+ "KraloveEventDetail.event_datetime": {
+  "en": "ISO 8601 date in UTC.",
+  "fr": "Date ISO 8601 en UTC."
+ },
+ "KraloveEventDetail.creator": {
+  "en": "`null` when the account was deleted for good, or when you and that user blocked each other.",
+  "fr": "`null` quand le compte a été supprimé définitivement, ou quand vous et ce joueur vous êtes bloqués mutuellement."
+ },
+ "Avatar": {
+  "en": "The monster a user picked as their avatar.",
+  "fr": "Le monstre qu'un joueur a choisi comme avatar."
+ },
+ "UserSummary": {
+  "en": "A user as a search or a trade match returns them.",
+  "fr": "Un joueur tel que le renvoie une recherche ou une correspondance d'échange."
+ },
+ "UserSummary.last_active": {
+  "en": "ISO 8601 date in UTC.",
+  "fr": "Date ISO 8601 en UTC."
+ },
+ "Account": {
+  "en": "The account an API key belongs to.",
+  "fr": "Le compte auquel appartient une clé API."
+ },
+ "QuestBase": {
+  "en": "What every quest carries, whoever looks at it.",
+  "fr": "Ce que porte chaque quête, quel que soit celui qui la regarde."
+ },
+ "QuestBase.slug": {
+  "en": "Identifier of the quest, the one in the URL of its page.",
+  "fr": "Identifiant de la quête, celui de l'URL de sa page."
+ },
+ "QuestBase.current_step": {
+  "en": "Step the character is at, from 1 to `step_count` of the quest template, `step_count + 1` once the quest is over.",
+  "fr": "Étape où en est le personnage, de 1 au `step_count` du modèle de quête, `step_count + 1` une fois la quête terminée."
+ },
+ "QuestBase.parallel_quests": {
+  "en": "How many times the quest is being done in parallel: the number of each monster to own.",
+  "fr": "Combien de fois la quête est faite en parallèle : le nombre d'exemplaires de chaque monstre à posséder."
+ },
+ "PublicQuest": {
+  "en": "A public quest in a profile.",
+  "fr": "Une quête publique dans un profil."
+ },
+ "PublicQuestSummary": {
+  "en": "A public quest in the list of a user's quests.",
+  "fr": "Une quête publique dans la liste des quêtes d'un joueur."
+ },
+ "PublicQuestSummary.wanted_count": {
+  "en": "Monsters the quest is looking for.",
+  "fr": "Monstres que la quête recherche."
+ },
+ "PublicQuestSummary.offered_count": {
+  "en": "Monsters the quest offers.",
+  "fr": "Monstres que la quête propose."
+ },
+ "UserProfile": {
+  "en": "The public profile of a user.",
+  "fr": "Le profil public d'un joueur."
+ },
+ "QuestMonster": {
+  "en": "A monster of a quest, as anyone can see it.",
+  "fr": "Un monstre d'une quête, tel que tout le monde peut le voir."
+ },
+ "QuestMonster.step": {
+  "en": "Step of the quest the monster belongs to.",
+  "fr": "Étape de la quête à laquelle appartient le monstre."
+ },
+ "QuestMonster.quantity": {
+  "en": "How many the player owns.",
+  "fr": "Combien d'exemplaires le joueur en possède."
+ },
+ "QuestMonster.want": {
+  "en": "How many the quest is really looking for in trades, after the player's trade settings.",
+  "fr": "Combien d'exemplaires la quête recherche vraiment dans les échanges, une fois les réglages d'échange du joueur appliqués."
+ },
+ "QuestMonster.offer": {
+  "en": "How many the quest really offers in trades. Can be 0 even when the player owns spares.",
+  "fr": "Combien d'exemplaires la quête propose vraiment dans les échanges. Peut valoir 0 même quand le joueur en possède en trop."
+ },
+ "OwnQuest": {
+  "en": "One of your quests, as `quests.list()` returns it.",
+  "fr": "Une de vos quêtes, telle que la renvoie `quests.list()`."
+ },
+ "OwnQuest.show_trades": {
+  "en": "The \"Show on my public profile\" setting. A hidden quest still answers to your own key.",
+  "fr": "Le réglage « Afficher sur mon profil public ». Une quête masquée répond toujours à votre propre clé."
+ },
+ "TypeFilter": {
+  "en": "Trade filters of one kind of monster.",
+  "fr": "Filtres d'échange d'un type de monstre."
+ },
+ "TypeFilter.never_offer": {
+  "en": "Never offer this kind of monster.",
+  "fr": "Ne jamais proposer ce type de monstre."
+ },
+ "TypeFilter.never_want": {
+  "en": "Never look for this kind of monster.",
+  "fr": "Ne jamais rechercher ce type de monstre."
+ },
+ "TypeFilters": {
+  "en": "Trade filters by kind of monster, keyed by the id of the kind as a string:\n`\"1\"` monsters, `\"2\"` bosses, `\"3\"` archmonsters.",
+  "fr": "Filtres d'échange par type de monstre, indexés par l'identifiant du type sous forme de chaîne :\n`\"1\"` les monstres, `\"2\"` les boss, `\"3\"` les archimonstres."
+ },
+ "QuestSettings": {
+  "en": "The full settings of one of your quests.",
+  "fr": "Les réglages complets d'une de vos quêtes."
+ },
+ "QuestSettings.trade_mode": {
+  "en": "0 is automatic, 1 is expert mode.",
+  "fr": "0 pour le mode automatique, 1 pour le mode expert."
+ },
+ "QuestSettings.trade_offer_threshold": {
+  "en": "Expert mode: offer a monster from this quantity up. `null` in automatic mode.",
+  "fr": "Mode expert : proposer un monstre à partir de cette quantité. `null` en mode automatique."
+ },
+ "QuestSettings.trade_want_threshold": {
+  "en": "Expert mode: look for a monster up to this quantity. `null` in automatic mode.",
+  "fr": "Mode expert : rechercher un monstre jusqu'à cette quantité. `null` en mode automatique."
+ },
+ "QuestUpdate": {
+  "en": "What `quests.update()` can change. Every field is optional.",
+  "fr": "Ce que `quests.update()` peut modifier. Chaque champ est facultatif."
+ },
+ "QuestUpdate.character_name": {
+  "en": "Name of the character, 200 characters at most.",
+  "fr": "Nom du personnage, 200 caractères au plus."
+ },
+ "QuestUpdate.parallel_quests": {
+  "en": "Quests done in parallel, from 1. The site sets the upper bound.",
+  "fr": "Quêtes faites en parallèle, à partir de 1. Le site fixe la limite haute."
+ },
+ "QuestUpdate.current_step": {
+  "en": "Step the character is at, from 1 to `step_count` of the quest template, `step_count + 1` once the quest is over.",
+  "fr": "Étape où en est le personnage, de 1 au `step_count` du modèle de quête, `step_count + 1` une fois la quête terminée."
+ },
+ "QuestUpdate.show_trades": {
+  "en": "The \"Show on my public profile\" setting.",
+  "fr": "Le réglage « Afficher sur mon profil public »."
+ },
+ "QuestUpdate.trade_mode": {
+  "en": "0 is automatic, 1 is expert mode.",
+  "fr": "0 pour le mode automatique, 1 pour le mode expert."
+ },
+ "QuestUpdate.trade_offer_threshold": {
+  "en": "Expert mode: offer a monster from this quantity up, 0 to 99. Only saved in expert mode.",
+  "fr": "Mode expert : proposer un monstre à partir de cette quantité, de 0 à 99. Enregistré seulement en mode expert."
+ },
+ "QuestUpdate.trade_want_threshold": {
+  "en": "Expert mode: look for a monster up to this quantity, 0 to 99. Only saved in expert mode.",
+  "fr": "Mode expert : rechercher un monstre jusqu'à cette quantité, de 0 à 99. Enregistré seulement en mode expert."
+ },
+ "QuestUpdate.never_offer_normal": {
+  "en": "Never offer normal monsters.",
+  "fr": "Ne jamais proposer de monstres normaux."
+ },
+ "QuestUpdate.never_want_normal": {
+  "en": "Never look for normal monsters.",
+  "fr": "Ne jamais rechercher de monstres normaux."
+ },
+ "QuestUpdate.never_offer_boss": {
+  "en": "Never offer bosses.",
+  "fr": "Ne jamais proposer de boss."
+ },
+ "QuestUpdate.never_want_boss": {
+  "en": "Never look for bosses.",
+  "fr": "Ne jamais rechercher de boss."
+ },
+ "QuestUpdate.never_offer_arch": {
+  "en": "Never offer archmonsters.",
+  "fr": "Ne jamais proposer d'archimonstres."
+ },
+ "QuestUpdate.never_want_arch": {
+  "en": "Never look for archmonsters.",
+  "fr": "Ne jamais rechercher d'archimonstres."
+ },
+ "QuestUpdate.type_filters": {
+  "en": "The same filters, keyed by kind. Only what you list changes: `{ \"3\": { never_want: true } }`.",
+  "fr": "Les mêmes filtres, indexés par type. Seul ce que vous listez change : `{ \"3\": { never_want: true } }`."
+ },
+ "QuestUpdateResult": {
+  "en": "What `quests.update()` answers: the slug and only the fields you changed.\nThe `never_*` flags come back grouped in `type_filters`.",
+  "fr": "Ce que répond `quests.update()` : le slug et seulement les champs que vous avez modifiés.\nLes indicateurs `never_*` reviennent regroupés dans `type_filters`."
+ },
+ "OwnQuestMonster": {
+  "en": "A monster of one of your quests, with its manual trade overrides.",
+  "fr": "Un monstre d'une de vos quêtes, avec ses réglages manuels."
+ },
+ "OwnQuestMonster.trade_offer": {
+  "en": "Manual override of the quantity offered. `null` means none: the value is\ncalculated. It is not the same as 0, which forces \"offer nothing\".",
+  "fr": "Réglage manuel de la quantité proposée. `null` signifie aucun : la valeur est\ncalculée. Ce n'est pas la même chose que 0, qui impose « ne rien proposer »."
+ },
+ "OwnQuestMonster.trade_want": {
+  "en": "Manual override of the quantity wanted. `null` means none: the value is calculated.",
+  "fr": "Réglage manuel de la quantité recherchée. `null` signifie aucun : la valeur est calculée."
+ },
+ "MonsterQuantityResult": {
+  "en": "What setting a quantity answers, for each monster.",
+  "fr": "Ce que répond l'enregistrement d'une quantité, pour chaque monstre."
+ },
+ "MonsterQuantityResult.status": {
+  "en": "`owned - parallel_quests`: negative when some are missing, positive when there are spares.",
+  "fr": "`owned - parallel_quests` : négatif quand il en manque, positif quand il y en a en trop."
+ },
+ "MonsterQuantityResult.effective_offer": {
+  "en": "How many the quest really offers after the trade mode, thresholds and overrides.",
+  "fr": "Combien d'exemplaires la quête propose vraiment, une fois le mode d'échange, les seuils et les réglages manuels appliqués."
+ },
+ "MonsterQuantityResult.effective_want": {
+  "en": "How many the quest really looks for after the trade mode, thresholds and overrides.",
+  "fr": "Combien d'exemplaires la quête recherche vraiment, une fois le mode d'échange, les seuils et les réglages manuels appliqués."
+ },
+ "MonstersUpdateResult": {
+  "en": "What `quests.setMonsters()` answers.",
+  "fr": "Ce que répond `quests.setMonsters()`."
+ },
+ "TradeOverride": {
+  "en": "A manual trade override. `null` hands a value back to the automatic calculation.",
+  "fr": "Un réglage manuel. `null` rend une valeur au calcul automatique."
+ },
+ "TradeOverride.trade_offer": {
+  "en": "Quantity to offer, from 0 to the quantity owned.",
+  "fr": "Quantité à proposer, de 0 à la quantité possédée."
+ },
+ "TradeOverride.trade_want": {
+  "en": "Quantity to look for, from 0.",
+  "fr": "Quantité à rechercher, à partir de 0."
+ },
+ "TradeOverrideResult": {
+  "en": "What `quests.setTrade()` answers.",
+  "fr": "Ce que répond `quests.setTrade()`."
+ },
+ "MatchMonster": {
+  "en": "A monster one side of a match can give the other.",
+  "fr": "Un monstre qu'un côté d'une correspondance peut donner à l'autre."
+ },
+ "MatchMonster.available": {
+  "en": "Quantity available for the trade.",
+  "fr": "Quantité disponible pour l'échange."
+ },
+ "MatchMonster.needed": {
+  "en": "Quantity needed.",
+  "fr": "Quantité nécessaire."
+ },
+ "MatchMonster.covers_need": {
+  "en": "Whether what is available covers the whole need.",
+  "fr": "Indique si ce qui est disponible couvre tout le besoin."
+ },
+ "TradeMatch": {
+  "en": "A trade partner for one of your quests.",
+  "fr": "Un partenaire d'échange pour une de vos quêtes."
+ },
+ "TradeMatch.match_score": {
+  "en": "How many different monsters you can give, plus how many you can receive.",
+  "fr": "Le nombre de monstres différents que vous pouvez donner, plus le nombre que vous pouvez recevoir."
+ },
+ "ZoneProgressMonster": {
+  "en": "A monster in the progress of a quest by zone.",
+  "fr": "Un monstre dans la progression d'une quête par zone."
+ },
+ "ZoneProgressMonster.status": {
+  "en": "`validated`: a step already passed. `completed`: enough of them.\n`incomplete`: some are missing.",
+  "fr": "`validated` : une étape déjà passée. `completed` : vous en possédez assez.\n`incomplete` : il en manque."
+ },
+ "SubzoneProgress": {
+  "en": "The progress of a quest in one subzone.",
+  "fr": "La progression d'une quête dans une sous-zone."
+ },
+ "ZoneProgress": {
+  "en": "The progress of a quest in one zone.",
+  "fr": "La progression d'une quête dans une zone."
+ },
+ "ZoneProgress.subzones": {
+  "en": "Least advanced first, complete ones last.",
+  "fr": "Les moins avancées en premier, les complètes en dernier."
+ },
+ "Conversation": {
+  "en": "A conversation: one per correspondent.",
+  "fr": "Une conversation : une par correspondant."
+ },
+ "Conversation.username": {
+  "en": "The correspondent. A deleted account stays readable here for 30 days while `users.get()` answers 404.",
+  "fr": "Le correspondant. Un compte supprimé reste lisible ici pendant 30 jours, alors que `users.get()` répond 404."
+ },
+ "Conversation.message_count": {
+  "en": "Visible messages, trade proposals included.",
+  "fr": "Messages visibles, propositions d'échange comprises."
+ },
+ "Conversation.unread_count": {
+  "en": "Messages received and not read yet, trade proposals included.",
+  "fr": "Messages reçus et pas encore lus, propositions d'échange comprises."
+ },
+ "Conversation.has_priority_unread": {
+  "en": "Whether a priority message from the Metamob staff is among the unread\nones: the site shows those in a golden popup.",
+  "fr": "Indique si un message prioritaire de l'équipe de Metamob fait partie des non\nlus : le site les affiche dans une fenêtre dorée."
+ },
+ "Conversation.last_message_at": {
+  "en": "ISO 8601 date in UTC.",
+  "fr": "Date ISO 8601 en UTC."
+ },
+ "ConversationMessage": {
+  "en": "A text message of a conversation.",
+  "fr": "Un message texte d'une conversation."
+ },
+ "ConversationMessage.created_at": {
+  "en": "ISO 8601 date in UTC.",
+  "fr": "Date ISO 8601 en UTC."
+ },
+ "ConversationMessage.read_at": {
+  "en": "ISO 8601 date in UTC, or `null`.",
+  "fr": "Date ISO 8601 en UTC, ou `null`."
+ },
+ "ConversationMessage.is_priority": {
+  "en": "A priority message from the Metamob staff, which the site shows in a\ngolden popup until it is read. Only the staff can send one.",
+  "fr": "Un message prioritaire de l'équipe de Metamob, que le site affiche dans une\nfenêtre dorée jusqu'à sa lecture. Seule l'équipe peut en envoyer."
+ },
+ "ProposalMonster": {
+  "en": "A quantity of a monster in a trade proposal. `monsters.get()` or `data.monster()` gives the monster.",
+  "fr": "Une quantité d'un monstre dans une proposition d'échange. `monsters.get()` ou `data.monster()` donne le monstre."
+ },
+ "ProposalMonsterDetail": {
+  "en": "A monster that leaves or enters your quest with a trade proposal, with what you own of it now.",
+  "fr": "Un monstre qui sort de votre quête ou y entre avec une proposition d'échange, avec ce que vous en possédez maintenant."
+ },
+ "ProposalMonsterDetail.owned": {
+  "en": "How many you own now in your quest the proposal is about, the trade included\nonce your side is applied. `null` when you have no quest of this kind on this server.",
+  "fr": "Combien d'exemplaires vous en possédez maintenant dans votre quête concernée par la proposition, l'échange compris\nune fois votre côté appliqué. `null` quand vous n'avez pas de quête de ce type sur ce serveur."
+ },
+ "ProposalMonsterDetail.applied_quantity": {
+  "en": "In the answer of `apply()` only: how many really moved, less than `quantity` when it was clamped.",
+  "fr": "Seulement dans la réponse d'`apply()` : combien d'exemplaires ont vraiment bougé, moins que `quantity` quand la quantité a été réduite."
+ },
+ "ProposalViewer": {
+  "en": "Your side of a trade proposal.",
+  "fr": "Votre côté d'une proposition d'échange."
+ },
+ "ProposalViewer.role": {
+  "en": "Whether you sent the proposal or received it.",
+  "fr": "Indique si vous avez envoyé ou reçu la proposition."
+ },
+ "ProposalViewer.applied": {
+  "en": "You applied your side.",
+  "fr": "Vous avez appliqué votre côté."
+ },
+ "ProposalViewer.clamped": {
+  "en": "`null` until you apply your side, then `true` when a quantity was reduced: to what you owned, or to the maximum quantity.",
+  "fr": "`null` tant que vous n'avez pas appliqué votre côté, puis `true` quand une quantité a été réduite : à ce que vous possédiez, ou à la quantité maximale."
+ },
+ "ProposalViewer.removed": {
+  "en": "What leaves your quest.",
+  "fr": "Ce qui sort de votre quête."
+ },
+ "ProposalViewer.added": {
+  "en": "What enters your quest.",
+  "fr": "Ce qui entre dans votre quête."
+ },
+ "ProposalQuest": {
+  "en": "The quest of one side of a trade proposal.",
+  "fr": "La quête d'un des deux côtés d'une proposition d'échange."
+ },
+ "ProposalQuest.character_name": {
+  "en": "The character doing the quest, when its owner gave one.",
+  "fr": "Le personnage qui fait la quête, quand son propriétaire en a indiqué un."
+ },
+ "ProposalQuestTemplate": {
+  "en": "The quest template of a trade proposal: which kind of quest, in which version of the game.",
+  "fr": "Le modèle de quête d'une proposition d'échange : quel type de quête, dans quelle version du jeu."
+ },
+ "TradeProposal": {
+  "en": "A trade proposal between two players.",
+  "fr": "Une proposition d'échange entre deux joueurs."
+ },
+ "TradeProposal.sender": {
+  "en": "Username of the player who proposed.",
+  "fr": "Pseudo du joueur qui a fait la proposition."
+ },
+ "TradeProposal.recipient": {
+  "en": "Username of the player the proposal was made to.",
+  "fr": "Pseudo du joueur à qui la proposition a été faite."
+ },
+ "TradeProposal.status": {
+  "en": "`pending`: nobody confirmed yet. `half_applied`: one side confirmed, see\n`applications`. `completed`: both did. `cancelled`: cancelled or expired.",
+  "fr": "`pending` : personne n'a encore confirmé. `half_applied` : un côté a confirmé, voir\n`applications`. `completed` : les deux l'ont fait. `cancelled` : annulée ou expirée."
+ },
+ "TradeProposal.server": {
+  "en": "The server the trade happens on.",
+  "fr": "Le serveur sur lequel se fait l'échange."
+ },
+ "TradeProposal.quest_template": {
+  "en": "The kind of quest and the version of the game. `null` when the quest concerned was deleted.",
+  "fr": "Le type de quête et la version du jeu. `null` quand la quête concernée a été supprimée."
+ },
+ "TradeProposal.sender_quest": {
+  "en": "The quest of the sender, or `null` when it is not visible.",
+  "fr": "La quête de l'expéditeur, ou `null` quand elle n'est pas visible."
+ },
+ "TradeProposal.recipient_quest": {
+  "en": "The quest of the recipient, or `null` when it is not visible.",
+  "fr": "La quête du destinataire, ou `null` quand elle n'est pas visible."
+ },
+ "TradeProposal.monsters_given": {
+  "en": "What the sender gives. If you are the recipient, this is what you receive.",
+  "fr": "Ce que donne l'expéditeur. Si vous êtes le destinataire, c'est ce que vous recevez."
+ },
+ "TradeProposal.monsters_received": {
+  "en": "What the sender receives. If you are the recipient, this is what you give.",
+  "fr": "Ce que reçoit l'expéditeur. Si vous êtes le destinataire, c'est ce que vous donnez."
+ },
+ "TradeProposal.applications": {
+  "en": "Who confirmed their side.",
+  "fr": "Qui a confirmé son côté."
+ },
+ "TradeProposal.cancelled_at": {
+  "en": "ISO 8601 date in UTC, or `null`.",
+  "fr": "Date ISO 8601 en UTC, ou `null`."
+ },
+ "TradeProposal.cancelled_by": {
+  "en": "Username of the player who cancelled it. `null` when it is not cancelled, or when it expired.",
+  "fr": "Pseudo du joueur qui l'a annulée. `null` quand elle n'est pas annulée, ou quand elle a expiré."
+ },
+ "TradeProposal.created_at": {
+  "en": "ISO 8601 date in UTC.",
+  "fr": "Date ISO 8601 en UTC."
+ },
+ "TradeProposal.read_at": {
+  "en": "When the recipient read it, as an ISO 8601 date in UTC, or `null` while unread.",
+  "fr": "Le moment où le destinataire l'a lue, en date ISO 8601 en UTC, ou `null` tant qu'elle n'est pas lue."
+ },
+ "TradeProposalDetail": {
+  "en": "A trade proposal read on its own, with your side of it.",
+  "fr": "Une proposition d'échange lue seule, avec votre côté."
+ },
+ "TradeProposalDetail.viewer": {
+  "en": "Your side: your role, whether you applied it, and what leaves and enters your quest.",
+  "fr": "Votre côté : votre rôle, si vous l'avez appliqué, et ce qui sort de votre quête et y entre."
+ },
+ "ConversationProposal": {
+  "en": "A trade proposal as it appears in a conversation, among the messages.",
+  "fr": "Une proposition d'échange telle qu'elle apparaît dans une conversation, parmi les messages."
+ },
+ "ConversationItem": {
+  "en": "What a conversation is made of. `kind` tells the two apart.",
+  "fr": "Ce dont est faite une conversation. `kind` distingue les deux."
+ },
+ "MarkAsReadResult": {
+  "en": "What marking a conversation as read answers.",
+  "fr": "Ce que répond le marquage d'une conversation comme lue."
+ },
+ "MarkAsReadResult.marked_count": {
+  "en": "How many messages were marked as read. 0 when there was nothing unread.",
+  "fr": "Combien de messages ont été marqués comme lus. 0 quand il n'y avait rien de non lu."
+ }
+}

@@ -81,25 +81,17 @@ Avec ces méthodes, vos quêtes apparaissent comme les autres les voient : seule
 - Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT` avant l'envoi.
 - Rien ici n'est mis en cache par défaut. Pour un profil souvent affiché : `cache: { methods: { "users.get": "1m" } }`, voir [Cache](/basics/caching/).
 
+<!-- exports:start -->
 ## Référence
 
-| Méthode | Renvoie |
+Chaque export a sa page dans la [référence](/reference/) :
+
+| Export | À quoi il sert |
 | --- | --- |
-| `users.search(query, { server, activeWithinDays, limit, offset }, options?)` | une liste de `UserSummary` |
-| `users.get(username, options?)` | `UserProfile` |
-| `users.quests(username, options?)` | `PublicQuestSummary[]` |
-| `users.quest(username, slug, { type, status, step, limit, offset }, options?)` | une liste de `QuestMonster`, avec `page.quest` |
-
-Une quête publique :
-
-| Champ | Signification |
-| --- | --- |
-| `slug` | Son identifiant |
-| `character_name` | Le personnage qui fait la quête |
-| `current_step` | L'étape où en est le personnage |
-| `parallel_quests` | Quêtes menées en parallèle, soit le nombre d'exemplaires de chaque monstre à réunir |
-| `server` | Le serveur, avec sa version du jeu |
-| `quest_template` | Le type de quête, son nombre de monstres et d'étapes |
-| `wanted_count`, `offered_count` | Seulement avec `users.quests()` |
-
-Un monstre d'une quête publique est un `Monster` avec `step`, `quantity`, `want` et `offer`.
+| [`Users`](/reference/users/) | Les autres joueurs : leur profil et leurs quêtes publiques. |
+| [`PublicQuest`](/reference/public-quest/) | Une quête publique dans un profil. |
+| [`PublicQuestParams`](/reference/public-quest-params/) | Filtres de [`Users.quest`](/reference/users/). |
+| [`PublicQuestSummary`](/reference/public-quest-summary/) | Une quête publique dans la liste des quêtes d'un joueur. |
+| [`UserProfile`](/reference/user-profile/) | Le profil public d'un joueur. |
+| [`UserSearchParams`](/reference/user-search-params/) | Filtres de [`Users.search`](/reference/users/). |
+<!-- exports:end -->

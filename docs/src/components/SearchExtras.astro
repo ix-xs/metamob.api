@@ -6,19 +6,19 @@ const { locale } = Astro.locals.starlightRoute;
 const t = useT(locale);
 
 const STARTING_POINTS = [
-  "start/quick-start",
+  "script/client",
   "basics/names-and-ids",
   "basics/lists",
   "basics/rate-limit",
   "resources/quests",
   "resources/trading",
-  "reference/methods",
+  "resources/methods",
 ];
 const QUERIES = t("search.queries").split("|");
 
 function area(slug: string): string {
   const folder = slug.includes("/") ? slug.slice(0, slug.indexOf("/")) : "";
-  if (folder === "" || folder === "start") return t("area.start");
+  if (folder === "" || folder === "start" || folder === "script") return t("area.start");
   if (folder === "reference" || folder === "help") return t("area.reference");
   return t(`area.${folder}` as UiKey);
 }

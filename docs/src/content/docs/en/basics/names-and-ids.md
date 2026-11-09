@@ -119,14 +119,21 @@ A subzone added to the game after the package was published is not in it yet: gi
 await metamob.zones.monsters("Coin des Bouftous", { zone: "Amakna" });
 ```
 
+<!-- exports:start -->
 ## Reference
 
-| Type | Accepts |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `MonsterLike` | `number`, a monster name, `{ id }` |
-| `ZoneLike`, `SubzoneLike` | `number`, a name, `{ id }` |
-| `ServerLike`, `GameVersionLike` | `number`, a name, `{ id }` |
-| `MonsterTypeLike` | `number`, a name, `{ id }` |
-| `QuestTypeLike` | `number`, a slug, a name, `{ id }` |
-| `QuestTemplateLike` | `number`, `{ id }`, `{ questType, gameVersion }` |
-| `MonsterHint` | `{ gameVersion }`, `{ template }` |
+| [`normalizeName`](/reference/normalize-name/) | The form names are compared in: no accents, lower case, one kind of apostrophe and of dash, single spaces. |
+| [`GameVersionLike`](/reference/game-version-like/) | A version of the game: its id, its name, or an object with its `id`. |
+| [`MonsterLike`](/reference/monster-like/) | A monster: its id, its name in French, English or Spanish, or an object with its `id`. |
+| [`MonsterTypeLike`](/reference/monster-type-like/) | A kind of monster: its id (1, 2, 3), its name in French, English or Spanish, or an object with its `id`. |
+| [`QuestTemplateLike`](/reference/quest-template-like/) | A quest template: its id, an object with its `id`, or the kind of quest and the version of the game it is for. |
+| [`QuestTypeLike`](/reference/quest-type-like/) | A kind of quest: its id, its slug (`ocre`, `dokille`), its name, or an object with its `id`. |
+| [`ServerLike`](/reference/server-like/) | A server: its id, its name, or an object with its `id`. |
+| [`SubzoneLike`](/reference/subzone-like/) | A subzone: its id, its name in French, English or Spanish, or an object with its `id`. |
+| [`ZoneLike`](/reference/zone-like/) | A zone: its id, its name in French, English or Spanish, or an object with its `id`. |
+| [`GameVersionName`](/reference/game-version-name/), [`MonsterNameEn`](/reference/monster-name-en/), [`MonsterNameEs`](/reference/monster-name-es/), [`MonsterNameFr`](/reference/monster-name-fr/), [`MonsterTypeNameEn`](/reference/monster-type-name-en/), [`MonsterTypeNameEs`](/reference/monster-type-name-es/), [`MonsterTypeNameFr`](/reference/monster-type-name-fr/), [`QuestTemplateId`](/reference/quest-template-id/), [`QuestTypeNameEn`](/reference/quest-type-name-en/), [`QuestTypeNameEs`](/reference/quest-type-name-es/), [`QuestTypeNameFr`](/reference/quest-type-name-fr/), [`QuestTypeSlug`](/reference/quest-type-slug/), [`ServerName`](/reference/server-name/), [`SubzoneNameEn`](/reference/subzone-name-en/), [`SubzoneNameEs`](/reference/subzone-name-es/), [`SubzoneNameFr`](/reference/subzone-name-fr/), [`ZoneNameEn`](/reference/zone-name-en/), [`ZoneNameEs`](/reference/zone-name-es/), [`ZoneNameFr`](/reference/zone-name-fr/) | The names the package knows, one type per language: monsters, zones, subzones, kinds of monster and of quest, servers, game versions. |
+<!-- exports:end -->

@@ -1,0 +1,74 @@
+---
+title: When it fails
+description: "Recognise the errors of the client and of the API, and react to each one."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+A revoked key, a deleted quest, the site out of reach: a call can fail. The
+client then throws an error that says what happened. This last step shows how
+to read it.
+
+## Catch an error
+
+Replace the content of `quest.ts`:
+
+```ts title="quest.ts"
+import { Metamob, isMetamobError } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+try {
+  const me = await metamob.me();
+  console.log(`Signed in as ${me.username}`);
+} catch (error) {
+  if (!isMetamobError(error)) throw error;
+  console.log(`${error.code}: ${error.message}`);
+  process.exitCode = 1;
+}
+```
+
+With a revoked key in `.env`:
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/errors/bad-key" />
+
+`isMetamobError()` tells whether the error comes from the client. Any other
+error is a bug in your code: the script throws it again.
+
+## The most common codes
+
+Every error has a `code`, the same whatever the language of the message:
+
+| Code | What happened | What to do |
+| --- | --- | --- |
+| `MISSING_API_KEY` | No key reached the client | Check `.env` and `--env-file=.env` |
+| `UNAUTHORIZED` | The API refuses the key | Create a new one on metamob.fr |
+| `NOT_FOUND` | What was asked for does not exist, or is not yours | Check the slug or the username |
+| `UNKNOWN_NAME` | No monster, zone or server has this name | Read the names offered in the message |
+| `NETWORK` | The site could not be reached | Try again later |
+
+[Error codes](/help/error-codes/) lists them all.
+
+## What the client already does
+
+You do not have to handle the rate limit: beyond 60 requests a minute, the
+client makes the next calls wait instead of sending them. A passing server
+error is retried on its own, a few times, before it is thrown.
+[The rate limit](/basics/rate-limit/) and [Errors](/basics/errors/) show how
+to tune both.
+
+## What next
+
+Your script signs in, reads your quests, lists what is missing, records a
+monster and finds who to trade with. To go further:
+
+- [The basics](/basics/configuration/): the options of the client, lists,
+  caching.
+- [The API](/resources/methods/): one page per part of the API, from quests
+  to messages.
+- [Complete examples](/recipes/discord-command/): a Discord command, a
+  progress report, a trade finder.

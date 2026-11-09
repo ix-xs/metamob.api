@@ -126,22 +126,16 @@ Les propositions envoyées et reçues se lisent avec [`tradeProposals.list()`](/
 - `NOT_FOUND` pour une quête qui n'est pas la vôtre.
 - Un réglage manuel vide, sans aucun des deux champs, est refusé avant d'être envoyé.
 
+<!-- exports:start -->
 ## Référence
 
-| Méthode | Renvoie |
+Chaque export a sa page dans la [référence](/reference/) :
+
+| Export | À quoi il sert |
 | --- | --- |
-| `quests.matches(slug, { minParallelQuests, onlyPossibleTrades, limit, offset }, options?)` | une liste de `TradeMatch` |
-| `quests.setTrade(slug, monster, { trade_offer, trade_want }, options?)` | `TradeOverrideResult` |
-| `quests.resetTrade(slug, monster, options?)` | `TradeOverrideResult` |
-
-Un `TradeMatch` :
-
-| Champ | Signification |
-| --- | --- |
-| `user` | `username`, `avatar`, `last_active` |
-| `quest` | `slug`, `character_name`, `parallel_quests` de sa quête |
-| `matches.they_have_you_want` | Ce qu'il peut vous donner |
-| `matches.you_have_they_want` | Ce que vous pouvez lui donner |
-| `match_score` | Nombre de monstres différents que vous pouvez donner, plus ceux que vous pouvez recevoir. Le classement privilégie l'équilibre, pas cette somme |
-
-Chaque monstre d'une correspondance a `id`, `name`, `available`, `needed` et `covers_need`.
+| [`MatchesParams`](/reference/matches-params/) | Filtres de [`Quests.matches`](/reference/quests/). |
+| [`MatchMonster`](/reference/match-monster/) | Un monstre qu'un côté d'une correspondance peut donner à l'autre. |
+| [`TradeMatch`](/reference/trade-match/) | Un partenaire d'échange pour une de vos quêtes. |
+| [`TradeOverride`](/reference/trade-override/) | Un réglage manuel. |
+| [`TradeOverrideResult`](/reference/trade-override-result/) | Ce que répond `quests.setTrade()`. |
+<!-- exports:end -->

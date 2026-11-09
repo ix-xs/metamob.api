@@ -171,31 +171,23 @@ setInterval(async () => {
 - Un identificador, una misión o una fecha no válidos se rechazan antes de enviarse.
 - Las propuestas pertenecen a la cuenta de la clave. Nada de esto se guarda en caché por defecto.
 
+<!-- exports:start -->
 ## Referencia
 
-| Método | Devuelve |
+Cada export tiene su página en la [referencia](/reference/):
+
+| Export | Para qué sirve |
 | --- | --- |
-| `tradeProposals.list({ direction, status, quest, since, limit, beforeId }, options?)` | una lista de `TradeProposal`, por cursor |
-| `tradeProposals.get(id, options?)` | `TradeProposalDetail` |
-| `tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received }, options?)` | `TradeProposalDetail` |
-| `tradeProposals.apply(id, { allowPartial }?, options?)` | `TradeProposalDetail` |
-| `tradeProposals.cancel(id, options?)` | `TradeProposalDetail` |
-
-Una `TradeProposal`:
-
-| Campo | Tipo |
-| --- | --- |
-| `id` | `number` |
-| `sender`, `recipient` | `string`, nombres de usuario |
-| `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
-| `server` | `Server \| null`, con su versión del juego |
-| `quest_template` | `{ id, quest_type } \| null`, `null` cuando la misión se ha borrado |
-| `sender_quest`, `recipient_quest` | `{ slug, character_name } \| null`, `null` cuando no es visible |
-| `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
-| `applications` | `{ username, created_at }[]`, quién ha confirmado |
-| `cancelled_at` | `string \| null` |
-| `cancelled_by` | `string \| null`, `null` cuando ha caducado |
-| `created_at` | `string` |
-| `read_at` | `string \| null`, `null` mientras el destinatario no la ha leído |
-
-Una `TradeProposalDetail` es una `TradeProposal` con `viewer`: `role` (`"sender" | "recipient"`), `applied` (`boolean`), `clamped` (`boolean | null`), `removed` y `added` (`{ monster_id, quantity, owned }[]`, con `applied_quantity` en la respuesta de `apply()`).
+| [`TradeProposals`](/reference/trade-proposals/) | Las propuestas de intercambio de la cuenta: las que enviaste y las que recibiste, en todas las misiones. |
+| [`ApplyProposalOptions`](/reference/apply-proposal-options/) | Opciones de [`TradeProposals.apply`](/reference/trade-proposals/). |
+| [`ConversationProposal`](/reference/conversation-proposal/) | Una propuesta de intercambio tal como aparece en una conversación, entre los mensajes. |
+| [`NewTradeProposal`](/reference/new-trade-proposal/) | Lo que envía [`TradeProposals.create`](/reference/trade-proposals/). |
+| [`ProposalMonster`](/reference/proposal-monster/) | Una cantidad de un monstruo en una propuesta de intercambio. |
+| [`ProposalMonsterDetail`](/reference/proposal-monster-detail/) | Un monstruo que sale de tu misión o entra en ella con una propuesta de intercambio, con lo que posees de él ahora. |
+| [`ProposalQuest`](/reference/proposal-quest/) | La misión de un lado de una propuesta de intercambio. |
+| [`ProposalQuestTemplate`](/reference/proposal-quest-template/) | La plantilla de misión de una propuesta de intercambio: qué tipo de misión, en qué versión del juego. |
+| [`ProposalViewer`](/reference/proposal-viewer/) | Tu lado de una propuesta de intercambio. |
+| [`TradeProposal`](/reference/trade-proposal/) | Una propuesta de intercambio entre dos jugadores. |
+| [`TradeProposalDetail`](/reference/trade-proposal-detail/) | Una propuesta de intercambio leída por separado, con tu lado. |
+| [`TradeProposalListParams`](/reference/trade-proposal-list-params/) | Filtros de [`TradeProposals.list`](/reference/trade-proposals/). |
+<!-- exports:end -->

@@ -1,0 +1,58 @@
+---
+title: Trouver avec qui échanger
+description: "Trouver les joueurs qui ont ce qui vous manque, et cherchent ce que vous avez en trop."
+---
+
+import TerminalDemo from '../../../components/demo/TerminalDemo.astro';
+
+Il vous manque des monstres, et d'autres joueurs en ont en trop. Metamob
+calcule qui peut échanger avec vous, comme sur sa page Communauté. Le script
+affiche les trois meilleurs partenaires.
+
+## Le script
+
+```ts title="trades.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+const partners = await metamob.quests.matches(quest.slug, { onlyPossibleTrades: true }).take(3);
+
+for (const { user, matches } of partners) {
+  const gives = matches.they_have_you_want.map((monster) => monster.name.fr);
+  const wants = matches.you_have_they_want.map((monster) => monster.name.fr);
+  console.log(`${user.username} has ${gives.join(", ")}`);
+  console.log(`  and is looking for ${wants.join(", ")}`);
+}
+```
+
+```bash
+node --env-file=.env trades.ts
+```
+
+<TerminalDemo scene="script/trades/partners" />
+
+Seules les quêtes du même type, sur le même serveur, peuvent échanger : les
+partenaires sont cherchés là.
+
+## Ce que contient un partenaire
+
+| Champ | Ce qu'il contient |
+| --- | --- |
+| `user.username` | Le pseudo du joueur |
+| `quest` | Sa quête : slug, personnage, quêtes en parallèle |
+| `matches.they_have_you_want` | Ce qu'il peut vous donner |
+| `matches.you_have_they_want` | Ce que vous pouvez lui donner |
+| `match_score` | Le classement : le nombre de monstres échangeables dans les deux sens |
+
+`onlyPossibleTrades: true` écarte les joueurs avec qui l'échange ne va que
+dans un sens. `.take(3)` s'arrête aux trois premiers.
+
+:::note[Proposer l'échange]
+Le script s'arrête à la recherche. Envoyer un message ou une proposition
+d'échange se fait avec `metamob.conversations` et `metamob.tradeProposals` :
+voir [Échanges](/resources/trading/).
+:::

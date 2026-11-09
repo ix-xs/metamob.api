@@ -74,22 +74,17 @@ A check every few minutes is enough. To read the list more often without more re
 - `NOT_FOUND` for an event that does not exist.
 - `from` in another format than `YYYY-MM-DD` throws `INVALID_ARGUMENT` before sending.
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `kralove.list({ server, from }, options?)` | `KraloveEvent[]` |
-| `kralove.get(id, options?)` | `KraloveEventDetail` |
-
-An event:
-
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `id` | `number` | |
-| `event_datetime` | `string` | When, as an ISO 8601 date in UTC: `2026-01-27T20:00:00Z` |
-| `description` | `string` | What the organiser wrote |
-| `creator` | `string \| null` | The organiser |
-| `server` | `Server \| null` | Where |
-| `participants_count`, `character_count`, `messages_count` | `number` | Only with `list()` |
-| `participants` | `{ username, character_count }[]` | Only with `get()` |
-| `messages` | `{ username, content, created_at }[]` | Only with `get()` |
+| [`Kralove`](/reference/kralove/) | The Kralamoure events: meetings players organise to fight the Kralove. |
+| [`KraloveEvent`](/reference/kralove-event/) | A Kralamoure event, as the list returns it. |
+| [`KraloveEventDetail`](/reference/kralove-event-detail/) | A Kralamoure event with its participants and its messages. |
+| [`KraloveListParams`](/reference/kralove-list-params/) | Filters of [`Kralove.list`](/reference/kralove/). |
+| [`KraloveMessage`](/reference/kralove-message/) | A message posted on a Kralamoure event. |
+| [`KraloveParticipant`](/reference/kralove-participant/) | Someone taking part in a Kralamoure event. |
+<!-- exports:end -->

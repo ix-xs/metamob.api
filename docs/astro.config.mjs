@@ -1,27 +1,36 @@
-import { existsSync } from "node:fs";
 import { defineConfig } from "astro/config";
 import { unified } from "@astrojs/markdown-remark";
 import starlight from "@astrojs/starlight";
-import { normalizeBase, remarkBaseLinks, withBase } from "./plugins/base-links.mjs";
+import { LOCALES, normalizeBase, remarkBaseLinks, withBase } from "./plugins/base-links.mjs";
+import { remarkApiLinks } from "./plugins/api-links.mjs";
 import { rehypeSharedHeadingIds } from "./plugins/heading-ids.mjs";
 import { rehypeWrapTables } from "./plugins/wrap-tables.mjs";
+import { MOVED } from "./redirects.mjs";
 import { atelierDark, atelierLight } from "./src/styles/code-themes.mjs";
 
 const site = process.env.DOCS_SITE || "https://ix-xs.github.io";
 const base = normalizeBase(process.env.DOCS_BASE || "/metamob.api");
 
-const draft = Boolean(process.env.DOCS_DRAFT);
-const exists = (slug) => ["md", "mdx"].some((extension) => existsSync(new URL(`./src/content/docs/${slug}.${extension}`, import.meta.url)));
-const pages = (...slugs) => slugs.filter((slug) => !draft || exists(slug)).map((slug) => ({ slug }));
-
-const section = (fr, en, es, directory) => ({ label: fr, translations: { en, es }, items: [{ autogenerate: { directory } }] });
+/** One group of the sidebar, its pages in reading order. */
+const group = ([fr, en, es], items, collapsed = true) => ({
+  label: fr,
+  translations: { en, es },
+  collapsed,
+  items: items.map((item) => (typeof item === "string" ? { slug: item } : item)),
+});
 
 export default defineConfig({
   site,
   base: base || "/",
+  redirects: Object.fromEntries(
+    Object.entries(MOVED).flatMap(([from, to]) => [
+      [from, withBase(to, base)],
+      ...LOCALES.map((code) => [`/${code}${from}`, withBase(`/${code}${to}`, base)]),
+    ]),
+  ),
   markdown: {
     processor: unified({
-      remarkPlugins: [[remarkBaseLinks, { base }]],
+      remarkPlugins: [remarkApiLinks, [remarkBaseLinks, { base }]],
       rehypePlugins: [rehypeSharedHeadingIds, rehypeWrapTables],
     }),
   },
@@ -51,6 +60,7 @@ export default defineConfig({
         "@fontsource/fragment-mono/400-italic.css",
         "./src/styles/atelier.css",
         "./src/styles/playground.css",
+        "./src/styles/reference.css",
       ],
       components: {
         Header: "./src/components/Header.astro",
@@ -58,7 +68,6 @@ export default defineConfig({
         ThemeSelect: "./src/components/ThemeSelect.astro",
         LanguageSelect: "./src/components/LanguageSelect.astro",
         PageTitle: "./src/components/PageTitle.astro",
-        Hero: "./src/components/Hero.astro",
       },
       expressiveCode: {
         themes: [atelierDark, atelierLight],
@@ -90,20 +99,55 @@ export default defineConfig({
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
       lastUpdated: false,
       sidebar: [
-        { label: "Introduction", translations: { en: "Introduction", es: "Introducción" }, link: "/" },
-        {
-          label: "Démarrer",
-          translations: { en: "Getting started", es: "Empezar" },
-          items: pages("start/quick-start", "start/api-key", "start/playground", "start/migrating-from-v4"),
-        },
-        section("Les bases", "Basics", "Lo básico", "basics"),
-        section("L'API", "The API", "La API", "resources"),
-        section("Exemples", "Examples", "Ejemplos", "recipes"),
-        {
-          label: "Référence",
-          translations: { en: "Reference", es: "Referencia" },
-          items: pages("reference/methods", "reference/errors", "reference/exports", "reference/runtimes", "help/troubleshooting", "help/faq"),
-        },
+        group(["Pour commencer", "Getting started", "Para empezar"], [
+          { slug: "index", label: "Introduction", translations: { en: "Introduction", es: "Introducción" } },
+          "start/installation",
+          "start/api-key",
+        ], false),
+        group(["Votre premier script", "Your first script", "Tu primer script"], [
+          "script/client",
+          "script/quests",
+          "script/missing",
+          "script/recording",
+          "script/trades",
+          "script/errors",
+        ], false),
+        group(["Les bases", "Basics", "Lo básico"], [
+          "basics/configuration",
+          "basics/names-and-ids",
+          "basics/lists",
+          "basics/embedded-data",
+          "basics/errors",
+          "basics/rate-limit",
+          "basics/caching",
+          "basics/many-keys",
+        ]),
+        group(["L'API", "The API", "La API"], [
+          "resources/methods",
+          "resources/account",
+          "resources/quests",
+          "resources/trading",
+          "resources/monsters",
+          "resources/zones",
+          "resources/users",
+          "resources/conversations",
+          "resources/trade-proposals",
+          "resources/kralove",
+          "resources/reference-data",
+        ]),
+        group(["Exemples complets", "Complete examples", "Ejemplos completos"], [
+          "recipes/discord-command",
+          "recipes/quest-progress",
+          "recipes/trade-finder",
+        ]),
+        group(["Aide", "Help", "Ayuda"], [
+          "help/troubleshooting",
+          "help/faq",
+          "help/error-codes",
+          "help/runtimes",
+          "help/playground",
+          "help/migrating-from-v4",
+        ]),
       ],
     }),
   ],

@@ -114,24 +114,17 @@ To read what the API says right now, use the calls: [`metamob.monsters`](/resour
 
 ## In a browser
 
-`data` needs neither a key nor a network: it also works in a web page. Importing only `data` leaves the client out of your bundle, and the data weighs about 30 kB once compressed. The [Try it](/start/playground/) page works this way.
+`data` needs neither a key nor a network: it also works in a web page. Importing only `data` leaves the client out of your bundle, and the data weighs about 30 kB once compressed. The [Try it](/help/playground/) page works this way.
 
+<!-- exports:start -->
 ## Reference
 
-| Member | Returns |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `monster(ref, hint?)` | `Monster \| undefined` |
-| `monstersNamed(name)` | `Monster[]`, more than one for a shared name |
-| `searchMonsters(query, { type, gameVersion, template, limit })` | `Monster[]` |
-| `zone(ref)`, `subzone(ref)` | `ZoneDetail \| undefined`, `Subzone \| undefined` |
-| `server(ref)`, `gameVersion(ref)` | `Server \| undefined`, `GameVersion \| undefined` |
-| `monsterType(ref)`, `questType(ref)` | `MonsterType \| undefined`, `QuestType \| undefined` |
-| `questTemplate(ref)` | `QuestTemplate \| undefined` |
-| `subzonesOf(monster)`, `zonesOf(monster)` | `Subzone[]`, `Zone[]` |
-| `monstersInSubzone(subzone)`, `monstersInZone(zone)` | `Monster[]` |
-| `archmonstersOf(monster)` | `Monster[]` |
-| `templatesOf(monster)` | `QuestTemplate[]` |
-| `templateMonsters(template, { step })` | `TemplateMonster[]` |
-| `stepOf(monster, template)` | `number \| undefined` |
-| `suggest(kind, text, limit?)` | `string[]` |
-| `fetchedAt` | `string`, as `YYYY-MM-DD` |
+| [`Dataset`](/reference/dataset/) | The reference data of Metamob embedded in the package (monsters, zones, subzones, servers, game versions and quest templates), as of [`Dataset.fetchedAt`](/reference/dataset/). |
+| [`data`](/reference/data/) | The reference data embedded in the package. |
+| [`MonsterHint`](/reference/monster-hint/) | What tells two monsters of the same name apart. |
+| [`MonsterSearchOptions`](/reference/monster-search-options/) | Options of [`Dataset.searchMonsters`](/reference/dataset/). |
+<!-- exports:end -->

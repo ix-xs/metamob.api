@@ -132,42 +132,15 @@ for await (const item of metamob.conversations.messages(username)) {
 
 Algunos puntos de acceso responden todo de una vez y devuelven un simple array: `quests.list()`, `quests.zones()`, `users.quests()`, `zones.list()`, `zones.subzones()`, `zones.monsters()`, `kralove.list()` y las listas de referencia (`servers.list()` y las demás del mismo tipo).
 
+<!-- exports:start -->
 ## Referencia
 
-Lo que ofrece una solicitud de lista:
+Cada export tiene su página en la [referencia](/reference/):
 
-| Miembro | Resultado | Solicitudes |
-| --- | --- | --- |
-| `await request` | `Page` | 1 |
-| `for await (const item of request)` | cada elemento | 1 por página, cuando el bucle llega a ella |
-| `request.all({ limit })` | `T[]` | 1 por página |
-| `request.take(n)` | `T[]` de `n` elementos como máximo | 1 por página |
-| `request.first()` | `T \| undefined` | 1 |
-| `request.count()` | `number \| undefined` | 1 |
-| `request.pages({ limit })` | cada `Page` | 1 por página |
-
-Lo que contiene una página:
-
-| Miembro | Significado |
+| Export | Para qué sirve |
 | --- | --- |
-| `items` | Los elementos de la página |
-| `total` | Elementos en el conjunto de las páginas, `undefined` para los mensajes y las propuestas |
-| `limit`, `offset` | Lo que aplicó la API |
-| `nextBeforeId` | Para los mensajes y las propuestas, el cursor de la página siguiente |
-| `hasNext` | Indica si existe otra página |
-| `next()` | La página siguiente, o `null` |
-| `raw` | El cuerpo que envió la API |
-
-Los métodos que devuelven una solicitud de lista:
-
-| Método | Página más grande |
-| --- | --- |
-| `monsters.list`, `monsters.search` | 200 |
-| `questTemplates.monsters` | 200 |
-| `quests.monsters` | 200 |
-| `users.quest` | 200 |
-| `users.search` | 50 |
-| `quests.matches` | 50 |
-| `conversations.list` | 50 |
-| `conversations.messages` | 50, por cursor |
-| `tradeProposals.list` | 50, por cursor |
+| [`ListRequest`](/reference/list-request/) | Lo que devuelve cada método paginado. |
+| [`Page`](/reference/page/) | Una página de resultados. |
+| [`CollectOptions`](/reference/collect-options/) | Opciones de [`ListRequest.all`](/reference/list-request/) y [`ListRequest.pages`](/reference/list-request/). |
+| [`PageParams`](/reference/page-params/) | Tamaño de página y punto de partida de una lista paginada. |
+<!-- exports:end -->

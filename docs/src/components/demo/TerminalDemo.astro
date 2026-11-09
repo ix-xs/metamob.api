@@ -1,0 +1,161 @@
+---
+// A terminal that types a command and prints what the program answered, once
+// when it comes into view and again from the replay button. Without
+// JavaScript, or with reduced motion, the whole output is already there. The
+// output is a real run of the code of the page (scripts/scenes.mjs).
+import output from "../../scenes/output.json";
+
+interface Unit {
+  /** Lines as HTML, each one a `<span class="mm-line">`. */
+  html: string;
+  /** The program made the reader wait before this unit. */
+  wait?: boolean;
+}
+
+interface Props {
+  scene?: string;
+  command?: string;
+  units?: Unit[];
+}
+
+const locale = Astro.locals.starlightRoute?.locale;
+const replayLabel = locale === "en" ? "Replay" : locale === "es" ? "Repetir" : "Rejouer";
+const scenes = output as Record<string, { command: string; units: Unit[] } | null>;
+const { scene } = Astro.props;
+const run = scene ? scenes[scene] : { command: Astro.props.command ?? "", units: Astro.props.units ?? [] };
+if (!run) throw new Error(`TerminalDemo: no scene "${scene}" in src/scenes/output.json. Is it listed in src/scenes/scenes.mjs?`);
+const title = "Terminal";
+---
+
+<figure class="mm-td not-content" data-td aria-label={`${title}: ${run.command}`}>
+  <div class="mm-td-window" translate="no">
+    <div class="mm-td-bar">
+      <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i><span aria-hidden="true">{title}</span>
+      <button class="mm-td-replay" type="button" data-td-replay hidden>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        {replayLabel}
+      </button>
+    </div>
+    <pre class="mm-td-screen" tabindex="0"><code><span class="mm-td-cmd"><span class="mm-td-prompt">{"$ "}</span><span data-td-command data-text={run.command}>{run.command}</span><span class="mm-td-caret" aria-hidden="true"></span></span>{run.units.map((unit) => (
+      <span class="mm-td-unit" data-td-unit data-wait={unit.wait ? "" : undefined} set:html={unit.html} />
+    ))}</code></pre>
+  </div>
+</figure>
+
+<script>
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  /** Before the command, per character, before the output, between two units, and where the program made you wait. */
+  const TIMING = { start: 300, char: 40, enter: 350, unit: 160, wait: 900 };
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-td]")) {
+    const command = root.querySelector<HTMLElement>("[data-td-command]")!;
+    const units = [...root.querySelectorAll<HTMLElement>("[data-td-unit]")];
+    const screen = root.querySelector<HTMLElement>(".mm-td-screen")!;
+    const replay = root.querySelector<HTMLButtonElement>("[data-td-replay]")!;
+    const text = command.dataset.text ?? "";
+    // Each play has a number: a play that a newer one replaced stops at its next step.
+    let run = 0;
+    const sleep = (ms: number, current: number) => new Promise<boolean>((resolve) => setTimeout(() => resolve(current === run), ms));
+
+    async function play(): Promise<void> {
+      const current = ++run;
+      // The screen keeps the height of the whole output, so that the page does not move.
+      screen.style.minHeight = "";
+      for (const unit of units) unit.setAttribute("data-on", "");
+      screen.style.minHeight = `${screen.offsetHeight}px`;
+      for (const unit of units) unit.removeAttribute("data-on");
+      root.setAttribute("data-playing", "");
+      if (reduced.matches) {
+        command.textContent = text;
+      } else {
+        command.textContent = "";
+        if (!(await sleep(TIMING.start, current))) return;
+        for (const char of text) {
+          command.textContent += char;
+          if (!(await sleep(TIMING.char, current))) return;
+        }
+      }
+      if (!(await sleep(TIMING.enter, current))) return;
+      for (const unit of units) {
+        if (!(await sleep(unit.hasAttribute("data-wait") ? TIMING.wait : TIMING.unit, current))) return;
+        unit.setAttribute("data-on", "");
+      }
+      root.removeAttribute("data-playing");
+    }
+
+    for (const unit of units) unit.setAttribute("data-on", "");
+    root.setAttribute("data-ready", "");
+    replay.hidden = false;
+    replay.addEventListener("click", () => void play());
+    if (reduced.matches) continue;
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        watcher.disconnect();
+        void play();
+      },
+      { threshold: 0.6 },
+    );
+    watcher.observe(root);
+  }
+</script>
+
+<style is:global>
+  /* Dark in both themes, like a terminal. */
+  .mm-td {
+    --mm-td-bg: #141413;
+    --mm-td-fg: #e6e3da;
+    --mm-td-dim: #8f8c82;
+    --mm-td-rule: #2b2a26;
+    --mm-td-accent: #a78bfa;
+    margin: 1.75rem 0 0;
+  }
+  .mm-td-window { overflow: hidden; border: 1px solid var(--at-line); border-radius: var(--at-radius); background: var(--mm-td-bg); }
+  .mm-td-bar { display: flex; align-items: center; gap: 0.375rem; height: 2.25rem; padding: 0 0.375rem 0 0.875rem; border-bottom: 1px solid var(--mm-td-rule); }
+  .mm-td-bar i { flex: none; width: 0.625rem; height: 0.625rem; border-radius: 50%; background: #3a3934; }
+  .mm-td-bar > span { margin-left: 0.5rem; font-family: var(--sl-font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; color: var(--mm-td-dim); }
+  .mm-td-replay {
+    display: inline-flex; align-items: center; gap: 0.375rem; margin-inline-start: auto; padding: 0.375rem 0.5rem;
+    border: 0; border-radius: var(--at-radius); background: none; color: var(--mm-td-dim);
+    font-family: var(--sl-font-mono); font-size: 0.6875rem; letter-spacing: 0.02em; cursor: pointer;
+    transition: transform 160ms var(--ease-out);
+  }
+  .mm-td-replay:active { transform: scale(0.97); }
+  .mm-td-replay[hidden] { display: none; }
+  .mm-td-replay svg { width: 0.8125rem; height: 0.8125rem; color: var(--mm-td-accent); }
+  @media (hover: hover) and (pointer: fine) {
+    .mm-td-replay:hover { color: var(--mm-td-fg); background: rgb(255 255 255 / 0.06); }
+  }
+  :root .sl-markdown-content .mm-td pre.mm-td-screen, .mm-td pre.mm-td-screen {
+    margin: 0; padding: 1rem 1.25rem; border: 0; border-radius: 0; background: none; overflow-x: auto; overscroll-behavior-x: contain;
+    scrollbar-width: thin; scrollbar-color: var(--mm-td-rule) transparent;
+    font-family: var(--sl-font-mono); font-size: 0.8125rem; line-height: 1.6; color: var(--mm-td-fg);
+  }
+  .mm-td-screen:focus-visible { outline: 2px solid var(--mm-td-accent); outline-offset: -2px; }
+  .mm-td-screen code { display: grid; grid-template-columns: minmax(0, 1fr); padding: 0; background: none; font: inherit; color: inherit; }
+  .mm-td-cmd, .mm-td .mm-line { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .mm-td-prompt { color: var(--mm-td-accent); }
+  .mm-td .b { font-weight: 700; }
+  .mm-td .d { opacity: 0.6; }
+  .mm-td .i { font-style: italic; }
+  .mm-td .u { text-decoration: underline; }
+  .mm-td-caret { display: none; width: 0.55em; height: 1.1em; margin-left: 1px; vertical-align: -0.15em; background: var(--mm-td-fg); }
+  .mm-td[data-playing] .mm-td-caret { display: inline-block; animation: mm-td-blink 1s steps(1) infinite; }
+  .mm-td-unit { display: block; }
+  .mm-td[data-ready] .mm-td-unit { display: none; }
+  .mm-td[data-ready] .mm-td-unit[data-on] {
+    display: block;
+    transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out);
+    @starting-style { opacity: 0; transform: translateY(4px); }
+  }
+  @keyframes mm-td-blink { 50% { opacity: 0; } }
+  @media (max-width: 30rem) {
+    :root .sl-markdown-content .mm-td pre.mm-td-screen, .mm-td pre.mm-td-screen { padding: 0.875rem 1rem; font-size: 0.75rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mm-td[data-ready] .mm-td-unit[data-on] { transition: opacity 180ms ease; @starting-style { opacity: 0; transform: none; } }
+    .mm-td[data-playing] .mm-td-caret { animation: none; }
+    .mm-td-replay { transition: none; }
+    .mm-td-replay:active { transform: none; }
+  }
+</style>

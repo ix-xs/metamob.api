@@ -1,0 +1,66 @@
+---
+title: Le client
+description: "Donner votre clé au client et faire un premier appel à l'API Metamob."
+---
+
+import TerminalDemo from '../../../components/demo/TerminalDemo.astro';
+
+Tout passe par un client : un objet `Metamob` qui connaît votre clé et envoie
+les requêtes. Sur cette page, vous le créez et vous lui demandez à qui
+appartient la clé.
+
+## Ranger la clé
+
+Le client lit la clé dans la variable d'environnement `METAMOB_API_KEY`. Le
+plus simple est de la mettre dans un fichier `.env`, à la racine du projet :
+
+```bash title=".env"
+METAMOB_API_KEY=your-key
+```
+
+Remplacez `your-key` par la clé créée à l'étape [Votre clé API](/start/api-key/).
+
+Si votre projet est dans un dépôt git, ajoutez ce fichier à `.gitignore` pour
+ne jamais publier la clé :
+
+```text title=".gitignore"
+.env
+node_modules
+```
+
+## Le premier appel
+
+Créez `quest.ts`. C'est le fichier que vous allez compléter tout au long du
+guide :
+
+```ts title="quest.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const me = await metamob.me();
+console.log(`Signed in as ${me.username}`);
+```
+
+| Ligne | Ce qu'elle fait |
+| --- | --- |
+| `new Metamob()` | Crée le client. Sans argument, il lit `METAMOB_API_KEY` |
+| `metamob.me()` | Demande à l'API le compte auquel appartient la clé |
+| `await` | Attend la réponse : chaque appel à l'API prend un peu de temps |
+
+## Lancer le script
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/client/signed-in" />
+
+`--env-file=.env` demande à Node.js de lire le fichier `.env` avant de lancer
+le script : c'est ainsi que la clé arrive dans `METAMOB_API_KEY`.
+
+:::note[La clé ailleurs que dans .env]
+Vous pouvez aussi donner la clé directement : `new Metamob({ apiKey })`. Le
+client la prend alors à la place de la variable d'environnement.
+[Configuration](/basics/configuration/) liste toutes les options du client.
+:::

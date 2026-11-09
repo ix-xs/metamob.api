@@ -114,24 +114,17 @@ Pour lire ce que l'API dit en ce moment, utilisez les appels : [`metamob.monster
 
 ## Dans un navigateur
 
-`data` n'a besoin ni de clé ni de réseau : il fonctionne aussi dans une page web. Importer seulement `data` laisse le client hors de votre bundle, et les données pèsent environ 30 ko compressées. La page [Essayer](/start/playground/) fonctionne ainsi.
+`data` n'a besoin ni de clé ni de réseau : il fonctionne aussi dans une page web. Importer seulement `data` laisse le client hors de votre bundle, et les données pèsent environ 30 ko compressées. La page [Essayer](/help/playground/) fonctionne ainsi.
 
+<!-- exports:start -->
 ## Référence
 
-| Membre | Renvoie |
+Chaque export a sa page dans la [référence](/reference/) :
+
+| Export | À quoi il sert |
 | --- | --- |
-| `monster(ref, hint?)` | `Monster \| undefined` |
-| `monstersNamed(name)` | `Monster[]`, plus d'un pour un nom partagé |
-| `searchMonsters(query, { type, gameVersion, template, limit })` | `Monster[]` |
-| `zone(ref)`, `subzone(ref)` | `ZoneDetail \| undefined`, `Subzone \| undefined` |
-| `server(ref)`, `gameVersion(ref)` | `Server \| undefined`, `GameVersion \| undefined` |
-| `monsterType(ref)`, `questType(ref)` | `MonsterType \| undefined`, `QuestType \| undefined` |
-| `questTemplate(ref)` | `QuestTemplate \| undefined` |
-| `subzonesOf(monster)`, `zonesOf(monster)` | `Subzone[]`, `Zone[]` |
-| `monstersInSubzone(subzone)`, `monstersInZone(zone)` | `Monster[]` |
-| `archmonstersOf(monster)` | `Monster[]` |
-| `templatesOf(monster)` | `QuestTemplate[]` |
-| `templateMonsters(template, { step })` | `TemplateMonster[]` |
-| `stepOf(monster, template)` | `number \| undefined` |
-| `suggest(kind, text, limit?)` | `string[]` |
-| `fetchedAt` | `string`, au format `YYYY-MM-DD` |
+| [`Dataset`](/reference/dataset/) | Les données de référence de Metamob incluses dans le paquet (monstres, zones, sous-zones, serveurs, versions du jeu et modèles de quête), telles qu'au [`Dataset.fetchedAt`](/reference/dataset/). |
+| [`data`](/reference/data/) | Les données de référence incluses dans le paquet. |
+| [`MonsterHint`](/reference/monster-hint/) | Ce qui distingue deux monstres de même nom. |
+| [`MonsterSearchOptions`](/reference/monster-search-options/) | Options de [`Dataset.searchMonsters`](/reference/dataset/). |
+<!-- exports:end -->

@@ -1,0 +1,109 @@
+{
+  "start/installation/check": {
+    "command": "node check.ts",
+    "units": [
+      {
+        "html": "<span class=\"mm-line\">metamob.api 5.3.0 is installed</span>"
+      }
+    ]
+  },
+  "script/client/signed-in": {
+    "command": "node --env-file=.env quest.ts",
+    "units": [
+      {
+        "html": "<span class=\"mm-line\">Signed in as Ix-xs</span>"
+      }
+    ]
+  },
+  "script/quests/list": {
+    "command": "node --env-file=.env quest.ts",
+    "units": [
+      {
+        "html": "<span class=\"mm-line\">a1b2c3d4  Ix-xs on Mikhal, step 4 of 18</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">e5f6a7b8  Ix-alt on Tylezia, step 1 of 18</span>"
+      }
+    ]
+  },
+  "script/missing/needed": {
+    "command": "node --env-file=.env quest.ts",
+    "units": [
+      {
+        "html": "<span class=\"mm-line\">Ix-xs, step 4, still to find:</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Arachitik la Souffreteuse</span>",
+        "wait": true
+      },
+      {
+        "html": "<span class=\"mm-line\">  Arakule la Revancharde</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Boulgourvil le Lointain</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Craraboss le Féérique</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Mosketère le Dévoué</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Pioukas la Plante</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Pioulette la Coquine</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Pioustone le Problème</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Sousourizoto le Collant</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  Tofumanchou l'Empereur</span>"
+      }
+    ]
+  },
+  "script/recording/recorded": {
+    "command": "node --env-file=.env record.ts \"Pioukas la Plante\" 1",
+    "units": [
+      {
+        "html": "<span class=\"mm-line\">Pioukas la Plante: 1 owned</span>"
+      }
+    ]
+  },
+  "script/recording/typo": {
+    "command": "node --env-file=.env record.ts \"Pioukas la Plnte\" 1",
+    "units": [
+      {
+        "html": "<span class=\"mm-line\">Unknown monster \"Pioukas la Plnte\". Did you mean \"Pioukas la Plante\"?</span>"
+      }
+    ]
+  },
+  "script/trades/partners": {
+    "command": "node --env-file=.env trades.ts",
+    "units": [
+      {
+        "html": "<span class=\"mm-line\">Partner-A has Arachitik la Souffreteuse, Arakule la Revancharde, Boulgourvil le Lointain</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  and is looking for Araknay la Galopante, Boudalf le Blanc</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">Partner-C has Boulgourvil le Lointain</span>"
+      },
+      {
+        "html": "<span class=\"mm-line\">  and is looking for Chamchie le Difficile</span>"
+      }
+    ]
+  },
+  "script/errors/bad-key": {
+    "command": "node --env-file=.env quest.ts",
+    "units": [
+      {
+        "html": "<span class=\"mm-line\">UNAUTHORIZED: me.get: Missing or invalid API key</span>"
+      }
+    ]
+  }
+}

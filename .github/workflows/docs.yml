@@ -32,6 +32,8 @@ jobs:
           cache: npm
       # The samples and the generated pages are checked against the library itself.
       - run: npm ci
+      # The terminals of the guide run the code of their page against the built package.
+      - run: npm run build
       - name: Build docs site
         working-directory: docs
         # Left unset, the site uses GitHub Pages' default URL. For a custom
@@ -42,6 +44,8 @@ jobs:
         run: |
           npm install
           node scripts/reference.mjs --check
+          node scripts/topic-exports.mjs --check
+          node scripts/scenes.mjs
           npm run check-samples
           npm run check-translation
           npm run build

@@ -123,50 +123,18 @@ Un mensaje nunca se reintenta, sea cual sea el fallo: enviado dos veces, llegar�
 - Un interlocutor puede no tener ya perfil: una cuenta borrada conserva sus conversaciones legibles durante 30 días, mientras que `users.get()` responde `NOT_FOUND`.
 - Las conversaciones pertenecen a la cuenta de la clave. Nada de esto se guarda en caché por defecto.
 
+<!-- exports:start -->
 ## Referencia
 
-| Método | Devuelve |
+Cada export tiene su página en la [referencia](/reference/):
+
+| Export | Para qué sirve |
 | --- | --- |
-| `conversations.list({ status, limit, offset }, options?)` | una lista de `Conversation` |
-| `conversations.messages(username, { limit, beforeId }, options?)` | una lista de `ConversationItem`, por cursor |
-| `conversations.markAsRead(username, options?)` | `{ marked_count }` |
-| `conversations.send(username, content, options?)` | `ConversationMessage` |
-
-Una `Conversation`:
-
-| Campo | Tipo |
-| --- | --- |
-| `username` | `string`, el interlocutor |
-| `message_count` | `number`, propuestas incluidas |
-| `unread_count` | `number`, recibidos y todavía no leídos |
-| `has_priority_unread` | `boolean`, hay un mensaje prioritario del staff de Metamob sin leer |
-| `last_message_at` | `string` |
-
-Un mensaje:
-
-| Campo | Tipo |
-| --- | --- |
-| `kind` | `"message"` |
-| `id` | `number` |
-| `content` | `string` |
-| `sender` | `string`, un nombre de usuario |
-| `created_at` | `string` |
-| `read_at` | `string \| null` |
-| `is_priority` | `boolean`, un mensaje prioritario del staff de Metamob, que el sitio muestra en una ventana dorada mientras no se lee |
-
-Una propuesta:
-
-| Campo | Tipo |
-| --- | --- |
-| `kind` | `"proposal"` |
-| `id` | `number` |
-| `sender`, `recipient` | `string`, nombres de usuario |
-| `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
-| `server` | `Server \| null` |
-| `quest_template` | `{ id, quest_type } \| null`, `null` cuando la misión se ha borrado |
-| `sender_quest`, `recipient_quest` | `{ slug, character_name } \| null` |
-| `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
-| `applications` | `{ username, created_at }[]`, quién ha confirmado |
-| `cancelled_at`, `cancelled_by` | `string \| null` |
-| `created_at` | `string` |
-| `read_at` | `string \| null` |
+| [`Conversations`](/reference/conversations/) | Los mensajes privados de la cuenta a la que pertenece la clave API. |
+| [`Conversation`](/reference/conversation/) | Una conversación: una por interlocutor. |
+| [`ConversationListParams`](/reference/conversation-list-params/) | Filtros de [`Conversations.list`](/reference/conversations/). |
+| [`ConversationMessage`](/reference/conversation-message/) | Un mensaje de texto de una conversación. |
+| [`MarkAsReadResult`](/reference/mark-as-read-result/) | Lo que devuelve marcar una conversación como leída. |
+| [`MessagesParams`](/reference/messages-params/) | Dónde empezar a leer una conversación. |
+| [`ConversationItem`](/reference/conversation-item/) | Lo que compone una conversación. |
+<!-- exports:end -->

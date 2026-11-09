@@ -164,31 +164,29 @@ A monster is `validated` when its step is already passed, `completed` when you o
 - After a write, the next read is up to date: the cache of your key is dropped.
 - The API neither creates nor deletes quests: that is done on the site.
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `quests.list(options?)` | `OwnQuest[]` |
-| `quests.get(slug, options?)` | `QuestSettings` |
-| `quests.update(slug, changes, options?)` | `QuestUpdateResult` |
-| `quests.monsters(slug, { type, status, trade, step, limit, offset }, options?)` | a list of `OwnQuestMonster` |
-| `quests.setMonster(slug, monster, quantity, options?)` | `MonsterQuantityResult` |
-| `quests.setMonsters(slug, quantities, options?)` | `MonstersUpdateResult` |
-| `quests.zones(slug, { zone, subzone, type }, options?)` | `ZoneProgress[]` |
-
-What `update` accepts:
-
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `character_name` | `string` | 200 characters at most |
-| `parallel_quests` | `number` | From 1 |
-| `current_step` | `number` | From 1 to `step_count`, `step_count + 1` once the quest is finished |
-| `show_trades` | `boolean` | Shown on the public profile |
-| `trade_mode` | `0 \| 1` | Automatic or expert |
-| `trade_offer_threshold`, `trade_want_threshold` | `number \| null` | Expert mode, from 0 to 99 |
-| `never_offer_normal`, `never_want_normal` | `boolean` | Monsters |
-| `never_offer_boss`, `never_want_boss` | `boolean` | Bosses |
-| `never_offer_arch`, `never_want_arch` | `boolean` | Archmonsters |
-| `type_filters` | `{ "1" \| "2" \| "3": { never_offer, never_want } }` | The same filters, by kind |
-
-The trade side of a quest, `setTrade`, `resetTrade` and `matches`, is described in [Trading](/resources/trading/).
+| [`Quests`](/reference/quests/) | Your own quests: the ones of the account the API key belongs to. |
+| [`MonsterQuantityResult`](/reference/monster-quantity-result/) | What setting a quantity answers, for each monster. |
+| [`MonstersUpdateResult`](/reference/monsters-update-result/) | What `quests.setMonsters()` answers. |
+| [`OwnQuest`](/reference/own-quest/) | One of your quests, as `quests.list()` returns it. |
+| [`OwnQuestMonster`](/reference/own-quest-monster/) | A monster of one of your quests, with its manual trade overrides. |
+| [`OwnQuestMonstersParams`](/reference/own-quest-monsters-params/) | Filters of [`Quests.monsters`](/reference/quests/). |
+| [`QuestBase`](/reference/quest-base/) | What every quest carries, whoever looks at it. |
+| [`QuestMonster`](/reference/quest-monster/) | A monster of a quest, as anyone can see it. |
+| [`QuestSettings`](/reference/quest-settings/) | The full settings of one of your quests. |
+| [`QuestUpdate`](/reference/quest-update/) | What `quests.update()` can change. |
+| [`QuestUpdateResult`](/reference/quest-update-result/) | What `quests.update()` answers: the slug and only the fields you changed. |
+| [`QuestZonesParams`](/reference/quest-zones-params/) | Filters of [`Quests.zones`](/reference/quests/). |
+| [`SubzoneProgress`](/reference/subzone-progress/) | The progress of a quest in one subzone. |
+| [`TypeFilter`](/reference/type-filter/) | Trade filters of one kind of monster. |
+| [`ZoneProgress`](/reference/zone-progress/) | The progress of a quest in one zone. |
+| [`ZoneProgressMonster`](/reference/zone-progress-monster/) | A monster in the progress of a quest by zone. |
+| [`MonsterQuantities`](/reference/monster-quantities/) | Quantities to set, in any of three shapes: a list of `{ monster, quantity }`, an object keyed by monster name, or a `Map`. |
+| [`TypeFilters`](/reference/type-filters/) | Trade filters by kind of monster, keyed by the id of the kind as a string: `"1"` monsters, `"2"` bosses, `"3"` archmonsters. |
+<!-- exports:end -->

@@ -49,18 +49,14 @@ async function whose(key: string) {
 }
 ```
 
+<!-- exports:start -->
 ## Référence
 
-`metamob.me(options?)` renvoie un `Account` :
+Chaque export a sa page dans la [référence](/reference/) :
 
-| Champ | Type | Signification |
-| --- | --- | --- |
-| `username` | `string` | Le pseudo du compte |
-| `bio` | `string` | Le texte du profil, vide quand il n'y en a pas |
-| `avatar` | `Avatar \| null` | Le monstre choisi comme avatar : `id`, `name`, `image` |
-| `last_active` | `string` | Dernière activité, en date ISO 8601 UTC : `2026-10-14T09:12:45Z` |
-
-| Erreur | Quand |
+| Export | À quoi il sert |
 | --- | --- |
-| `UNAUTHORIZED` | La clé est invalide ou a été révoquée |
-| `MISSING_API_KEY` | Aucune clé n'a été fournie, nulle part |
+| [`Account`](/reference/account/) | Le compte auquel appartient une clé API. |
+| [`Avatar`](/reference/avatar/) | Le monstre qu'un joueur a choisi comme avatar. |
+| [`UserSummary`](/reference/user-summary/) | Un joueur tel que le renvoie une recherche ou une correspondance d'échange. |
+<!-- exports:end -->

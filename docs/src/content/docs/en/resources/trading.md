@@ -126,22 +126,16 @@ The proposals sent and received are read with [`tradeProposals.list()`](/resourc
 - `NOT_FOUND` for a quest that is not yours.
 - An empty manual setting, with neither field, is refused before being sent.
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `quests.matches(slug, { minParallelQuests, onlyPossibleTrades, limit, offset }, options?)` | a list of `TradeMatch` |
-| `quests.setTrade(slug, monster, { trade_offer, trade_want }, options?)` | `TradeOverrideResult` |
-| `quests.resetTrade(slug, monster, options?)` | `TradeOverrideResult` |
-
-A `TradeMatch`:
-
-| Field | Meaning |
-| --- | --- |
-| `user` | `username`, `avatar`, `last_active` |
-| `quest` | `slug`, `character_name`, `parallel_quests` of their quest |
-| `matches.they_have_you_want` | What they can give you |
-| `matches.you_have_they_want` | What you can give them |
-| `match_score` | The number of different monsters you can give, plus those you can receive. The ranking favours balance, not this sum |
-
-Each monster of a match has `id`, `name`, `available`, `needed` and `covers_need`.
+| [`MatchesParams`](/reference/matches-params/) | Filters of [`Quests.matches`](/reference/quests/). |
+| [`MatchMonster`](/reference/match-monster/) | A monster one side of a match can give the other. |
+| [`TradeMatch`](/reference/trade-match/) | A trade partner for one of your quests. |
+| [`TradeOverride`](/reference/trade-override/) | A manual trade override. |
+| [`TradeOverrideResult`](/reference/trade-override-result/) | What `quests.setTrade()` answers. |
+<!-- exports:end -->

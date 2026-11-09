@@ -1,0 +1,59 @@
+---
+title: Encontrar con quién intercambiar
+description: "Encontrar a los jugadores que tienen lo que te falta y buscan lo que te sobra."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+Te faltan monstruos, y otros jugadores tienen de sobra. Metamob calcula quién
+puede intercambiar contigo, como en su página Comunidad. El script muestra
+los tres mejores socios.
+
+## El script
+
+```ts title="trades.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+const partners = await metamob.quests.matches(quest.slug, { onlyPossibleTrades: true }).take(3);
+
+for (const { user, matches } of partners) {
+  const gives = matches.they_have_you_want.map((monster) => monster.name.fr);
+  const wants = matches.you_have_they_want.map((monster) => monster.name.fr);
+  console.log(`${user.username} has ${gives.join(", ")}`);
+  console.log(`  and is looking for ${wants.join(", ")}`);
+}
+```
+
+```bash
+node --env-file=.env trades.ts
+```
+
+<TerminalDemo scene="script/trades/partners" />
+
+Solo las misiones del mismo tipo, en el mismo servidor, pueden intercambiar:
+ahí se buscan los socios.
+
+## Lo que contiene un socio
+
+| Campo | Lo que contiene |
+| --- | --- |
+| `user.username` | El nombre del jugador |
+| `quest` | Su misión: slug, personaje, misiones en paralelo |
+| `matches.they_have_you_want` | Lo que te puede dar |
+| `matches.you_have_they_want` | Lo que le puedes dar |
+| `match_score` | La clasificación: el número de monstruos intercambiables en los dos sentidos |
+
+`onlyPossibleTrades: true` descarta a los jugadores con los que el
+intercambio solo va en un sentido. `.take(3)` se detiene en los tres
+primeros.
+
+:::note[Proponer el intercambio]
+El script se queda en la búsqueda. Enviar un mensaje o una propuesta de
+intercambio se hace con `metamob.conversations` y `metamob.tradeProposals`:
+consulta [Intercambios](/resources/trading/).
+:::

@@ -106,22 +106,26 @@ The quests of players point to their template: `quest.quest_template` holds its 
 - `UNKNOWN_NAME`, with suggestions, for a name that neither the package nor the API knows.
 - No template for a kind of quest in a version of the game: `UNKNOWN_NAME` too. The Dokille does not exist in every version.
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
-| --- | --- |
-| `gameVersions.list(options?)`, `gameVersions.get(version, options?)` | `GameVersion[]`, `GameVersion` |
-| `servers.list(options?)`, `servers.get(server, options?)` | `Server[]`, `Server` |
-| `monsterTypes.list(options?)`, `monsterTypes.get(type, options?)` | `MonsterType[]`, `MonsterType` |
-| `questTypes.list(options?)`, `questTypes.get(type, options?)` | `QuestType[]`, `QuestType` |
-| `questTemplates.list(options?)`, `questTemplates.get(template, options?)` | `QuestTemplate[]`, `QuestTemplate` |
-| `questTemplates.monsters(template, { step, limit, offset }, options?)` | a list of `TemplateMonster`, with `page.template` |
+Each export has its page in the [reference](/reference/):
 
-| Type | Fields |
+| Export | What it is for |
 | --- | --- |
-| `GameVersion` | `id`, `name` |
-| `Server` | `id`, `name`, `community`, `game_version` |
-| `MonsterType` | `id`, `name` in three languages |
-| `QuestType` | `id`, `slug`, `name` in three languages, `image` |
-| `QuestTemplate` | `id`, `quest_type`, `game_version`, `monster_count`, `step_count` |
-| `TemplateMonster` | a `Monster` with its `step` |
+| [`GameVersions`](/reference/game-versions/) | The versions of the game. |
+| [`MonsterTypes`](/reference/monster-types/) | The kinds of monsters. |
+| [`QuestTemplates`](/reference/quest-templates/) | The quest templates: what each kind of quest asks for in each version of the game. |
+| [`QuestTypes`](/reference/quest-types/) | The kinds of quests. |
+| [`Servers`](/reference/servers/) | The game servers. |
+| [`GameVersion`](/reference/game-version/) | A version of the game: Dofus (Unity), Dofus Retro (1.29) or Dofus Touch. |
+| [`LocalizedName`](/reference/localized-name/) | A name in the three languages of the site. |
+| [`QuestTemplate`](/reference/quest-template/) | A quest template: the monsters to capture for one kind of quest in one version of the game. |
+| [`QuestTemplateRef`](/reference/quest-template-ref/) | The template a quest follows, as it appears inside a quest. |
+| [`QuestType`](/reference/quest-type/) | A kind of quest as `questTypes` returns it, with its image. |
+| [`QuestTypeRef`](/reference/quest-type-ref/) | A kind of quest as it appears inside a quest: Ochre (`ocre`) or Grofus (`dokille`). |
+| [`Server`](/reference/server/) | A game server. |
+| [`TemplateHeader`](/reference/template-header/) | The template a page of monsters belongs to. |
+| [`TemplateMonstersParams`](/reference/template-monsters-params/) | Filters of [`QuestTemplates.monsters`](/reference/quest-templates/). |
+| [`Language`](/reference/language/) | A language the site is translated in. |
+<!-- exports:end -->

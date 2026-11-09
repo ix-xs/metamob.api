@@ -81,25 +81,17 @@ Con estos métodos, tus misiones aparecen como las ven los demás: solo las púb
 - Una búsqueda de menos de 3 caracteres lanza `INVALID_ARGUMENT` antes del envío.
 - Nada de esto se guarda en caché por defecto. Para un perfil que se muestra a menudo: `cache: { methods: { "users.get": "1m" } }`, consulta [Caché](/basics/caching/).
 
+<!-- exports:start -->
 ## Referencia
 
-| Método | Devuelve |
+Cada export tiene su página en la [referencia](/reference/):
+
+| Export | Para qué sirve |
 | --- | --- |
-| `users.search(query, { server, activeWithinDays, limit, offset }, options?)` | una lista de `UserSummary` |
-| `users.get(username, options?)` | `UserProfile` |
-| `users.quests(username, options?)` | `PublicQuestSummary[]` |
-| `users.quest(username, slug, { type, status, step, limit, offset }, options?)` | una lista de `QuestMonster`, con `page.quest` |
-
-Una misión pública:
-
-| Campo | Significado |
-| --- | --- |
-| `slug` | Su identificador |
-| `character_name` | El personaje que hace la misión |
-| `current_step` | La etapa en la que está el personaje |
-| `parallel_quests` | Misiones en paralelo, es decir, el número de ejemplares de cada monstruo que reunir |
-| `server` | El servidor, con su versión del juego |
-| `quest_template` | El tipo de misión, su número de monstruos y de etapas |
-| `wanted_count`, `offered_count` | Solo con `users.quests()` |
-
-Un monstruo de una misión pública es un `Monster` con `step`, `quantity`, `want` y `offer`.
+| [`Users`](/reference/users/) | Los demás jugadores: su perfil y sus misiones públicas. |
+| [`PublicQuest`](/reference/public-quest/) | Una misión pública en un perfil. |
+| [`PublicQuestParams`](/reference/public-quest-params/) | Filtros de [`Users.quest`](/reference/users/). |
+| [`PublicQuestSummary`](/reference/public-quest-summary/) | Una misión pública en la lista de misiones de un usuario. |
+| [`UserProfile`](/reference/user-profile/) | El perfil público de un usuario. |
+| [`UserSearchParams`](/reference/user-search-params/) | Filtros de [`Users.search`](/reference/users/). |
+<!-- exports:end -->

@@ -106,22 +106,26 @@ Las misiones de los jugadores apuntan a su plantilla: `quest.quest_template` con
 - `UNKNOWN_NAME`, con sugerencias, para un nombre que no conocen ni el paquete ni la API.
 - Ninguna plantilla para un tipo de misión en una versión del juego: también `UNKNOWN_NAME`. El Dokille no existe en todas las versiones.
 
+<!-- exports:start -->
 ## Referencia
 
-| Método | Devuelve |
-| --- | --- |
-| `gameVersions.list(options?)`, `gameVersions.get(version, options?)` | `GameVersion[]`, `GameVersion` |
-| `servers.list(options?)`, `servers.get(server, options?)` | `Server[]`, `Server` |
-| `monsterTypes.list(options?)`, `monsterTypes.get(type, options?)` | `MonsterType[]`, `MonsterType` |
-| `questTypes.list(options?)`, `questTypes.get(type, options?)` | `QuestType[]`, `QuestType` |
-| `questTemplates.list(options?)`, `questTemplates.get(template, options?)` | `QuestTemplate[]`, `QuestTemplate` |
-| `questTemplates.monsters(template, { step, limit, offset }, options?)` | una lista de `TemplateMonster`, con `page.template` |
+Cada export tiene su página en la [referencia](/reference/):
 
-| Tipo | Campos |
+| Export | Para qué sirve |
 | --- | --- |
-| `GameVersion` | `id`, `name` |
-| `Server` | `id`, `name`, `community`, `game_version` |
-| `MonsterType` | `id`, `name` en tres idiomas |
-| `QuestType` | `id`, `slug`, `name` en tres idiomas, `image` |
-| `QuestTemplate` | `id`, `quest_type`, `game_version`, `monster_count`, `step_count` |
-| `TemplateMonster` | un `Monster` con su `step` |
+| [`GameVersions`](/reference/game-versions/) | Las versiones del juego. |
+| [`MonsterTypes`](/reference/monster-types/) | Los tipos de monstruo. |
+| [`QuestTemplates`](/reference/quest-templates/) | Las plantillas de misión: lo que pide cada tipo de misión en cada versión del juego. |
+| [`QuestTypes`](/reference/quest-types/) | Los tipos de misión. |
+| [`Servers`](/reference/servers/) | Los servidores de juego. |
+| [`GameVersion`](/reference/game-version/) | Una versión del juego: Dofus (Unity), Dofus Retro (1.29) o Dofus Touch. |
+| [`LocalizedName`](/reference/localized-name/) | Un nombre en los tres idiomas del sitio. |
+| [`QuestTemplate`](/reference/quest-template/) | Una plantilla de misión: los monstruos que capturar para un tipo de misión en una versión del juego. |
+| [`QuestTemplateRef`](/reference/quest-template-ref/) | La plantilla que sigue una misión, tal como aparece dentro de una misión. |
+| [`QuestType`](/reference/quest-type/) | Un tipo de misión tal como lo devuelve `questTypes`, con su imagen. |
+| [`QuestTypeRef`](/reference/quest-type-ref/) | Un tipo de misión tal como aparece dentro de una misión: Ocre (`ocre`) o Dosaurio (`dokille`). |
+| [`Server`](/reference/server/) | Un servidor de juego. |
+| [`TemplateHeader`](/reference/template-header/) | La plantilla a la que pertenece una página de monstruos. |
+| [`TemplateMonstersParams`](/reference/template-monsters-params/) | Filtros de [`QuestTemplates.monsters`](/reference/quest-templates/). |
+| [`Language`](/reference/language/) | Un idioma al que está traducido el sitio. |
+<!-- exports:end -->
