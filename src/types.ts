@@ -468,7 +468,7 @@ export interface ProposalViewer {
   role: "sender" | "recipient";
   /** You applied your side. */
   applied: boolean;
-  /** `null` until you apply your side, then `true` when quantities were reduced to what you owned. */
+  /** `null` until you apply your side, then `true` when a quantity was reduced: to what you owned, or to the maximum quantity. */
   clamped: boolean | null;
   /** What leaves your quest. */
   removed: ProposalMonsterDetail[];

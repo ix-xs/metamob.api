@@ -3,7 +3,7 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
-## Unreleased
+## 5.3.0
 
 Follows the update of the Metamob API of November 2026 on trade proposals: 42
 endpoints.

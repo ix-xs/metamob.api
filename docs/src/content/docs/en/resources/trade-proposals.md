@@ -113,7 +113,7 @@ proposal.status; // "half_applied", or "completed" if the other side already was
 proposal.viewer.applied; // true
 ```
 
-When you lack copies of a monster you give, nothing changes and the API answers `CONFLICT`, with what you own and what is asked. With `allowPartial: true`, the proposal is applied anyway, each quantity reduced to what you own: `viewer.clamped` is then `true`, and `applied_quantity` gives what really moved for each monster.
+When you lack copies of a monster you give, nothing changes and the API answers `CONFLICT`, with what you own and what is asked. With `allowPartial: true`, the proposal is applied anyway, each quantity reduced to what you own: `viewer.clamped` is then `true`, and `applied_quantity` gives what really moved for each monster. `clamped` is also `true` when a monster you receive would go over the maximum quantity.
 
 ```ts
 const proposal = await metamob.tradeProposals.apply(57, { allowPartial: true });

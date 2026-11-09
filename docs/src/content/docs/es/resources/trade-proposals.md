@@ -113,7 +113,7 @@ proposal.status; // "half_applied", o "completed" si el otro lado ya lo estaba
 proposal.viewer.applied; // true
 ```
 
-Si te faltan ejemplares de un monstruo que das, no se modifica nada y la API responde `CONFLICT`, con lo que posees y lo que se pide. Con `allowPartial: true`, la propuesta se aplica igualmente, con cada cantidad reducida a lo que posees: `viewer.clamped` vale entonces `true`, y `applied_quantity` da lo que se movió de verdad para cada monstruo.
+Si te faltan ejemplares de un monstruo que das, no se modifica nada y la API responde `CONFLICT`, con lo que posees y lo que se pide. Con `allowPartial: true`, la propuesta se aplica igualmente, con cada cantidad reducida a lo que posees: `viewer.clamped` vale entonces `true`, y `applied_quantity` da lo que se movió de verdad para cada monstruo. `clamped` también vale `true` cuando un monstruo que recibes superaría la cantidad máxima.
 
 ```ts
 const proposal = await metamob.tradeProposals.apply(57, { allowPartial: true });
