@@ -9,7 +9,7 @@ Aucune clé n'est parvenue au client. Vérifiez, dans cet ordre :
 
 - La variable d'environnement `METAMOB_API_KEY` est définie dans le processus qui exécute votre code. Node.js ne lit pas un fichier `.env` de lui-même : démarrez avec `node --env-file=.env app.mjs`, ou chargez-le avec votre framework.
 - Vous avez passé `apiKey` et elle ne vaut pas `undefined`. `new Metamob({ apiKey: process.env.METAMOB_KEY })` avec une variable mal orthographiée est la cause habituelle.
-- Sur une plateforme edge, il n'y a peut-être pas de variable d'environnement : passez la clé vous-même, voir [Environnements d'exécution](/reference/runtimes/#the-api-key).
+- Sur une plateforme edge, il n'y a peut-être pas de variable d'environnement : passez la clé vous-même, voir [Environnements d'exécution](/help/runtimes/#the-api-key).
 
 ## UNAUTHORIZED
 
@@ -83,11 +83,11 @@ Un message ou une proposition n'est pas retenté : après un `SERVER_ERROR`, con
 
 ## Cela fonctionne sur mon serveur et échoue dans le navigateur
 
-Une page ne peut appeler qu'une API qui autorise son origine. Appelez Metamob depuis votre serveur, et faites appeler votre serveur par la page : la clé reste aussi hors de la page. Voir [Environnements d'exécution](/reference/runtimes/#browsers).
+Une page ne peut appeler qu'une API qui autorise son origine. Appelez Metamob depuis votre serveur, et faites appeler votre serveur par la page : la clé reste aussi hors de la page. Voir [Environnements d'exécution](/help/runtimes/#browsers).
 
 ## require() renvoie quelque chose sans Metamob
 
-La version 5 a des exports nommés. `const MetamobAPI = require("@ix-xs/metamob.api")` devient `const { Metamob } = require("@ix-xs/metamob.api")`. Voir [Depuis la version 4](/start/migrating-from-v4/).
+La version 5 a des exports nommés. `const MetamobAPI = require("@ix-xs/metamob.api")` devient `const { Metamob } = require("@ix-xs/metamob.api")`. Voir [Depuis la version 4](/help/migrating-from-v4/).
 
 ## Toujours bloqué
 

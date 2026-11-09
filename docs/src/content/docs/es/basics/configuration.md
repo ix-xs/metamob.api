@@ -90,41 +90,17 @@ const metamob = new Metamob({
 
 `baseUrl` dirige el cliente hacia otro host. La clave se envía a ese host: usa solo uno en el que confíes.
 
+<!-- exports:start -->
 ## Referencia
 
-Opciones del cliente:
+Cada export tiene su página en la [referencia](/reference/):
 
-| Opción | Por defecto | Significado |
-| --- | --- | --- |
-| `apiKey` | `METAMOB_API_KEY` | La clave del cliente |
-| `timeout` | `"30s"` | Tiempo concedido a un intento |
-| `retry` | 3 reintentos | `{ attempts, delay, maxDelay }`, o `false`. Consulta [Errores](/basics/errors/#what-is-retried) |
-| `cache` | activa, `"10m"` | `{ ttl, methods, max, store }`, o `false`. Consulta [Caché](/basics/caching/) |
-| `rateLimit` | activo, 60 por minuto | `{ requests, per }`, o `false`. Consulta [El límite de solicitudes](/basics/rate-limit/) |
-| `fetch` | el `fetch` global | Un `fetch` que usar en su lugar |
-| `baseUrl` | `https://www.metamob.fr/api/v1` | Dónde está la API |
-| `headers` | ninguno | Cabeceras añadidas a cada solicitud |
-
-Opciones de una llamada:
-
-| Opción | Significado |
+| Export | Para qué sirve |
 | --- | --- |
-| `apiKey` | La clave para esta llamada. Consulta [Actuar por otros jugadores](/basics/many-keys/) |
-| `signal` | Un `AbortSignal` que cancela la llamada |
-| `timeout` | Tiempo concedido a un intento de esta llamada |
-| `retry` | Política de reintentos de esta llamada, o `false` |
-| `cache` | Tiempo de frescura de esta respuesta, o `false` para ignorar la caché |
-| `headers` | Cabeceras añadidas a esta solicitud |
-
-Miembros del cliente:
-
-| Miembro | Significado |
-| --- | --- |
-| `me()` | La cuenta de la clave |
-| `quests`, `monsters`, `zones`, `users`, `conversations`, `tradeProposals`, `kralove` | Las partes de la API |
-| `gameVersions`, `servers`, `monsterTypes`, `questTypes`, `questTemplates` | Las listas de referencia |
-| `data` | [Los datos del paquete](/basics/embedded-data/) |
-| `withKey(apiKey)` | Un cliente para otra clave |
-| `rateLimit` | En qué punto está la clave respecto al límite |
-| `on`, `once`, `off` | Eventos |
-| `clearCache()` | Vacía la caché |
+| [`Metamob`](/reference/metamob/) | El cliente de la API de Metamob. |
+| [`VERSION`](/reference/version/) | Versión del paquete. |
+| [`ClientEvents`](/reference/client-events/) | Eventos emitidos por el cliente, consulta `metamob.on()`. |
+| [`MetamobOptions`](/reference/metamob-options/) | Opciones del cliente [`Metamob`](/reference/metamob/). |
+| [`RequestOptions`](/reference/request-options/) | Opciones aceptadas como último argumento de cada llamada a la API. |
+| [`RetryOptions`](/reference/retry-options/) | Política de reintentos. |
+<!-- exports:end -->

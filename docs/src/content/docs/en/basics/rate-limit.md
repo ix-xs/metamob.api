@@ -85,16 +85,13 @@ A call waiting for its turn can be cancelled with a `signal`. It throws an error
 await metamob.monsters.get("Tofu", {}, { signal: AbortSignal.timeout(10_000) });
 ```
 
+<!-- exports:start -->
 ## Reference
 
-| Option | Default | Meaning |
-| --- | --- | --- |
-| `rateLimit` | on | `false` turns the limiter off |
-| `rateLimit.requests` | `60` | Requests allowed per window, per key |
-| `rateLimit.per` | `"1m"` | Length of the window |
+Each export has its page in the [reference](/reference/):
 
-| `metamob.rateLimit` | Meaning |
+| Export | What it is for |
 | --- | --- |
-| `limit` | Requests allowed per window |
-| `remaining` | Requests left in the current window |
-| `resetsIn` | Milliseconds until a request is free again, 0 when one already is |
+| [`RateLimitOptions`](/reference/rate-limit-options/) | Settings of the built-in rate limiter. |
+| [`RateLimitState`](/reference/rate-limit-state/) | Where an API key stands against its rate limit, as counted by this client. |
+<!-- exports:end -->

@@ -2,6 +2,9 @@ import { ROOT_LANGUAGE, withBase, withLocale } from "../plugins/base-links.mjs";
 
 const en = {
   "nav.github": "GitHub repository",
+  "nav.guide": "Guide",
+  "nav.reference": "Reference",
+  "nav.sections": "Sections",
   "nav.theme": "Switch between dark and light",
   "nav.language": "Language",
 
@@ -22,7 +25,6 @@ const en = {
   "search.open": "open",
   "search.close": "close",
 
-  "hero.copy": "Copy the install command",
 
   "finder.trials": "Trials",
   "finder.tab.name": "A name",
@@ -78,6 +80,9 @@ export type UiKey = keyof typeof en;
 
 const fr: Record<UiKey, string> = {
   "nav.github": "Dépôt GitHub",
+  "nav.guide": "Guide",
+  "nav.reference": "Référence",
+  "nav.sections": "Sections",
   "nav.theme": "Basculer entre sombre et clair",
   "nav.language": "Langue",
 
@@ -98,7 +103,6 @@ const fr: Record<UiKey, string> = {
   "search.open": "ouvrir",
   "search.close": "fermer",
 
-  "hero.copy": "Copier la commande d'installation",
 
   "finder.trials": "Essais",
   "finder.tab.name": "Un nom",
@@ -152,6 +156,9 @@ const fr: Record<UiKey, string> = {
 
 const es: Record<UiKey, string> = {
   "nav.github": "Repositorio de GitHub",
+  "nav.guide": "Guía",
+  "nav.reference": "Referencia",
+  "nav.sections": "Secciones",
   "nav.theme": "Cambiar entre oscuro y claro",
   "nav.language": "Idioma",
 
@@ -172,7 +179,6 @@ const es: Record<UiKey, string> = {
   "search.open": "abrir",
   "search.close": "cerrar",
 
-  "hero.copy": "Copiar el comando de instalación",
 
   "finder.trials": "Pruebas",
   "finder.tab.name": "Un nombre",

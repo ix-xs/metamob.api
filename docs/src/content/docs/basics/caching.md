@@ -15,7 +15,7 @@ Deux lectures identiques envoyées au même moment partagent toujours une seule 
 
 ## Mettre davantage en cache
 
-`ttl` change la durée des données de référence, et `methods` donne une durée à n'importe quelle méthode, par son nom tel qu'il figure dans [Toutes les méthodes](/reference/methods/) :
+`ttl` change la durée des données de référence, et `methods` donne une durée à n'importe quelle méthode, par son nom tel qu'il figure dans [Toutes les méthodes](/resources/methods/) :
 
 ```ts
 const metamob = new Metamob({
@@ -89,13 +89,16 @@ Les données de référence sont aussi incluses dans le paquet : [`data`](/basic
 
 Partout où une durée est attendue, écrivez un nombre de millisecondes ou une chaîne avec une unité : `"500ms"`, `"30s"`, `"10m"`, `"1h"`, `"1d"`.
 
+<!-- exports:start -->
 ## Référence
 
-| Option | Par défaut | Signification |
-| --- | --- | --- |
-| `cache` | actif | `false` le désactive |
-| `cache.ttl` | `"10m"` | Durée de fraîcheur des données de référence |
-| `cache.methods` | aucune | Durée de fraîcheur par méthode, ou `false` |
-| `cache.max` | `500` | Entrées que contient le stockage en mémoire |
-| `cache.store` | mémoire | Votre propre `CacheStore` |
-| `{ cache }` sur un appel | | Une durée, ou `false` |
+Chaque export a sa page dans la [référence](/reference/) :
+
+| Export | À quoi il sert |
+| --- | --- |
+| [`MemoryCache`](/reference/memory-cache/) | Stockage en mémoire qui retire l'entrée la moins récemment utilisée une fois plein. |
+| [`CacheEntry`](/reference/cache-entry/) | Ce que le client stocke pour une réponse mise en cache. |
+| [`CacheOptions`](/reference/cache-options/) | Réglages du cache du client. |
+| [`CacheStore`](/reference/cache-store/) | Là où sont gardées les réponses mises en cache. |
+| [`Duration`](/reference/duration/) | Une durée : un nombre de millisecondes, ou une courte chaîne comme `"30s"`, `"5m"`, `"2h"` ou `"1d"`. |
+<!-- exports:end -->

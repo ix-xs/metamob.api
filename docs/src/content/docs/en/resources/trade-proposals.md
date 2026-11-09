@@ -171,31 +171,23 @@ setInterval(async () => {
 - An invalid id, quest or date is refused before being sent.
 - Proposals belong to the account of the key. Nothing here is cached by default.
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `tradeProposals.list({ direction, status, quest, since, limit, beforeId }, options?)` | a list of `TradeProposal`, by cursor |
-| `tradeProposals.get(id, options?)` | `TradeProposalDetail` |
-| `tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received }, options?)` | `TradeProposalDetail` |
-| `tradeProposals.apply(id, { allowPartial }?, options?)` | `TradeProposalDetail` |
-| `tradeProposals.cancel(id, options?)` | `TradeProposalDetail` |
-
-A `TradeProposal`:
-
-| Field | Type |
-| --- | --- |
-| `id` | `number` |
-| `sender`, `recipient` | `string`, usernames |
-| `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
-| `server` | `Server \| null`, with its version of the game |
-| `quest_template` | `{ id, quest_type } \| null`, `null` when the quest was deleted |
-| `sender_quest`, `recipient_quest` | `{ slug, character_name } \| null`, `null` when it is not visible |
-| `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
-| `applications` | `{ username, created_at }[]`, who confirmed |
-| `cancelled_at` | `string \| null` |
-| `cancelled_by` | `string \| null`, `null` when it expired |
-| `created_at` | `string` |
-| `read_at` | `string \| null`, `null` while the recipient has not read it |
-
-A `TradeProposalDetail` is a `TradeProposal` with `viewer`: `role` (`"sender" | "recipient"`), `applied` (`boolean`), `clamped` (`boolean | null`), `removed` and `added` (`{ monster_id, quantity, owned }[]`, with `applied_quantity` in the answer of `apply()`).
+| [`TradeProposals`](/reference/trade-proposals/) | The trade proposals of the account: the ones you sent and the ones you received, on every quest. |
+| [`ApplyProposalOptions`](/reference/apply-proposal-options/) | Options of [`TradeProposals.apply`](/reference/trade-proposals/). |
+| [`ConversationProposal`](/reference/conversation-proposal/) | A trade proposal as it appears in a conversation, among the messages. |
+| [`NewTradeProposal`](/reference/new-trade-proposal/) | What [`TradeProposals.create`](/reference/trade-proposals/) sends. |
+| [`ProposalMonster`](/reference/proposal-monster/) | A quantity of a monster in a trade proposal. |
+| [`ProposalMonsterDetail`](/reference/proposal-monster-detail/) | A monster that leaves or enters your quest with a trade proposal, with what you own of it now. |
+| [`ProposalQuest`](/reference/proposal-quest/) | The quest of one side of a trade proposal. |
+| [`ProposalQuestTemplate`](/reference/proposal-quest-template/) | The quest template of a trade proposal: which kind of quest, in which version of the game. |
+| [`ProposalViewer`](/reference/proposal-viewer/) | Your side of a trade proposal. |
+| [`TradeProposal`](/reference/trade-proposal/) | A trade proposal between two players. |
+| [`TradeProposalDetail`](/reference/trade-proposal-detail/) | A trade proposal read on its own, with your side of it. |
+| [`TradeProposalListParams`](/reference/trade-proposal-list-params/) | Filters of [`TradeProposals.list`](/reference/trade-proposals/). |
+<!-- exports:end -->

@@ -1,0 +1,64 @@
+---
+title: Lo que falta
+description: "Listar los monstruos que aún le faltan a la etapa actual de una misión."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+El script conoce tus misiones. Ya puede decir, para la primera, qué monstruos
+te faltan todavía en la etapa actual.
+
+## Listar los monstruos que faltan
+
+Reemplaza el contenido de `quest.ts`:
+
+```ts title="quest.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+const step = quest.current_step;
+const needed = metamob.quests.monsters(quest.slug, { status: "needed", step });
+
+console.log(`${quest.character_name}, step ${step}, still to find:`);
+for await (const monster of needed) {
+  console.log(`  ${monster.name.fr}`);
+}
+```
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/missing/needed" />
+
+## Los filtros
+
+`metamob.quests.monsters()` recibe el slug de la misión, y luego filtros:
+
+| Filtro | Lo que conserva |
+| --- | --- |
+| `status: "needed"` | Los monstruos de los que tienes menos ejemplares que misiones en paralelo |
+| `status: "excess"` | Los que tienes de sobra |
+| `step` | Los de una etapa |
+| `type` | Un tipo de monstruo: `"monstre"`, `"boss"` o `"archimonstre"` |
+
+Sin filtro, obtienes todos los monstruos de la misión.
+
+## Una lista, página a página
+
+La API envía los monstruos por páginas. `for await` las recorre todas, y hace
+una solicitud por página, sin que tengas que ocuparte. La misma lista ofrece
+otras formas de leerla:
+
+| Escrito así | Lo que da |
+| --- | --- |
+| `for await (const monster of needed)` | Cada monstruo, de todas las páginas |
+| `await needed` | Solo la primera página |
+| `await needed.count()` | El total, en una solicitud |
+| `await needed.all()` | Todos los monstruos en un array |
+
+[Listas](/basics/lists/) las detalla.

@@ -164,31 +164,29 @@ Un monstre est `validated` quand son étape est déjà passée, `completed` quan
 - Après une écriture, la lecture suivante est à jour : le cache de votre clé est oublié.
 - L'API ne crée ni ne supprime de quête : cela se fait sur le site.
 
+<!-- exports:start -->
 ## Référence
 
-| Méthode | Renvoie |
+Chaque export a sa page dans la [référence](/reference/) :
+
+| Export | À quoi il sert |
 | --- | --- |
-| `quests.list(options?)` | `OwnQuest[]` |
-| `quests.get(slug, options?)` | `QuestSettings` |
-| `quests.update(slug, changes, options?)` | `QuestUpdateResult` |
-| `quests.monsters(slug, { type, status, trade, step, limit, offset }, options?)` | une liste de `OwnQuestMonster` |
-| `quests.setMonster(slug, monster, quantity, options?)` | `MonsterQuantityResult` |
-| `quests.setMonsters(slug, quantities, options?)` | `MonstersUpdateResult` |
-| `quests.zones(slug, { zone, subzone, type }, options?)` | `ZoneProgress[]` |
-
-Ce que `update` accepte :
-
-| Champ | Type | Signification |
-| --- | --- | --- |
-| `character_name` | `string` | 200 caractères au plus |
-| `parallel_quests` | `number` | À partir de 1 |
-| `current_step` | `number` | De 1 à `step_count`, `step_count + 1` une fois la quête terminée |
-| `show_trades` | `boolean` | Affichée sur le profil public |
-| `trade_mode` | `0 \| 1` | Automatique ou expert |
-| `trade_offer_threshold`, `trade_want_threshold` | `number \| null` | Mode expert, de 0 à 99 |
-| `never_offer_normal`, `never_want_normal` | `boolean` | Monstres |
-| `never_offer_boss`, `never_want_boss` | `boolean` | Boss |
-| `never_offer_arch`, `never_want_arch` | `boolean` | Archimonstres |
-| `type_filters` | `{ "1" \| "2" \| "3": { never_offer, never_want } }` | Les mêmes filtres, par type |
-
-Le côté échange d'une quête, `setTrade`, `resetTrade` et `matches`, est décrit dans [Échanges](/resources/trading/).
+| [`Quests`](/reference/quests/) | Vos propres quêtes : celles du compte auquel appartient la clé API. |
+| [`MonsterQuantityResult`](/reference/monster-quantity-result/) | Ce que répond l'enregistrement d'une quantité, pour chaque monstre. |
+| [`MonstersUpdateResult`](/reference/monsters-update-result/) | Ce que répond `quests.setMonsters()`. |
+| [`OwnQuest`](/reference/own-quest/) | Une de vos quêtes, telle que la renvoie `quests.list()`. |
+| [`OwnQuestMonster`](/reference/own-quest-monster/) | Un monstre d'une de vos quêtes, avec ses réglages manuels. |
+| [`OwnQuestMonstersParams`](/reference/own-quest-monsters-params/) | Filtres de [`Quests.monsters`](/reference/quests/). |
+| [`QuestBase`](/reference/quest-base/) | Ce que porte chaque quête, quel que soit celui qui la regarde. |
+| [`QuestMonster`](/reference/quest-monster/) | Un monstre d'une quête, tel que tout le monde peut le voir. |
+| [`QuestSettings`](/reference/quest-settings/) | Les réglages complets d'une de vos quêtes. |
+| [`QuestUpdate`](/reference/quest-update/) | Ce que `quests.update()` peut modifier. |
+| [`QuestUpdateResult`](/reference/quest-update-result/) | Ce que répond `quests.update()` : le slug et seulement les champs que vous avez modifiés. |
+| [`QuestZonesParams`](/reference/quest-zones-params/) | Filtres de [`Quests.zones`](/reference/quests/). |
+| [`SubzoneProgress`](/reference/subzone-progress/) | La progression d'une quête dans une sous-zone. |
+| [`TypeFilter`](/reference/type-filter/) | Filtres d'échange d'un type de monstre. |
+| [`ZoneProgress`](/reference/zone-progress/) | La progression d'une quête dans une zone. |
+| [`ZoneProgressMonster`](/reference/zone-progress-monster/) | Un monstre dans la progression d'une quête par zone. |
+| [`MonsterQuantities`](/reference/monster-quantities/) | Les quantités à fixer, sous l'une de trois formes : une liste de `{ monster, quantity }`, un objet indexé par nom de monstre, ou une `Map`. |
+| [`TypeFilters`](/reference/type-filters/) | Filtres d'échange par type de monstre, indexés par l'identifiant du type sous forme de chaîne : `"1"` les monstres, `"2"` les boss, `"3"` les archimonstres. |
+<!-- exports:end -->

@@ -80,22 +80,19 @@ The monsters a quest asks for, step by step, come from the [quest templates](/re
 - An id that does not exist answers `NOT_FOUND`. A name that does not exist throws `UNKNOWN_NAME`, with suggestions.
 - Answers are [cached](/basics/caching/) for 10 minutes by default.
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `monsters.get(monster, { gameVersion, template }?, options?)` | `MonsterDetail` |
-| `monsters.list({ query, type, limit, offset }, options?)` | a list of `Monster` |
-| `monsters.search(query, { type, limit, offset }, options?)` | a list of `Monster` |
-
-A `Monster`:
-
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `id` | `number` | |
-| `name` | `{ fr, en, es }` | The name in three languages |
-| `image` | `string` | File name of the picture, see `urls.monsterImage()` |
-| `level_min`, `level_max` | `number` | |
-| `type` | `MonsterType \| null` | `{ id, name }`: monster, boss or archmonster |
-| `reference` | `{ id, name }` or absent | For an archmonster, its base monster |
-| `zones` | `ZoneDetail[]` | Only with `get()`: the zones, each with the subzones concerned |
+| [`Monsters`](/reference/monsters/) | The monsters of the game. |
+| [`urls`](/reference/urls/) | Addresses on metamob.fr, built from what the API returns. |
+| [`Monster`](/reference/monster/) | A monster. |
+| [`MonsterDetail`](/reference/monster-detail/) | A monster with the places it lives in. |
+| [`MonsterListParams`](/reference/monster-list-params/) | Filters of [`Monsters.list`](/reference/monsters/). |
+| [`MonsterReference`](/reference/monster-reference/) | The base monster of an archmonster. |
+| [`MonsterType`](/reference/monster-type/) | A kind of monster: 1 is a monster, 2 a boss, 3 an archmonster. |
+| [`TemplateMonster`](/reference/template-monster/) | A monster of a quest template, with the step it belongs to. |
+<!-- exports:end -->

@@ -1,49 +1,84 @@
 ---
 title: Introduction
-description: A JavaScript and TypeScript client for the Metamob API.
-tableOfContents: false
-hero:
-  title: metamob.api
-  tagline: A JavaScript and TypeScript client for the API of <a href="https://www.metamob.fr">Metamob</a>. It covers its 42 endpoints, with their types, and takes care of pagination, the rate limit and monster names.
-  actions:
-    - text: Get started
-      link: /start/quick-start/
-      variant: primary
-    - text: Every method
-      link: /reference/methods/
-      variant: secondary
+description: "What metamob.api is, what you will build with it, and what you should know before you start."
 ---
 
-## A first example
+import TerminalDemo from '../../../components/demo/TerminalDemo.astro';
+
+This guide teaches you how to use **metamob.api**, from installation to a
+script that follows your quest. Each step tells you **what to do** and
+**why**.
+
+## What metamob.api is
+
+[Metamob](https://www.metamob.fr) is the site where Dofus players track their
+archmonster quests and find who to trade with. Its API gives a program access
+to the same information: your quests, the monsters, the other players, the
+messages.
+
+metamob.api is a JavaScript and TypeScript client for that API. It covers its
+42 endpoints, with their types:
 
 ```ts
 import { Metamob } from "@ix-xs/metamob.api";
 
-const metamob = new Metamob({ apiKey: process.env.METAMOB_API_KEY });
+const metamob = new Metamob();
 
 const [quest] = await metamob.quests.list();
-
-if (quest) {
-  const needed = metamob.quests.monsters(quest.slug, { status: "needed" });
-  const missing = await needed.count();
-  console.log(`${quest.character_name}: ${missing} monsters to go`);
-}
+if (quest) await metamob.quests.setMonster(quest.slug, "Pioukas la Plante", 1);
 ```
 
-## What is in this guide
+| What the package does | What it means for you |
+| --- | --- |
+| It knows the type of every answer | Your editor suggests the fields and flags typos |
+| It takes monster names in French, English and Spanish | `"Pioukas la Plante"` instead of its id |
+| It walks through paginated lists | `for await` reads every page, one request per page |
+| It counts the 60 requests a minute of your key | A call over the limit waits its turn instead of failing |
+| It ships the monsters, zones and servers | Searching that data sends no request |
 
-- [Getting started](/start/quick-start/): install the package, create an API key and make your first calls.
-- [Basics](/basics/names-and-ids/): names and ids, lists, errors, the rate limit and caching.
-- [The API](/resources/quests/): one page per part of the API, from quests to messages.
-- [Examples](/recipes/discord-command/): a Discord command, a progress report, a trade finder.
-- [Reference](/reference/methods/): every method, the errors and the exports.
+## What you will build
 
-## Before you start
+A small script, page after page: it signs in with your key, reads your
+quests, lists what the current step still lacks, records a monster and finds
+who to trade with. This is what it prints at the step
+[What is missing](/script/missing/):
 
-You need Node.js 20 or newer, and an account on [metamob.fr](https://www.metamob.fr) to create an API key. The guide assumes you know the basics of JavaScript, in particular `async` and `await`.
+<TerminalDemo scene="script/missing/needed" />
 
-The package also works with Bun, Deno, in a browser and on edge platforms: see [Runtimes](/reference/runtimes/).
+1. **Getting started**: install the package, then create your API key.
+2. **Your first script**: the client, your quests, what is missing, recording
+   a monster, trades, then errors.
+3. **The topic pages**: the basics, then one page per part of the API. Read
+   them when you need them.
+
+The [reference](/reference/) describes every class, function and type of the
+package.
+
+## What you should know first
+
+- **The basics of JavaScript**: functions, objects, `import`, `async` and
+  `await`.
+- **How to open a terminal** in a folder and type a command there.
+- **An account on [metamob.fr](https://www.metamob.fr)** with at least one
+  quest, to create your key.
+
+The guide uses TypeScript, which Node.js runs as is. Everything also works in
+JavaScript: just leave the types out.
+
+## How to read this guide
+
+- A code block with a **file name** is a file to create, or to replace, at
+  that location.
+- An API name written as code, like `metamob.quests.list()`, leads to its
+  page in the reference.
+- The terminals play when they come into view, and **Replay** runs them
+  again. What they show is what the code of the page really printed, on an
+  example account.
+- **Next**, at the bottom of the page, takes you to the following step.
 
 ## About Metamob
 
-[Metamob](https://www.metamob.fr) is the site where Dofus players track their archmonster quests and find who to trade with. The site, its data and its API are its work: this library only calls it. The [official API documentation](https://www.metamob.fr/help/api) remains the reference.
+[Metamob](https://www.metamob.fr) is a fan site. The site, its data and its
+API are its work: this library only calls it. The
+[official API documentation](https://www.metamob.fr/help/api) remains the
+reference.

@@ -3,6 +3,19 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+- The documentation site opens on a guide that builds one script page after
+  page, from installation to finding who to trade with. Its terminals show what
+  the code of the page really prints, on an example account.
+- A reference with one page per export, generated from the types: signature,
+  parameters, fields and what comes back, in French, English and Spanish.
+  Names of exports written in the guide link to their page.
+- The header has two areas, Guide and Reference. The old addresses redirect to
+  the new pages.
+- The doc comment of `MetamobArgumentError` no longer says it is thrown before
+  any request: an unknown name is first looked up through the API.
+
 ## 5.3.0
 
 Follows the update of the Metamob API of November 2026 on trade proposals: 42

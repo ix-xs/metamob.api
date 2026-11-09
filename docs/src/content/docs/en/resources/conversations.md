@@ -123,50 +123,18 @@ A message is never retried, whatever the failure: sent twice, it would arrive tw
 - A correspondent may have no profile left: a deleted account keeps its conversations readable for 30 days, while `users.get()` answers `NOT_FOUND`.
 - Conversations belong to the account of the key. Nothing here is cached by default.
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `conversations.list({ status, limit, offset }, options?)` | a list of `Conversation` |
-| `conversations.messages(username, { limit, beforeId }, options?)` | a list of `ConversationItem`, by cursor |
-| `conversations.markAsRead(username, options?)` | `{ marked_count }` |
-| `conversations.send(username, content, options?)` | `ConversationMessage` |
-
-A `Conversation`:
-
-| Field | Type |
-| --- | --- |
-| `username` | `string`, the correspondent |
-| `message_count` | `number`, proposals included |
-| `unread_count` | `number`, received and not read yet |
-| `has_priority_unread` | `boolean`, a priority message from the Metamob staff is unread |
-| `last_message_at` | `string` |
-
-A message:
-
-| Field | Type |
-| --- | --- |
-| `kind` | `"message"` |
-| `id` | `number` |
-| `content` | `string` |
-| `sender` | `string`, a username |
-| `created_at` | `string` |
-| `read_at` | `string \| null` |
-| `is_priority` | `boolean`, a priority message from the Metamob staff, shown by the site in a golden popup until it is read |
-
-A proposal:
-
-| Field | Type |
-| --- | --- |
-| `kind` | `"proposal"` |
-| `id` | `number` |
-| `sender`, `recipient` | `string`, usernames |
-| `status` | `"pending" \| "half_applied" \| "completed" \| "cancelled"` |
-| `server` | `Server \| null` |
-| `quest_template` | `{ id, quest_type } \| null`, `null` when the quest was deleted |
-| `sender_quest`, `recipient_quest` | `{ slug, character_name } \| null` |
-| `monsters_given`, `monsters_received` | `{ monster_id, quantity }[]` |
-| `applications` | `{ username, created_at }[]`, who confirmed |
-| `cancelled_at`, `cancelled_by` | `string \| null` |
-| `created_at` | `string` |
-| `read_at` | `string \| null` |
+| [`Conversations`](/reference/conversations/) | The private messages of the account the API key belongs to. |
+| [`Conversation`](/reference/conversation/) | A conversation: one per correspondent. |
+| [`ConversationListParams`](/reference/conversation-list-params/) | Filters of [`Conversations.list`](/reference/conversations/). |
+| [`ConversationMessage`](/reference/conversation-message/) | A text message of a conversation. |
+| [`MarkAsReadResult`](/reference/mark-as-read-result/) | What marking a conversation as read answers. |
+| [`MessagesParams`](/reference/messages-params/) | Where to start reading a conversation. |
+| [`ConversationItem`](/reference/conversation-item/) | What a conversation is made of. |
+<!-- exports:end -->

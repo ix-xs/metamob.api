@@ -87,14 +87,17 @@ L'avancement d'une de vos quêtes zone par zone se lit avec [`quests.zones()`](/
 - Une sous-zone que le paquet ne connaît pas, donnée sans sa zone, lève `UNKNOWN_NAME` et demande de passer `{ zone }`.
 - Les réponses sont [mises en cache](/basics/caching/) pendant 10 minutes par défaut.
 
+<!-- exports:start -->
 ## Référence
 
-| Méthode | Renvoie |
-| --- | --- |
-| `zones.list({ query }, options?)` | `Zone[]` |
-| `zones.get(zone, options?)` | `ZoneDetail`, la zone avec ses `subzones` |
-| `zones.subzones(zone, { query }, options?)` | `SubzoneRef[]` |
-| `zones.subzone(subzone, { zone }?, options?)` | `Subzone`, la sous-zone avec sa `zone` |
-| `zones.monsters(subzone, { zone }?, options?)` | `Monster[]` |
+Chaque export a sa page dans la [référence](/reference/) :
 
-Une zone et une sous-zone ont toutes deux un `id` et un `name` dans trois langues.
+| Export | À quoi il sert |
+| --- | --- |
+| [`Zones`](/reference/zones/) | Les zones et sous-zones du jeu, et les monstres qui y vivent. |
+| [`Subzone`](/reference/subzone/) | Une sous-zone avec la zone à laquelle elle appartient. |
+| [`SubzoneParams`](/reference/subzone-params/) | Indique à quelle zone appartient une sous-zone, pour une sous-zone plus récente que le paquet. |
+| [`SubzoneRef`](/reference/subzone-ref/) | Une sous-zone telle qu'elle apparaît dans une liste : son identifiant et son nom. |
+| [`Zone`](/reference/zone/) | Une zone du jeu. |
+| [`ZoneDetail`](/reference/zone-detail/) | Une zone avec ses sous-zones. |
+<!-- exports:end -->

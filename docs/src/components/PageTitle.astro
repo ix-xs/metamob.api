@@ -17,7 +17,12 @@ function trail(entries: Entry[], path: string[] = []): string[] | undefined {
 
 const { entry, sidebar } = Astro.locals.starlightRoute;
 const groups = trail(sidebar) ?? [];
-const lead = entry.data.description;
+// A page of the reference sets its own lead, and the pages of the guide's path
+// open with their own first paragraph: the description stays for search engines.
+const symbolPage = /\/reference\/[^/]+\/$/.test(Astro.url.pathname);
+const path = Astro.url.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, "").length).replace(/^\/(en|es)(?=\/|$)/, "");
+const guidePath = path === "/" || path === "" || path.startsWith("/start/") || path.startsWith("/script/");
+const lead = symbolPage || guidePath ? undefined : entry.data.description;
 ---
 {groups.length > 0 && <p class="at-eyebrow">{groups.join(" / ")}</p>}
 <h1 id="_top" class="at-title">{entry.data.title}</h1>

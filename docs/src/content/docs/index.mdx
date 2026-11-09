@@ -1,49 +1,82 @@
 ---
 title: Introduction
-description: Un client JavaScript et TypeScript pour l'API Metamob.
-tableOfContents: false
-hero:
-  title: metamob.api
-  tagline: Un client JavaScript et TypeScript pour l'API de <a href="https://www.metamob.fr">Metamob</a>. Il couvre ses 42 points d'accès, avec leurs types, et prend en charge la pagination, la limite de requêtes et les noms de monstres.
-  actions:
-    - text: Démarrer
-      link: /start/quick-start/
-      variant: primary
-    - text: Toutes les méthodes
-      link: /reference/methods/
-      variant: secondary
+description: "Ce qu'est metamob.api, ce que vous allez construire avec, et ce qu'il faut savoir avant de commencer."
 ---
 
-## Un premier exemple
+import TerminalDemo from '../../components/demo/TerminalDemo.astro';
+
+Ce guide vous apprend à utiliser **metamob.api**, de l'installation à un
+script qui suit votre quête. Chaque étape dit **quoi faire** et **pourquoi**.
+
+## Ce qu'est metamob.api
+
+[Metamob](https://www.metamob.fr) est le site où les joueurs de Dofus suivent
+leurs quêtes d'archimonstres et trouvent avec qui échanger. Son API donne
+accès aux mêmes informations depuis un programme : vos quêtes, les monstres,
+les autres joueurs, les messages.
+
+metamob.api est un client JavaScript et TypeScript pour cette API. Il couvre
+ses 42 points d'accès, avec leurs types :
 
 ```ts
 import { Metamob } from "@ix-xs/metamob.api";
 
-const metamob = new Metamob({ apiKey: process.env.METAMOB_API_KEY });
+const metamob = new Metamob();
 
 const [quest] = await metamob.quests.list();
-
-if (quest) {
-  const needed = metamob.quests.monsters(quest.slug, { status: "needed" });
-  const missing = await needed.count();
-  console.log(`${quest.character_name}: ${missing} monsters to go`);
-}
+if (quest) await metamob.quests.setMonster(quest.slug, "Pioukas la Plante", 1);
 ```
 
-## Ce que contient ce guide
+| Ce que fait le paquet | Ce que ça veut dire pour vous |
+| --- | --- |
+| Il connaît le type de chaque réponse | Votre éditeur propose les champs et signale les fautes de frappe |
+| Il accepte les noms des monstres en français, anglais et espagnol | `"Pioukas la Plante"` au lieu de son identifiant |
+| Il parcourt les listes paginées | `for await` lit toutes les pages, une requête par page |
+| Il compte les 60 requêtes par minute de votre clé | Un appel en trop attend son tour au lieu d'échouer |
+| Il inclut les monstres, zones et serveurs | Une recherche dans ces données ne fait aucune requête |
 
-- [Démarrer](/start/quick-start/) : installer le paquet, créer une clé API et faire ses premiers appels.
-- [Les bases](/basics/names-and-ids/) : les noms et les identifiants, les listes, les erreurs, la limite de requêtes et le cache.
-- [L'API](/resources/quests/) : une page par partie de l'API, des quêtes aux messages.
-- [Exemples](/recipes/discord-command/) : une commande Discord, un rapport de progression, un chercheur d'échanges.
-- [Référence](/reference/methods/) : toutes les méthodes, les erreurs et les exports.
+## Ce que vous allez construire
 
-## Avant de commencer
+Un petit script, page après page : il se connecte avec votre clé, lit vos
+quêtes, liste ce qui manque à l'étape en cours, enregistre un monstre et
+trouve avec qui échanger. Voici ce qu'il affiche à l'étape
+[Ce qui manque](/script/missing/) :
 
-Il vous faut Node.js 20 ou plus récent, et un compte sur [metamob.fr](https://www.metamob.fr) pour créer une clé API. Le guide suppose que vous connaissez les bases de JavaScript, en particulier `async` et `await`.
+<TerminalDemo scene="script/missing/needed" />
 
-Le paquet fonctionne aussi avec Bun, Deno, dans un navigateur et sur les plateformes edge : voir [Environnements d'exécution](/reference/runtimes/).
+1. **Pour commencer** : installer le paquet, puis créer votre clé API.
+2. **Votre premier script** : le client, vos quêtes, ce qui manque,
+   enregistrer un monstre, les échanges, puis les erreurs.
+3. **Les pages par thème** : les bases, puis une page par partie de l'API.
+   Lisez-les quand vous en avez besoin.
+
+La [référence](/reference/) décrit chaque classe, fonction et type du paquet.
+
+## Ce qu'il faut savoir avant
+
+- **Les bases de JavaScript** : fonctions, objets, `import`, `async` et
+  `await`.
+- **Ouvrir un terminal** dans un dossier et y taper une commande.
+- **Un compte sur [metamob.fr](https://www.metamob.fr)** avec au moins une
+  quête, pour créer votre clé.
+
+Le guide utilise TypeScript, que Node.js exécute directement. Tout fonctionne
+aussi en JavaScript : retirez simplement les types.
+
+## Comment lire ce guide
+
+- Un bloc de code avec un **nom de fichier** est un fichier à créer, ou à
+  remplacer, à cet endroit.
+- Un nom de l'API écrit en code, comme `metamob.quests.list()`, mène à sa
+  page dans la référence.
+- Les terminaux se jouent quand ils arrivent à l'écran, et **Rejouer** les
+  relance. Ce qu'ils affichent est ce que le code de la page a vraiment
+  affiché, sur un compte d'exemple.
+- **Suivant**, en bas de page, mène à l'étape suivante.
 
 ## À propos de Metamob
 
-[Metamob](https://www.metamob.fr) est le site où les joueurs de Dofus suivent leurs quêtes d'archimonstres et trouvent avec qui échanger. Le site, ses données et son API sont son travail : cette bibliothèque ne fait que l'appeler. La [documentation officielle de l'API](https://www.metamob.fr/help/api) reste la référence.
+[Metamob](https://www.metamob.fr) est un site de fans. Le site, ses données et
+son API sont son travail : cette bibliothèque ne fait que l'appeler. La
+[documentation officielle de l'API](https://www.metamob.fr/help/api) reste la
+référence.

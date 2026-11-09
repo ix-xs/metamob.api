@@ -80,22 +80,19 @@ Los monstruos que pide una misión, etapa por etapa, vienen de las [plantillas d
 - Un identificador que no existe responde `NOT_FOUND`. Un nombre que no existe lanza `UNKNOWN_NAME`, con sugerencias.
 - Las respuestas se [guardan en caché](/basics/caching/) durante 10 minutos por defecto.
 
+<!-- exports:start -->
 ## Referencia
 
-| Método | Devuelve |
+Cada export tiene su página en la [referencia](/reference/):
+
+| Export | Para qué sirve |
 | --- | --- |
-| `monsters.get(monster, { gameVersion, template }?, options?)` | `MonsterDetail` |
-| `monsters.list({ query, type, limit, offset }, options?)` | una lista de `Monster` |
-| `monsters.search(query, { type, limit, offset }, options?)` | una lista de `Monster` |
-
-Un `Monster`:
-
-| Campo | Tipo | Significado |
-| --- | --- | --- |
-| `id` | `number` | |
-| `name` | `{ fr, en, es }` | El nombre en tres idiomas |
-| `image` | `string` | Nombre de archivo de la imagen, consulta `urls.monsterImage()` |
-| `level_min`, `level_max` | `number` | |
-| `type` | `MonsterType \| null` | `{ id, name }`: monstruo, jefe o archimonstruo |
-| `reference` | `{ id, name }` o ausente | Para un archimonstruo, su monstruo base |
-| `zones` | `ZoneDetail[]` | Solo con `get()`: las zonas, cada una con las subzonas correspondientes |
+| [`Monsters`](/reference/monsters/) | Los monstruos del juego. |
+| [`urls`](/reference/urls/) | Direcciones en metamob.fr, construidas a partir de lo que devuelve la API. |
+| [`Monster`](/reference/monster/) | Un monstruo. |
+| [`MonsterDetail`](/reference/monster-detail/) | Un monstruo con los lugares donde vive. |
+| [`MonsterListParams`](/reference/monster-list-params/) | Filtros de [`Monsters.list`](/reference/monsters/). |
+| [`MonsterReference`](/reference/monster-reference/) | El monstruo de base de un archimonstruo. |
+| [`MonsterType`](/reference/monster-type/) | Un tipo de monstruo: 1 es un monstruo, 2 un jefe, 3 un archimonstruo. |
+| [`TemplateMonster`](/reference/template-monster/) | Un monstruo de una plantilla de misión, con la etapa a la que pertenece. |
+<!-- exports:end -->

@@ -1,0 +1,66 @@
+---
+title: Registrar un monstruo
+description: "Decirle a Metamob cuántos ejemplares de un monstruo tienes, llamándolo por su nombre."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+Acabas de capturar un monstruo. En lugar de abrir el sitio, el script lo
+registra en tu misión. El monstruo se da por su nombre, tal como lo
+escribirías.
+
+## El script
+
+Este script es un archivo nuevo: recibe el nombre del monstruo y la cantidad
+en el comando.
+
+```ts title="record.ts"
+import { Metamob, isMetamobError } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+const [name = "", quantity = "1"] = process.argv.slice(2);
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+try {
+  const result = await metamob.quests.setMonster(quest.slug, name, Number(quantity));
+  console.log(`${name}: ${result.owned} owned`);
+} catch (error) {
+  if (!isMetamobError(error, "UNKNOWN_NAME")) throw error;
+  console.log(error.message);
+}
+```
+
+```bash
+node --env-file=.env record.ts "Pioukas la Plante" 1
+```
+
+<TerminalDemo scene="script/recording/recorded" />
+
+`metamob.quests.setMonster()` fija cuántos ejemplares tienes: no los suma. Con
+`0`, el monstruo vuelve a faltar.
+
+## Los nombres aceptados
+
+| Escribes | El monstruo encontrado |
+| --- | --- |
+| `"Pioukas la Plante"` | Su nombre en francés |
+| Su nombre en inglés o en español | El mismo monstruo |
+| `"pioukas la plante"` | El mismo: las mayúsculas y los acentos no cuentan |
+| Un número | El monstruo con ese identificador |
+
+## Una errata
+
+Si el nombre no corresponde a ningún monstruo, no se envía nada a tu misión.
+La llamada lanza un error `UNKNOWN_NAME`, cuyo mensaje propone los nombres
+más parecidos:
+
+```bash
+node --env-file=.env record.ts "Pioukas la Plnte" 1
+```
+
+<TerminalDemo scene="script/recording/typo" />
+
+[Nombres e identificadores](/basics/names-and-ids/) detalla lo que se acepta,
+también para las zonas y los servidores.

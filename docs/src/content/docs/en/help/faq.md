@@ -13,7 +13,7 @@ No. `@ix-xs/metamob.api` is an independent open-source project, under the MIT li
 
 ## Does it cover the whole API?
 
-Yes, the 42 endpoints. [Every method](/reference/methods/) lists them, with the method that calls each one.
+Yes, the 42 endpoints. [Every method](/resources/methods/) lists them, with the method that calls each one.
 
 ## Do I need an API key?
 
@@ -33,11 +33,11 @@ Both. It is written in TypeScript and includes its types. In JavaScript, your ed
 
 ## ES modules or CommonJS?
 
-Both: `import { Metamob }` and `const { Metamob } = require(...)`. See [Runtimes](/reference/runtimes/).
+Both: `import { Metamob }` and `const { Metamob } = require(...)`. See [Runtimes](/help/runtimes/).
 
 ## Can I use it in a browser?
 
-Yes, with care for the key: see [Runtimes](/reference/runtimes/#browsers). The `data` object alone is safe anywhere.
+Yes, with care for the key: see [Runtimes](/help/runtimes/#browsers). The `data` object alone is safe anywhere.
 
 ## In which language are the names?
 
@@ -65,7 +65,7 @@ Yes: rate limits, server errors on reads, timeouts and network failures, up to 3
 
 ## I used version 4. What changes?
 
-The way to call the methods, not what they do. [Coming from version 4](/start/migrating-from-v4/) gives the replacement of each method.
+The way to call the methods, not what they do. [Coming from version 4](/help/migrating-from-v4/) gives the replacement of each method.
 
 ## Where do I report a bug or ask for something?
 

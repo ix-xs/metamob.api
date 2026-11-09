@@ -49,18 +49,14 @@ async function whose(key: string) {
 }
 ```
 
+<!-- exports:start -->
 ## Reference
 
-`metamob.me(options?)` returns an `Account`:
+Each export has its page in the [reference](/reference/):
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `username` | `string` | The username of the account |
-| `bio` | `string` | The text of the profile, empty when there is none |
-| `avatar` | `Avatar \| null` | The monster chosen as avatar: `id`, `name`, `image` |
-| `last_active` | `string` | Last activity, as an ISO 8601 date in UTC: `2026-10-14T09:12:45Z` |
-
-| Error | When |
+| Export | What it is for |
 | --- | --- |
-| `UNAUTHORIZED` | The key is invalid or was revoked |
-| `MISSING_API_KEY` | No key was given anywhere |
+| [`Account`](/reference/account/) | The account an API key belongs to. |
+| [`Avatar`](/reference/avatar/) | The monster a user picked as their avatar. |
+| [`UserSummary`](/reference/user-summary/) | A user as a search or a trade match returns them. |
+<!-- exports:end -->

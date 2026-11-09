@@ -126,22 +126,16 @@ Las propuestas enviadas y recibidas se leen con [`tradeProposals.list()`](/resou
 - `NOT_FOUND` para una misión que no es tuya.
 - Un ajuste manual vacío, sin ninguno de los dos campos, se rechaza antes de enviarse.
 
+<!-- exports:start -->
 ## Referencia
 
-| Método | Devuelve |
+Cada export tiene su página en la [referencia](/reference/):
+
+| Export | Para qué sirve |
 | --- | --- |
-| `quests.matches(slug, { minParallelQuests, onlyPossibleTrades, limit, offset }, options?)` | una lista de `TradeMatch` |
-| `quests.setTrade(slug, monster, { trade_offer, trade_want }, options?)` | `TradeOverrideResult` |
-| `quests.resetTrade(slug, monster, options?)` | `TradeOverrideResult` |
-
-Un `TradeMatch`:
-
-| Campo | Significado |
-| --- | --- |
-| `user` | `username`, `avatar`, `last_active` |
-| `quest` | `slug`, `character_name`, `parallel_quests` de su misión |
-| `matches.they_have_you_want` | Lo que te puede dar |
-| `matches.you_have_they_want` | Lo que le puedes dar |
-| `match_score` | Número de monstruos distintos que puedes dar, más los que puedes recibir. La clasificación favorece el equilibrio, no esta suma |
-
-Cada monstruo de una coincidencia tiene `id`, `name`, `available`, `needed` y `covers_need`.
+| [`MatchesParams`](/reference/matches-params/) | Filtros de [`Quests.matches`](/reference/quests/). |
+| [`MatchMonster`](/reference/match-monster/) | Un monstruo que un lado de una coincidencia puede dar al otro. |
+| [`TradeMatch`](/reference/trade-match/) | Un socio de intercambio para una de tus misiones. |
+| [`TradeOverride`](/reference/trade-override/) | Un ajuste manual de intercambio. |
+| [`TradeOverrideResult`](/reference/trade-override-result/) | Lo que devuelve `quests.setTrade()`. |
+<!-- exports:end -->

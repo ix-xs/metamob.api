@@ -115,8 +115,8 @@ export class MetamobRequestError extends MetamobError {
 }
 
 /**
- * Thrown before any request is sent: an invalid argument, a missing API key,
- * or a name that matches no monster, zone or server.
+ * Thrown before the call it is about is sent: an invalid argument, a missing
+ * API key, or a name that matches no monster, zone or server.
  */
 export class MetamobArgumentError extends MetamobError {
   /** For an unknown name (`code === "UNKNOWN_NAME"`), the closest existing names, best first. */

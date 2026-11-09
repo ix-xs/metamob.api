@@ -1,0 +1,58 @@
+---
+title: Finding who to trade with
+description: "Find the players who have what you lack, and look for what you have spare."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+You lack some monsters, and other players have spare ones. Metamob works out
+who can trade with you, as on its Community page. The script shows the three
+best partners.
+
+## The script
+
+```ts title="trades.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+const partners = await metamob.quests.matches(quest.slug, { onlyPossibleTrades: true }).take(3);
+
+for (const { user, matches } of partners) {
+  const gives = matches.they_have_you_want.map((monster) => monster.name.fr);
+  const wants = matches.you_have_they_want.map((monster) => monster.name.fr);
+  console.log(`${user.username} has ${gives.join(", ")}`);
+  console.log(`  and is looking for ${wants.join(", ")}`);
+}
+```
+
+```bash
+node --env-file=.env trades.ts
+```
+
+<TerminalDemo scene="script/trades/partners" />
+
+Only quests of the same kind, on the same server, can trade: that is where
+partners are looked for.
+
+## What a partner holds
+
+| Field | What it holds |
+| --- | --- |
+| `user.username` | The player's username |
+| `quest` | Their quest: slug, character, quests in parallel |
+| `matches.they_have_you_want` | What they can give you |
+| `matches.you_have_they_want` | What you can give them |
+| `match_score` | The ranking: the number of monsters that can be traded both ways |
+
+`onlyPossibleTrades: true` leaves out players with whom the trade only goes
+one way. `.take(3)` stops at the first three.
+
+:::note[Proposing the trade]
+The script stops at the search. Sending a message or a trade proposal is done
+with `metamob.conversations` and `metamob.tradeProposals`: see
+[Trading](/resources/trading/).
+:::

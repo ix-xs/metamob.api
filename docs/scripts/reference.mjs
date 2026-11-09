@@ -159,7 +159,7 @@ async function page(language) {
 
 let stale = 0;
 for (const language of LANGUAGES) {
-  const file = path.join(folder(language), "reference", "methods.md");
+  const file = path.join(folder(language), "resources", "methods.md");
   const next = await page(language);
   const current = existsSync(file) ? (await readFile(file, "utf8")).replace(/\r\n/g, "\n") : "";
   if (current === next) continue;

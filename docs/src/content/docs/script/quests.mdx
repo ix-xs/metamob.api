@@ -1,0 +1,53 @@
+---
+title: Vos quêtes
+description: "Lire les quêtes de votre compte, et ce que chacune contient."
+---
+
+import TerminalDemo from '../../../components/demo/TerminalDemo.astro';
+
+Votre clé fonctionne. Le script peut maintenant lire vos quêtes : leur
+personnage, leur serveur et l'étape où vous en êtes.
+
+## Lister vos quêtes
+
+Remplacez le contenu de `quest.ts` :
+
+```ts title="quest.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const quests = await metamob.quests.list();
+
+for (const quest of quests) {
+  const steps = quest.quest_template.step_count;
+  console.log(`${quest.slug}  ${quest.character_name} on ${quest.server?.name}, step ${quest.current_step} of ${steps}`);
+}
+```
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/quests/list" />
+
+`metamob.quests.list()` renvoie toutes les quêtes du compte, même celles qui
+sont masquées du profil public.
+
+## Ce que contient une quête
+
+| Champ | Ce qu'il contient |
+| --- | --- |
+| `slug` | L'identifiant de la quête, celui qui termine l'adresse de sa page sur le site. Toutes les méthodes de `metamob.quests` le demandent |
+| `character_name` | Le personnage qui fait la quête |
+| `server` | Son serveur, avec la version du jeu |
+| `current_step` | L'étape en cours |
+| `parallel_quests` | Combien de fois vous faites la quête en même temps : le nombre d'exemplaires à avoir de chaque monstre |
+| `quest_template` | Le modèle suivi : le type de quête, le nombre d'étapes et de monstres |
+
+Le type complet est [`OwnQuest`](/reference/own-quest/).
+
+:::tip[Le slug d'une quête]
+Le slug ne change jamais. Un script qui ne travaille que sur une quête peut
+le garder en dur, au lieu d'appeler `metamob.quests.list()` à chaque fois.
+:::

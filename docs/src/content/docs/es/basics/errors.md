@@ -122,24 +122,17 @@ try {
 
 Un argumento que la API rechazaría con seguridad se rechaza antes del envío, con `INVALID_ARGUMENT`: un slug vacío, una cantidad negativa, una búsqueda de menos de 3 caracteres, una fecha con un formato incorrecto, un mensaje de más de 1000 caracteres, una propuesta sin monstruos.
 
+<!-- exports:start -->
 ## Referencia
 
-| Código | Significado |
-| --- | --- |
-| `BAD_REQUEST` | 400: la API rechazó los parámetros |
-| `UNAUTHORIZED` | 401: clave ausente, no válida o revocada |
-| `FORBIDDEN` | 403 |
-| `NOT_FOUND` | 404: no existe, o no es tuyo |
-| `CONFLICT` | 409: el estado no lo permite, por ejemplo una propuesta ya aplicada |
-| `RATE_LIMITED` | 429, después de los reintentos |
-| `SERVER_ERROR` | 5xx, después de los reintentos |
-| `API_ERROR` | Cualquier otro estado de error |
-| `TIMEOUT` | Sin respuesta a tiempo |
-| `NETWORK` | No se pudo hacer la solicitud |
-| `ABORTED` | Cancelado con tu `signal` |
-| `PARSE_ERROR` | La respuesta no era JSON válido |
-| `MISSING_API_KEY` | No hay clave en las opciones, la llamada ni el entorno |
-| `INVALID_ARGUMENT` | Un argumento es incorrecto |
-| `UNKNOWN_NAME` | Ningún monstruo, zona o servidor tiene ese nombre |
+Cada export tiene su página en la [referencia](/reference/):
 
-[Códigos de error](/reference/errors/) lista las propiedades de cada clase.
+| Export | Para qué sirve |
+| --- | --- |
+| [`MetamobApiError`](/reference/metamob-api-error/) | La API respondió con un código de error. |
+| [`MetamobArgumentError`](/reference/metamob-argument-error/) | Se lanza antes de enviar la llamada a la que se refiere: un argumento no válido, una clave API ausente, o un nombre que no corresponde a ningún monstruo, zona o servidor. |
+| [`MetamobError`](/reference/metamob-error/) | Clase base de todo lo que lanza esta biblioteca. |
+| [`MetamobRequestError`](/reference/metamob-request-error/) | La solicitud nunca dio una respuesta utilizable: tiempo agotado, fallo de red, cancelación o cuerpo ilegible. |
+| [`isMetamobError`](/reference/is-metamob-error/) | Guarda de tipo para los errores lanzados por esta biblioteca, opcionalmente limitada a un código. |
+| [`MetamobErrorCode`](/reference/metamob-error-code/) | El `code` de cada error que lanza esta biblioteca. |
+<!-- exports:end -->

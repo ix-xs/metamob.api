@@ -1,0 +1,74 @@
+---
+title: Quand ça échoue
+description: "Reconnaître les erreurs du client et de l'API, et réagir à chacune."
+---
+
+import TerminalDemo from '../../../components/demo/TerminalDemo.astro';
+
+Une clé révoquée, une quête supprimée, le site injoignable : un appel peut
+échouer. Le client lève alors une erreur qui dit ce qui s'est passé. Cette
+dernière étape montre comment la lire.
+
+## Attraper une erreur
+
+Remplacez le contenu de `quest.ts` :
+
+```ts title="quest.ts"
+import { Metamob, isMetamobError } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+try {
+  const me = await metamob.me();
+  console.log(`Signed in as ${me.username}`);
+} catch (error) {
+  if (!isMetamobError(error)) throw error;
+  console.log(`${error.code}: ${error.message}`);
+  process.exitCode = 1;
+}
+```
+
+Avec une clé révoquée dans `.env` :
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/errors/bad-key" />
+
+`isMetamobError()` dit si l'erreur vient du client. Toute autre erreur est un
+bug de votre code : le script la relance.
+
+## Les codes les plus fréquents
+
+Chaque erreur a un `code`, le même quelle que soit la langue du message :
+
+| Code | Ce qui s'est passé | Que faire |
+| --- | --- | --- |
+| `MISSING_API_KEY` | Aucune clé n'est arrivée au client | Vérifier `.env` et `--env-file=.env` |
+| `UNAUTHORIZED` | L'API refuse la clé | En créer une nouvelle sur metamob.fr |
+| `NOT_FOUND` | Ce qui est demandé n'existe pas, ou n'est pas à vous | Vérifier le slug ou le pseudo |
+| `UNKNOWN_NAME` | Aucun monstre, zone ou serveur ne porte ce nom | Lire les noms proposés dans le message |
+| `NETWORK` | Le site n'a pas pu être joint | Réessayer plus tard |
+
+[Codes d'erreur](/help/error-codes/) les liste tous.
+
+## Ce que le client fait déjà
+
+Vous n'avez pas à gérer la limite de requêtes : au-delà de 60 requêtes par
+minute, le client fait attendre les appels suivants au lieu de les envoyer.
+Une erreur passagère du serveur est réessayée seule, quelques fois, avant
+d'être levée. [La limite de requêtes](/basics/rate-limit/) et
+[Erreurs](/basics/errors/) montrent comment régler les deux.
+
+## Et ensuite
+
+Votre script se connecte, lit vos quêtes, liste ce qui manque, enregistre un
+monstre et trouve avec qui échanger. Pour aller plus loin :
+
+- [Les bases](/basics/configuration/) : les options du client, les listes, le
+  cache.
+- [L'API](/resources/methods/) : une page par partie de l'API, des quêtes aux
+  messages.
+- [Exemples complets](/recipes/discord-command/) : une commande Discord, un
+  rapport de progression, un chercheur d'échanges.

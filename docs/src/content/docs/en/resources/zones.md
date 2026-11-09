@@ -87,14 +87,17 @@ The progress of one of your quests zone by zone is read with [`quests.zones()`](
 - A subzone the package does not know, given without its zone, throws `UNKNOWN_NAME` and asks to pass `{ zone }`.
 - Answers are [cached](/basics/caching/) for 10 minutes by default.
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
-| --- | --- |
-| `zones.list({ query }, options?)` | `Zone[]` |
-| `zones.get(zone, options?)` | `ZoneDetail`, the zone with its `subzones` |
-| `zones.subzones(zone, { query }, options?)` | `SubzoneRef[]` |
-| `zones.subzone(subzone, { zone }?, options?)` | `Subzone`, the subzone with its `zone` |
-| `zones.monsters(subzone, { zone }?, options?)` | `Monster[]` |
+Each export has its page in the [reference](/reference/):
 
-A zone and a subzone both have an `id` and a `name` in three languages.
+| Export | What it is for |
+| --- | --- |
+| [`Zones`](/reference/zones/) | The zones and subzones of the game, and the monsters that live there. |
+| [`Subzone`](/reference/subzone/) | A subzone with the zone it belongs to. |
+| [`SubzoneParams`](/reference/subzone-params/) | Says which zone a subzone belongs to, for a subzone newer than the package. |
+| [`SubzoneRef`](/reference/subzone-ref/) | A subzone as it appears in a list: its id and name. |
+| [`Zone`](/reference/zone/) | A zone of the game. |
+| [`ZoneDetail`](/reference/zone-detail/) | A zone with its subzones. |
+<!-- exports:end -->

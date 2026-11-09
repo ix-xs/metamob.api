@@ -1,0 +1,64 @@
+---
+title: What is missing
+description: "List the monsters the current step of a quest still lacks."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+The script knows your quests. It can now tell, for the first one, which
+monsters you still lack at the current step.
+
+## List the missing monsters
+
+Replace the content of `quest.ts`:
+
+```ts title="quest.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+const step = quest.current_step;
+const needed = metamob.quests.monsters(quest.slug, { status: "needed", step });
+
+console.log(`${quest.character_name}, step ${step}, still to find:`);
+for await (const monster of needed) {
+  console.log(`  ${monster.name.fr}`);
+}
+```
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/missing/needed" />
+
+## The filters
+
+`metamob.quests.monsters()` takes the slug of the quest, then filters:
+
+| Filter | What it keeps |
+| --- | --- |
+| `status: "needed"` | The monsters you own fewer copies of than quests in parallel |
+| `status: "excess"` | Those you own spare copies of |
+| `step` | Those of one step |
+| `type` | One kind of monster: `"monstre"`, `"boss"` or `"archimonstre"` |
+
+With no filter, you get every monster of the quest.
+
+## A list, page by page
+
+The API sends monsters by pages. `for await` walks through all of them, and
+sends one request per page, without you having to deal with it. The same list
+offers other ways to read it:
+
+| Written as | What it gives |
+| --- | --- |
+| `for await (const monster of needed)` | Each monster, across every page |
+| `await needed` | The first page only |
+| `await needed.count()` | The total, in one request |
+| `await needed.all()` | Every monster in an array |
+
+[Lists](/basics/lists/) goes through them.

@@ -80,22 +80,19 @@ Les monstres que demande une quête, étape par étape, viennent des [modèles d
 - Un identifiant qui n'existe pas répond `NOT_FOUND`. Un nom qui n'existe pas lève `UNKNOWN_NAME`, avec des suggestions.
 - Les réponses sont [mises en cache](/basics/caching/) pendant 10 minutes par défaut.
 
+<!-- exports:start -->
 ## Référence
 
-| Méthode | Renvoie |
+Chaque export a sa page dans la [référence](/reference/) :
+
+| Export | À quoi il sert |
 | --- | --- |
-| `monsters.get(monster, { gameVersion, template }?, options?)` | `MonsterDetail` |
-| `monsters.list({ query, type, limit, offset }, options?)` | une liste de `Monster` |
-| `monsters.search(query, { type, limit, offset }, options?)` | une liste de `Monster` |
-
-Un `Monster` :
-
-| Champ | Type | Signification |
-| --- | --- | --- |
-| `id` | `number` | |
-| `name` | `{ fr, en, es }` | Le nom dans trois langues |
-| `image` | `string` | Nom de fichier de l'image, voir `urls.monsterImage()` |
-| `level_min`, `level_max` | `number` | |
-| `type` | `MonsterType \| null` | `{ id, name }` : monstre, boss ou archimonstre |
-| `reference` | `{ id, name }` ou absent | Pour un archimonstre, son monstre de base |
-| `zones` | `ZoneDetail[]` | Seulement avec `get()` : les zones, chacune avec les sous-zones concernées |
+| [`Monsters`](/reference/monsters/) | Les monstres du jeu. |
+| [`urls`](/reference/urls/) | Des adresses sur metamob.fr, construites à partir de ce que renvoie l'API. |
+| [`Monster`](/reference/monster/) | Un monstre. |
+| [`MonsterDetail`](/reference/monster-detail/) | Un monstre avec les endroits où il vit. |
+| [`MonsterListParams`](/reference/monster-list-params/) | Filtres de [`Monsters.list`](/reference/monsters/). |
+| [`MonsterReference`](/reference/monster-reference/) | Le monstre de base d'un archimonstre. |
+| [`MonsterType`](/reference/monster-type/) | Un type de monstre : 1 est un monstre, 2 un boss, 3 un archimonstre. |
+| [`TemplateMonster`](/reference/template-monster/) | Un monstre d'un modèle de quête, avec l'étape à laquelle il appartient. |
+<!-- exports:end -->

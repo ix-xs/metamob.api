@@ -81,25 +81,17 @@ With these methods, your quests appear the way others see them: only the public 
 - A search of fewer than 3 characters throws `INVALID_ARGUMENT` before sending.
 - Nothing here is cached by default. For a profile shown often: `cache: { methods: { "users.get": "1m" } }`, see [Caching](/basics/caching/).
 
+<!-- exports:start -->
 ## Reference
 
-| Method | Returns |
+Each export has its page in the [reference](/reference/):
+
+| Export | What it is for |
 | --- | --- |
-| `users.search(query, { server, activeWithinDays, limit, offset }, options?)` | a list of `UserSummary` |
-| `users.get(username, options?)` | `UserProfile` |
-| `users.quests(username, options?)` | `PublicQuestSummary[]` |
-| `users.quest(username, slug, { type, status, step, limit, offset }, options?)` | a list of `QuestMonster`, with `page.quest` |
-
-A public quest:
-
-| Field | Meaning |
-| --- | --- |
-| `slug` | Its identifier |
-| `character_name` | The character doing the quest |
-| `current_step` | The step the character is at |
-| `parallel_quests` | Quests done in parallel, that is the number of copies of each monster to gather |
-| `server` | The server, with its version of the game |
-| `quest_template` | The kind of quest, its number of monsters and of steps |
-| `wanted_count`, `offered_count` | Only with `users.quests()` |
-
-A monster of a public quest is a `Monster` with `step`, `quantity`, `want` and `offer`.
+| [`Users`](/reference/users/) | Other players: their profile and their public quests. |
+| [`PublicQuest`](/reference/public-quest/) | A public quest in a profile. |
+| [`PublicQuestParams`](/reference/public-quest-params/) | Filters of [`Users.quest`](/reference/users/). |
+| [`PublicQuestSummary`](/reference/public-quest-summary/) | A public quest in the list of a user's quests. |
+| [`UserProfile`](/reference/user-profile/) | The public profile of a user. |
+| [`UserSearchParams`](/reference/user-search-params/) | Filters of [`Users.search`](/reference/users/). |
+<!-- exports:end -->

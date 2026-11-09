@@ -1,0 +1,53 @@
+---
+title: Tus misiones
+description: "Leer las misiones de tu cuenta, y lo que contiene cada una."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+Tu clave funciona. El script ya puede leer tus misiones: su personaje, su
+servidor y la etapa en la que estás.
+
+## Listar tus misiones
+
+Reemplaza el contenido de `quest.ts`:
+
+```ts title="quest.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const quests = await metamob.quests.list();
+
+for (const quest of quests) {
+  const steps = quest.quest_template.step_count;
+  console.log(`${quest.slug}  ${quest.character_name} on ${quest.server?.name}, step ${quest.current_step} of ${steps}`);
+}
+```
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/quests/list" />
+
+`metamob.quests.list()` devuelve todas las misiones de la cuenta, incluso las
+que están ocultas en el perfil público.
+
+## Lo que contiene una misión
+
+| Campo | Lo que contiene |
+| --- | --- |
+| `slug` | El identificador de la misión, el que termina la dirección de su página en el sitio. Todos los métodos de `metamob.quests` lo piden |
+| `character_name` | El personaje que hace la misión |
+| `server` | Su servidor, con la versión del juego |
+| `current_step` | La etapa actual |
+| `parallel_quests` | Cuántas veces haces la misión a la vez: el número de ejemplares que tener de cada monstruo |
+| `quest_template` | La plantilla que sigue: el tipo de misión, el número de etapas y de monstruos |
+
+El tipo completo es [`OwnQuest`](/reference/own-quest/).
+
+:::tip[El slug de una misión]
+El slug no cambia nunca. Un script que solo trabaja con una misión puede
+guardarlo tal cual, en lugar de llamar a `metamob.quests.list()` cada vez.
+:::

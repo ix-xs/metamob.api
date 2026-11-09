@@ -1,0 +1,24 @@
+---
+// A dev-only page that feeds the terminal the scenes of the guide and the
+// worst realistic output, to see what breaks. Nothing is built in production.
+// Open /metamob.api/dev/demo/, /dev/worst/ or /dev/one/ on the dev server.
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import TerminalDemo from "../../components/demo/TerminalDemo.astro";
+import { demo, one, worst } from "../../components/demo/fixtures";
+
+export function getStaticPaths() {
+  if (!import.meta.env.DEV) return [];
+  return ["demo", "worst", "one"].map((state) => ({ params: { state } }));
+}
+
+const { state } = Astro.params;
+const data = state === "worst" ? worst : state === "one" ? one : demo;
+---
+
+<StarlightPage frontmatter={{ title: `Terminal: ${state}`, pagefind: false }}>
+  <p>
+    <a href="../demo/">Scenes of the guide</a> · <a href="../worst/">Worst case</a> · <a href="../one/">Smallest</a>
+  </p>
+  {data.scenes.map((scene) => <TerminalDemo scene={scene} />)}
+  {data.terminal.map((t) => <TerminalDemo command={t.command} units={t.units} />)}
+</StarlightPage>

@@ -1,0 +1,75 @@
+---
+title: Cuando algo falla
+description: "Reconocer los errores del cliente y de la API, y reaccionar a cada uno."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+Una clave revocada, una misión borrada, el sitio inaccesible: una llamada
+puede fallar. El cliente lanza entonces un error que dice lo que pasó. Este
+último paso muestra cómo leerlo.
+
+## Capturar un error
+
+Reemplaza el contenido de `quest.ts`:
+
+```ts title="quest.ts"
+import { Metamob, isMetamobError } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+try {
+  const me = await metamob.me();
+  console.log(`Signed in as ${me.username}`);
+} catch (error) {
+  if (!isMetamobError(error)) throw error;
+  console.log(`${error.code}: ${error.message}`);
+  process.exitCode = 1;
+}
+```
+
+Con una clave revocada en `.env`:
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/errors/bad-key" />
+
+`isMetamobError()` dice si el error viene del cliente. Cualquier otro error es
+un fallo de tu código: el script lo vuelve a lanzar.
+
+## Los códigos más frecuentes
+
+Cada error tiene un `code`, el mismo sea cual sea el idioma del mensaje:
+
+| Código | Lo que pasó | Qué hacer |
+| --- | --- | --- |
+| `MISSING_API_KEY` | Ninguna clave llegó al cliente | Comprobar `.env` y `--env-file=.env` |
+| `UNAUTHORIZED` | La API rechaza la clave | Crear una nueva en metamob.fr |
+| `NOT_FOUND` | Lo pedido no existe, o no es tuyo | Comprobar el slug o el nombre de usuario |
+| `UNKNOWN_NAME` | Ningún monstruo, zona o servidor tiene ese nombre | Leer los nombres propuestos en el mensaje |
+| `NETWORK` | No se pudo contactar con el sitio | Volver a intentarlo más tarde |
+
+[Códigos de error](/help/error-codes/) los lista todos.
+
+## Lo que el cliente ya hace
+
+No tienes que ocuparte del límite de solicitudes: por encima de 60
+solicitudes por minuto, el cliente hace esperar las llamadas siguientes en
+lugar de enviarlas. Un error pasajero del servidor se reintenta solo, unas
+cuantas veces, antes de lanzarse.
+[El límite de solicitudes](/basics/rate-limit/) y [Errores](/basics/errors/)
+muestran cómo ajustar ambos.
+
+## Y después
+
+Tu script se conecta, lee tus misiones, lista lo que falta, registra un
+monstruo y encuentra con quién intercambiar. Para ir más lejos:
+
+- [Lo básico](/basics/configuration/): las opciones del cliente, las listas,
+  la caché.
+- [La API](/resources/methods/): una página por parte de la API, de las
+  misiones a los mensajes.
+- [Ejemplos completos](/recipes/discord-command/): un comando de Discord, un
+  informe de progreso, un buscador de intercambios.

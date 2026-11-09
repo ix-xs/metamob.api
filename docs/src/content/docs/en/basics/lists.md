@@ -132,42 +132,15 @@ for await (const item of metamob.conversations.messages(username)) {
 
 Some endpoints answer everything at once and return a plain array: `quests.list()`, `quests.zones()`, `users.quests()`, `zones.list()`, `zones.subzones()`, `zones.monsters()`, `kralove.list()` and the reference lists (`servers.list()` and the others of the same kind).
 
+<!-- exports:start -->
 ## Reference
 
-What a list request offers:
+Each export has its page in the [reference](/reference/):
 
-| Member | Result | Requests |
-| --- | --- | --- |
-| `await request` | `Page` | 1 |
-| `for await (const item of request)` | each item | 1 per page, when the loop reaches it |
-| `request.all({ limit })` | `T[]` | 1 per page |
-| `request.take(n)` | `T[]` of `n` items at most | 1 per page |
-| `request.first()` | `T \| undefined` | 1 |
-| `request.count()` | `number \| undefined` | 1 |
-| `request.pages({ limit })` | each `Page` | 1 per page |
-
-What a page holds:
-
-| Member | Meaning |
+| Export | What it is for |
 | --- | --- |
-| `items` | The items of the page |
-| `total` | Items across all pages, `undefined` for messages and proposals |
-| `limit`, `offset` | What the API applied |
-| `nextBeforeId` | For messages and proposals, the cursor of the next page |
-| `hasNext` | Whether another page exists |
-| `next()` | The next page, or `null` |
-| `raw` | The body the API sent |
-
-The methods that return a list request:
-
-| Method | Largest page |
-| --- | --- |
-| `monsters.list`, `monsters.search` | 200 |
-| `questTemplates.monsters` | 200 |
-| `quests.monsters` | 200 |
-| `users.quest` | 200 |
-| `users.search` | 50 |
-| `quests.matches` | 50 |
-| `conversations.list` | 50 |
-| `conversations.messages` | 50, by cursor |
-| `tradeProposals.list` | 50, by cursor |
+| [`ListRequest`](/reference/list-request/) | What every paginated method returns. |
+| [`Page`](/reference/page/) | One page of results. |
+| [`CollectOptions`](/reference/collect-options/) | Options of [`ListRequest.all`](/reference/list-request/) and [`ListRequest.pages`](/reference/list-request/). |
+| [`PageParams`](/reference/page-params/) | Page size and starting point of a paginated list. |
+<!-- exports:end -->

@@ -1,0 +1,64 @@
+---
+title: Ce qui manque
+description: "Lister les monstres qui manquent encore à l'étape en cours d'une quête."
+---
+
+import TerminalDemo from '../../../components/demo/TerminalDemo.astro';
+
+Le script connaît vos quêtes. Il peut maintenant dire, pour la première,
+quels monstres il vous manque encore à l'étape en cours.
+
+## Lister les monstres manquants
+
+Remplacez le contenu de `quest.ts` :
+
+```ts title="quest.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+const step = quest.current_step;
+const needed = metamob.quests.monsters(quest.slug, { status: "needed", step });
+
+console.log(`${quest.character_name}, step ${step}, still to find:`);
+for await (const monster of needed) {
+  console.log(`  ${monster.name.fr}`);
+}
+```
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/missing/needed" />
+
+## Les filtres
+
+`metamob.quests.monsters()` prend le slug de la quête, puis des filtres :
+
+| Filtre | Ce qu'il garde |
+| --- | --- |
+| `status: "needed"` | Les monstres dont vous avez moins d'exemplaires que de quêtes en parallèle |
+| `status: "excess"` | Ceux dont vous avez des exemplaires en trop |
+| `step` | Ceux d'une étape |
+| `type` | Un type de monstre : `"monstre"`, `"boss"` ou `"archimonstre"` |
+
+Sans filtre, vous obtenez tous les monstres de la quête.
+
+## Une liste, page par page
+
+L'API renvoie les monstres par pages. `for await` les parcourt toutes, et
+fait une requête par page, sans que vous ayez à vous en occuper. La même liste
+offre d'autres façons de la lire :
+
+| Écriture | Ce qu'elle donne |
+| --- | --- |
+| `for await (const monster of needed)` | Chaque monstre, toutes pages confondues |
+| `await needed` | La première page seulement |
+| `await needed.count()` | Le nombre total, en une requête |
+| `await needed.all()` | Tous les monstres dans un tableau |
+
+[Listes](/basics/lists/) les détaille.

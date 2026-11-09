@@ -85,16 +85,13 @@ Un appel qui attend son tour peut être annulé avec un `signal`. Il lève une e
 await metamob.monsters.get("Tofu", {}, { signal: AbortSignal.timeout(10_000) });
 ```
 
+<!-- exports:start -->
 ## Référence
 
-| Option | Par défaut | Signification |
-| --- | --- | --- |
-| `rateLimit` | actif | `false` désactive le limiteur |
-| `rateLimit.requests` | `60` | Requêtes autorisées par fenêtre, par clé |
-| `rateLimit.per` | `"1m"` | Durée de la fenêtre |
+Chaque export a sa page dans la [référence](/reference/) :
 
-| `metamob.rateLimit` | Signification |
+| Export | À quoi il sert |
 | --- | --- |
-| `limit` | Requêtes autorisées par fenêtre |
-| `remaining` | Requêtes restantes dans la fenêtre en cours |
-| `resetsIn` | Millisecondes avant qu'une requête soit de nouveau libre, 0 quand il y en a déjà une |
+| [`RateLimitOptions`](/reference/rate-limit-options/) | Réglages du limiteur de requêtes intégré. |
+| [`RateLimitState`](/reference/rate-limit-state/) | Où en est une clé API par rapport à sa limite de requêtes, d'après le compte de ce client. |
+<!-- exports:end -->

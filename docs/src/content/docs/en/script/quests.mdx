@@ -1,0 +1,53 @@
+---
+title: Your quests
+description: "Read the quests of your account, and what each one holds."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+Your key works. The script can now read your quests: their character, their
+server and the step you are at.
+
+## List your quests
+
+Replace the content of `quest.ts`:
+
+```ts title="quest.ts"
+import { Metamob } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+
+const quests = await metamob.quests.list();
+
+for (const quest of quests) {
+  const steps = quest.quest_template.step_count;
+  console.log(`${quest.slug}  ${quest.character_name} on ${quest.server?.name}, step ${quest.current_step} of ${steps}`);
+}
+```
+
+```bash
+node --env-file=.env quest.ts
+```
+
+<TerminalDemo scene="script/quests/list" />
+
+`metamob.quests.list()` returns every quest of the account, even those hidden
+from the public profile.
+
+## What a quest holds
+
+| Field | What it holds |
+| --- | --- |
+| `slug` | The id of the quest, the one that ends the address of its page on the site. Every method of `metamob.quests` asks for it |
+| `character_name` | The character doing the quest |
+| `server` | Its server, with the game version |
+| `current_step` | The current step |
+| `parallel_quests` | How many times you do the quest at once: the number of copies to own of each monster |
+| `quest_template` | The template it follows: the kind of quest, the number of steps and monsters |
+
+The full type is [`OwnQuest`](/reference/own-quest/).
+
+:::tip[The slug of a quest]
+The slug never changes. A script that works on one quest only can keep it as
+is, instead of calling `metamob.quests.list()` every time.
+:::

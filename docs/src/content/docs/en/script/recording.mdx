@@ -1,0 +1,65 @@
+---
+title: Recording a monster
+description: "Tell Metamob how many copies of a monster you own, calling it by its name."
+---
+
+import TerminalDemo from '../../../../components/demo/TerminalDemo.astro';
+
+You have just caught a monster. Instead of opening the site, the script
+records it in your quest. The monster is given by its name, the way you
+would write it.
+
+## The script
+
+This script is a new file: it takes the name of the monster and the quantity
+from the command.
+
+```ts title="record.ts"
+import { Metamob, isMetamobError } from "@ix-xs/metamob.api";
+
+const metamob = new Metamob();
+const [name = "", quantity = "1"] = process.argv.slice(2);
+
+const [quest] = await metamob.quests.list();
+if (!quest) throw new Error("This account has no quest yet.");
+
+try {
+  const result = await metamob.quests.setMonster(quest.slug, name, Number(quantity));
+  console.log(`${name}: ${result.owned} owned`);
+} catch (error) {
+  if (!isMetamobError(error, "UNKNOWN_NAME")) throw error;
+  console.log(error.message);
+}
+```
+
+```bash
+node --env-file=.env record.ts "Pioukas la Plante" 1
+```
+
+<TerminalDemo scene="script/recording/recorded" />
+
+`metamob.quests.setMonster()` sets how many copies you own: it does not add
+to it. With `0`, the monster is missing again.
+
+## The names it takes
+
+| You write | The monster found |
+| --- | --- |
+| `"Pioukas la Plante"` | Its French name |
+| Its English or Spanish name | The same monster |
+| `"pioukas la plante"` | The same: case and accents do not count |
+| A number | The monster with that id |
+
+## A typo
+
+When the name matches no monster, nothing is sent to your quest. The call
+throws an `UNKNOWN_NAME` error, whose message offers the closest names:
+
+```bash
+node --env-file=.env record.ts "Pioukas la Plnte" 1
+```
+
+<TerminalDemo scene="script/recording/typo" />
+
+[Names and ids](/basics/names-and-ids/) details what is accepted, zones and
+servers included.
