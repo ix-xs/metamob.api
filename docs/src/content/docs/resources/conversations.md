@@ -117,7 +117,7 @@ Un message n'est jamais retenté, quel que soit l'échec : envoyé deux fois, il
 
 ## Limites et erreurs
 
-- Confirmer ou annuler une proposition se fait sur le site.
+- Appliquer ou annuler une proposition se fait avec [`tradeProposals`](/resources/trade-proposals/).
 - Un message vide, ou de plus de 1000 caractères, est refusé avant d'être envoyé.
 - `markAsRead()` répond `NOT_FOUND` pour un pseudo qui n'existe pas.
 - Un correspondant peut ne plus avoir de profil : un compte supprimé garde ses conversations lisibles pendant 30 jours, alors que `users.get()` répond `NOT_FOUND`.

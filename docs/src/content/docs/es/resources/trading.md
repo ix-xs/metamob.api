@@ -117,7 +117,7 @@ for await (const monster of metamob.quests.monsters(slug, { trade: "manual" })) 
 
 ## Propuestas
 
-Las propuestas enviadas y recibidas se leen con [`tradeProposals.list()`](/resources/trade-proposals/), y también aparecen en tus [conversaciones](/resources/conversations/#trade-proposals). [`tradeProposals.create()`](/resources/trade-proposals/#making-a-proposal) envía una, cuando el envío está abierto en la cuenta. Confirmarlas o cancelarlas se hace en el sitio.
+Las propuestas enviadas y recibidas se leen con [`tradeProposals.list()`](/resources/trade-proposals/), y también aparecen en tus [conversaciones](/resources/conversations/#trade-proposals). [`tradeProposals.create()`](/resources/trade-proposals/#making-a-proposal) envía una, cuando el envío está abierto en la cuenta. `apply()` aplica tu lado, y `cancel()` la cancela o la rechaza.
 
 ## Límites y errores
 

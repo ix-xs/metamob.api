@@ -117,7 +117,7 @@ A message is never retried, whatever the failure: sent twice, it would arrive tw
 
 ## Limits and errors
 
-- Confirming or cancelling a proposal is done on the site.
+- Applying or cancelling a proposal is done with [`tradeProposals`](/resources/trade-proposals/).
 - An empty message, or one longer than 1000 characters, is refused before being sent.
 - `markAsRead()` answers `NOT_FOUND` for a username that does not exist.
 - A correspondent may have no profile left: a deleted account keeps its conversations readable for 30 days, while `users.get()` answers `NOT_FOUND`.

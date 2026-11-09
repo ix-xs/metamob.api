@@ -35,6 +35,8 @@ export const METHODS = {
   "tradeProposals.list": { id: "tradeProposals.list", verb: "GET", path: "/trade-proposals", scope: "account", paged: { max: 50, cursor: true } },
   "tradeProposals.get": { id: "tradeProposals.get", verb: "GET", path: "/trade-proposals/{id}", scope: "account" },
   "tradeProposals.create": { id: "tradeProposals.create", verb: "POST", path: "/trade-proposals", scope: "account", once: true },
+  "tradeProposals.apply": { id: "tradeProposals.apply", verb: "POST", path: "/trade-proposals/{id}/apply", scope: "account", once: true },
+  "tradeProposals.cancel": { id: "tradeProposals.cancel", verb: "POST", path: "/trade-proposals/{id}/cancel", scope: "account", once: true },
   "quests.list": { id: "quests.list", verb: "GET", path: "/quests", scope: "account" },
   "quests.get": { id: "quests.get", verb: "GET", path: "/quests/{slug}", scope: "account" },
   "quests.update": { id: "quests.update", verb: "PATCH", path: "/quests/{slug}", scope: "account" },

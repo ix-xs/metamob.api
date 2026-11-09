@@ -5,7 +5,7 @@ sidebar:
   order: 8
 ---
 
-Una propuesta de intercambio sale de una de tus misiones, hacia otro jugador. La API permite leerlas, y enviarlas cuando el envío está abierto en la cuenta. Confirmarlas o cancelarlas se hace en el sitio. Cada una aparece también en la [conversación](/resources/conversations/#trade-proposals) con ese jugador.
+Una propuesta de intercambio sale de una de tus misiones, hacia otro jugador. La API permite leerlas, aplicar tu lado o cancelarlas, y enviarlas cuando el envío está abierto en la cuenta. Cada una aparece también en la [conversación](/resources/conversations/#trade-proposals) con ese jugador.
 
 ## Listar las propuestas
 
@@ -49,24 +49,30 @@ Una propuesta designa sus monstruos por su identificador: [`data.monster()`](/ba
 
 | `status` | Significado |
 | --- | --- |
-| `pending` | Nadie ha confirmado todavía |
-| `half_applied` | Uno de los dos jugadores ha confirmado: consulta `applications` |
-| `completed` | Los dos jugadores han confirmado |
+| `pending` | Nadie ha aplicado todavía su lado |
+| `half_applied` | Uno de los dos jugadores ha aplicado su lado: consulta `applications` |
+| `completed` | Los dos lados están aplicados |
 | `cancelled` | Cancelada por `cancelled_by`, o caducada cuando `cancelled_by` vale `null` |
 
 ## Leer una propuesta
 
-`tradeProposals.get()` toma un identificador, o una propuesta sacada de una lista. Leída sola, cada monstruo de la propuesta lleva `owned`: el número de ejemplares que posees ahora en tu misión correspondiente.
+`tradeProposals.get()` toma un identificador, o una propuesta sacada de una lista. La respuesta añade `viewer`, tu lado de la propuesta: tu papel, si aplicaste tu lado, lo que sale de tu misión (`removed`) y lo que entra (`added`).
 
 ```ts
 const proposal = await metamob.tradeProposals.get(57);
 
-for (const { monster_id, owned, quantity } of proposal.monsters_given) {
-  console.log(data.monster(monster_id)?.name.fr, `${owned ?? 0} owned, ${quantity} more`);
+proposal.viewer.role; // "sender" o "recipient"
+proposal.viewer.applied; // aplicaste tu lado
+
+for (const { monster_id, owned, quantity } of proposal.viewer.added) {
+  const name = data.monster(monster_id)?.name.fr;
+  console.log(name, `${owned ?? 0} owned, ${quantity} coming`);
 }
 ```
 
-`owned` es la cantidad actual, no la del día en que se hizo la propuesta: una vez aplicado el intercambio, ya lo tiene en cuenta. Vale `null` cuando no tienes ninguna misión de ese tipo en ese servidor.
+Cada monstruo de `removed` y de `added` lleva `owned`: el número de ejemplares que posees ahora. Una vez aplicado tu lado, ya lo tiene en cuenta. Vale `null` cuando no tienes ninguna misión de ese tipo en ese servidor.
+
+`create()`, `apply()` y `cancel()` devuelven la propuesta con la misma forma.
 
 ## Hacer una propuesta
 
@@ -96,6 +102,45 @@ El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petici
 
 Una propuesta nunca se reintenta, sea cual sea el fallo: enviada dos veces, existiría por duplicado. Después de un tiempo agotado o un corte de red, consulta `list({ direction: "sent" })` antes de reenviarla.
 
+## Aplicar una propuesta
+
+`tradeProposals.apply()` aplica tu lado de la propuesta a tu misión: lo que das sale de ella, lo que recibes entra. Vale para el remitente y para el destinatario, y la propuesta pasa a `completed` cuando los dos lados están aplicados. A diferencia del envío, está abierto a todas las claves:
+
+```ts
+const proposal = await metamob.tradeProposals.apply(57);
+
+proposal.status; // "half_applied", o "completed" si el otro lado ya lo estaba
+proposal.viewer.applied; // true
+```
+
+Si te faltan ejemplares de un monstruo que das, no se modifica nada y la API responde `CONFLICT`, con lo que posees y lo que se pide. Con `allowPartial: true`, la propuesta se aplica igualmente, con cada cantidad reducida a lo que posees: `viewer.clamped` vale entonces `true`, y `applied_quantity` da lo que se movió de verdad para cada monstruo.
+
+```ts
+const proposal = await metamob.tradeProposals.apply(57, { allowPartial: true });
+const { clamped, removed } = proposal.viewer;
+
+if (clamped) {
+  for (const { monster_id, quantity, applied_quantity } of removed) {
+    const name = data.monster(monster_id)?.name.fr;
+    console.log(name, `${applied_quantity} of ${quantity}`); // lo que se movió de verdad
+  }
+}
+```
+
+Aplicar dos veces, o aplicar una propuesta cancelada, también responde `CONFLICT`. `apply()` nunca se reintenta: tras un tiempo de espera agotado, vuelve a leer la propuesta con `get()` antes de intentarlo de nuevo.
+
+## Cancelar o rechazar
+
+`tradeProposals.cancel()` cancela una propuesta que enviaste, o rechaza una que recibiste. Es posible mientras no hayas aplicado tu lado, aunque el otro jugador haya aplicado el suyo:
+
+```ts
+const proposal = await metamob.tradeProposals.cancel(57);
+
+proposal.status; // "cancelled"
+```
+
+Una propuesta ya cancelada, o que ya aplicaste, responde `CONFLICT`. Como `apply()`, `cancel()` nunca se reintenta.
+
 ## Vigilar las nuevas propuestas
 
 Consultada con regularidad con `since`, la lista da lo que ha llegado desde la última vez, por ejemplo para un bot que te avisa:
@@ -118,7 +163,7 @@ setInterval(async () => {
 
 ## Límites y errores
 
-- Confirmar o cancelar una propuesta se hace en el sitio.
+- `apply()` y `cancel()` responden `NOT_FOUND` para una propuesta que no existe o en la que no participas, y `CONFLICT` para una propuesta ya cancelada, ya aplicada por ti, o cuya misión tuya se eliminó.
 - `create()` rechaza antes del envío una propuesta sin ningún monstruo, una cantidad fuera del rango de 1 a 99, un monstruo nombrado dos veces en el mismo lado, o más de 200 monstruos en un mismo lado.
 - La API responde `BAD_REQUEST` para un monstruo que no está en la misión, para un monstruo del que das más ejemplares de los que tienes, o para dos misiones de tipos o servidores distintos, y `NOT_FOUND` para una misión que no existe o, en el caso de `sender_quest`, que no es tuya.
 - `NOT_FOUND` para una propuesta que no existe o que no es tuya.
@@ -132,7 +177,9 @@ setInterval(async () => {
 | --- | --- |
 | `tradeProposals.list({ direction, status, quest, since, limit, beforeId }, options?)` | una lista de `TradeProposal`, por cursor |
 | `tradeProposals.get(id, options?)` | `TradeProposalDetail` |
-| `tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received }, options?)` | `TradeProposal` |
+| `tradeProposals.create({ recipient, sender_quest, recipient_quest, monsters_given, monsters_received }, options?)` | `TradeProposalDetail` |
+| `tradeProposals.apply(id, { allowPartial }?, options?)` | `TradeProposalDetail` |
+| `tradeProposals.cancel(id, options?)` | `TradeProposalDetail` |
 
 Una `TradeProposal`:
 
@@ -151,4 +198,4 @@ Una `TradeProposal`:
 | `created_at` | `string` |
 | `read_at` | `string \| null`, `null` mientras el destinatario no la ha leído |
 
-Una `TradeProposalDetail` es idéntica, con `owned: number | null` en cada monstruo.
+Una `TradeProposalDetail` es una `TradeProposal` con `viewer`: `role` (`"sender" | "recipient"`), `applied` (`boolean`), `clamped` (`boolean | null`), `removed` y `added` (`{ monster_id, quantity, owned }[]`, con `applied_quantity` en la respuesta de `apply()`).

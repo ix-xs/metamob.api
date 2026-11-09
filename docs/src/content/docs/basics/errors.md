@@ -130,6 +130,7 @@ Un argument que l'API refuserait à coup sûr est refusé avant l'envoi, avec `I
 | `UNAUTHORIZED` | 401 : clé manquante, invalide ou révoquée |
 | `FORBIDDEN` | 403 |
 | `NOT_FOUND` | 404 : n'existe pas, ou n'est pas à vous |
+| `CONFLICT` | 409 : l'état ne le permet pas, par exemple une proposition déjà appliquée |
 | `RATE_LIMITED` | 429, après les nouvelles tentatives |
 | `SERVER_ERROR` | 5xx, après les nouvelles tentatives |
 | `API_ERROR` | Tout autre statut d'erreur |

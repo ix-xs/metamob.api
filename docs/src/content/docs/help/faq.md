@@ -13,7 +13,7 @@ Non. `@ix-xs/metamob.api` est un projet open source indépendant, sous licence M
 
 ## Couvre-t-il toute l'API ?
 
-Oui, les 40 points d'accès. [Toutes les méthodes](/reference/methods/) les liste, avec la méthode qui appelle chacun.
+Oui, les 42 points d'accès. [Toutes les méthodes](/reference/methods/) les liste, avec la méthode qui appelle chacun.
 
 ## Ai-je besoin d'une clé API ?
 
@@ -49,7 +49,7 @@ En français, en anglais et en espagnol. Chaque monstre, zone et sous-zone a un 
 
 ## Peut-il créer une quête, envoyer un message ou proposer un échange ?
 
-Il peut envoyer un message et proposer un échange, une fois que Metamob a ouvert l'envoi sur votre compte : voir [Conversations](/resources/conversations/#sending-a-message) et [Propositions d'échange](/resources/trade-proposals/#making-a-proposal). Il écrit aussi dans vos quêtes : réglages, quantités et réglages manuels d'échange. Créer une quête, ou confirmer une proposition, se fait sur le site.
+Il peut envoyer un message et proposer un échange, une fois que Metamob a ouvert l'envoi sur votre compte : voir [Conversations](/resources/conversations/#sending-a-message) et [Propositions d'échange](/resources/trade-proposals/#making-a-proposal). Il écrit aussi dans vos quêtes : réglages, quantités et réglages manuels d'échange. Il peut aussi appliquer ou annuler une proposition. Créer une quête se fait sur le site.
 
 ## Puis-je gérer les quêtes d'autres joueurs ?
 

@@ -117,7 +117,7 @@ Un mensaje nunca se reintenta, sea cual sea el fallo: enviado dos veces, llegar�
 
 ## Límites y errores
 
-- Confirmar o cancelar una propuesta se hace en el sitio.
+- Aplicar o cancelar una propuesta se hace con [`tradeProposals`](/resources/trade-proposals/).
 - Un mensaje vacío, o de más de 1000 caracteres, se rechaza antes de enviarse.
 - `markAsRead()` responde `NOT_FOUND` para un nombre de usuario que no existe.
 - Un interlocutor puede no tener ya perfil: una cuenta borrada conserva sus conversaciones legibles durante 30 días, mientras que `users.get()` responde `NOT_FOUND`.

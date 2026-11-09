@@ -3,6 +3,33 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+Follows the update of the Metamob API of November 2026 on trade proposals: 42
+endpoints.
+
+### Added
+
+- `metamob.tradeProposals.apply(id, { allowPartial })`: applies your side of a
+  proposal to your quest, as the sender or the recipient. Without
+  `allowPartial`, a monster you lack copies of is a `CONFLICT` and nothing
+  changes; with it, quantities are reduced to what you own.
+- `metamob.tradeProposals.cancel(id)`: cancels a proposal you sent, or
+  declines one you received, as long as you have not applied your side.
+- `viewer` on a proposal read on its own: your `role`, whether you `applied`,
+  whether it was `clamped`, and the monsters `removed` from and `added` to your
+  quest, each with what you `owned`, and `applied_quantity` after `apply()`.
+- The error code `CONFLICT`, for a 409.
+- Types `ProposalViewer` and `ApplyProposalOptions`.
+- Applying and cancelling are never retried, like sending.
+
+### Changed
+
+- `tradeProposals.get()` no longer carries `owned` on the monsters of the
+  proposal: the API moved it to `viewer.removed` and `viewer.added`.
+- `tradeProposals.create()` answers the proposal with its `viewer`, like
+  `get()`.
+
 ## 5.2.2
 
 Follows the corrections of the Metamob API of November 2026.

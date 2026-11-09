@@ -7,7 +7,7 @@ Todos los errores extienden `MetamobError` y llevan un `code`. [Errores](/basics
 
 ## Códigos
 
-`code` es un `MetamobErrorCode`. Hay 14.
+`code` es un `MetamobErrorCode`. Hay 15.
 
 «Se reintenta» significa hasta 3 intentos más por defecto. La espera empieza en 500 ms y se duplica, hasta 60 segundos. Cuando la API envía un `Retry-After`, se usa esa espera, salvo que supere `retry.maxDelay`: el error se lanza entonces enseguida, con su `retryAfter`.
 
@@ -19,6 +19,7 @@ Desde la API, como `MetamobApiError`:
 | `UNAUTHORIZED` | 401 | La clave falta, no es válida o se ha revocado | No |
 | `FORBIDDEN` | 403 | La clave no tiene derecho a hacer eso: el envío no está abierto en la cuenta, o uno de los dos jugadores ha bloqueado al otro | No |
 | `NOT_FOUND` | 404 | No existe, o no es tuyo: una misión de otra cuenta, una misión oculta, un jugador borrado | No |
+| `CONFLICT` | 409 | El estado no lo permite: una propuesta ya cancelada o ya aplicada por ti, o para la que te faltan ejemplares | No |
 | `RATE_LIMITED` | 429 | Más de 60 solicitudes en un minuto con esta clave, o los límites antispam del sitio en un mensaje o una propuesta | Sí, salvo un mensaje o una propuesta |
 | `SERVER_ERROR` | 500 o más | La API ha fallado | 502, 503, 504: sí, salvo un mensaje o una propuesta. 500: solo las lecturas |
 | `API_ERROR` | cualquier otro | Otro estado de error | No |

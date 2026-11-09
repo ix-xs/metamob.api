@@ -13,7 +13,7 @@ No. `@ix-xs/metamob.api` es un proyecto de código abierto independiente, con li
 
 ## ¿Cubre toda la API?
 
-Sí, los 40 puntos de acceso. [Todos los métodos](/reference/methods/) los lista, con el método que llama a cada uno.
+Sí, los 42 puntos de acceso. [Todos los métodos](/reference/methods/) los lista, con el método que llama a cada uno.
 
 ## ¿Necesito una clave API?
 
@@ -49,7 +49,7 @@ En francés, en inglés y en español. Cada monstruo, zona y subzona tiene un `n
 
 ## ¿Puede crear una misión, enviar un mensaje o proponer un intercambio?
 
-Puede enviar un mensaje y proponer un intercambio, una vez que Metamob ha abierto el envío en tu cuenta: consulta [Conversaciones](/resources/conversations/#sending-a-message) y [Propuestas de intercambio](/resources/trade-proposals/#making-a-proposal). También escribe en tus misiones: ajustes, cantidades y ajustes manuales de intercambio. Crear una misión, o confirmar una propuesta, se hace en el sitio.
+Puede enviar un mensaje y proponer un intercambio, una vez que Metamob ha abierto el envío en tu cuenta: consulta [Conversaciones](/resources/conversations/#sending-a-message) y [Propuestas de intercambio](/resources/trade-proposals/#making-a-proposal). También escribe en tus misiones: ajustes, cantidades y ajustes manuales de intercambio. También puede aplicar o cancelar una propuesta. Crear una misión se hace en el sitio.
 
 ## ¿Puedo gestionar las misiones de otros jugadores?
 

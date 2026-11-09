@@ -13,7 +13,7 @@ No. `@ix-xs/metamob.api` is an independent open-source project, under the MIT li
 
 ## Does it cover the whole API?
 
-Yes, the 40 endpoints. [Every method](/reference/methods/) lists them, with the method that calls each one.
+Yes, the 42 endpoints. [Every method](/reference/methods/) lists them, with the method that calls each one.
 
 ## Do I need an API key?
 
@@ -49,7 +49,7 @@ French, English and Spanish. Every monster, zone and subzone has a `name` with `
 
 ## Can it create a quest, send a message or propose a trade?
 
-It can send a message and propose a trade, once Metamob has opened sending on your account: see [Conversations](/resources/conversations/#sending-a-message) and [Trade proposals](/resources/trade-proposals/#making-a-proposal). It also writes to your quests: settings, quantities and manual trade settings. Creating a quest, or confirming a proposal, is done on the site.
+It can send a message and propose a trade, once Metamob has opened sending on your account: see [Conversations](/resources/conversations/#sending-a-message) and [Trade proposals](/resources/trade-proposals/#making-a-proposal). It also writes to your quests: settings, quantities and manual trade settings. It can also apply or cancel a proposal. Creating a quest is done on the site.
 
 ## Can I manage the quests of other players?
 

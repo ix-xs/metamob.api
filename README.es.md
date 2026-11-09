@@ -49,7 +49,7 @@ La clave API se crea en metamob.fr, en **Configuración > Clave API**.
 
 ## Lo que incluye el paquete
 
-- **Los 40 endpoints de la API**, tipados: cuenta, misiones, socios de intercambio, propuestas de intercambio, mensajes privados, monstruos, zonas, jugadores, eventos Kralamar y datos de referencia.
+- **Los 42 endpoints de la API**, tipados: cuenta, misiones, socios de intercambio, propuestas de intercambio, mensajes privados, monstruos, zonas, jugadores, eventos Kralamar y datos de referencia.
 - **Los nombres**: un monstruo, una zona, un servidor o un tipo de monstruo se indica por su identificador o por su nombre, en francés, inglés o español. Un nombre desconocido lanza un error que propone los nombres más parecidos.
 - **Las listas**: un método paginado se espera con `await` para una página, o se recorre con `for await`.
 - **El límite de solicitudes**: el cliente cuenta las 60 solicitudes por minuto y por clave, y hace esperar a las llamadas siguientes.

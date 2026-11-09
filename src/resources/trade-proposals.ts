@@ -3,7 +3,7 @@ import { ListRequest, topLevel } from "../core/pagination.js";
 import { type Context, text } from "../core/resource.js";
 import type { RequestOptions } from "../core/rest.js";
 import { METHODS } from "../generated/methods.js";
-import type { ProposalMonster, TradeProposal, TradeProposalDetail } from "../types.js";
+import type { ProposalMonster, ProposalViewer, TradeProposal, TradeProposalDetail } from "../types.js";
 import { entries, type MonsterQuantities, type Quests } from "./quests.js";
 
 /** What {@link TradeProposals.create} sends. */
@@ -22,6 +22,16 @@ export interface NewTradeProposal {
 
 const PROPOSAL_MONSTERS = 200;
 const MAX_QUANTITY = 99;
+
+/** Options of {@link TradeProposals.apply}. */
+export interface ApplyProposalOptions {
+  /**
+   * `false` (default): when you own fewer copies of a monster than you give,
+   * nothing is applied and the API answers `CONFLICT`. `true`: applied anyway,
+   * with each quantity reduced to what you own.
+   */
+  allowPartial?: boolean | undefined;
+}
 
 /** Filters of {@link TradeProposals.list}. */
 export interface TradeProposalListParams {
@@ -52,6 +62,13 @@ function since(value: Date | string): string {
   return value;
 }
 
+type Single = { data: TradeProposal; viewer: ProposalViewer };
+
+/** A proposal and your side of it, as one object. */
+function detail(answer: Single): TradeProposalDetail {
+  return { ...answer.data, viewer: answer.viewer };
+}
+
 function proposalId(value: number | string | { readonly id: number }): number {
   const id = typeof value === "object" && value !== null ? value.id : typeof value === "string" && /^\d+$/.test(value.trim()) ? Number(value) : value;
   if (typeof id !== "number" || !Number.isInteger(id) || id <= 0) throw new MetamobArgumentError("Expected a trade proposal: its id, or the proposal itself.");
@@ -60,8 +77,7 @@ function proposalId(value: number | string | { readonly id: number }): number {
 
 /**
  * The trade proposals of the account: the ones you sent and the ones you
- * received, on every quest, and new ones to send. Confirming or cancelling a
- * proposal is done on the site.
+ * received, on every quest. Send one, apply your side, or cancel it.
  */
 export class TradeProposals {
   readonly #context: Context;
@@ -104,24 +120,61 @@ export class TradeProposals {
   }
 
   /**
-   * One trade proposal. Each monster comes with `owned`: how many of it you
-   * own now in the quest the proposal is about.
+   * One trade proposal, with `viewer`: your side of it. `viewer.removed` is
+   * what leaves your quest and `viewer.added` what enters it, each monster
+   * with what you own of it now.
    *
    * @example
    * const proposal = await metamob.tradeProposals.get(57);
-   * const mine = proposal.recipient === me.username;
-   * for (const monster of mine ? proposal.monsters_given : proposal.monsters_received) {
+   * for (const monster of proposal.viewer.added) {
    *   console.log(monster.monster_id, `${monster.owned ?? 0} owned, ${monster.quantity} coming`);
    * }
    */
   async get(id: number | string | { readonly id: number }, options?: RequestOptions): Promise<TradeProposalDetail> {
     const path = { id: proposalId(id) };
-    return (await this.#context.rest.request<{ data: TradeProposalDetail }>(METHODS["tradeProposals.get"], { path }, options)).data;
+    return detail(await this.#context.rest.request<Single>(METHODS["tradeProposals.get"], { path }, options));
+  }
+
+  /**
+   * Applies your side of a proposal to your quest: what you give leaves it,
+   * what you receive enters it. Works for the sender and for the recipient.
+   * The proposal is `completed` once both sides are applied.
+   *
+   * When you own fewer copies than you give, the API answers `CONFLICT` and
+   * nothing changes, unless `allowPartial` is `true`: then each quantity is
+   * reduced to what you own, `viewer.clamped` is `true`, and
+   * `applied_quantity` says what really moved. Applying twice, or a cancelled
+   * proposal, is a `CONFLICT` too. Never retried.
+   *
+   * @example
+   * const proposal = await metamob.tradeProposals.apply(57);
+   * proposal.status; // "half_applied", or "completed" when the other side was applied too
+   */
+  async apply(id: number | string | { readonly id: number }, options: ApplyProposalOptions = {}, requestOptions?: RequestOptions): Promise<TradeProposalDetail> {
+    const path = { id: proposalId(id) };
+    const allowPartial = options.allowPartial ?? false;
+    if (typeof allowPartial !== "boolean") throw new MetamobArgumentError("`allowPartial` must be true or false.");
+    return detail(await this.#context.rest.request<Single>(METHODS["tradeProposals.apply"], { path, body: { allow_partial: allowPartial } }, requestOptions));
+  }
+
+  /**
+   * Cancels a proposal you sent, or declines one you received, as long as you
+   * have not applied your side, even when the other player applied theirs.
+   * A proposal already cancelled, or already applied by you, is a `CONFLICT`.
+   * Never retried.
+   *
+   * @example
+   * await metamob.tradeProposals.cancel(57);
+   */
+  async cancel(id: number | string | { readonly id: number }, options?: RequestOptions): Promise<TradeProposalDetail> {
+    const path = { id: proposalId(id) };
+    return detail(await this.#context.rest.request<Single>(METHODS["tradeProposals.cancel"], { path }, options));
   }
 
   /**
    * Proposes a trade to a player from one of your quests, and answers the
-   * proposal as `list()` shows it. Monsters are an id, a name or a monster.
+   * proposal with your side of it, like `get()`. Monsters are an id, a name or
+   * a monster.
    *
    * Sending is closed by default: Metamob opens it account by account, on
    * request. Without it, or when one player blocked the other, the API answers
@@ -144,7 +197,7 @@ export class TradeProposals {
    *   });
    * }
    */
-  async create(proposal: NewTradeProposal, options?: RequestOptions): Promise<TradeProposal> {
+  async create(proposal: NewTradeProposal, options?: RequestOptions): Promise<TradeProposalDetail> {
     if (!proposal || typeof proposal !== "object") throw new MetamobArgumentError("`proposal` must be an object with `recipient`, `sender_quest`, `recipient_quest` and monsters.");
     const quest = text(proposal.sender_quest, "sender_quest");
     const body = {
@@ -155,7 +208,7 @@ export class TradeProposals {
       monsters_received: await this.#monsters(quest, proposal.monsters_received, "monsters_received", options),
     };
     if (!body.monsters_given.length && !body.monsters_received.length) throw new MetamobArgumentError("A proposal needs at least one monster, given or received.");
-    return (await this.#context.rest.request<{ data: TradeProposal }>(METHODS["tradeProposals.create"], { body }, options)).data;
+    return detail(await this.#context.rest.request<Single>(METHODS["tradeProposals.create"], { body }, options));
   }
 
   async #monsters(quest: string, quantities: MonsterQuantities | undefined, name: string, options: RequestOptions | undefined): Promise<ProposalMonster[]> {

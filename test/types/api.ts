@@ -91,7 +91,11 @@ export async function results() {
   expect<Equal<typeof proposals, ListRequest<TradeProposal>>>();
   const proposal = await metamob.tradeProposals.get(57);
   expect<Equal<typeof proposal, TradeProposalDetail>>();
-  expect<Equal<(typeof proposal.monsters_given)[number]["owned"], number | null>>();
+  expect<Equal<(typeof proposal.viewer.added)[number]["owned"], number | null>>();
+  expect<Equal<typeof proposal.viewer.role, "sender" | "recipient">>();
+  expect<Equal<typeof proposal.viewer.clamped, boolean | null>>();
+  // @ts-expect-error what you own is on your side, not on the proposal
+  void proposal.monsters_given[0]?.owned;
   expect<Equal<typeof proposal.status, "pending" | "half_applied" | "completed" | "cancelled">>();
   // @ts-expect-error the deprecated fields are gone
   void proposal.server_id;
@@ -100,7 +104,13 @@ export async function results() {
   const sent = await metamob.conversations.send("Ix-xs", "Salut !");
   expect<Equal<typeof sent.kind, "message">>();
   const made = await metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, recipient_quest: "e5f6a7b8", monsters_given: { "Tofu Maléfique": 1 } });
-  expect<Equal<typeof made, TradeProposal>>();
+  expect<Equal<typeof made, TradeProposalDetail>>();
+
+  // Applying and cancelling answer the same shape.
+  const applied = await metamob.tradeProposals.apply(57, { allowPartial: true });
+  expect<Equal<typeof applied, TradeProposalDetail>>();
+  expect<Equal<(typeof applied.viewer.removed)[number]["applied_quantity"], number | undefined>>();
+  expect<Equal<Awaited<ReturnType<typeof metamob.tradeProposals.cancel>>, TradeProposalDetail>>();
   // @ts-expect-error the quest type is read from quest_template
   void proposal.quest_type;
 }
@@ -110,6 +120,8 @@ export async function refused() {
   metamob.tradeProposals.create({ sender_quest: slug, recipient_quest: "e5f6a7b8", monsters_given: { Tofu: 1 } });
   // @ts-expect-error and which of their quests
   metamob.tradeProposals.create({ recipient: "Ix-xs", sender_quest: slug, monsters_given: { Tofu: 1 } });
+  // @ts-expect-error allowPartial is a boolean
+  metamob.tradeProposals.apply(57, { allowPartial: 1 });
   // @ts-expect-error a message is text
   metamob.conversations.send("Ix-xs", 42);
   // @ts-expect-error `direction` is received, sent or all

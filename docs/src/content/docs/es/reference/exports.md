@@ -27,7 +27,7 @@ import type { Monster, OwnQuest, MonsterLike } from "@ix-xs/metamob.api";
 | `Page` | Una página de una lista | [Listas](/basics/lists/#one-page) |
 | `MemoryCache` | El almacenamiento integrado de la caché | [Caché](/basics/caching/) |
 | `normalizeName` | La comparación de nombres que usa la biblioteca | [Nombres e identificadores](/basics/names-and-ids/#how-a-name-is-matched) |
-| `METHODS` | Los 40 puntos de acceso, por nombre de método | [Todos los métodos](/reference/methods/) |
+| `METHODS` | Los 42 puntos de acceso, por nombre de método | [Todos los métodos](/reference/methods/) |
 | `VERSION` | La versión del paquete | |
 
 ## urls
@@ -58,7 +58,7 @@ La descripción de cada punto de acceso, bajo el nombre de su método. Las clave
 
 ```ts
 METHODS["quests.setMonster"].path; // "/quests/{slug}/monsters/{monsterId}"
-Object.keys(METHODS).length; // 40
+Object.keys(METHODS).length; // 42
 ```
 
 ## Tipos del cliente

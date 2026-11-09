@@ -451,13 +451,29 @@ export interface ProposalMonster {
   quantity: number;
 }
 
-/** A monster of a trade proposal read on its own, with what you own of it now. */
+/** A monster that leaves or enters your quest with a trade proposal, with what you own of it now. */
 export interface ProposalMonsterDetail extends ProposalMonster {
   /**
    * How many you own now in your quest the proposal is about, the trade included
-   * once applied. `null` when you have no quest of this kind on this server.
+   * once your side is applied. `null` when you have no quest of this kind on this server.
    */
   owned: number | null;
+  /** In the answer of `apply()` only: how many really moved, less than `quantity` when it was clamped. */
+  applied_quantity?: number;
+}
+
+/** Your side of a trade proposal. */
+export interface ProposalViewer {
+  /** Whether you sent the proposal or received it. */
+  role: "sender" | "recipient";
+  /** You applied your side. */
+  applied: boolean;
+  /** `null` until you apply your side, then `true` when quantities were reduced to what you owned. */
+  clamped: boolean | null;
+  /** What leaves your quest. */
+  removed: ProposalMonsterDetail[];
+  /** What enters your quest. */
+  added: ProposalMonsterDetail[];
 }
 
 /** The quest of one side of a trade proposal. */
@@ -509,12 +525,10 @@ export interface TradeProposal {
   read_at: string | null;
 }
 
-/** A trade proposal read on its own, with what you own of each monster. */
-export interface TradeProposalDetail extends Omit<TradeProposal, "monsters_given" | "monsters_received"> {
-  /** What the sender gives, with what you own of each monster. */
-  monsters_given: ProposalMonsterDetail[];
-  /** What the sender receives, with what you own of each monster. */
-  monsters_received: ProposalMonsterDetail[];
+/** A trade proposal read on its own, with your side of it. */
+export interface TradeProposalDetail extends TradeProposal {
+  /** Your side: your role, whether you applied it, and what leaves and enters your quest. */
+  viewer: ProposalViewer;
 }
 
 /** A trade proposal as it appears in a conversation, among the messages. */

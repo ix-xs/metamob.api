@@ -27,7 +27,7 @@ import type { Monster, OwnQuest, MonsterLike } from "@ix-xs/metamob.api";
 | `Page` | One page of a list | [Lists](/basics/lists/#one-page) |
 | `MemoryCache` | The built-in cache store | [Caching](/basics/caching/) |
 | `normalizeName` | The name comparison the library uses | [Names and ids](/basics/names-and-ids/#how-a-name-is-matched) |
-| `METHODS` | The 40 endpoints, by method name | [Every method](/reference/methods/) |
+| `METHODS` | The 42 endpoints, by method name | [Every method](/reference/methods/) |
 | `VERSION` | The version of the package | |
 
 ## urls
@@ -58,7 +58,7 @@ The description of each endpoint, under the name of its method. The keys of `cac
 
 ```ts
 METHODS["quests.setMonster"].path; // "/quests/{slug}/monsters/{monsterId}"
-Object.keys(METHODS).length; // 40
+Object.keys(METHODS).length; // 42
 ```
 
 ## Types of the client

@@ -130,6 +130,7 @@ An argument the API would surely refuse is refused before sending, with `INVALID
 | `UNAUTHORIZED` | 401: missing, invalid or revoked key |
 | `FORBIDDEN` | 403 |
 | `NOT_FOUND` | 404: does not exist, or is not yours |
+| `CONFLICT` | 409: the state does not allow it, a proposal already applied for instance |
 | `RATE_LIMITED` | 429, after the retries |
 | `SERVER_ERROR` | 5xx, after the retries |
 | `API_ERROR` | Any other error status |

@@ -45,6 +45,8 @@ const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>;
     path: "/trade-proposals",
     body: { recipient: "Ix-xs", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: [{ monster_id: 20, quantity: 2 }], monsters_received: [{ monster_id: 472, quantity: 1 }] },
   },
+  "tradeProposals.apply": { run: (m) => m.tradeProposals.apply(57, { allowPartial: true }), path: "/trade-proposals/57/apply", body: { allow_partial: true } },
+  "tradeProposals.cancel": { run: (m) => m.tradeProposals.cancel({ id: 57 }), path: "/trade-proposals/57/cancel" },
   "quests.list": { run: (m) => m.quests.list(), path: "/quests" },
   "quests.get": { run: (m) => m.quests.get(SLUG), path: `/quests/${SLUG}` },
   "quests.update": {
@@ -301,8 +303,9 @@ describe("sending messages and proposals", () => {
 
   it("builds a proposal from names, and refuses what the API would before sending it", async () => {
     const proposal = { id: 58, sender: "Ix-xs", recipient: "Other", status: "pending" };
-    const { metamob, calls } = client({ data: proposal });
-    expect(await metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: new Map([["Tofu", 1]]) })).toEqual(proposal);
+    const viewer = { role: "sender", applied: false, clamped: null, removed: [{ monster_id: 20, quantity: 1, owned: 3 }], added: [] };
+    const { metamob, calls } = client({ data: proposal, viewer });
+    expect(await metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: new Map([["Tofu", 1]]) })).toEqual({ ...proposal, viewer });
     expect(calls[0]!.body).toEqual({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: [{ monster_id: 20, quantity: 1 }], monsters_received: [] });
 
     const base = { recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8" };
@@ -322,6 +325,41 @@ describe("sending messages and proposals", () => {
     const { metamob, calls } = client([apiError(504, "timeout"), { data: {} }]);
     await expect(metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: { Tofu: 1 } })).rejects.toMatchObject({ status: 504 });
     expect(calls).toHaveLength(1);
+  });
+});
+
+describe("applying and cancelling proposals", () => {
+  const proposal = { id: 57, sender: "Other", recipient: "Ix-xs", status: "half_applied" };
+  const viewer = { role: "recipient", applied: true, clamped: false, removed: [], added: [{ monster_id: 20, quantity: 1, owned: 2, applied_quantity: 1 }] };
+
+  it("puts your side of a proposal next to it", async () => {
+    const { metamob } = client({ data: proposal, viewer });
+    const read = await metamob.tradeProposals.get(57);
+    expect(read).toEqual({ ...proposal, viewer });
+    expect(read.viewer.added[0]?.owned).toBe(2);
+  });
+
+  it("applies without allowing a partial trade unless asked", async () => {
+    const { metamob, calls } = client([{ data: proposal, viewer }, { data: proposal, viewer }]);
+    await metamob.tradeProposals.apply(57);
+    await metamob.tradeProposals.apply("57", { allowPartial: true });
+    expect(calls.map((call) => call.body)).toEqual([{ allow_partial: false }, { allow_partial: true }]);
+    await expect(metamob.tradeProposals.apply(57, { allowPartial: "yes" as never })).rejects.toThrow(/allowPartial/);
+    await expect(metamob.tradeProposals.apply(0)).rejects.toThrow(/trade proposal/);
+    expect(calls).toHaveLength(2);
+  });
+
+  it("says CONFLICT when the API refuses to apply or cancel", async () => {
+    const { metamob } = client([apiError(409, "already applied by you"), apiError(409, "already cancelled")]);
+    await expect(metamob.tradeProposals.apply(57)).rejects.toMatchObject({ code: "CONFLICT", status: 409, message: expect.stringContaining("already applied") });
+    await expect(metamob.tradeProposals.cancel(57)).rejects.toMatchObject({ code: "CONFLICT" });
+  });
+
+  it("never applies or cancels twice", async () => {
+    const { metamob, calls } = client([apiError(503, "down"), apiError(503, "down"), { data: proposal, viewer }]);
+    await expect(metamob.tradeProposals.apply(57)).rejects.toMatchObject({ status: 503 });
+    await expect(metamob.tradeProposals.cancel(57)).rejects.toMatchObject({ status: 503 });
+    expect(calls).toHaveLength(2);
   });
 });
 

@@ -7,7 +7,7 @@ Every error extends `MetamobError` and carries a `code`. [Errors](/basics/errors
 
 ## Codes
 
-`code` is a `MetamobErrorCode`. There are 14 of them.
+`code` is a `MetamobErrorCode`. There are 15 of them.
 
 "Retried" means up to 3 more attempts by default. The delay starts at 500 ms and doubles, up to 60 seconds. When the API sends a `Retry-After`, that wait is used, unless it is longer than `retry.maxDelay`: the error is then thrown at once, with its `retryAfter`.
 
@@ -19,6 +19,7 @@ From the API, as a `MetamobApiError`:
 | `UNAUTHORIZED` | 401 | The key is missing, invalid or was revoked | No |
 | `FORBIDDEN` | 403 | The key may not do this: sending is not opened on the account, or one of the two players blocked the other | No |
 | `NOT_FOUND` | 404 | It does not exist, or it is not yours: a quest of another account, a hidden quest, a deleted player | No |
+| `CONFLICT` | 409 | The state does not allow it: a proposal already cancelled or already applied by you, or one you lack copies for | No |
 | `RATE_LIMITED` | 429 | More than 60 requests in a minute with this key, or the anti-spam limits of the site on a message or a proposal | Yes, except a message or a proposal |
 | `SERVER_ERROR` | 500 and up | The API failed | 502, 503, 504: yes, except a message or a proposal. 500: reads only |
 | `API_ERROR` | any other | Another error status | No |

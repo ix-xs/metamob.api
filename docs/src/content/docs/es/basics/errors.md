@@ -130,6 +130,7 @@ Un argumento que la API rechazaría con seguridad se rechaza antes del envío, c
 | `UNAUTHORIZED` | 401: clave ausente, no válida o revocada |
 | `FORBIDDEN` | 403 |
 | `NOT_FOUND` | 404: no existe, o no es tuyo |
+| `CONFLICT` | 409: el estado no lo permite, por ejemplo una propuesta ya aplicada |
 | `RATE_LIMITED` | 429, después de los reintentos |
 | `SERVER_ERROR` | 5xx, después de los reintentos |
 | `API_ERROR` | Cualquier otro estado de error |

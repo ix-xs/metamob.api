@@ -7,7 +7,7 @@ Toutes les erreurs étendent `MetamobError` et portent un `code`. [Erreurs](/bas
 
 ## Codes
 
-`code` est un `MetamobErrorCode`. Il y en a 14.
+`code` est un `MetamobErrorCode`. Il y en a 15.
 
 « Retentée » signifie jusqu'à 3 tentatives de plus par défaut. Le délai commence à 500 ms et double, jusqu'à 60 secondes. Quand l'API envoie un `Retry-After`, c'est cette attente qui est utilisée, sauf si elle dépasse `retry.maxDelay` : l'erreur est alors levée aussitôt, avec son `retryAfter`.
 
@@ -19,6 +19,7 @@ Venant de l'API, sous forme de `MetamobApiError` :
 | `UNAUTHORIZED` | 401 | La clé est absente, invalide ou a été révoquée | Non |
 | `FORBIDDEN` | 403 | La clé n'a pas le droit de faire cela : l'envoi n'est pas ouvert sur le compte, ou l'un des deux joueurs a bloqué l'autre | Non |
 | `NOT_FOUND` | 404 | Cela n'existe pas, ou ce n'est pas à vous : une quête d'un autre compte, une quête masquée, un joueur supprimé | Non |
+| `CONFLICT` | 409 | L'état ne le permet pas : une proposition déjà annulée ou déjà appliquée par vous, ou à laquelle il manque des exemplaires | Non |
 | `RATE_LIMITED` | 429 | Plus de 60 requêtes en une minute avec cette clé, ou les limites anti-spam du site sur un message ou une proposition | Oui, sauf un message ou une proposition |
 | `SERVER_ERROR` | 500 et plus | L'API a échoué | 502, 503, 504 : oui, sauf un message ou une proposition. 500 : lectures seulement |
 | `API_ERROR` | tout autre | Un autre statut d'erreur | Non |
