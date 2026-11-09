@@ -43,8 +43,12 @@ const translate = (symbol, language) => {
   return entry && entry.en === symbol.text && entry[language] ? entry[language] : symbol.text;
 };
 
-/** `[label](ref:Name)` becomes a link to the page of Name, and table cells keep their pipes escaped. */
-const cell = (text) => text.replace(/\]\(ref:([\w$]+)\)/g, (_, name) => `](/reference/${model.symbols.find((s) => s.name === name)?.slug ?? name.toLowerCase()}/)`).replace(/\|/g, "\\|");
+/** `[label](ref:Name)` becomes a link to the page of Name, and table cells keep their backslashes and pipes escaped. */
+const cell = (text) =>
+  text
+    .replace(/\]\(ref:([\w$]+)\)/g, (_, name) => `](/reference/${model.symbols.find((s) => s.name === name)?.slug ?? name.toLowerCase()}/)`)
+    .replace(/\\/g, "\\\\")
+    .replace(/\|/g, "\\|");
 
 function list(topic, language) {
   const words = WORDS[language];
