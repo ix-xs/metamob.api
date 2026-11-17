@@ -4,10 +4,10 @@
 
 Un cliente JavaScript y TypeScript para la API de [Metamob](https://www.metamob.fr).
 
-[![npm version](https://img.shields.io/npm/v/@ix-xs/metamob.api.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/@ix-xs/metamob.api)
-[![npm downloads](https://img.shields.io/npm/dm/@ix-xs/metamob.api.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/@ix-xs/metamob.api)
-[![CI](https://img.shields.io/github/actions/workflow/status/ix-xs/metamob.api/ci.yml?branch=main&label=CI&logo=github)](https://github.com/ix-xs/metamob.api/actions)
-[![node](https://img.shields.io/badge/node-%3E%3D20-brightgreen?logo=node.js&logoColor=white)](https://nodejs.org)
+[![npm version](https://img.shields.io/npm/v/@ix-xs/metamob.api.svg?color=cb3837)](https://www.npmjs.com/package/@ix-xs/metamob.api)
+[![npm downloads](https://img.shields.io/npm/dm/@ix-xs/metamob.api.svg?color=cb3837)](https://www.npmjs.com/package/@ix-xs/metamob.api)
+[![CI](https://img.shields.io/github/actions/workflow/status/ix-xs/metamob.api/ci.yml?branch=main&label=CI)](https://github.com/ix-xs/metamob.api/actions)
+[![node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
 **[Documentación](https://ix-xs.github.io/metamob.api/es/)** ·
