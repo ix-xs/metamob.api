@@ -3,7 +3,7 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
-## Unreleased
+## 5.3.1
 
 - The documentation site opens on a guide that builds one script page after
   page, from installation to finding who to trade with. Its terminals show what
@@ -15,6 +15,8 @@ adheres to [Semantic Versioning](https://semver.org).
   the new pages.
 - The doc comment of `MetamobArgumentError` no longer says it is thrown before
   any request: an unknown name is first looked up through the API.
+- The badges of the README show on npm again: they no longer carry a logo,
+  which npm does not display.
 
 ## 5.3.0
 
