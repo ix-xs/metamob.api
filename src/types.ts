@@ -129,6 +129,8 @@ export interface KraloveEvent {
   character_count: number;
   messages_count: number;
   server: Server | null;
+  /** Last change to the event itself, as an ISO 8601 date in UTC. Registrations and messages do not change it. */
+  updated_at: string;
 }
 
 /** Someone taking part in a Kralamoure event. */
@@ -156,6 +158,8 @@ export interface KraloveEventDetail {
   /** `null` when the account was deleted for good, or when you and that user blocked each other. */
   creator: string | null;
   server: Server | null;
+  /** Last change to the event itself, as an ISO 8601 date in UTC. Registrations and messages do not change it. */
+  updated_at: string;
   participants: KraloveParticipant[];
   messages: KraloveMessage[];
 }
@@ -175,9 +179,23 @@ export interface UserSummary {
   last_active: string;
 }
 
+/**
+ * What Metamob opened to an account on request: `true` when the endpoint
+ * answers, `false` when it would answer `FORBIDDEN`. More may come.
+ */
+export interface AccountFeatures {
+  /** `conversations.send()`. */
+  messages_send: boolean;
+  /** `tradeProposals.create()`. */
+  trade_proposals_create: boolean;
+  [feature: string]: boolean;
+}
+
 /** The account an API key belongs to. */
 export interface Account extends UserSummary {
   bio: string;
+  /** Sending messages and trade proposals, opened account by account. */
+  features: AccountFeatures;
 }
 
 /** What every quest carries, whoever looks at it. */
@@ -521,6 +539,12 @@ export interface TradeProposal {
   cancelled_by: string | null;
   /** ISO 8601 date in UTC. */
   created_at: string;
+  /**
+   * When a `pending` proposal will be cancelled on its own, as an ISO 8601
+   * date in UTC, or `null` in every other state. A proposal nobody applied is
+   * cancelled after 30 days, give or take a day.
+   */
+  expires_at: string | null;
   /** When the recipient read it, as an ISO 8601 date in UTC, or `null` while unread. */
   read_at: string | null;
 }

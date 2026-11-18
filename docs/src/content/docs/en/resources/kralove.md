@@ -49,6 +49,8 @@ if (next) {
 }
 ```
 
+`updated_at` gives the last change to the event itself: its date or its description. Registrations and messages do not change it.
+
 ## Names that are missing
 
 `creator`, and the `username` of a participant or of a message, can be `null`: when the account was deleted, or when one of you blocked the other. Plan for it wherever you show a name.
@@ -71,7 +73,7 @@ A check every few minutes is enough. To read the list more often without more re
 ## Limits and errors
 
 - The API reads events. Creating one, signing up and posting a message are done on the site.
-- `NOT_FOUND` for an event that does not exist.
+- `NOT_FOUND` for an event that does not exist, or that its creator cancelled: a cancelled event is deleted.
 - `from` in another format than `YYYY-MM-DD` throws `INVALID_ARGUMENT` before sending.
 
 <!-- exports:start -->

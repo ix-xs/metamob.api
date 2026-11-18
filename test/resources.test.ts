@@ -328,6 +328,14 @@ describe("sending messages and proposals", () => {
   });
 });
 
+describe("proposals still going", () => {
+  it("asks for the open ones, pending and half applied", async () => {
+    const { metamob, calls } = client({ data: [], pagination: { has_more: false, next_before_id: null } });
+    await metamob.tradeProposals.list({ status: "open" });
+    expect(calls[0]?.url.search).toBe("?status=open");
+  });
+});
+
 describe("applying and cancelling proposals", () => {
   const proposal = { id: 57, sender: "Other", recipient: "Ix-xs", status: "half_applied" };
   const viewer = { role: "recipient", applied: true, clamped: false, removed: [], added: [{ monster_id: 20, quantity: 1, owned: 2, applied_quantity: 1 }] };

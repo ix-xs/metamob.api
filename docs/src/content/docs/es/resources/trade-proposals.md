@@ -17,12 +17,13 @@ const pending = { direction: "received", status: "pending" } as const;
 const waiting = await metamob.tradeProposals.list(pending).all();
 const sent = await metamob.tradeProposals.list({ direction: "sent" }).take(20);
 const done = await metamob.tradeProposals.list({ quest: slug, status: "completed" });
+const going = await metamob.tradeProposals.list({ status: "open" });
 ```
 
 | Filtro | Valores |
 | --- | --- |
 | `direction` | `"received"`: las que te han hecho. `"sent"`: las que has hecho tú. `"all"`, el valor por defecto: las dos |
-| `status` | `"pending"`, `"half_applied"`, `"completed"`, `"cancelled"` |
+| `status` | `"pending"`, `"half_applied"`, `"completed"`, `"cancelled"`, o `"open"` para las que siguen en curso: `pending` y `half_applied` |
 | `quest` | El slug de una de tus misiones |
 | `since` | Una `Date`, o una fecha ISO 8601 con su zona horaria como `"2026-01-27T14:00:00Z"`: solo las propuestas creadas a partir de ese momento, incluido |
 
@@ -53,6 +54,8 @@ Una propuesta designa sus monstruos por su identificador: [`data.monster()`](/ba
 | `half_applied` | Uno de los dos jugadores ha aplicado su lado: consulta `applications` |
 | `completed` | Los dos lados están aplicados |
 | `cancelled` | Cancelada por `cancelled_by`, o caducada cuando `cancelled_by` vale `null` |
+
+Una propuesta `pending` lleva `expires_at`, la fecha en la que se cancelará sola: si nadie ha aplicado su lado al cabo de 30 días, pasa a `cancelled`, sin `cancelled_by`. La hora es aproximada, la cancelación se hace una vez al día. En cualquier otro estado, `expires_at` vale `null`.
 
 ## Leer una propuesta
 
@@ -97,7 +100,7 @@ if (match) {
 `recipient`, `sender_quest` y `recipient_quest` son obligatorios. `recipient_quest` es el slug de la misión del otro jugador, que `quests.matches()` da para cada socio. Las dos misiones deben ser del mismo tipo y estar en el mismo servidor. Hace falta al menos un monstruo, de un lado o del otro, y 200 como máximo en cada lado.
 
 :::note
-El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petición, y sin eso la API responde `FORBIDDEN`. Las reglas son las del sitio: `FORBIDDEN` cuando uno de los dos jugadores ha bloqueado al otro, `RATE_LIMITED` por encima de los límites antispam.
+El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petición, y sin eso la API responde `FORBIDDEN`. [`features`](/resources/account/#what-the-account-can-do) dice si lo está. Las reglas son las del sitio: `FORBIDDEN` cuando uno de los dos jugadores ha bloqueado al otro, `RATE_LIMITED` por encima de los límites antispam.
 :::
 
 Una propuesta nunca se reintenta, sea cual sea el fallo: enviada dos veces, existiría por duplicado. Después de un tiempo agotado o un corte de red, consulta `list({ direction: "sent" })` antes de reenviarla.

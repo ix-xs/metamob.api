@@ -97,6 +97,15 @@ export async function results() {
   // @ts-expect-error what you own is on your side, not on the proposal
   void proposal.monsters_given[0]?.owned;
   expect<Equal<typeof proposal.status, "pending" | "half_applied" | "completed" | "cancelled">>();
+  expect<Equal<typeof proposal.expires_at, string | null>>();
+  metamob.tradeProposals.list({ status: "open" });
+
+  // What Metamob opened to the account, and when an event last changed.
+  const account = await metamob.me();
+  expect<Equal<typeof account.features.messages_send, boolean>>();
+  expect<Equal<(typeof account.features)["a_feature_to_come"], boolean>>();
+  const event = await metamob.kralove.get(1);
+  expect<Equal<typeof event.updated_at, string>>();
   // @ts-expect-error the deprecated fields are gone
   void proposal.server_id;
 
@@ -126,7 +135,7 @@ export async function refused() {
   metamob.conversations.send("Ix-xs", 42);
   // @ts-expect-error `direction` is received, sent or all
   metamob.tradeProposals.list({ direction: "inbox" });
-  // @ts-expect-error `status` of a proposal takes four values
+  // @ts-expect-error `status` of a proposal takes four values, or `open`
   metamob.tradeProposals.list({ status: "accepted" });
   // @ts-expect-error `status` of your own quest takes five values
   metamob.quests.monsters(slug, { status: "missing" });

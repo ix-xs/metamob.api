@@ -17,12 +17,13 @@ const pending = { direction: "received", status: "pending" } as const;
 const waiting = await metamob.tradeProposals.list(pending).all();
 const sent = await metamob.tradeProposals.list({ direction: "sent" }).take(20);
 const done = await metamob.tradeProposals.list({ quest: slug, status: "completed" });
+const going = await metamob.tradeProposals.list({ status: "open" });
 ```
 
 | Filter | Values |
 | --- | --- |
 | `direction` | `"received"`: made to you. `"sent"`: made by you. `"all"`, the default: both |
-| `status` | `"pending"`, `"half_applied"`, `"completed"`, `"cancelled"` |
+| `status` | `"pending"`, `"half_applied"`, `"completed"`, `"cancelled"`, or `"open"` for the ones still going: `pending` and `half_applied` |
 | `quest` | The slug of one of your quests |
 | `since` | A `Date`, or an ISO 8601 date with its time zone such as `"2026-01-27T14:00:00Z"`: only the proposals created from that moment on, included |
 
@@ -53,6 +54,8 @@ A proposal names its monsters by id: [`data.monster()`](/basics/embedded-data/) 
 | `half_applied` | One of the two players applied their side: see `applications` |
 | `completed` | Both sides are applied |
 | `cancelled` | Cancelled by `cancelled_by`, or expired when `cancelled_by` is `null` |
+
+A `pending` proposal carries `expires_at`, when it will be cancelled on its own: when nobody applied their side after 30 days, it turns `cancelled`, with no `cancelled_by`. The time is approximate, the cancellation runs once a day. In every other state, `expires_at` is `null`.
 
 ## Reading one proposal
 
@@ -97,7 +100,7 @@ if (match) {
 `recipient`, `sender_quest` and `recipient_quest` are required. `recipient_quest` is the slug of the quest of the other player, which `quests.matches()` gives for each partner. Both quests must be of the same kind and on the same server. At least one monster is needed, on one side or the other, and 200 at most on each side.
 
 :::note
-Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. The rules are the ones of the site: `FORBIDDEN` when one of the two players blocked the other, `RATE_LIMITED` past the anti-spam limits.
+Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. [`features`](/resources/account/#what-the-account-can-do) says whether it is. The rules are the ones of the site: `FORBIDDEN` when one of the two players blocked the other, `RATE_LIMITED` past the anti-spam limits.
 :::
 
 A proposal is never retried, whatever the failure: sent twice, it would exist twice. After a timeout or a network failure, look at `list({ direction: "sent" })` before sending it again.

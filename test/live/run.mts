@@ -60,8 +60,11 @@ const QUEST = ["slug", "character_name", "current_step", "parallel_quests", "ser
 
 const me = await step("me()", async () => {
   const account = await metamob.me();
-  shape("Account", account, ["username", "bio", "avatar", "last_active"]);
+  shape("Account", account, ["username", "bio", "avatar", "last_active", "features"]);
   date("Account.last_active", account.last_active);
+  for (const name of ["messages_send", "trade_proposals_create"]) {
+    if (typeof account.features?.[name] !== "boolean") problems.push(`Account.features.${name} is not a boolean`);
+  }
   return account;
 });
 if (!me) {
@@ -131,9 +134,12 @@ await step("questTemplates.monsters()", async () => {
 await step("kralove.list() and get()", async () => {
   const events = await metamob.kralove.list();
   if (!events.length) return void console.log("      no event to read");
-  shape("KraloveEvent", events[0], ["id", "event_datetime", "description", "creator", "participants_count", "character_count", "messages_count", "server"]);
+  shape("KraloveEvent", events[0], ["id", "event_datetime", "description", "creator", "participants_count", "character_count", "messages_count", "server", "updated_at"]);
   date("KraloveEvent.event_datetime", events[0]!.event_datetime);
-  shape("KraloveEventDetail", await metamob.kralove.get(events[0]!), ["id", "event_datetime", "description", "creator", "server", "participants", "messages"]);
+  date("KraloveEvent.updated_at", events[0]!.updated_at);
+  const detail = await metamob.kralove.get(events[0]!);
+  shape("KraloveEventDetail", detail, ["id", "event_datetime", "description", "creator", "server", "updated_at", "participants", "messages"]);
+  date("KraloveEventDetail.updated_at", detail.updated_at);
 });
 
 const slugs = await step("users: search, get, quests, quest", async () => {
@@ -152,12 +158,13 @@ const slugs = await step("users: search, get, quests, quest", async () => {
 });
 void slugs;
 
-const PROPOSAL = ["id", "sender", "recipient", "status", "server", "quest_template", "sender_quest", "recipient_quest", "monsters_given", "monsters_received", "applications", "cancelled_at", "cancelled_by", "created_at", "read_at"];
+const PROPOSAL = ["id", "sender", "recipient", "status", "server", "quest_template", "sender_quest", "recipient_quest", "monsters_given", "monsters_received", "applications", "cancelled_at", "cancelled_by", "created_at", "expires_at", "read_at"];
 
 function proposal(label: string, item: Record<string, unknown>, extra: string[] = [], optional: string[] = []): void {
   shape(label, item, [...PROPOSAL, ...extra], optional);
   date(`${label}.created_at`, item.created_at);
-  for (const key of ["cancelled_at", "read_at"]) if (item[key] !== null) date(`${label}.${key}`, item[key]);
+  for (const key of ["cancelled_at", "read_at", "expires_at"]) if (item[key] !== null) date(`${label}.${key}`, item[key]);
+  if (item.status !== "pending" && item.expires_at !== null) problems.push(`${label}.expires_at is set on a ${String(item.status)} proposal`);
   if (item.server !== null) shape(`${label}.server`, item.server, ["id", "name", "community", "game_version"]);
   if (item.quest_template !== null) shape(`${label}.quest_template`, item.quest_template, ["id", "quest_type"]);
 }
@@ -200,6 +207,8 @@ await step("tradeProposals: list, get, filters, apply and cancel", async () => {
   for (const item of page.items) proposal("TradeProposal", item as unknown as Record<string, unknown>);
   const recent = await metamob.tradeProposals.list({ direction: "received", status: "pending", since: new Date(Date.now() - 30 * 86_400_000), limit: 5 });
   for (const item of recent.items) if (item.status !== "pending") problems.push(`tradeProposals status filter let through ${item.status}`);
+  const open = await metamob.tradeProposals.list({ status: "open", limit: 5 });
+  for (const item of open.items) if (item.status !== "pending" && item.status !== "half_applied") problems.push(`tradeProposals open filter let through ${item.status}`);
   await refused("NOT_FOUND", () => metamob.tradeProposals.get(2_000_000_000));
   if (!page.items[0]) return void console.log("      no trade proposal to read");
   const detail = await metamob.tradeProposals.get(page.items[0]);

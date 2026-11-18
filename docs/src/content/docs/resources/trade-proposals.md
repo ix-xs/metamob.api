@@ -17,12 +17,13 @@ const pending = { direction: "received", status: "pending" } as const;
 const waiting = await metamob.tradeProposals.list(pending).all();
 const sent = await metamob.tradeProposals.list({ direction: "sent" }).take(20);
 const done = await metamob.tradeProposals.list({ quest: slug, status: "completed" });
+const going = await metamob.tradeProposals.list({ status: "open" });
 ```
 
 | Filtre | Valeurs |
 | --- | --- |
 | `direction` | `"received"` : faites à vous. `"sent"` : faites par vous. `"all"`, la valeur par défaut : les deux |
-| `status` | `"pending"`, `"half_applied"`, `"completed"`, `"cancelled"` |
+| `status` | `"pending"`, `"half_applied"`, `"completed"`, `"cancelled"`, ou `"open"` pour celles en cours : `pending` et `half_applied` |
 | `quest` | Le slug de l'une de vos quêtes |
 | `since` | Une `Date`, ou une date ISO 8601 avec son fuseau horaire comme `"2026-01-27T14:00:00Z"` : seulement les propositions créées à partir de ce moment, inclus |
 
@@ -53,6 +54,8 @@ Une proposition désigne ses monstres par leur identifiant : [`data.monster()`](
 | `half_applied` | Un des deux joueurs a appliqué son côté : voir `applications` |
 | `completed` | Les deux côtés sont appliqués |
 | `cancelled` | Annulée par `cancelled_by`, ou expirée quand `cancelled_by` vaut `null` |
+
+Une proposition `pending` porte `expires_at`, la date à laquelle elle sera annulée d'elle-même : si personne n'a appliqué son côté au bout de 30 jours, elle passe à `cancelled`, sans `cancelled_by`. L'heure est approchée, l'annulation passe une fois par jour. Dans tout autre état, `expires_at` vaut `null`.
 
 ## Lire une proposition
 
@@ -97,7 +100,7 @@ if (match) {
 `recipient`, `sender_quest` et `recipient_quest` sont obligatoires. `recipient_quest` est le slug de la quête de l'autre joueur, que `quests.matches()` donne pour chaque partenaire. Les deux quêtes doivent être du même type et sur le même serveur. Il faut au moins un monstre, d'un côté ou de l'autre, et 200 au plus de chaque côté.
 
 :::note
-L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande, et l'API répond `FORBIDDEN` sans cela. Les règles sont celles du site : `FORBIDDEN` quand l'un des deux joueurs a bloqué l'autre, `RATE_LIMITED` au-delà des limites anti-spam.
+L'envoi est fermé par défaut : Metamob l'ouvre compte par compte, sur demande, et l'API répond `FORBIDDEN` sans cela. [`features`](/resources/account/#what-the-account-can-do) dit s'il l'est. Les règles sont celles du site : `FORBIDDEN` quand l'un des deux joueurs a bloqué l'autre, `RATE_LIMITED` au-delà des limites anti-spam.
 :::
 
 Une proposition n'est jamais retentée, quel que soit l'échec : envoyée deux fois, elle existerait en double. Après un délai dépassé ou une coupure réseau, consultez `list({ direction: "sent" })` avant de la renvoyer.

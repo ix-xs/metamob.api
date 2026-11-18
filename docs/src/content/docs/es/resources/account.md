@@ -7,7 +7,7 @@ sidebar:
 
 ## Lo que recibes
 
-`metamob.me()` devuelve el nombre de usuario, la biografía, el avatar y la última actividad de la cuenta de la clave. Nada privado: es lo que muestra el perfil público, sin las misiones.
+`metamob.me()` devuelve el nombre de usuario, la biografía, el avatar y la última actividad de la cuenta de la clave, y lo que Metamob le ha abierto. Nada privado: es lo que muestra el perfil público, sin las misiones.
 
 ```ts
 const me = await metamob.me();
@@ -20,6 +20,25 @@ if (me.avatar) {
   console.log(urls.monsterImage(me.avatar)); // su imagen
 }
 ```
+
+## Lo que tiene abierto la cuenta
+
+Enviar mensajes y propuestas de intercambio lo abre Metamob cuenta por cuenta, a petición. `features` dice qué está abierto, para mostrar u ocultar el envío en tu aplicación sin probar la llamada:
+
+```ts
+const { features } = await metamob.me();
+
+if (features.trade_proposals_create) {
+  // muestra el botón que envía una propuesta
+}
+```
+
+| Campo | Vale `true` cuando esta llamada está abierta |
+| --- | --- |
+| `messages_send` | `conversations.send()` |
+| `trade_proposals_create` | `tradeProposals.create()` |
+
+En una cuenta donde vale `false`, la llamada responde `FORBIDDEN`. Pueden añadirse otros campos: ignora los que no conozcas.
 
 ## De una clave a todo lo demás
 
@@ -57,6 +76,7 @@ Cada export tiene su página en la [referencia](/reference/):
 | Export | Para qué sirve |
 | --- | --- |
 | [`Account`](/reference/account/) | La cuenta a la que pertenece una clave API. |
+| [`AccountFeatures`](/reference/account-features/) | Lo que Metamob ha abierto a la cuenta a petición: `true` cuando el punto de acceso responde, `false` cuando respondería `FORBIDDEN`. |
 | [`Avatar`](/reference/avatar/) | El monstruo que un usuario eligió como avatar. |
 | [`UserSummary`](/reference/user-summary/) | Un usuario tal como lo devuelve una búsqueda o una coincidencia de intercambio. |
 <!-- exports:end -->

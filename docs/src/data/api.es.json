@@ -1028,8 +1028,8 @@
   "es": "`received`: las que te han hecho. `sent`: las que has hecho tú. `all` (por defecto): las dos."
  },
  "TradeProposalListParams.status": {
-  "en": "Only the proposals in this state.",
-  "es": "Solo las propuestas en este estado."
+  "en": "Only the proposals in this state. `open`: the ones still going, `pending` and `half_applied`.",
+  "es": "Solo las propuestas en este estado. `open`: las que siguen en curso, `pending` y `half_applied`."
  },
  "TradeProposalListParams.quest": {
   "en": "Only the proposals about this quest of yours, by its slug.",
@@ -1790,5 +1790,33 @@
  "MarkAsReadResult.marked_count": {
   "en": "How many messages were marked as read. 0 when there was nothing unread.",
   "es": "Cuántos mensajes se marcaron como leídos. 0 cuando no había nada sin leer."
+ },
+ "KraloveEvent.updated_at": {
+  "en": "Last change to the event itself, as an ISO 8601 date in UTC. Registrations and messages do not change it.",
+  "es": "Última modificación del propio evento, como fecha ISO 8601 en UTC. Las inscripciones y los mensajes no la cambian."
+ },
+ "KraloveEventDetail.updated_at": {
+  "en": "Last change to the event itself, as an ISO 8601 date in UTC. Registrations and messages do not change it.",
+  "es": "Última modificación del propio evento, como fecha ISO 8601 en UTC. Las inscripciones y los mensajes no la cambian."
+ },
+ "AccountFeatures": {
+  "en": "What Metamob opened to an account on request: `true` when the endpoint\nanswers, `false` when it would answer `FORBIDDEN`. More may come.",
+  "es": "Lo que Metamob ha abierto a la cuenta a petición: `true` cuando el punto\nde acceso responde, `false` cuando respondería `FORBIDDEN`. Pueden añadirse otros."
+ },
+ "AccountFeatures.messages_send": {
+  "en": "`conversations.send()`.",
+  "es": "`conversations.send()`."
+ },
+ "AccountFeatures.trade_proposals_create": {
+  "en": "`tradeProposals.create()`.",
+  "es": "`tradeProposals.create()`."
+ },
+ "Account.features": {
+  "en": "Sending messages and trade proposals, opened account by account.",
+  "es": "El envío de mensajes y de propuestas de intercambio, abierto cuenta por cuenta."
+ },
+ "TradeProposal.expires_at": {
+  "en": "When a `pending` proposal will be cancelled on its own, as an ISO 8601\ndate in UTC, or `null` in every other state. A proposal nobody applied is\ncancelled after 30 days, give or take a day.",
+  "es": "Cuándo se cancelará sola una propuesta `pending`, como fecha ISO 8601 en\nUTC, o `null` en cualquier otro estado. Una propuesta que nadie ha aplicado\nse cancela a los 30 días, con un día de margen."
  }
 }

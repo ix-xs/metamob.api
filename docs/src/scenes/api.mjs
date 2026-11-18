@@ -69,7 +69,7 @@ export function answer({ method, url, body, key }) {
   let match;
 
   if (method === "GET" && path === "/me") {
-    return json(200, { data: { username: "Ix-xs", bio: "", avatar: null, last_active: "2026-11-09T09:30:00Z" } });
+    return json(200, { data: { username: "Ix-xs", bio: "", avatar: null, last_active: "2026-11-09T09:30:00Z", features: { messages_send: false, trade_proposals_create: false } } });
   }
   if (method === "GET" && path === "/quests") {
     return json(200, { data: QUESTS.map((quest) => ({ ...quest, quest_template: template() })) });

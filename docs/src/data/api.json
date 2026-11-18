@@ -5561,7 +5561,7 @@
    "kind": "variable",
    "code": [
     [
-     "const VERSION: \"5.3.1\""
+     "const VERSION: \"5.4.0\""
     ]
    ],
    "slug": "version"
@@ -10575,11 +10575,11 @@
      "name": "status",
      "type": [
       [
-       "\"pending\" | \"half_applied\" | \"completed\" | \"cancelled\" | undefined"
+       "\"pending\" | \"half_applied\" | \"completed\" | \"cancelled\" | \"open\" | undefined"
       ]
      ],
      "optional": true,
-     "text": "Only the proposals in this state."
+     "text": "Only the proposals in this state. `open`: the ones still going, `pending` and `half_applied`."
     },
     {
      "name": "quest",
@@ -16767,6 +16767,15 @@
        " | null"
       ]
      ]
+    },
+    {
+     "name": "updated_at",
+     "type": [
+      [
+       "string"
+      ]
+     ],
+     "text": "Last change to the event itself, as an ISO 8601 date in UTC. Registrations and messages do not change it."
     }
    ],
    "code": [
@@ -16782,7 +16791,7 @@
   {
    "name": "KraloveParticipant",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L135",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L137",
    "file": "src/types.ts",
    "guide": "/resources/kralove/",
    "text": "Someone taking part in a Kralamoure event.",
@@ -16819,7 +16828,7 @@
   {
    "name": "KraloveMessage",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L142",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L144",
    "file": "src/types.ts",
    "guide": "/resources/kralove/",
    "text": "A message posted on a Kralamoure event.",
@@ -16865,7 +16874,7 @@
   {
    "name": "KraloveEventDetail",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L151",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L153",
    "file": "src/types.ts",
    "guide": "/resources/kralove/",
    "text": "A Kralamoure event with its participants and its messages.",
@@ -16920,6 +16929,15 @@
      ]
     },
     {
+     "name": "updated_at",
+     "type": [
+      [
+       "string"
+      ]
+     ],
+     "text": "Last change to the event itself, as an ISO 8601 date in UTC. Registrations and messages do not change it."
+    },
+    {
      "name": "participants",
      "type": [
       [
@@ -16961,7 +16979,7 @@
   {
    "name": "Avatar",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L164",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L168",
    "file": "src/types.ts",
    "guide": "/resources/account/",
    "text": "The monster a user picked as their avatar.",
@@ -17010,7 +17028,7 @@
   {
    "name": "UserSummary",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L171",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L175",
    "file": "src/types.ts",
    "guide": "/resources/account/",
    "text": "A user as a search or a trade match returns them.",
@@ -17061,9 +17079,48 @@
    ]
   },
   {
+   "name": "AccountFeatures",
+   "module": "@ix-xs/metamob.api",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L186",
+   "file": "src/types.ts",
+   "guide": "/resources/account/",
+   "text": "What Metamob opened to an account on request: `true` when the endpoint\nanswers, `false` when it would answer `FORBIDDEN`. More may come.",
+   "kind": "interface",
+   "properties": [
+    {
+     "name": "messages_send",
+     "type": [
+      [
+       "boolean"
+      ]
+     ],
+     "text": "`conversations.send()`."
+    },
+    {
+     "name": "trade_proposals_create",
+     "type": [
+      [
+       "boolean"
+      ]
+     ],
+     "text": "`tradeProposals.create()`."
+    }
+   ],
+   "code": [
+    [
+     "interface AccountFeatures"
+    ]
+   ],
+   "slug": "account-features",
+   "usedBy": [
+    "Account",
+    "UserProfile"
+   ]
+  },
+  {
    "name": "Account",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L179",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L195",
    "file": "src/types.ts",
    "guide": "/resources/account/",
    "text": "The account an API key belongs to.",
@@ -17086,6 +17143,18 @@
        "string"
       ]
      ]
+    },
+    {
+     "name": "features",
+     "type": [
+      [
+       "AccountFeatures",
+       {
+        "ref": "AccountFeatures"
+       }
+      ]
+     ],
+     "text": "Sending messages and trade proposals, opened account by account."
     },
     {
      "name": "username",
@@ -17142,7 +17211,7 @@
   {
    "name": "QuestBase",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L184",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L202",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "What every quest carries, whoever looks at it.",
@@ -17224,7 +17293,7 @@
   {
    "name": "PublicQuest",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L197",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L215",
    "file": "src/types.ts",
    "guide": "/resources/users/",
    "text": "A public quest in a profile.",
@@ -17327,7 +17396,7 @@
   {
    "name": "PublicQuestSummary",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L200",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L218",
    "file": "src/types.ts",
    "guide": "/resources/users/",
    "text": "A public quest in the list of a user's quests.",
@@ -17447,7 +17516,7 @@
   {
    "name": "UserProfile",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L208",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L226",
    "file": "src/types.ts",
    "guide": "/resources/users/",
    "text": "The public profile of a user.",
@@ -17484,6 +17553,19 @@
        "string"
       ]
      ],
+     "inheritedFrom": "Account"
+    },
+    {
+     "name": "features",
+     "type": [
+      [
+       "AccountFeatures",
+       {
+        "ref": "AccountFeatures"
+       }
+      ]
+     ],
+     "text": "Sending messages and trade proposals, opened account by account.",
      "inheritedFrom": "Account"
     },
     {
@@ -17540,7 +17622,7 @@
   {
    "name": "QuestMonster",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L213",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L231",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "A monster of a quest, as anyone can see it.",
@@ -17694,7 +17776,7 @@
   {
    "name": "OwnQuest",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L225",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L243",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "One of your quests, as `quests.list()` returns it.",
@@ -17814,7 +17896,7 @@
   {
    "name": "TypeFilter",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L232",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L250",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "Trade filters of one kind of monster.",
@@ -17853,7 +17935,7 @@
   {
    "name": "TypeFilters",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L243",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L261",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "Trade filters by kind of monster, keyed by the id of the kind as a string:\n`\"1\"` monsters, `\"2\"` bosses, `\"3\"` archmonsters.",
@@ -17891,7 +17973,7 @@
   {
    "name": "QuestSettings",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L246",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L264",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "The full settings of one of your quests.",
@@ -18050,7 +18132,7 @@
   {
    "name": "QuestUpdate",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L257",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L275",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "What `quests.update()` can change. Every field is optional.",
@@ -18236,7 +18318,7 @@
   {
    "name": "QuestUpdateResult",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L292",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L310",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "What `quests.update()` answers: the slug and only the fields you changed.\nThe `never_*` flags come back grouped in `type_filters`.",
@@ -18339,7 +18421,7 @@
   {
    "name": "OwnQuestMonster",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L305",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L323",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "A monster of one of your quests, with its manual trade overrides.",
@@ -18514,7 +18596,7 @@
   {
    "name": "MonsterQuantityResult",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L316",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L334",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "What setting a quantity answers, for each monster.",
@@ -18586,7 +18668,7 @@
   {
    "name": "MonstersUpdateResult",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L329",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L347",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "What `quests.setMonsters()` answers.",
@@ -18628,7 +18710,7 @@
   {
    "name": "TradeOverride",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L335",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L353",
    "file": "src/types.ts",
    "guide": "/resources/trading/",
    "text": "A manual trade override. `null` hands a value back to the automatic calculation.",
@@ -18668,7 +18750,7 @@
   {
    "name": "TradeOverrideResult",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L343",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L361",
    "file": "src/types.ts",
    "guide": "/resources/trading/",
    "text": "What `quests.setTrade()` answers.",
@@ -18728,7 +18810,7 @@
   {
    "name": "MatchMonster",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L352",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L370",
    "file": "src/types.ts",
    "guide": "/resources/trading/",
    "text": "A monster one side of a match can give the other.",
@@ -18794,7 +18876,7 @@
   {
    "name": "TradeMatch",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L364",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L382",
    "file": "src/types.ts",
    "guide": "/resources/trading/",
    "text": "A trade partner for one of your quests.",
@@ -18868,7 +18950,7 @@
   {
    "name": "ZoneProgressMonster",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L378",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L396",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "A monster in the progress of a quest by zone.",
@@ -18978,7 +19060,7 @@
   {
    "name": "SubzoneProgress",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L396",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L414",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "The progress of a quest in one subzone.",
@@ -19047,7 +19129,7 @@
   {
    "name": "ZoneProgress",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L405",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L423",
    "file": "src/types.ts",
    "guide": "/resources/quests/",
    "text": "The progress of a quest in one zone.",
@@ -19117,7 +19199,7 @@
   {
    "name": "Conversation",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L415",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L433",
    "file": "src/types.ts",
    "guide": "/resources/conversations/",
    "text": "A conversation: one per correspondent.",
@@ -19183,7 +19265,7 @@
   {
    "name": "ConversationMessage",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L432",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L450",
    "file": "src/types.ts",
    "guide": "/resources/conversations/",
    "text": "A text message of a conversation.",
@@ -19264,7 +19346,7 @@
   {
    "name": "ProposalMonster",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L449",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L467",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "A quantity of a monster in a trade proposal. `monsters.get()` or `data.monster()` gives the monster.",
@@ -19303,7 +19385,7 @@
   {
    "name": "ProposalMonsterDetail",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L455",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L473",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "A monster that leaves or enters your quest with a trade proposal, with what you own of it now.",
@@ -19376,7 +19458,7 @@
   {
    "name": "ProposalViewer",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L466",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L484",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "Your side of a trade proposal.",
@@ -19453,7 +19535,7 @@
   {
    "name": "ProposalQuest",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L480",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L498",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "The quest of one side of a trade proposal.",
@@ -19492,7 +19574,7 @@
   {
    "name": "ProposalQuestTemplate",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L487",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L505",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "The quest template of a trade proposal: which kind of quest, in which version of the game.",
@@ -19533,7 +19615,7 @@
   {
    "name": "TradeProposal",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L493",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L511",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "A trade proposal between two players.",
@@ -19701,6 +19783,15 @@
      "text": "ISO 8601 date in UTC."
     },
     {
+     "name": "expires_at",
+     "type": [
+      [
+       "string | null"
+      ]
+     ],
+     "text": "When a `pending` proposal will be cancelled on its own, as an ISO 8601\ndate in UTC, or `null` in every other state. A proposal nobody applied is\ncancelled after 30 days, give or take a day."
+    },
+    {
      "name": "read_at",
      "type": [
       [
@@ -19725,7 +19816,7 @@
   {
    "name": "TradeProposalDetail",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L529",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L553",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "A trade proposal read on its own, with your side of it.",
@@ -19929,6 +20020,16 @@
      "inheritedFrom": "TradeProposal"
     },
     {
+     "name": "expires_at",
+     "type": [
+      [
+       "string | null"
+      ]
+     ],
+     "text": "When a `pending` proposal will be cancelled on its own, as an ISO 8601\ndate in UTC, or `null` in every other state. A proposal nobody applied is\ncancelled after 30 days, give or take a day.",
+     "inheritedFrom": "TradeProposal"
+    },
+    {
      "name": "read_at",
      "type": [
       [
@@ -19958,7 +20059,7 @@
   {
    "name": "ConversationProposal",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L535",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L559",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "A trade proposal as it appears in a conversation, among the messages.",
@@ -20158,6 +20259,16 @@
      "inheritedFrom": "TradeProposal"
     },
     {
+     "name": "expires_at",
+     "type": [
+      [
+       "string | null"
+      ]
+     ],
+     "text": "When a `pending` proposal will be cancelled on its own, as an ISO 8601\ndate in UTC, or `null` in every other state. A proposal nobody applied is\ncancelled after 30 days, give or take a day.",
+     "inheritedFrom": "TradeProposal"
+    },
+    {
      "name": "read_at",
      "type": [
       [
@@ -20187,7 +20298,7 @@
   {
    "name": "ConversationItem",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L540",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L564",
    "file": "src/types.ts",
    "guide": "/resources/conversations/",
    "text": "What a conversation is made of. `kind` tells the two apart.",
@@ -20220,7 +20331,7 @@
   {
    "name": "MarkAsReadResult",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L543",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L567",
    "file": "src/types.ts",
    "guide": "/resources/conversations/",
    "text": "What marking a conversation as read answers.",

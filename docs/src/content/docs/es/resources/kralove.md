@@ -49,6 +49,8 @@ if (next) {
 }
 ```
 
+`updated_at` da la última modificación del propio evento: su fecha o su descripción. Las inscripciones y los mensajes no la cambian.
+
 ## Los nombres que faltan
 
 `creator`, y el `username` de un participante o de un mensaje, pueden valer `null`: cuando la cuenta se ha borrado, o cuando uno de los dos ha bloqueado al otro. Tenlo en cuenta en todos los sitios donde muestres un nombre.
@@ -71,7 +73,7 @@ Basta con una comprobación cada pocos minutos. Para leer la lista más a menudo
 ## Límites y errores
 
 - La API lee los eventos. Crear uno, apuntarse y publicar un mensaje se hacen en el sitio.
-- `NOT_FOUND` para un evento que no existe.
+- `NOT_FOUND` para un evento que no existe, o que su creador ha cancelado: un evento cancelado se elimina.
 - `from` en otro formato que `YYYY-MM-DD` lanza `INVALID_ARGUMENT` antes del envío.
 
 <!-- exports:start -->

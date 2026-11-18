@@ -110,7 +110,7 @@ console.log(message.id, message.created_at);
 ```
 
 :::note
-El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petición, y sin eso la API responde `FORBIDDEN`. Las reglas son las del sitio: también `FORBIDDEN` cuando uno de los dos jugadores ha bloqueado al otro, `RATE_LIMITED` por encima de los límites antispam.
+El envío está cerrado por defecto: Metamob lo abre cuenta por cuenta, a petición, y sin eso la API responde `FORBIDDEN`. [`features`](/resources/account/#what-the-account-can-do) dice si lo está. Las reglas son las del sitio: también `FORBIDDEN` cuando uno de los dos jugadores ha bloqueado al otro, `RATE_LIMITED` por encima de los límites antispam.
 :::
 
 Un mensaje nunca se reintenta, sea cual sea el fallo: enviado dos veces, llegaría dos veces. Después de un tiempo agotado o un corte de red, lee la conversación antes de reenviarlo.

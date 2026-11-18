@@ -46,7 +46,7 @@ const BY_NAME = [
   [/^(MethodSpec)$/, "/resources/methods/"],
   [/Like$/, "/basics/names-and-ids/"],
   [/^(MatchesParams|TradeOverride|TradeOverrideResult|MatchMonster|TradeMatch)$/, "/resources/trading/"],
-  [/^(Account|Avatar|UserSummary)$/, "/resources/account/"],
+  [/^(Account|AccountFeatures|Avatar|UserSummary)$/, "/resources/account/"],
   [/^(Conversation|ConversationMessage|ConversationItem|MarkAsReadResult)$/, "/resources/conversations/"],
   [/^(Proposal|TradeProposal|ConversationProposal)/, "/resources/trade-proposals/"],
   [/^Kralove/, "/resources/kralove/"],

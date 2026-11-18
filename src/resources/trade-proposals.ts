@@ -37,8 +37,8 @@ export interface ApplyProposalOptions {
 export interface TradeProposalListParams {
   /** `received`: made to you. `sent`: made by you. `all` (default): both. */
   direction?: "received" | "sent" | "all" | undefined;
-  /** Only the proposals in this state. */
-  status?: "pending" | "half_applied" | "completed" | "cancelled" | undefined;
+  /** Only the proposals in this state. `open`: the ones still going, `pending` and `half_applied`. */
+  status?: "pending" | "half_applied" | "completed" | "cancelled" | "open" | undefined;
   /** Only the proposals about this quest of yours, by its slug. */
   quest?: string | undefined;
   /** Only the proposals created from this moment on: a `Date`, or an ISO 8601 date with its time zone. */

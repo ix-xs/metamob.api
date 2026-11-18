@@ -3,6 +3,27 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## 5.4.0
+
+Follows the update of the Metamob API of 18 November 2026.
+
+### Added
+
+- `features` on `metamob.me()`: whether sending messages
+  (`messages_send`) and trade proposals (`trade_proposals_create`) is opened
+  on the account, to show or hide sending without trying the call. Type
+  `AccountFeatures`.
+- `expires_at` on a trade proposal: when a `pending` proposal will be
+  cancelled on its own. A proposal nobody applied is cancelled after 30 days.
+- `status: "open"` in `tradeProposals.list()`: the proposals still going,
+  `pending` and `half_applied`.
+- `updated_at` on Kralamoure events: the last change to the event itself.
+
+### Changed
+
+- The documentation says that a Kralamoure event cancelled by its creator is
+  deleted, and answers `NOT_FOUND`.
+
 ## 5.3.1
 
 - The documentation site opens on a guide that builds one script page after

@@ -110,7 +110,7 @@ console.log(message.id, message.created_at);
 ```
 
 :::note
-Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. The rules are the ones of the site: `FORBIDDEN` too when one of the two players blocked the other, `RATE_LIMITED` past the anti-spam limits.
+Sending is closed by default: Metamob opens it account by account, on request, and the API answers `FORBIDDEN` without it. [`features`](/resources/account/#what-the-account-can-do) says whether it is. The rules are the ones of the site: `FORBIDDEN` too when one of the two players blocked the other, `RATE_LIMITED` past the anti-spam limits.
 :::
 
 A message is never retried, whatever the failure: sent twice, it would arrive twice. After a timeout or a network failure, read the conversation before sending it again.
