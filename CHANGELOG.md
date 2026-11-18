@@ -3,6 +3,13 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+- The documentation site is a plain documentation for developers: it opens on
+  the installation, then the API key and the configuration, the basics, one
+  page per part of the API, help, and the reference. The guided path and the
+  complete examples are gone; their addresses redirect to the matching pages.
+
 ## 5.5.0
 
 Follows the update of the Metamob API of 18 November 2026, afternoon: 43

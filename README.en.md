@@ -73,11 +73,11 @@ try {
 
 ## Documentation
 
-The full guide is at **[ix-xs.github.io/metamob.api](https://ix-xs.github.io/metamob.api/en/)**, in English, [French](https://ix-xs.github.io/metamob.api/) and [Spanish](https://ix-xs.github.io/metamob.api/es/):
+The full documentation is at **[ix-xs.github.io/metamob.api](https://ix-xs.github.io/metamob.api/en/)**, in English, [French](https://ix-xs.github.io/metamob.api/) and [Spanish](https://ix-xs.github.io/metamob.api/es/):
 
-- [Quick start](https://ix-xs.github.io/metamob.api/en/start/quick-start/)
+- [Configuration](https://ix-xs.github.io/metamob.api/en/basics/configuration/)
 - [Every method](https://ix-xs.github.io/metamob.api/en/resources/methods/)
-- [Examples](https://ix-xs.github.io/metamob.api/en/recipes/discord-command/): a Discord command, a progress report, a trade finder
+- [API reference](https://ix-xs.github.io/metamob.api/en/reference/)
 - [Coming from version 4](https://ix-xs.github.io/metamob.api/en/help/migrating-from-v4/)
 
 ## Metamob

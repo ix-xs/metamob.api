@@ -73,11 +73,11 @@ try {
 
 ## Documentation
 
-Le guide complet est sur **[ix-xs.github.io/metamob.api](https://ix-xs.github.io/metamob.api/)**, en français, [en anglais](https://ix-xs.github.io/metamob.api/en/) et [en espagnol](https://ix-xs.github.io/metamob.api/es/) :
+La documentation complète est sur **[ix-xs.github.io/metamob.api](https://ix-xs.github.io/metamob.api/)**, en français, [en anglais](https://ix-xs.github.io/metamob.api/en/) et [en espagnol](https://ix-xs.github.io/metamob.api/es/) :
 
-- [Démarrage rapide](https://ix-xs.github.io/metamob.api/start/quick-start/)
+- [Configuration](https://ix-xs.github.io/metamob.api/basics/configuration/)
 - [Toutes les méthodes](https://ix-xs.github.io/metamob.api/resources/methods/)
-- [Exemples](https://ix-xs.github.io/metamob.api/recipes/discord-command/) : une commande Discord, un rapport de progression, un chercheur d'échanges
+- [Référence de l'API](https://ix-xs.github.io/metamob.api/reference/)
 - [Depuis la version 4](https://ix-xs.github.io/metamob.api/help/migrating-from-v4/)
 
 ## Metamob

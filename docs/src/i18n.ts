@@ -2,7 +2,7 @@ import { ROOT_LANGUAGE, withBase, withLocale } from "../plugins/base-links.mjs";
 
 const en = {
   "nav.github": "GitHub repository",
-  "nav.guide": "Guide",
+  "nav.guide": "Documentation",
   "nav.reference": "Reference",
   "nav.sections": "Sections",
   "nav.theme": "Switch between dark and light",
@@ -13,7 +13,6 @@ const en = {
   "area.start": "Start",
   "area.basics": "Basics",
   "area.resources": "Resources",
-  "area.recipes": "Recipes",
   "area.reference": "Reference",
 
   "search.recent": "Recently opened",
@@ -80,7 +79,7 @@ export type UiKey = keyof typeof en;
 
 const fr: Record<UiKey, string> = {
   "nav.github": "Dépôt GitHub",
-  "nav.guide": "Guide",
+  "nav.guide": "Documentation",
   "nav.reference": "Référence",
   "nav.sections": "Sections",
   "nav.theme": "Basculer entre sombre et clair",
@@ -91,7 +90,6 @@ const fr: Record<UiKey, string> = {
   "area.start": "Démarrer",
   "area.basics": "Bases",
   "area.resources": "Ressources",
-  "area.recipes": "Recettes",
   "area.reference": "Référence",
 
   "search.recent": "Ouvertes récemment",
@@ -156,7 +154,7 @@ const fr: Record<UiKey, string> = {
 
 const es: Record<UiKey, string> = {
   "nav.github": "Repositorio de GitHub",
-  "nav.guide": "Guía",
+  "nav.guide": "Documentación",
   "nav.reference": "Referencia",
   "nav.sections": "Secciones",
   "nav.theme": "Cambiar entre oscuro y claro",
@@ -167,7 +165,6 @@ const es: Record<UiKey, string> = {
   "area.start": "Empezar",
   "area.basics": "Bases",
   "area.resources": "Recursos",
-  "area.recipes": "Recetas",
   "area.reference": "Referencia",
 
   "search.recent": "Abiertas recientemente",
