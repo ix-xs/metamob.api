@@ -3,6 +3,25 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## 5.5.0
+
+Follows the update of the Metamob API of 18 November 2026, afternoon: 43
+endpoints.
+
+### Added
+
+- `metamob.tradeProposals.unapply(id)`: undoes your side of a proposal within
+  2 hours of applying it. What you gave comes back to your quest, what you
+  received leaves it, and the other player is not changed. Never retried, like
+  applying and cancelling.
+- `unapply_until` on the `viewer` of a proposal: until when your side can be
+  undone, or `null`.
+
+### Changed
+
+- `applied_quantity` is also in the answer of `unapply()`: what really came
+  back or left.
+
 ## 5.4.0
 
 Follows the update of the Metamob API of 18 November 2026.

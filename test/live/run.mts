@@ -202,7 +202,7 @@ await step("conversations: list, messages, unread_count, markAsRead", async () =
   }
 });
 
-await step("tradeProposals: list, get, filters, apply and cancel", async () => {
+await step("tradeProposals: list, get, filters, apply, unapply and cancel", async () => {
   const page = await metamob.tradeProposals.list({ limit: 5 });
   for (const item of page.items) proposal("TradeProposal", item as unknown as Record<string, unknown>);
   const recent = await metamob.tradeProposals.list({ direction: "received", status: "pending", since: new Date(Date.now() - 30 * 86_400_000), limit: 5 });
@@ -213,11 +213,13 @@ await step("tradeProposals: list, get, filters, apply and cancel", async () => {
   if (!page.items[0]) return void console.log("      no trade proposal to read");
   const detail = await metamob.tradeProposals.get(page.items[0]);
   proposal("TradeProposalDetail", detail as unknown as Record<string, unknown>, ["viewer"]);
-  shape("ProposalViewer", detail.viewer, ["role", "applied", "clamped", "removed", "added"]);
+  shape("ProposalViewer", detail.viewer, ["role", "applied", "clamped", "unapply_until", "removed", "added"]);
+  if (detail.viewer?.unapply_until != null) date("ProposalViewer.unapply_until", detail.viewer.unapply_until);
   for (const monster of [...(detail.viewer?.removed ?? []), ...(detail.viewer?.added ?? [])]) shape("ProposalMonsterDetail", monster, ["monster_id", "quantity", "owned"]);
   // A proposal that does not exist: nothing is applied or cancelled.
   await refused("NOT_FOUND", () => metamob.tradeProposals.apply(2_000_000_000));
   await refused("NOT_FOUND", () => metamob.tradeProposals.cancel(2_000_000_000));
+  await refused("NOT_FOUND", () => metamob.tradeProposals.unapply(2_000_000_000));
 });
 
 await step("errors: the message is in messages.error", async () => {

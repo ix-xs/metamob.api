@@ -37,6 +37,7 @@ export const METHODS = {
   "tradeProposals.create": { id: "tradeProposals.create", verb: "POST", path: "/trade-proposals", scope: "account", once: true },
   "tradeProposals.apply": { id: "tradeProposals.apply", verb: "POST", path: "/trade-proposals/{id}/apply", scope: "account", once: true },
   "tradeProposals.cancel": { id: "tradeProposals.cancel", verb: "POST", path: "/trade-proposals/{id}/cancel", scope: "account", once: true },
+  "tradeProposals.unapply": { id: "tradeProposals.unapply", verb: "POST", path: "/trade-proposals/{id}/unapply", scope: "account", once: true },
   "quests.list": { id: "quests.list", verb: "GET", path: "/quests", scope: "account" },
   "quests.get": { id: "quests.get", verb: "GET", path: "/quests/{slug}", scope: "account" },
   "quests.update": { id: "quests.update", verb: "PATCH", path: "/quests/{slug}", scope: "account" },

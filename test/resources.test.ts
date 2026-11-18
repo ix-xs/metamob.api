@@ -47,6 +47,7 @@ const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>;
   },
   "tradeProposals.apply": { run: (m) => m.tradeProposals.apply(57, { allowPartial: true }), path: "/trade-proposals/57/apply", body: { allow_partial: true } },
   "tradeProposals.cancel": { run: (m) => m.tradeProposals.cancel({ id: 57 }), path: "/trade-proposals/57/cancel" },
+  "tradeProposals.unapply": { run: (m) => m.tradeProposals.unapply("57"), path: "/trade-proposals/57/unapply" },
   "quests.list": { run: (m) => m.quests.list(), path: "/quests" },
   "quests.get": { run: (m) => m.quests.get(SLUG), path: `/quests/${SLUG}` },
   "quests.update": {
@@ -363,11 +364,20 @@ describe("applying and cancelling proposals", () => {
     await expect(metamob.tradeProposals.cancel(57)).rejects.toMatchObject({ code: "CONFLICT" });
   });
 
-  it("never applies or cancels twice", async () => {
-    const { metamob, calls } = client([apiError(503, "down"), apiError(503, "down"), { data: proposal, viewer }]);
+  it("never applies, undoes or cancels twice", async () => {
+    const { metamob, calls } = client([apiError(503, "down"), apiError(503, "down"), apiError(503, "down"), { data: proposal, viewer }]);
     await expect(metamob.tradeProposals.apply(57)).rejects.toMatchObject({ status: 503 });
+    await expect(metamob.tradeProposals.unapply(57)).rejects.toMatchObject({ status: 503 });
     await expect(metamob.tradeProposals.cancel(57)).rejects.toMatchObject({ status: 503 });
-    expect(calls).toHaveLength(2);
+    expect(calls).toHaveLength(3);
+  });
+
+  it("undoes your side, and says CONFLICT past the deadline", async () => {
+    const undone = { ...viewer, applied: false, clamped: false, unapply_until: null };
+    const { metamob, calls } = client([{ data: proposal, viewer: undone }, apiError(409, "Trade proposal not applied by you")]);
+    expect((await metamob.tradeProposals.unapply(57)).viewer.applied).toBe(false);
+    expect(calls[0]?.body).toBeUndefined();
+    await expect(metamob.tradeProposals.unapply(57)).rejects.toMatchObject({ code: "CONFLICT", status: 409 });
   });
 });
 

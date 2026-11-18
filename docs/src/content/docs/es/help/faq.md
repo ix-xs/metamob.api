@@ -13,7 +13,7 @@ No. `@ix-xs/metamob.api` es un proyecto de código abierto independiente, con li
 
 ## ¿Cubre toda la API?
 
-Sí, los 42 puntos de acceso. [Todos los métodos](/resources/methods/) los lista, con el método que llama a cada uno.
+Sí, los 43 puntos de acceso. [Todos los métodos](/resources/methods/) los lista, con el método que llama a cada uno.
 
 ## ¿Necesito una clave API?
 

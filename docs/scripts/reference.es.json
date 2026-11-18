@@ -1,5 +1,5 @@
 {
-  "The account an API key belongs to: username, bio, avatar and last activity.": "La cuenta a la que pertenece una clave API: nombre de usuario, biografía, avatar y última actividad.",
+  "The account an API key belongs to: username, bio, avatar, last activity, and what sending is opened to it.": "La cuenta a la que pertenece una clave API: nombre de usuario, biografía, avatar, última actividad y el envío que tiene abierto.",
   "The versions of the game: Dofus (Unity), Dofus Retro and Dofus Touch.": "Las versiones del juego: Dofus (Unity), Dofus Retro y Dofus Touch.",
   "One version of the game, from its id or its name.": "Una versión del juego, por su identificador o su nombre.",
   "Every game server, with its community and its game version.": "Todos los servidores de juego, con su comunidad y su versión del juego.",
@@ -40,5 +40,6 @@
   "Sets the quantities of many monsters at once. More than 200 are split across calls.": "Fija las cantidades de muchos monstruos a la vez. Por encima de 200, se reparten en varias llamadas.",
   "Forces how many of a monster a quest offers and wants, or hands it back to the automatic calculation.": "Impone cuántos ejemplares de un monstruo ofrece y busca una misión, o devuelve el control al cálculo automático.",
   "The best trade partners for one of your quests, ranked like the Community page.": "Los mejores socios de intercambio para una de tus misiones, ordenados como en la página Comunidad.",
-  "The progress of one of your quests, organised by zone and subzone.": "El progreso de una de tus misiones, organizado por zona y subzona."
+  "The progress of one of your quests, organised by zone and subzone.": "El progreso de una de tus misiones, organizado por zona y subzona.",
+  "Undoes your side of a trade proposal within 2 hours of applying it: your quest gets back what it had before.": "Deshace tu lado de una propuesta de intercambio en las 2 horas siguientes a aplicarlo: tu misión recupera lo que tenía antes."
 }

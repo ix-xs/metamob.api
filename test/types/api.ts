@@ -120,6 +120,8 @@ export async function results() {
   expect<Equal<typeof applied, TradeProposalDetail>>();
   expect<Equal<(typeof applied.viewer.removed)[number]["applied_quantity"], number | undefined>>();
   expect<Equal<Awaited<ReturnType<typeof metamob.tradeProposals.cancel>>, TradeProposalDetail>>();
+  const undone = await metamob.tradeProposals.unapply(57);
+  expect<Equal<typeof undone.viewer.unapply_until, string | null>>();
   // @ts-expect-error the quest type is read from quest_template
   void proposal.quest_type;
 }

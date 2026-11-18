@@ -1048,8 +1048,8 @@
   "fr": "Commencer par des propositions plus anciennes : le `nextBeforeId` d'une page que vous avez déjà."
  },
  "TradeProposals": {
-  "en": "The trade proposals of the account: the ones you sent and the ones you\nreceived, on every quest. Send one, apply your side, or cancel it.",
-  "fr": "Les propositions d'échange du compte : celles que vous avez envoyées et celles que vous avez\nreçues, sur toutes les quêtes. En envoyer une, appliquer votre côté, ou l'annuler."
+  "en": "The trade proposals of the account: the ones you sent and the ones you\nreceived, on every quest. Send one, apply your side, undo it, or cancel it.",
+  "fr": "Les propositions d'échange du compte : celles que vous avez envoyées et celles que vous avez\nreçues, sur toutes les quêtes. En envoyer une, appliquer votre côté, le défaire, ou l'annuler."
  },
  "TradeProposals.list": {
   "en": "The trade proposals you sent and received, most recent first. Await it\nfor one page, or iterate it to walk back in time.",
@@ -1668,8 +1668,8 @@
   "fr": "Combien d'exemplaires vous en possédez maintenant dans votre quête concernée par la proposition, l'échange compris\nune fois votre côté appliqué. `null` quand vous n'avez pas de quête de ce type sur ce serveur."
  },
  "ProposalMonsterDetail.applied_quantity": {
-  "en": "In the answer of `apply()` only: how many really moved, less than `quantity` when it was clamped.",
-  "fr": "Seulement dans la réponse d'`apply()` : combien d'exemplaires ont vraiment bougé, moins que `quantity` quand la quantité a été réduite."
+  "en": "In the answers of `apply()` and `unapply()` only: how many really moved, less than `quantity` when it was clamped.",
+  "fr": "Dans les réponses de `apply()` et `unapply()` seulement : combien ont vraiment bougé, moins que `quantity` quand la quantité a été réduite."
  },
  "ProposalViewer": {
   "en": "Your side of a trade proposal.",
@@ -1818,5 +1818,13 @@
  "TradeProposal.expires_at": {
   "en": "When a `pending` proposal will be cancelled on its own, as an ISO 8601\ndate in UTC, or `null` in every other state. A proposal nobody applied is\ncancelled after 30 days, give or take a day.",
   "fr": "Quand une proposition `pending` sera annulée d'elle-même, en date ISO 8601\nUTC, ou `null` dans tout autre état. Une proposition que personne n'a appliquée\nest annulée au bout de 30 jours, à un jour près."
+ },
+ "TradeProposals.unapply": {
+  "en": "Undoes your side of a proposal, within 2 hours of applying it\n(`viewer.unapply_until`): what you gave comes back to your quest and what\nyou received leaves it, for the quantities that really moved. The other\nplayer is neither changed nor told. Allowed even when the proposal was\ncancelled since; when it was not, you can apply or cancel it again.\nPast the deadline, or on a proposal you did not apply, it is a\n`CONFLICT`. Never retried.",
+  "fr": "Défait votre côté d'une proposition, dans les 2 heures qui suivent son application\n(`viewer.unapply_until`) : ce que vous avez donné revient dans votre quête et ce que\nvous avez reçu en repart, pour les quantités qui ont vraiment bougé. L'autre\njoueur n'est ni modifié ni prévenu. Possible même si la proposition a été\nannulée depuis ; sinon, vous pouvez ensuite l'appliquer ou l'annuler de nouveau.\nAprès la limite, ou sur une proposition que vous n'avez pas appliquée, c'est un\n`CONFLICT`. Jamais retenté."
+ },
+ "ProposalViewer.unapply_until": {
+  "en": "Until when you can undo your side with `unapply()`, as an ISO 8601 date in\nUTC: 2 hours after you applied it. `null` when you did not apply it, when\nthe deadline has passed, or when it cannot be undone automatically.",
+  "fr": "Jusqu'à quand vous pouvez défaire votre côté avec `unapply()`, en date ISO 8601\nUTC : 2 heures après l'avoir appliqué. `null` quand vous ne l'avez pas appliqué, quand\nla limite est passée, ou quand il ne peut pas être défait automatiquement."
  }
 }

@@ -132,6 +132,27 @@ if (clamped) {
 
 Applying twice, or applying a cancelled proposal, also answers `CONFLICT`. `apply()` is never retried: after a timeout, read the proposal again with `get()` before trying again.
 
+## Undoing your application
+
+For 2 hours after you applied your side, `tradeProposals.unapply()` undoes it: what you gave comes back to your quest, what you received leaves it, for the quantities that really moved. The other player is neither changed nor told. `viewer.unapply_until` gives the deadline, and is `null` when there is nothing to undo:
+
+```ts
+const proposal = await metamob.tradeProposals.get(57);
+
+if (proposal.viewer.unapply_until) {
+  const undone = await metamob.tradeProposals.unapply(proposal);
+
+  for (const { monster_id, quantity, applied_quantity } of undone.viewer.removed) {
+    const name = data.monster(monster_id)?.name.fr;
+    console.log(name, `${applied_quantity} of ${quantity}`); // what came back to your quest
+  }
+}
+```
+
+The answer is the proposal, with `viewer.applied` back to `false`. When you changed your quantities in between, the undo can be partial: a monster you received and already used, or the maximum quantity reached. `viewer.clamped` is then `true`, and `applied_quantity` says what really moved.
+
+It works even when the proposal was cancelled since. Otherwise, you can then apply it again, or cancel it. Past the deadline, on a proposal you did not apply, or one applied before Metamob added this, the API answers `CONFLICT`: fix your quantities by hand then. Like `apply()`, `unapply()` is never retried.
+
 ## Cancelling or declining
 
 `tradeProposals.cancel()` cancels a proposal you sent, or declines one you received. It works as long as you have not applied your side, even when the other player applied theirs:
@@ -166,7 +187,7 @@ setInterval(async () => {
 
 ## Limits and errors
 
-- `apply()` and `cancel()` answer `NOT_FOUND` for a proposal that does not exist or that you take no part in, and `CONFLICT` for a proposal already cancelled, already applied by you, or whose quest of yours was deleted.
+- `apply()`, `unapply()` and `cancel()` answer `NOT_FOUND` for a proposal that does not exist or that you take no part in, and `CONFLICT` for a proposal already cancelled, already applied by you, or whose quest of yours was deleted.
 - `create()` refuses before sending a proposal without any monster, a quantity outside 1 to 99, a monster named twice on the same side, or more than 200 monsters on one side.
 - The API answers `BAD_REQUEST` for a monster that is not in the quest, for a monster you give more copies of than you own, or for two quests of different kinds or servers, and `NOT_FOUND` for a quest that does not exist or, for `sender_quest`, that is not yours.
 - `NOT_FOUND` for a proposal that does not exist or that is not yours.

@@ -132,6 +132,27 @@ if (clamped) {
 
 Aplicar dos veces, o aplicar una propuesta cancelada, también responde `CONFLICT`. `apply()` nunca se reintenta: tras un tiempo de espera agotado, vuelve a leer la propuesta con `get()` antes de intentarlo de nuevo.
 
+## Deshacer tu aplicación
+
+Durante las 2 horas siguientes a aplicar tu lado, `tradeProposals.unapply()` lo deshace: lo que diste vuelve a tu misión, lo que recibiste sale de ella, en las cantidades que se movieron de verdad. El otro jugador no se modifica ni se le avisa. `viewer.unapply_until` da el límite, y vale `null` cuando no hay nada que deshacer:
+
+```ts
+const proposal = await metamob.tradeProposals.get(57);
+
+if (proposal.viewer.unapply_until) {
+  const undone = await metamob.tradeProposals.unapply(proposal);
+
+  for (const { monster_id, quantity, applied_quantity } of undone.viewer.removed) {
+    const name = data.monster(monster_id)?.name.fr;
+    console.log(name, `${applied_quantity} of ${quantity}`); // lo que volvió a tu misión
+  }
+}
+```
+
+La respuesta es la propuesta, con `viewer.applied` de nuevo en `false`. Si cambiaste tus cantidades entretanto, la anulación puede ser parcial: un monstruo recibido que ya usaste, o la cantidad máxima alcanzada. `viewer.clamped` vale entonces `true`, y `applied_quantity` dice lo que se movió de verdad.
+
+Funciona aunque la propuesta se haya cancelado después. Si no, luego puedes volver a aplicarla, o cancelarla. Pasado el límite, en una propuesta que no aplicaste, o aplicada antes de que Metamob añadiera esta opción, la API responde `CONFLICT`: corrige entonces tus cantidades a mano. Como `apply()`, `unapply()` nunca se reintenta.
+
 ## Cancelar o rechazar
 
 `tradeProposals.cancel()` cancela una propuesta que enviaste, o rechaza una que recibiste. Es posible mientras no hayas aplicado tu lado, aunque el otro jugador haya aplicado el suyo:
@@ -166,7 +187,7 @@ setInterval(async () => {
 
 ## Límites y errores
 
-- `apply()` y `cancel()` responden `NOT_FOUND` para una propuesta que no existe o en la que no participas, y `CONFLICT` para una propuesta ya cancelada, ya aplicada por ti, o cuya misión tuya se eliminó.
+- `apply()`, `unapply()` y `cancel()` responden `NOT_FOUND` para una propuesta que no existe o en la que no participas, y `CONFLICT` para una propuesta ya cancelada, ya aplicada por ti, o cuya misión tuya se eliminó.
 - `create()` rechaza antes del envío una propuesta sin ningún monstruo, una cantidad fuera del rango de 1 a 99, un monstruo nombrado dos veces en el mismo lado, o más de 200 monstruos en un mismo lado.
 - La API responde `BAD_REQUEST` para un monstruo que no está en la misión, para un monstruo del que das más ejemplares de los que tienes, o para dos misiones de tipos o servidores distintos, y `NOT_FOUND` para una misión que no existe o, en el caso de `sender_quest`, que no es tuya.
 - `NOT_FOUND` para una propuesta que no existe o que no es tuya.

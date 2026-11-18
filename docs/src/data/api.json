@@ -5484,7 +5484,7 @@
    "kind": "variable",
    "code": [
     [
-     "const METHODS: { readonly \"me.get\": { readonly id: \"me.get\"; readonly verb: \"GET\"; readonly path: \"/me\"; readonly scope: \"account\"; }; readonly \"gameVersions.list\": { readonly id: \"gameVersions.list\"; readonly verb: \"GET\"; readonly path: \"/game-versions\"; readonly scope: \"public\"; }; readonly \"gameVersions.get\": { readonly id: \"gameVersions.get\"; readonly verb: \"GET\"; readonly path: \"/game-versions/{id}\"; readonly scope: \"public\"; }; readonly \"servers.list\": { readonly id: \"servers.list\"; readonly verb: \"GET\"; readonly path: \"/servers\"; readonly scope: \"public\"; }; readonly \"servers.get\": { readonly id: \"servers.get\"; readonly verb: \"GET\"; readonly path: \"/servers/{id}\"; readonly scope: \"public\"; }; readonly \"monsterTypes.list\": { readonly id: \"monsterTypes.list\"; readonly verb: \"GET\"; readonly path: \"/monster-types\"; readonly scope: \"public\"; }; readonly \"monsterTypes.get\": { readonly id: \"monsterTypes.get\"; readonly verb: \"GET\"; readonly path: \"/monster-types/{id}\"; readonly scope: \"public\"; }; readonly \"questTypes.list\": { readonly id: \"questTypes.list\"; readonly verb: \"GET\"; readonly path: \"/quest-types\"; readonly scope: \"public\"; }; readonly \"questTypes.get\": { readonly id: \"questTypes.get\"; readonly verb: \"GET\"; readonly path: \"/quest-types/{id}\"; readonly scope: \"public\"; }; readonly \"questTemplates.list\": { readonly id: \"questTemplates.list\"; readonly verb: \"GET\"; readonly path: \"/quest-templates\"; readonly scope: \"public\"; }; readonly \"questTemplates.monsters\": { readonly id: \"questTemplates.monsters\"; readonly verb: \"GET\"; readonly path: \"/quest-templates/{id}\"; readonly scope: \"public\"; readonly paged: { readonly max: 200; }; }; readonly \"monsters.list\": { readonly id: \"monsters.list\"; readonly verb: \"GET\"; readonly path: \"/monsters\"; readonly scope: \"public\"; readonly paged: { readonly max: 200; }; }; readonly \"monsters.get\": { readonly id: \"monsters.get\"; readonly verb: \"GET\"; readonly path: \"/monsters/{id}\"; readonly scope: \"public\"; }; readonly \"zones.list\": { readonly id: \"zones.list\"; readonly verb: \"GET\"; readonly path: \"/zones\"; readonly scope: \"public\"; }; readonly \"zones.get\": { readonly id: \"zones.get\"; readonly verb: \"GET\"; readonly path: \"/zones/{id}\"; readonly scope: \"public\"; }; readonly \"zones.subzones\": { readonly id: \"zones.subzones\"; readonly verb: \"GET\"; readonly path: \"/zones/{id}/subzones\"; readonly scope: \"public\"; }; readonly \"zones.subzone\": { readonly id: \"zones.subzone\"; readonly verb: \"GET\"; readonly path: \"/zones/{id}/subzones/{subzoneId}\"; readonly scope: \"public\"; }; readonly \"zones.monsters\": { readonly id: \"zones.monsters\"; readonly verb: \"GET\"; readonly path: \"/zones/{id}/subzones/{subzoneId}/monsters\"; readonly scope: \"public\"; }; readonly \"kralove.list\": { readonly id: \"kralove.list\"; readonly verb: \"GET\"; readonly path: \"/kralove\"; readonly scope: \"account\"; }; readonly \"kralove.get\": { readonly id: \"kralove.get\"; readonly verb: \"GET\"; readonly path: \"/kralove/{id}\"; readonly scope: \"account\"; }; readonly \"users.search\": { readonly id: \"users.search\"; readonly verb: \"GET\"; readonly path: \"/users/search\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; }; }; readonly \"users.get\": { readonly id: \"users.get\"; readonly verb: \"GET\"; readonly path: \"/users/{username}\"; readonly scope: \"account\"; }; readonly \"users.quests\": { readonly id: \"users.quests\"; readonly verb: \"GET\"; readonly path: \"/users/{username}/quests\"; readonly scope: \"account\"; }; readonly \"users.quest\": { readonly id: \"users.quest\"; readonly verb: \"GET\"; readonly path: \"/users/{username}/quests/{slug}\"; readonly scope: \"account\"; readonly paged: { readonly max: 200; }; }; readonly \"conversations.list\": { readonly id: \"conversations.list\"; readonly verb: \"GET\"; readonly path: \"/conversations\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; }; }; readonly \"conversations.messages\": { readonly id: \"conversations.messages\"; readonly verb: \"GET\"; readonly path: \"/conversations/{username}\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; readonly cursor: true; }; }; readonly \"conversations.markAsRead\": { readonly id: \"conversations.markAsRead\"; readonly verb: \"POST\"; readonly path: \"/conversations/{username}/read\"; readonly scope: \"account\"; }; readonly \"conversations.send\": { readonly id: \"conversations.send\"; readonly verb: \"POST\"; readonly path: \"/conversations/{username}/messages\"; readonly scope: \"account\"; readonly once: true; }; readonly \"tradeProposals.list\": { readonly id: \"tradeProposals.list\"; readonly verb: \"GET\"; readonly path: \"/trade-proposals\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; readonly cursor: true; }; }; readonly \"tradeProposals.get\": { readonly id: \"tradeProposals.get\"; readonly verb: \"GET\"; readonly path: \"/trade-proposals/{id}\"; readonly scope: \"account\"; }; readonly \"tradeProposals.create\": { readonly id: \"tradeProposals.create\"; readonly verb: \"POST\"; readonly path: \"/trade-proposals\"; readonly scope: \"account\"; readonly once: true; }; readonly \"tradeProposals.apply\": { readonly id: \"tradeProposals.apply\"; readonly verb: \"POST\"; readonly path: \"/trade-proposals/{id}/apply\"; readonly scope: \"account\"; readonly once: true; }; readonly \"tradeProposals.cancel\": { readonly id: \"tradeProposals.cancel\"; readonly verb: \"POST\"; readonly path: \"/trade-proposals/{id}/cancel\"; readonly scope: \"account\"; readonly once: true; }; readonly \"quests.list\": { readonly id: \"quests.list\"; readonly verb: \"GET\"; readonly path: \"/quests\"; readonly scope: \"account\"; }; readonly \"quests.get\": { readonly id: \"quests.get\"; readonly verb: \"GET\"; readonly path: \"/quests/{slug}\"; readonly scope: \"account\"; }; readonly \"quests.update\": { readonly id: \"quests.update\"; readonly verb: \"PATCH\"; readonly path: \"/quests/{slug}\"; readonly scope: \"account\"; }; readonly \"quests.monsters\": { readonly id: \"quests.monsters\"; readonly verb: \"GET\"; readonly path: \"/quests/{slug}/monsters\"; readonly scope: \"account\"; readonly paged: { readonly max: 200; }; }; readonly \"quests.setMonster\": { readonly id: \"quests.setMonster\"; readonly verb: \"PATCH\"; readonly path: \"/quests/{slug}/monsters/{monsterId}\"; readonly scope: \"account\"; }; readonly \"quests.setMonsters\": { readonly id: \"quests.setMonsters\"; readonly verb: \"PATCH\"; readonly path: \"/quests/{slug}/monsters\"; readonly scope: \"account\"; }; readonly \"quests.setTrade\": { readonly id: \"quests.setTrade\"; readonly verb: \"PATCH\"; readonly path: \"/quests/{slug}/monsters/{monsterId}/trade\"; readonly scope: \"account\"; }; readonly \"quests.matches\": { readonly id: \"quests.matches\"; readonly verb: \"GET\"; readonly path: \"/quests/{slug}/matches\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; }; }; readonly \"quests.zones\": { readonly id: \"quests.zones\"; readonly verb: \"GET\"; readonly path: \"/quests/{slug}/zones\"; readonly scope: \"account\"; }; }"
+     "const METHODS: { readonly \"me.get\": { readonly id: \"me.get\"; readonly verb: \"GET\"; readonly path: \"/me\"; readonly scope: \"account\"; }; readonly \"gameVersions.list\": { readonly id: \"gameVersions.list\"; readonly verb: \"GET\"; readonly path: \"/game-versions\"; readonly scope: \"public\"; }; readonly \"gameVersions.get\": { readonly id: \"gameVersions.get\"; readonly verb: \"GET\"; readonly path: \"/game-versions/{id}\"; readonly scope: \"public\"; }; readonly \"servers.list\": { readonly id: \"servers.list\"; readonly verb: \"GET\"; readonly path: \"/servers\"; readonly scope: \"public\"; }; readonly \"servers.get\": { readonly id: \"servers.get\"; readonly verb: \"GET\"; readonly path: \"/servers/{id}\"; readonly scope: \"public\"; }; readonly \"monsterTypes.list\": { readonly id: \"monsterTypes.list\"; readonly verb: \"GET\"; readonly path: \"/monster-types\"; readonly scope: \"public\"; }; readonly \"monsterTypes.get\": { readonly id: \"monsterTypes.get\"; readonly verb: \"GET\"; readonly path: \"/monster-types/{id}\"; readonly scope: \"public\"; }; readonly \"questTypes.list\": { readonly id: \"questTypes.list\"; readonly verb: \"GET\"; readonly path: \"/quest-types\"; readonly scope: \"public\"; }; readonly \"questTypes.get\": { readonly id: \"questTypes.get\"; readonly verb: \"GET\"; readonly path: \"/quest-types/{id}\"; readonly scope: \"public\"; }; readonly \"questTemplates.list\": { readonly id: \"questTemplates.list\"; readonly verb: \"GET\"; readonly path: \"/quest-templates\"; readonly scope: \"public\"; }; readonly \"questTemplates.monsters\": { readonly id: \"questTemplates.monsters\"; readonly verb: \"GET\"; readonly path: \"/quest-templates/{id}\"; readonly scope: \"public\"; readonly paged: { readonly max: 200; }; }; readonly \"monsters.list\": { readonly id: \"monsters.list\"; readonly verb: \"GET\"; readonly path: \"/monsters\"; readonly scope: \"public\"; readonly paged: { readonly max: 200; }; }; readonly \"monsters.get\": { readonly id: \"monsters.get\"; readonly verb: \"GET\"; readonly path: \"/monsters/{id}\"; readonly scope: \"public\"; }; readonly \"zones.list\": { readonly id: \"zones.list\"; readonly verb: \"GET\"; readonly path: \"/zones\"; readonly scope: \"public\"; }; readonly \"zones.get\": { readonly id: \"zones.get\"; readonly verb: \"GET\"; readonly path: \"/zones/{id}\"; readonly scope: \"public\"; }; readonly \"zones.subzones\": { readonly id: \"zones.subzones\"; readonly verb: \"GET\"; readonly path: \"/zones/{id}/subzones\"; readonly scope: \"public\"; }; readonly \"zones.subzone\": { readonly id: \"zones.subzone\"; readonly verb: \"GET\"; readonly path: \"/zones/{id}/subzones/{subzoneId}\"; readonly scope: \"public\"; }; readonly \"zones.monsters\": { readonly id: \"zones.monsters\"; readonly verb: \"GET\"; readonly path: \"/zones/{id}/subzones/{subzoneId}/monsters\"; readonly scope: \"public\"; }; readonly \"kralove.list\": { readonly id: \"kralove.list\"; readonly verb: \"GET\"; readonly path: \"/kralove\"; readonly scope: \"account\"; }; readonly \"kralove.get\": { readonly id: \"kralove.get\"; readonly verb: \"GET\"; readonly path: \"/kralove/{id}\"; readonly scope: \"account\"; }; readonly \"users.search\": { readonly id: \"users.search\"; readonly verb: \"GET\"; readonly path: \"/users/search\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; }; }; readonly \"users.get\": { readonly id: \"users.get\"; readonly verb: \"GET\"; readonly path: \"/users/{username}\"; readonly scope: \"account\"; }; readonly \"users.quests\": { readonly id: \"users.quests\"; readonly verb: \"GET\"; readonly path: \"/users/{username}/quests\"; readonly scope: \"account\"; }; readonly \"users.quest\": { readonly id: \"users.quest\"; readonly verb: \"GET\"; readonly path: \"/users/{username}/quests/{slug}\"; readonly scope: \"account\"; readonly paged: { readonly max: 200; }; }; readonly \"conversations.list\": { readonly id: \"conversations.list\"; readonly verb: \"GET\"; readonly path: \"/conversations\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; }; }; readonly \"conversations.messages\": { readonly id: \"conversations.messages\"; readonly verb: \"GET\"; readonly path: \"/conversations/{username}\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; readonly cursor: true; }; }; readonly \"conversations.markAsRead\": { readonly id: \"conversations.markAsRead\"; readonly verb: \"POST\"; readonly path: \"/conversations/{username}/read\"; readonly scope: \"account\"; }; readonly \"conversations.send\": { readonly id: \"conversations.send\"; readonly verb: \"POST\"; readonly path: \"/conversations/{username}/messages\"; readonly scope: \"account\"; readonly once: true; }; readonly \"tradeProposals.list\": { readonly id: \"tradeProposals.list\"; readonly verb: \"GET\"; readonly path: \"/trade-proposals\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; readonly cursor: true; }; }; readonly \"tradeProposals.get\": { readonly id: \"tradeProposals.get\"; readonly verb: \"GET\"; readonly path: \"/trade-proposals/{id}\"; readonly scope: \"account\"; }; readonly \"tradeProposals.create\": { readonly id: \"tradeProposals.create\"; readonly verb: \"POST\"; readonly path: \"/trade-proposals\"; readonly scope: \"account\"; readonly once: true; }; readonly \"tradeProposals.apply\": { readonly id: \"tradeProposals.apply\"; readonly verb: \"POST\"; readonly path: \"/trade-proposals/{id}/apply\"; readonly scope: \"account\"; readonly once: true; }; readonly \"tradeProposals.cancel\": { readonly id: \"tradeProposals.cancel\"; readonly verb: \"POST\"; readonly path: \"/trade-proposals/{id}/cancel\"; readonly scope: \"account\"; readonly once: true; }; readonly \"tradeProposals.unapply\": { readonly id: \"tradeProposals.unapply\"; readonly verb: \"POST\"; readonly path: \"/trade-proposals/{id}/unapply\"; readonly scope: \"account\"; readonly once: true; }; readonly \"quests.list\": { readonly id: \"quests.list\"; readonly verb: \"GET\"; readonly path: \"/quests\"; readonly scope: \"account\"; }; readonly \"quests.get\": { readonly id: \"quests.get\"; readonly verb: \"GET\"; readonly path: \"/quests/{slug}\"; readonly scope: \"account\"; }; readonly \"quests.update\": { readonly id: \"quests.update\"; readonly verb: \"PATCH\"; readonly path: \"/quests/{slug}\"; readonly scope: \"account\"; }; readonly \"quests.monsters\": { readonly id: \"quests.monsters\"; readonly verb: \"GET\"; readonly path: \"/quests/{slug}/monsters\"; readonly scope: \"account\"; readonly paged: { readonly max: 200; }; }; readonly \"quests.setMonster\": { readonly id: \"quests.setMonster\"; readonly verb: \"PATCH\"; readonly path: \"/quests/{slug}/monsters/{monsterId}\"; readonly scope: \"account\"; }; readonly \"quests.setMonsters\": { readonly id: \"quests.setMonsters\"; readonly verb: \"PATCH\"; readonly path: \"/quests/{slug}/monsters\"; readonly scope: \"account\"; }; readonly \"quests.setTrade\": { readonly id: \"quests.setTrade\"; readonly verb: \"PATCH\"; readonly path: \"/quests/{slug}/monsters/{monsterId}/trade\"; readonly scope: \"account\"; }; readonly \"quests.matches\": { readonly id: \"quests.matches\"; readonly verb: \"GET\"; readonly path: \"/quests/{slug}/matches\"; readonly scope: \"account\"; readonly paged: { readonly max: 50; }; }; readonly \"quests.zones\": { readonly id: \"quests.zones\"; readonly verb: \"GET\"; readonly path: \"/quests/{slug}/zones\"; readonly scope: \"account\"; }; }"
     ]
    ],
    "slug": "methods"
@@ -5492,7 +5492,7 @@
   {
    "name": "MethodId",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/generated/methods.ts#L52",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/generated/methods.ts#L53",
    "file": "src/generated/methods.ts",
    "guide": "/resources/methods/",
    "text": "Name of an endpoint, for example `monsters.get`.",
@@ -5536,6 +5536,7 @@
     "tradeProposals.create",
     "tradeProposals.apply",
     "tradeProposals.cancel",
+    "tradeProposals.unapply",
     "quests.list",
     "quests.get",
     "quests.update",
@@ -5561,7 +5562,7 @@
    "kind": "variable",
    "code": [
     [
-     "const VERSION: \"5.4.0\""
+     "const VERSION: \"5.5.0\""
     ]
    ],
    "slug": "version"
@@ -10645,7 +10646,7 @@
    "source": "https://github.com/ix-xs/metamob.api/blob/main/src/resources/trade-proposals.ts#L82",
    "file": "src/resources/trade-proposals.ts",
    "guide": "/resources/trade-proposals/",
-   "text": "The trade proposals of the account: the ones you sent and the ones you\nreceived, on every quest. Send one, apply your side, or cancel it.",
+   "text": "The trade proposals of the account: the ones you sent and the ones you\nreceived, on every quest. Send one, apply your side, undo it, or cancel it.",
    "kind": "class",
    "methods": [
     {
@@ -11060,6 +11061,101 @@
      "text": "Cancels a proposal you sent, or declines one you received, as long as you\nhave not applied your side, even when the other player applied theirs.\nA proposal already cancelled, or already applied by you, is a `CONFLICT`.\nNever retried.",
      "examples": [
       "await metamob.tradeProposals.cancel(57);"
+     ]
+    },
+    {
+     "name": "unapply",
+     "overloads": [
+      {
+       "params": [
+        {
+         "name": "id",
+         "type": [
+          [
+           "number | string | { readonly id: number }"
+          ]
+         ]
+        },
+        {
+         "name": "options",
+         "type": [
+          [
+           "RequestOptions",
+           {
+            "ref": "RequestOptions"
+           }
+          ]
+         ],
+         "optional": true
+        }
+       ],
+       "returns": {
+        "type": [
+         [
+          "Promise",
+          {
+           "href": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+           "external": "builtin"
+          }
+         ],
+         [
+          "<"
+         ],
+         [
+          "TradeProposalDetail",
+          {
+           "ref": "TradeProposalDetail"
+          }
+         ],
+         [
+          ">"
+         ]
+        ]
+       },
+       "doc": {
+        "text": "Undoes your side of a proposal, within 2 hours of applying it\n(`viewer.unapply_until`): what you gave comes back to your quest and what\nyou received leaves it, for the quantities that really moved. The other\nplayer is neither changed nor told. Allowed even when the proposal was\ncancelled since; when it was not, you can apply or cancel it again.\nPast the deadline, or on a proposal you did not apply, it is a\n`CONFLICT`. Never retried.",
+        "examples": [
+         "const proposal = await metamob.tradeProposals.unapply(57);\nproposal.viewer.applied; // false\nproposal.viewer.clamped; // true when only part could be undone"
+        ]
+       },
+       "code": [
+        [
+         "unapply(\n  id: number | string | { readonly id: number },\n  options?: "
+        ],
+        [
+         "RequestOptions",
+         {
+          "ref": "RequestOptions"
+         }
+        ],
+        [
+         ",\n): "
+        ],
+        [
+         "Promise",
+         {
+          "href": "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+          "external": "builtin"
+         }
+        ],
+        [
+         "<"
+        ],
+        [
+         "TradeProposalDetail",
+         {
+          "ref": "TradeProposalDetail"
+         }
+        ],
+        [
+         ">"
+        ]
+       ]
+      }
+     ],
+     "text": "Undoes your side of a proposal, within 2 hours of applying it\n(`viewer.unapply_until`): what you gave comes back to your quest and what\nyou received leaves it, for the quantities that really moved. The other\nplayer is neither changed nor told. Allowed even when the proposal was\ncancelled since; when it was not, you can apply or cancel it again.\nPast the deadline, or on a proposal you did not apply, it is a\n`CONFLICT`. Never retried.",
+     "examples": [
+      "const proposal = await metamob.tradeProposals.unapply(57);\nproposal.viewer.applied; // false\nproposal.viewer.clamped; // true when only part could be undone"
      ]
     },
     {
@@ -19418,7 +19514,7 @@
       ]
      ],
      "optional": true,
-     "text": "In the answer of `apply()` only: how many really moved, less than `quantity` when it was clamped."
+     "text": "In the answers of `apply()` and `unapply()` only: how many really moved, less than `quantity` when it was clamped."
     },
     {
      "name": "monster_id",
@@ -19492,6 +19588,15 @@
      "text": "`null` until you apply your side, then `true` when a quantity was reduced: to what you owned, or to the maximum quantity."
     },
     {
+     "name": "unapply_until",
+     "type": [
+      [
+       "string | null"
+      ]
+     ],
+     "text": "Until when you can undo your side with `unapply()`, as an ISO 8601 date in\nUTC: 2 hours after you applied it. `null` when you did not apply it, when\nthe deadline has passed, or when it cannot be undone automatically."
+    },
+    {
      "name": "removed",
      "type": [
       [
@@ -19535,7 +19640,7 @@
   {
    "name": "ProposalQuest",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L498",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L504",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "The quest of one side of a trade proposal.",
@@ -19574,7 +19679,7 @@
   {
    "name": "ProposalQuestTemplate",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L505",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L511",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "The quest template of a trade proposal: which kind of quest, in which version of the game.",
@@ -19615,7 +19720,7 @@
   {
    "name": "TradeProposal",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L511",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L517",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "A trade proposal between two players.",
@@ -19816,7 +19921,7 @@
   {
    "name": "TradeProposalDetail",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L553",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L559",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "A trade proposal read on its own, with your side of it.",
@@ -20059,7 +20164,7 @@
   {
    "name": "ConversationProposal",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L559",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L565",
    "file": "src/types.ts",
    "guide": "/resources/trade-proposals/",
    "text": "A trade proposal as it appears in a conversation, among the messages.",
@@ -20298,7 +20403,7 @@
   {
    "name": "ConversationItem",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L564",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L570",
    "file": "src/types.ts",
    "guide": "/resources/conversations/",
    "text": "What a conversation is made of. `kind` tells the two apart.",
@@ -20331,7 +20436,7 @@
   {
    "name": "MarkAsReadResult",
    "module": "@ix-xs/metamob.api",
-   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L567",
+   "source": "https://github.com/ix-xs/metamob.api/blob/main/src/types.ts#L573",
    "file": "src/types.ts",
    "guide": "/resources/conversations/",
    "text": "What marking a conversation as read answers.",

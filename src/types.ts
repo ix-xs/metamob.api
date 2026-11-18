@@ -476,7 +476,7 @@ export interface ProposalMonsterDetail extends ProposalMonster {
    * once your side is applied. `null` when you have no quest of this kind on this server.
    */
   owned: number | null;
-  /** In the answer of `apply()` only: how many really moved, less than `quantity` when it was clamped. */
+  /** In the answers of `apply()` and `unapply()` only: how many really moved, less than `quantity` when it was clamped. */
   applied_quantity?: number;
 }
 
@@ -488,6 +488,12 @@ export interface ProposalViewer {
   applied: boolean;
   /** `null` until you apply your side, then `true` when a quantity was reduced: to what you owned, or to the maximum quantity. */
   clamped: boolean | null;
+  /**
+   * Until when you can undo your side with `unapply()`, as an ISO 8601 date in
+   * UTC: 2 hours after you applied it. `null` when you did not apply it, when
+   * the deadline has passed, or when it cannot be undone automatically.
+   */
+  unapply_until: string | null;
   /** What leaves your quest. */
   removed: ProposalMonsterDetail[];
   /** What enters your quest. */

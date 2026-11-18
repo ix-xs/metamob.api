@@ -132,6 +132,27 @@ if (clamped) {
 
 Appliquer deux fois, ou appliquer une proposition annulée, répond aussi `CONFLICT`. `apply()` n'est jamais retenté : après un délai dépassé, relisez la proposition avec `get()` avant de recommencer.
 
+## Annuler votre application
+
+Pendant 2 heures après avoir appliqué votre côté, `tradeProposals.unapply()` le défait : ce que vous avez donné revient dans votre quête, ce que vous avez reçu en repart, pour les quantités qui ont vraiment bougé. L'autre joueur n'est ni modifié ni prévenu. `viewer.unapply_until` donne la limite, et vaut `null` quand il n'y a rien à défaire :
+
+```ts
+const proposal = await metamob.tradeProposals.get(57);
+
+if (proposal.viewer.unapply_until) {
+  const undone = await metamob.tradeProposals.unapply(proposal);
+
+  for (const { monster_id, quantity, applied_quantity } of undone.viewer.removed) {
+    const name = data.monster(monster_id)?.name.fr;
+    console.log(name, `${applied_quantity} of ${quantity}`); // ce qui est revenu dans votre quête
+  }
+}
+```
+
+La réponse est la proposition, avec `viewer.applied` revenu à `false`. Si vous avez modifié vos quantités entre-temps, l'annulation peut n'être que partielle : un monstre reçu déjà utilisé, ou la quantité maximale atteinte. `viewer.clamped` vaut alors `true`, et `applied_quantity` dit ce qui a vraiment bougé.
+
+C'est possible même si la proposition a été annulée depuis. Sinon, vous pouvez ensuite l'appliquer de nouveau, ou l'annuler. Après la limite, sur une proposition que vous n'avez pas appliquée, ou appliquée avant que Metamob ajoute cette possibilité, l'API répond `CONFLICT` : corrigez alors vos quantités à la main. Comme `apply()`, `unapply()` n'est jamais retenté.
+
 ## Annuler ou refuser
 
 `tradeProposals.cancel()` annule une proposition que vous avez envoyée, ou refuse une proposition reçue. C'est possible tant que vous n'avez pas appliqué votre côté, même si l'autre joueur a appliqué le sien :
@@ -166,7 +187,7 @@ setInterval(async () => {
 
 ## Limites et erreurs
 
-- `apply()` et `cancel()` répondent `NOT_FOUND` pour une proposition qui n'existe pas ou à laquelle vous ne participez pas, et `CONFLICT` pour une proposition déjà annulée, déjà appliquée par vous, ou dont votre quête a été supprimée.
+- `apply()`, `unapply()` et `cancel()` répondent `NOT_FOUND` pour une proposition qui n'existe pas ou à laquelle vous ne participez pas, et `CONFLICT` pour une proposition déjà annulée, déjà appliquée par vous, ou dont votre quête a été supprimée.
 - `create()` refuse avant l'envoi une proposition sans aucun monstre, une quantité hors de 1 à 99, un monstre nommé deux fois du même côté, ou plus de 200 monstres d'un même côté.
 - L'API répond `BAD_REQUEST` pour un monstre qui n'est pas dans la quête, pour un monstre dont vous donnez plus d'exemplaires que vous n'en possédez, ou pour deux quêtes de types ou de serveurs différents, et `NOT_FOUND` pour une quête qui n'existe pas ou, pour `sender_quest`, qui n'est pas la vôtre.
 - `NOT_FOUND` pour une proposition qui n'existe pas ou qui n'est pas la vôtre.

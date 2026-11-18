@@ -77,7 +77,7 @@ function proposalId(value: number | string | { readonly id: number }): number {
 
 /**
  * The trade proposals of the account: the ones you sent and the ones you
- * received, on every quest. Send one, apply your side, or cancel it.
+ * received, on every quest. Send one, apply your side, undo it, or cancel it.
  */
 export class TradeProposals {
   readonly #context: Context;
@@ -169,6 +169,25 @@ export class TradeProposals {
   async cancel(id: number | string | { readonly id: number }, options?: RequestOptions): Promise<TradeProposalDetail> {
     const path = { id: proposalId(id) };
     return detail(await this.#context.rest.request<Single>(METHODS["tradeProposals.cancel"], { path }, options));
+  }
+
+  /**
+   * Undoes your side of a proposal, within 2 hours of applying it
+   * (`viewer.unapply_until`): what you gave comes back to your quest and what
+   * you received leaves it, for the quantities that really moved. The other
+   * player is neither changed nor told. Allowed even when the proposal was
+   * cancelled since; when it was not, you can apply or cancel it again.
+   * Past the deadline, or on a proposal you did not apply, it is a
+   * `CONFLICT`. Never retried.
+   *
+   * @example
+   * const proposal = await metamob.tradeProposals.unapply(57);
+   * proposal.viewer.applied; // false
+   * proposal.viewer.clamped; // true when only part could be undone
+   */
+  async unapply(id: number | string | { readonly id: number }, options?: RequestOptions): Promise<TradeProposalDetail> {
+    const path = { id: proposalId(id) };
+    return detail(await this.#context.rest.request<Single>(METHODS["tradeProposals.unapply"], { path }, options));
   }
 
   /**

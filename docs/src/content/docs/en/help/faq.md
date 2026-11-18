@@ -13,7 +13,7 @@ No. `@ix-xs/metamob.api` is an independent open-source project, under the MIT li
 
 ## Does it cover the whole API?
 
-Yes, the 42 endpoints. [Every method](/resources/methods/) lists them, with the method that calls each one.
+Yes, the 43 endpoints. [Every method](/resources/methods/) lists them, with the method that calls each one.
 
 ## Do I need an API key?
 

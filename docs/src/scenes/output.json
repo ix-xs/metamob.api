@@ -3,7 +3,7 @@
     "command": "node check.ts",
     "units": [
       {
-        "html": "<span class=\"mm-line\">metamob.api 5.4.0 is installed</span>"
+        "html": "<span class=\"mm-line\">metamob.api 5.5.0 is installed</span>"
       }
     ]
   },

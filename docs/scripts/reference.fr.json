@@ -1,5 +1,5 @@
 {
-  "The account an API key belongs to: username, bio, avatar and last activity.": "Le compte auquel appartient une clé API : pseudo, bio, avatar et dernière activité.",
+  "The account an API key belongs to: username, bio, avatar, last activity, and what sending is opened to it.": "Le compte auquel appartient une clé API : pseudo, bio, avatar, dernière activité, et l'envoi qui lui est ouvert.",
   "The versions of the game: Dofus (Unity), Dofus Retro and Dofus Touch.": "Les versions du jeu : Dofus (Unity), Dofus Retro et Dofus Touch.",
   "One version of the game, from its id or its name.": "Une version du jeu, par son identifiant ou son nom.",
   "Every game server, with its community and its game version.": "Tous les serveurs de jeu, avec leur communauté et leur version du jeu.",
@@ -40,5 +40,6 @@
   "Sets the quantities of many monsters at once. More than 200 are split across calls.": "Fixe les quantités de nombreux monstres en une fois. Au-delà de 200, ils sont répartis sur plusieurs appels.",
   "Forces how many of a monster a quest offers and wants, or hands it back to the automatic calculation.": "Impose combien d'exemplaires d'un monstre une quête propose et recherche, ou rend la main au calcul automatique.",
   "The best trade partners for one of your quests, ranked like the Community page.": "Les meilleurs partenaires d'échange pour une de vos quêtes, classés comme sur la page Communauté.",
-  "The progress of one of your quests, organised by zone and subzone.": "La progression d'une de vos quêtes, organisée par zone et sous-zone."
+  "The progress of one of your quests, organised by zone and subzone.": "La progression d'une de vos quêtes, organisée par zone et sous-zone.",
+  "Undoes your side of a trade proposal within 2 hours of applying it: your quest gets back what it had before.": "Défait votre côté d'une proposition d'échange dans les 2 heures qui suivent son application : votre quête retrouve ce qu'elle avait avant."
 }
