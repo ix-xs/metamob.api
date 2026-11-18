@@ -5,7 +5,7 @@ sidebar:
   order: 8
 ---
 
-Una propuesta de intercambio sale de una de tus misiones, hacia otro jugador. La API permite leerlas, aplicar tu lado o cancelarlas, y enviarlas cuando el envío está abierto en la cuenta. Cada una aparece también en la [conversación](/resources/conversations/#trade-proposals) con ese jugador.
+Una propuesta de intercambio sale de una de tus misiones, hacia otro jugador. La API permite leerlas, aplicar tu lado, deshacerlo o cancelarlas, y enviarlas cuando el envío está abierto en la cuenta. Cada una aparece también en la [conversación](/resources/conversations/#trade-proposals) con ese jugador.
 
 ## Listar las propuestas
 
@@ -59,7 +59,7 @@ Una propuesta `pending` lleva `expires_at`, la fecha en la que se cancelará sol
 
 ## Leer una propuesta
 
-`tradeProposals.get()` toma un identificador, o una propuesta sacada de una lista. La respuesta añade `viewer`, tu lado de la propuesta: tu papel, si aplicaste tu lado, lo que sale de tu misión (`removed`) y lo que entra (`added`).
+`tradeProposals.get()` toma un identificador, o una propuesta sacada de una lista. La respuesta añade `viewer`, tu lado de la propuesta: tu papel, si aplicaste tu lado y hasta cuándo puedes deshacerlo (`unapply_until`), lo que sale de tu misión (`removed`) y lo que entra (`added`).
 
 ```ts
 const proposal = await metamob.tradeProposals.get(57);
@@ -75,7 +75,7 @@ for (const { monster_id, owned, quantity } of proposal.viewer.added) {
 
 Cada monstruo de `removed` y de `added` lleva `owned`: el número de ejemplares que posees ahora. Una vez aplicado tu lado, ya lo tiene en cuenta. Vale `null` cuando no tienes ninguna misión de ese tipo en ese servidor.
 
-`create()`, `apply()` y `cancel()` devuelven la propuesta con la misma forma.
+`create()`, `apply()`, `unapply()` y `cancel()` devuelven la propuesta con la misma forma.
 
 ## Hacer una propuesta
 

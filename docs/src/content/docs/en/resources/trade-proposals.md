@@ -5,7 +5,7 @@ sidebar:
   order: 8
 ---
 
-A trade proposal goes from one of your quests to another player. The API lets you read them, apply your side or cancel them, and send them when sending is opened on the account. Each one also appears in the [conversation](/resources/conversations/#trade-proposals) with that player.
+A trade proposal goes from one of your quests to another player. The API lets you read them, apply your side, undo it or cancel them, and send them when sending is opened on the account. Each one also appears in the [conversation](/resources/conversations/#trade-proposals) with that player.
 
 ## Listing proposals
 
@@ -59,7 +59,7 @@ A `pending` proposal carries `expires_at`, when it will be cancelled on its own:
 
 ## Reading one proposal
 
-`tradeProposals.get()` takes an id, or a proposal taken from a list. The answer adds `viewer`, your side of the proposal: your role, whether you applied your side, what leaves your quest (`removed`) and what enters it (`added`).
+`tradeProposals.get()` takes an id, or a proposal taken from a list. The answer adds `viewer`, your side of the proposal: your role, whether you applied your side and until when you can undo it (`unapply_until`), what leaves your quest (`removed`) and what enters it (`added`).
 
 ```ts
 const proposal = await metamob.tradeProposals.get(57);
@@ -75,7 +75,7 @@ for (const { monster_id, owned, quantity } of proposal.viewer.added) {
 
 Each monster of `removed` and `added` carries `owned`: the number of copies of it you own now. Once your side is applied, it already includes it. It is `null` when you have no quest of that kind on that server.
 
-`create()`, `apply()` and `cancel()` answer the proposal in the same shape.
+`create()`, `apply()`, `unapply()` and `cancel()` answer the proposal in the same shape.
 
 ## Making a proposal
 

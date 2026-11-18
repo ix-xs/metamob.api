@@ -49,7 +49,7 @@ En français, en anglais et en espagnol. Chaque monstre, zone et sous-zone a un 
 
 ## Peut-il créer une quête, envoyer un message ou proposer un échange ?
 
-Il peut envoyer un message et proposer un échange, une fois que Metamob a ouvert l'envoi sur votre compte : voir [Conversations](/resources/conversations/#sending-a-message) et [Propositions d'échange](/resources/trade-proposals/#making-a-proposal). Il écrit aussi dans vos quêtes : réglages, quantités et réglages manuels d'échange. Il peut aussi appliquer ou annuler une proposition. Créer une quête se fait sur le site.
+Il peut envoyer un message et proposer un échange, une fois que Metamob a ouvert l'envoi sur votre compte : voir [Conversations](/resources/conversations/#sending-a-message) et [Propositions d'échange](/resources/trade-proposals/#making-a-proposal). Il écrit aussi dans vos quêtes : réglages, quantités et réglages manuels d'échange. Il peut aussi appliquer une proposition, défaire votre côté dans les 2 heures, ou l'annuler. Créer une quête se fait sur le site.
 
 ## Puis-je gérer les quêtes d'autres joueurs ?
 

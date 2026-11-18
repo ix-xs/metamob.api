@@ -5,7 +5,7 @@ sidebar:
   order: 8
 ---
 
-Une proposition d'échange part d'une de vos quêtes, vers un autre joueur. L'API permet de les lire, d'appliquer votre côté ou de les annuler, et d'en envoyer quand l'envoi est ouvert sur le compte. Chacune apparaît aussi dans la [conversation](/resources/conversations/#trade-proposals) avec ce joueur.
+Une proposition d'échange part d'une de vos quêtes, vers un autre joueur. L'API permet de les lire, d'appliquer votre côté, de le défaire ou de les annuler, et d'en envoyer quand l'envoi est ouvert sur le compte. Chacune apparaît aussi dans la [conversation](/resources/conversations/#trade-proposals) avec ce joueur.
 
 ## Lister les propositions
 
@@ -59,7 +59,7 @@ Une proposition `pending` porte `expires_at`, la date à laquelle elle sera annu
 
 ## Lire une proposition
 
-`tradeProposals.get()` prend un identifiant, ou une proposition tirée d'une liste. La réponse ajoute `viewer`, votre côté de la proposition : votre rôle, si vous avez appliqué votre côté, ce qui sort de votre quête (`removed`) et ce qui y entre (`added`).
+`tradeProposals.get()` prend un identifiant, ou une proposition tirée d'une liste. La réponse ajoute `viewer`, votre côté de la proposition : votre rôle, si vous avez appliqué votre côté et jusqu'à quand le défaire (`unapply_until`), ce qui sort de votre quête (`removed`) et ce qui y entre (`added`).
 
 ```ts
 const proposal = await metamob.tradeProposals.get(57);
@@ -75,7 +75,7 @@ for (const { monster_id, owned, quantity } of proposal.viewer.added) {
 
 Chaque monstre de `removed` et de `added` porte `owned` : le nombre d'exemplaires que vous en possédez maintenant. Une fois votre côté appliqué, il en tient déjà compte. Il vaut `null` quand vous n'avez pas de quête de ce type sur ce serveur.
 
-`create()`, `apply()` et `cancel()` renvoient la proposition sous la même forme.
+`create()`, `apply()`, `unapply()` et `cancel()` renvoient la proposition sous la même forme.
 
 ## Faire une proposition
 
