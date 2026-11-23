@@ -28,15 +28,15 @@ for (const language of LANGUAGES) {
 }
 
 const GROUPS = [
-  { en: "Account", fr: "Compte", es: "Cuenta", prefixes: ["me."] },
-  { en: "Your quests", fr: "Vos quêtes", es: "Tus misiones", prefixes: ["quests."] },
-  { en: "Monsters", fr: "Monstres", es: "Monstruos", prefixes: ["monsters."] },
-  { en: "Zones", fr: "Zones", es: "Zonas", prefixes: ["zones."] },
-  { en: "Other players", fr: "Autres joueurs", es: "Otros jugadores", prefixes: ["users."] },
-  { en: "Conversations", fr: "Conversations", es: "Conversaciones", prefixes: ["conversations."] },
-  { en: "Trade proposals", fr: "Propositions d'échange", es: "Propuestas de intercambio", prefixes: ["tradeProposals."] },
-  { en: "Kralamoure events", fr: "Événements Kralamoure", es: "Eventos Kralamar", prefixes: ["kralove."] },
-  { en: "Reference data", fr: "Données de référence", es: "Datos de referencia", prefixes: ["gameVersions.", "servers.", "monsterTypes.", "questTypes.", "questTemplates."] },
+  { en: "Account", fr: "Compte", es: "Cuenta", pt: "Conta", de: "Konto", prefixes: ["me."] },
+  { en: "Your quests", fr: "Vos quêtes", es: "Tus misiones", pt: "Suas missões", de: "Ihre Quests", prefixes: ["quests."] },
+  { en: "Monsters", fr: "Monstres", es: "Monstruos", pt: "Monstros", de: "Monster", prefixes: ["monsters."] },
+  { en: "Zones", fr: "Zones", es: "Zonas", pt: "Zonas", de: "Zonen", prefixes: ["zones."] },
+  { en: "Other players", fr: "Autres joueurs", es: "Otros jugadores", pt: "Outros jogadores", de: "Andere Spieler", prefixes: ["users."] },
+  { en: "Conversations", fr: "Conversations", es: "Conversaciones", pt: "Conversas", de: "Unterhaltungen", prefixes: ["conversations."] },
+  { en: "Trade proposals", fr: "Propositions d'échange", es: "Propuestas de intercambio", pt: "Propostas de troca", de: "Tauschvorschläge", prefixes: ["tradeProposals."] },
+  { en: "Kralamoure events", fr: "Événements Kralamoure", es: "Eventos Kralamar", pt: "Eventos do Kralamor", de: "Krakamor-Events", prefixes: ["kralove."] },
+  { en: "Reference data", fr: "Données de référence", es: "Datos de referencia", pt: "Dados de referência", de: "Referenzdaten", prefixes: ["gameVersions.", "servers.", "monsterTypes.", "questTypes.", "questTemplates."] },
 ];
 
 const WORDS = {
@@ -107,6 +107,52 @@ const WORDS = {
       ["`metamob.quests.resetTrade(slug, monster)`", "`quests.setTrade` con los dos valores devueltos al cálculo automático."],
       ["`metamob.withKey(apiKey)`", "Un cliente para otra clave, que comparte la caché, los oyentes y los ajustes de este."],
       ["`data.monster(name)` y el resto de `data`", "Los datos de referencia que vienen con el paquete, leídos en memoria."],
+    ],
+  },
+  pt: {
+    title: "Todos os métodos",
+    description: `Os ${methods.length} endpoints da API do Metamob, com o método que chama cada um e a página que o explica.`,
+    intro: [
+      "Cada linha é um endpoint da API: a chamada, depois o nome que a biblioteca lhe dá onde quer que um método seja nomeado (ajustes do cache, eventos, erros), e à direita o que ele faz e a requisição que envia.",
+      "Os métodos marcados *lista* devolvem uma requisição que você pode aguardar para uma página ou percorrer para todas, veja [Listas](/basics/lists/). O número é a maior página que a API aceita: é o tamanho usado quando você percorre.",
+      "Os métodos marcados *compartilhado* respondem o mesmo seja qual for a chave: o resultado vai para o cache e é compartilhado entre as chaves. Os outros dependem da conta e só vão para o cache se você pedir, veja [Cache](/basics/caching/).",
+    ],
+    columns: ["Método", "O que faz"],
+    list: (max, cursor) => (cursor ? `*lista*, ${max} por página, por cursor` : `*lista*, ${max} por página`),
+    shared: "*compartilhado*",
+    write: "*escrita*",
+    more: "Veja",
+    also: "Além dos endpoints",
+    alsoIntro: "Alguns métodos não enviam nenhuma requisição própria:",
+    extras: [
+      ["`metamob.monsters.search(query, { type })`", "`monsters.list` com uma busca, escrito de forma mais curta."],
+      ["`metamob.questTemplates.get(template)`", "Um modelo de missão, tirado de `questTemplates.list`: a API não tem endpoint para isso."],
+      ["`metamob.quests.resetTrade(slug, monster)`", "`quests.setTrade` com os dois valores devolvidos ao cálculo automático."],
+      ["`metamob.withKey(apiKey)`", "Um cliente para outra chave, que compartilha o cache, os ouvintes e os ajustes deste."],
+      ["`data.monster(name)` e o resto de `data`", "Os dados de referência que vêm com o pacote, lidos na memória."],
+    ],
+  },
+  de: {
+    title: "Alle Methoden",
+    description: `Die ${methods.length} Endpunkte der Metamob-API, mit der Methode, die jeden aufruft, und der Seite, die ihn erklärt.`,
+    intro: [
+      "Jede Zeile ist ein Endpunkt der API: der Aufruf, dann der Name, den die Bibliothek ihm überall dort gibt, wo eine Methode genannt wird (Cache-Einstellungen, Ereignisse, Fehler), und rechts, was er tut und welche Anfrage er sendet.",
+      "Mit *Liste* markierte Methoden geben eine Anfrage zurück, die Sie für eine Seite abwarten oder für alle durchlaufen können, siehe [Listen](/basics/lists/). Die Zahl ist die größte Seite, die die API annimmt: Diese Größe wird beim Durchlaufen verwendet.",
+      "Mit *geteilt* markierte Methoden antworten unabhängig vom Schlüssel gleich: Ihr Ergebnis wird zwischengespeichert und zwischen den Schlüsseln geteilt. Die anderen hängen vom Konto ab und werden nur auf Wunsch zwischengespeichert, siehe [Cache](/basics/caching/).",
+    ],
+    columns: ["Methode", "Was sie tut"],
+    list: (max, cursor) => (cursor ? `*Liste*, ${max} pro Seite, per Cursor` : `*Liste*, ${max} pro Seite`),
+    shared: "*geteilt*",
+    write: "*schreibend*",
+    more: "Siehe",
+    also: "Über die Endpunkte hinaus",
+    alsoIntro: "Einige Methoden senden keine eigene Anfrage:",
+    extras: [
+      ["`metamob.monsters.search(query, { type })`", "`monsters.list` mit einer Suche, kürzer geschrieben."],
+      ["`metamob.questTemplates.get(template)`", "Eine Quest-Vorlage aus `questTemplates.list`: Die API hat dafür keinen Endpunkt."],
+      ["`metamob.quests.resetTrade(slug, monster)`", "`quests.setTrade`, wobei beide Werte an die automatische Berechnung zurückgehen."],
+      ["`metamob.withKey(apiKey)`", "Ein Client für einen anderen Schlüssel, der Cache, Listener und Einstellungen mit diesem teilt."],
+      ["`data.monster(name)` und der Rest von `data`", "Die Referenzdaten, die mit dem Paket kommen, aus dem Speicher gelesen."],
     ],
   },
 };

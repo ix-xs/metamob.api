@@ -600,6 +600,8 @@ export function pending(model, table, language) {
 export const TRANSLATIONS = {
   fr: path.join(root, "docs/src/data/api.fr.json"),
   es: path.join(root, "docs/src/data/api.es.json"),
+  pt: path.join(root, "docs/src/data/api.pt.json"),
+  de: path.join(root, "docs/src/data/api.de.json"),
 };
 
 /** What a translation lacks, and what it keeps that no export uses any more. */

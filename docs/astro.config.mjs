@@ -12,9 +12,9 @@ const site = process.env.DOCS_SITE || "https://ix-xs.github.io";
 const base = normalizeBase(process.env.DOCS_BASE || "/metamob.api");
 
 /** One group of the sidebar, its pages in reading order. */
-const group = ([fr, en, es], items, collapsed = true) => ({
+const group = ([fr, en, es, pt, de], items, collapsed = true) => ({
   label: fr,
-  translations: { en, es },
+  translations: { en, es, pt, de },
   collapsed,
   items: items.map((item) => (typeof item === "string" ? { slug: item } : item)),
 });
@@ -42,6 +42,8 @@ export default defineConfig({
         root: { label: "Français", lang: "fr" },
         en: { label: "English", lang: "en" },
         es: { label: "Español", lang: "es" },
+        pt: { label: "Português", lang: "pt" },
+        de: { label: "Deutsch", lang: "de" },
       },
       description: "Un client JavaScript et TypeScript pour l'API Metamob.",
       social: [{ icon: "github", label: "GitHub", href: "https://github.com/ix-xs/metamob.api" }],
@@ -99,12 +101,12 @@ export default defineConfig({
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
       lastUpdated: false,
       sidebar: [
-        group(["Démarrer", "Getting started", "Empezar"], [
-          { slug: "index", label: "Installation", translations: { en: "Installation", es: "Instalación" } },
+        group(["Démarrer", "Getting started", "Empezar", "Começar", "Erste Schritte"], [
+          { slug: "index", label: "Installation", translations: { en: "Installation", es: "Instalación", pt: "Instalação", de: "Installation" } },
           "start/api-key",
           "basics/configuration",
         ], false),
-        group(["Les bases", "Basics", "Lo básico"], [
+        group(["Les bases", "Basics", "Lo básico", "O básico", "Grundlagen"], [
           "basics/names-and-ids",
           "basics/lists",
           "basics/errors",
@@ -113,7 +115,7 @@ export default defineConfig({
           "basics/embedded-data",
           "basics/many-keys",
         ], false),
-        group(["L'API", "The API", "La API"], [
+        group(["L'API", "The API", "La API", "A API", "Die API"], [
           "resources/methods",
           "resources/account",
           "resources/quests",
@@ -126,7 +128,7 @@ export default defineConfig({
           "resources/kralove",
           "resources/reference-data",
         ], false),
-        group(["Aide", "Help", "Ayuda"], [
+        group(["Aide", "Help", "Ayuda", "Ajuda", "Hilfe"], [
           "help/error-codes",
           "help/troubleshooting",
           "help/faq",

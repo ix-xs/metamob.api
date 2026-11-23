@@ -3,6 +3,12 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+- The documentation, its reference and the README are also in Portuguese and
+  German, the two languages Metamob added: `/pt/` and `/de/` on the site,
+  `README.pt.md` and `README.de.md` in the package.
+
 ## 5.6.0
 
 Follows the updates of the Metamob API of 20 and 22 November 2026.

@@ -15,7 +15,7 @@ export function withBase(url, base) {
 }
 
 // Languages in a folder of their own. French sits at the root.
-export const LOCALES = ["en", "es"];
+export const LOCALES = ["en", "es", "pt", "de"];
 
 export const ROOT_LANGUAGE = "fr";
 

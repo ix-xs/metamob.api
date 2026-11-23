@@ -131,14 +131,14 @@ export function grouped(): { topic: Topic; symbols: ApiSymbol[] }[] {
 
 /* Translation */
 
-type Language = "fr" | "en" | "es";
-type Table = Record<string, { en: string; fr?: string; es?: string }>;
+type Language = "fr" | "en" | "es" | "pt" | "de";
+type Table = Record<string, { en: string; fr?: string; es?: string; pt?: string; de?: string }>;
 const files = import.meta.glob<{ default: Table }>("../data/api.*.json", { eager: true });
 const tableOf = (language: string): Table => files[`../data/api.${language}.json`]?.default ?? {};
-const TABLES: Record<"fr" | "es", Table> = { fr: tableOf("fr"), es: tableOf("es") };
+const TABLES: Record<Exclude<Language, "en">, Table> = { fr: tableOf("fr"), es: tableOf("es"), pt: tableOf("pt"), de: tableOf("de") };
 
 /** The language of a page: French at the root. */
-export const languageOf = (locale: string | undefined): Language => (locale === "en" || locale === "es" ? locale : "fr");
+export const languageOf = (locale: string | undefined): Language => (locale === "en" || locale === "es" || locale === "pt" || locale === "de" ? locale : "fr");
 
 /**
  * A sentence of the reference in a language. English is the source: a
@@ -366,9 +366,142 @@ const esWords: Words = {
   form: "Forma",
 };
 
+const ptWords: Words = {
+  title: "Referência da API",
+  lead: "Cada classe, função, objeto e tipo que o pacote exporta, cada um na sua própria página: para que serve, o que recebe, o que devolve.",
+  sidebarAll: "Visão geral",
+  kinds: {
+    function: "Função",
+    variable: "Objeto",
+    constant: "Constante",
+    class: "Classe",
+    interface: "Interface",
+    type: "Tipo",
+    enum: "Enumeração",
+  },
+  kindHelp: {
+    class: "Um tipo de objeto com seus próprios métodos. `new Metamob()` cria um, e seus recursos (`metamob.quests`, `metamob.monsters`...) são outros.",
+    function: "Algo que você chama: recebe valores e devolve um.",
+    variable: "Um valor pronto que agrupa funções ou dados, como `data` ou `urls`.",
+    interface: "A forma de um objeto: o que ele contém. Você a lê (uma missão é um `OwnQuest`) ou a preenche (as opções de `new Metamob()` são `MetamobOptions`).",
+    type: "Um nome dado a um conjunto de valores possíveis, como um nome de monstro. Só existe para o seu editor.",
+  },
+  howToRead: "Como ler esta referência",
+  howToReadText: "Cada página responde a três perguntas: para que serve, o que recebe e o que devolve. A letra colorida antes de um nome indica que tipo de coisa é:",
+  topics: {
+    "/basics/configuration/": "O cliente",
+    "/basics/lists/": "Listas",
+    "/basics/names-and-ids/": "Nomes e identificadores",
+    "/basics/embedded-data/": "Dados incluídos",
+    "/basics/caching/": "Cache",
+    "/basics/rate-limit/": "Limite de requisições",
+    "/basics/errors/": "Erros",
+    "/resources/methods/": "Endpoints",
+    "/resources/account/": "Conta",
+    "/resources/quests/": "Missões",
+    "/resources/trading/": "Trocas",
+    "/resources/monsters/": "Monstros",
+    "/resources/zones/": "Zonas",
+    "/resources/users/": "Jogadores",
+    "/resources/conversations/": "Conversas",
+    "/resources/trade-proposals/": "Propostas de troca",
+    "/resources/kralove/": "Eventos do Kralamor",
+    "/resources/reference-data/": "Dados de referência",
+  },
+  modules: "Ponto de entrada",
+  import: "Importar",
+  parameters: "Parâmetros",
+  returns: "Devolve",
+  example: "Exemplo",
+  examples: "Exemplos",
+  properties: "Propriedades",
+  methods: "Métodos",
+  values: "Valores possíveis",
+  constructor: "Construtor",
+  usedBy: "Usado por",
+  usedByText: "Os outros exports que mencionam este.",
+  guide: "Explicado na documentação",
+  source: "Código",
+  optional: "opcional",
+  readonly: "somente leitura",
+  static: "estático",
+  deprecated: "Obsoleto",
+  default: "Padrão:",
+  inherited: "Vem de",
+  accepts: "O que aceita",
+  form: "Forma",
+  valuesCount: (count: number) => `${count} valores`,
+};
+
+const deWords: Words = {
+  title: "API-Referenz",
+  lead: "Jede Klasse, Funktion, jedes Objekt und jeder Typ, den das Paket exportiert, jeweils auf einer eigenen Seite: wofür es dient, was es annimmt, was es zurückgibt.",
+  sidebarAll: "Übersicht",
+  kinds: {
+    function: "Funktion",
+    variable: "Objekt",
+    constant: "Konstante",
+    class: "Klasse",
+    interface: "Interface",
+    type: "Typ",
+    enum: "Enum",
+  },
+  kindHelp: {
+    class: "Eine Art von Objekt mit eigenen Methoden. `new Metamob()` erzeugt eines, und seine Ressourcen (`metamob.quests`, `metamob.monsters`...) sind weitere.",
+    function: "Etwas, das Sie aufrufen: Es nimmt Werte an und gibt einen zurück.",
+    variable: "Ein fertiger Wert, der Funktionen oder Daten bündelt, wie `data` oder `urls`.",
+    interface: "Die Form eines Objekts: was es enthält. Sie lesen sie (eine Quest ist ein `OwnQuest`) oder füllen sie aus (die Optionen von `new Metamob()` sind `MetamobOptions`).",
+    type: "Ein Name für eine Menge möglicher Werte, etwa einen Monsternamen. Er existiert nur für Ihren Editor.",
+  },
+  howToRead: "So lesen Sie diese Referenz",
+  howToReadText: "Jede Seite beantwortet drei Fragen: wofür es dient, was es annimmt und was es zurückgibt. Der farbige Buchstabe vor einem Namen zeigt, um welche Art es sich handelt:",
+  topics: {
+    "/basics/configuration/": "Der Client",
+    "/basics/lists/": "Listen",
+    "/basics/names-and-ids/": "Namen und IDs",
+    "/basics/embedded-data/": "Mitgelieferte Daten",
+    "/basics/caching/": "Cache",
+    "/basics/rate-limit/": "Anfragelimit",
+    "/basics/errors/": "Fehler",
+    "/resources/methods/": "Endpunkte",
+    "/resources/account/": "Konto",
+    "/resources/quests/": "Quests",
+    "/resources/trading/": "Tausch",
+    "/resources/monsters/": "Monster",
+    "/resources/zones/": "Zonen",
+    "/resources/users/": "Spieler",
+    "/resources/conversations/": "Unterhaltungen",
+    "/resources/trade-proposals/": "Tauschvorschläge",
+    "/resources/kralove/": "Krakamor-Events",
+    "/resources/reference-data/": "Referenzdaten",
+  },
+  modules: "Einstiegspunkt",
+  import: "Import",
+  parameters: "Parameter",
+  returns: "Gibt zurück",
+  example: "Beispiel",
+  examples: "Beispiele",
+  properties: "Eigenschaften",
+  methods: "Methoden",
+  values: "Mögliche Werte",
+  constructor: "Konstruktor",
+  usedBy: "Verwendet von",
+  usedByText: "Die anderen Exporte, die diesen erwähnen.",
+  guide: "Erklärt in der Dokumentation",
+  source: "Quelle",
+  optional: "optional",
+  readonly: "schreibgeschützt",
+  static: "statisch",
+  deprecated: "Veraltet",
+  default: "Standard:",
+  inherited: "Von",
+  accepts: "Was es annimmt",
+  form: "Form",
+  valuesCount: (count: number) => `${count} Werte`,
+};
+
 export function words(locale: string | undefined): Words {
-  const language = languageOf(locale);
-  return language === "en" ? en : language === "es" ? esWords : frWords;
+  return { fr: frWords, en, es: esWords, pt: ptWords, de: deWords }[languageOf(locale)];
 }
 
 /** The sidebar of the reference: one group per topic, one link per export. */

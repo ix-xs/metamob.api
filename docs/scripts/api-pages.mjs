@@ -11,6 +11,8 @@ export const ENTRIES = [
       en: "Everything comes from one entry point.",
       fr: "Tout vient d'un seul point d'entrée.",
       es: "Todo viene de un solo punto de entrada.",
+      pt: "Tudo vem de um único ponto de entrada.",
+      de: "Alles kommt aus einem einzigen Einstiegspunkt.",
     },
   },
 ];

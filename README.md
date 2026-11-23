@@ -13,6 +13,8 @@ Un client JavaScript et TypeScript pour l'API de [Metamob](https://www.metamob.f
 **[Documentation](https://ix-xs.github.io/metamob.api/)** ·
 [English](./README.en.md) ·
 [Español](./README.es.md) ·
+[Português](./README.pt.md) ·
+[Deutsch](./README.de.md) ·
 [Journal des modifications](./CHANGELOG.md)
 
 </div>
@@ -73,7 +75,7 @@ try {
 
 ## Documentation
 
-La documentation complète est sur **[ix-xs.github.io/metamob.api](https://ix-xs.github.io/metamob.api/)**, en français, [en anglais](https://ix-xs.github.io/metamob.api/en/) et [en espagnol](https://ix-xs.github.io/metamob.api/es/) :
+La documentation complète est sur **[ix-xs.github.io/metamob.api](https://ix-xs.github.io/metamob.api/)**, en français, [anglais](https://ix-xs.github.io/metamob.api/en/), [espagnol](https://ix-xs.github.io/metamob.api/es/), [portugais](https://ix-xs.github.io/metamob.api/pt/) et [allemand](https://ix-xs.github.io/metamob.api/de/) :
 
 - [Configuration](https://ix-xs.github.io/metamob.api/basics/configuration/)
 - [Toutes les méthodes](https://ix-xs.github.io/metamob.api/resources/methods/)

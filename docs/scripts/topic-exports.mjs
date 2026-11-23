@@ -17,12 +17,14 @@ const data = path.resolve(here, "..", "src", "data");
 const check = process.argv.includes("--check");
 
 const model = JSON.parse(readFileSync(path.join(data, "api.json"), "utf8"));
-const tables = { fr: JSON.parse(readFileSync(path.join(data, "api.fr.json"), "utf8")), es: JSON.parse(readFileSync(path.join(data, "api.es.json"), "utf8")) };
+const tables = Object.fromEntries(["fr", "es", "pt", "de"].map((language) => [language, JSON.parse(readFileSync(path.join(data, `api.${language}.json`), "utf8"))]));
 
 const KIND_ORDER = ["class", "function", "variable", "interface", "type", "enum"];
 const WORDS = {
   fr: { heading: "## Référence", intro: "Chaque export a sa page dans la [référence](/reference/) :", columns: "| Export | À quoi il sert |", names: "Les noms connus du paquet, un type par langue : monstres, zones, sous-zones, types de monstre et de quête, serveurs, versions du jeu." },
   en: { heading: "## Reference", intro: "Each export has its page in the [reference](/reference/):", columns: "| Export | What it is for |", names: "The names the package knows, one type per language: monsters, zones, subzones, kinds of monster and of quest, servers, game versions." },
+  pt: { heading: "## Referência", intro: "Cada export tem sua página na [referência](/reference/):", columns: "| Export | Para que serve |", names: "Os nomes que o pacote conhece, um tipo por idioma: monstros, zonas, subzonas, tipos de monstro e de missão, servidores, versões do jogo." },
+  de: { heading: "## Referenz", intro: "Jeder Export hat seine Seite in der [Referenz](/reference/):", columns: "| Export | Wofür er dient |", names: "Die Namen, die das Paket kennt, ein Typ pro Sprache: Monster, Zonen, Unterzonen, Monster- und Questtypen, Server, Spielversionen." },
   es: { heading: "## Referencia", intro: "Cada export tiene su página en la [referencia](/reference/):", columns: "| Export | Para qué sirve |", names: "Los nombres que conoce el paquete, un tipo por idioma: monstruos, zonas, subzonas, tipos de monstruo y de misión, servidores, versiones del juego." },
 };
 
