@@ -5,7 +5,7 @@ sidebar:
   order: 1
 ---
 
-Un monstruo se puede dar por su identificador o por su nombre, en uno de los tres idiomas del sitio:
+Un monstruo se puede dar por su identificador o por su nombre, en uno de los cinco idiomas del sitio:
 
 ```ts
 await metamob.monsters.get(21);
@@ -19,9 +19,9 @@ await metamob.monsters.get("Tofu maléfico"); // español
 
 | Qué | Se acepta | Dónde |
 | --- | --- | --- |
-| Un monstruo | identificador, nombre en francés, en inglés o en español, `{ id }` | `monsters.get`, `quests.setMonster`, `quests.setMonsters`, `quests.setTrade` |
-| Una zona | identificador, nombre en los tres idiomas, `{ id }` | `zones.get`, `zones.subzones`, `quests.zones({ zone })` |
-| Una subzona | identificador, nombre en los tres idiomas, `{ id }` | `zones.subzone`, `zones.monsters`, `quests.zones({ subzone })` |
+| Un monstruo | identificador, nombre en francés, inglés, español, portugués o alemán, `{ id }` | `monsters.get`, `quests.setMonster`, `quests.setMonsters`, `quests.setTrade` |
+| Una zona | identificador, nombre en los cinco idiomas, `{ id }` | `zones.get`, `zones.subzones`, `quests.zones({ zone })` |
+| Una subzona | identificador, nombre en los cinco idiomas, `{ id }` | `zones.subzone`, `zones.monsters`, `quests.zones({ subzone })` |
 | Un servidor | identificador, nombre, `{ id }` | `servers.get`, `kralove.list({ server })`, `users.search(query, { server })` |
 | Un tipo de monstruo | 1, 2, 3, o `monstre`, `boss`, `archimonstre` y sus traducciones | todos los filtros `type` |
 | Una versión del juego | identificador, nombre, `{ id }` | `gameVersions.get`, la indicación `gameVersion` |
@@ -80,7 +80,7 @@ data.searchMonsters("tofu", { limit: 5 }); // los monstruos cuyo nombre contiene
 
 ## Los monstruos que comparten nombre
 
-Seis pares de monstruos, sobre todo archimonstruos, comparten un nombre en al menos un idioma, en dos versiones del juego, con dos identificadores distintos. «Crognan le Barbare» es un monstruo en Dofus (Unity) y otro en Dofus Retro y Dofus Touch.
+Cada versión del juego tiene sus propios monstruos: el Tofu de Dofus Retro no es el de Dofus (Unity), tiene su propio identificador. La mayoría de los nombres designan por tanto un monstruo por versión. Lo mismo ocurre con las zonas y las subzonas: hay tres Amakna.
 
 Cuando escribes en una misión, la misión decide. La biblioteca lee una vez la plantilla que sigue la misión, y toma el monstruo de esa plantilla.
 
@@ -102,7 +102,7 @@ const ochreOnRetro = { questType: "ocre", gameVersion: "Dofus Retro (1.29)" } as
 const retro = await metamob.monsters.get(name, { template: ochreOnRetro });
 ```
 
-Sin indicación, se devuelve el monstruo de la plantilla de misión con el identificador más bajo. `data.monstersNamed(name)` lista todos los monstruos que responden a un nombre.
+Sin indicación, se devuelve el de Dofus (Unity), y lo mismo para una zona o una subzona. `data.monstersNamed(name)` lista todos los monstruos que responden a un nombre.
 
 ## Las subzonas y su zona
 
@@ -128,12 +128,12 @@ Cada export tiene su página en la [referencia](/reference/):
 | --- | --- |
 | [`normalizeName`](/reference/normalize-name/) | La forma en la que se comparan los nombres: sin acentos, en minúsculas, un solo tipo de apóstrofo y de guion, espacios simples. |
 | [`GameVersionLike`](/reference/game-version-like/) | Una versión del juego: su identificador, su nombre, o un objeto con su `id`. |
-| [`MonsterLike`](/reference/monster-like/) | Un monstruo: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`. |
-| [`MonsterTypeLike`](/reference/monster-type-like/) | Un tipo de monstruo: su identificador (1, 2, 3), su nombre en francés, inglés o español, o un objeto con su `id`. |
+| [`MonsterLike`](/reference/monster-like/) | Un monstruo: su identificador, su nombre en francés, inglés, español, portugués o alemán, o un objeto con su `id`. |
+| [`MonsterTypeLike`](/reference/monster-type-like/) | Un tipo de monstruo: su identificador (1, 2, 3), su nombre en cualquier idioma del sitio, o un objeto con su `id`. |
 | [`QuestTemplateLike`](/reference/quest-template-like/) | Una plantilla de misión: su identificador, un objeto con su `id`, o el tipo de misión y la versión del juego a la que corresponde. |
 | [`QuestTypeLike`](/reference/quest-type-like/) | Un tipo de misión: su identificador, su slug (`ocre`, `dokille`), su nombre, o un objeto con su `id`. |
 | [`ServerLike`](/reference/server-like/) | Un servidor: su identificador, su nombre, o un objeto con su `id`. |
-| [`SubzoneLike`](/reference/subzone-like/) | Una subzona: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`. |
-| [`ZoneLike`](/reference/zone-like/) | Una zona: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`. |
-| [`GameVersionName`](/reference/game-version-name/), [`MonsterNameEn`](/reference/monster-name-en/), [`MonsterNameEs`](/reference/monster-name-es/), [`MonsterNameFr`](/reference/monster-name-fr/), [`MonsterTypeNameEn`](/reference/monster-type-name-en/), [`MonsterTypeNameEs`](/reference/monster-type-name-es/), [`MonsterTypeNameFr`](/reference/monster-type-name-fr/), [`QuestTemplateId`](/reference/quest-template-id/), [`QuestTypeNameEn`](/reference/quest-type-name-en/), [`QuestTypeNameEs`](/reference/quest-type-name-es/), [`QuestTypeNameFr`](/reference/quest-type-name-fr/), [`QuestTypeSlug`](/reference/quest-type-slug/), [`ServerName`](/reference/server-name/), [`SubzoneNameEn`](/reference/subzone-name-en/), [`SubzoneNameEs`](/reference/subzone-name-es/), [`SubzoneNameFr`](/reference/subzone-name-fr/), [`ZoneNameEn`](/reference/zone-name-en/), [`ZoneNameEs`](/reference/zone-name-es/), [`ZoneNameFr`](/reference/zone-name-fr/) | Los nombres que conoce el paquete, un tipo por idioma: monstruos, zonas, subzonas, tipos de monstruo y de misión, servidores, versiones del juego. |
+| [`SubzoneLike`](/reference/subzone-like/) | Una subzona: su identificador, su nombre en francés, inglés, español, portugués o alemán, o un objeto con su `id`. |
+| [`ZoneLike`](/reference/zone-like/) | Una zona: su identificador, su nombre en francés, inglés, español, portugués o alemán, o un objeto con su `id`. |
+| [`GameVersionName`](/reference/game-version-name/), [`MonsterNameDe`](/reference/monster-name-de/), [`MonsterNameEn`](/reference/monster-name-en/), [`MonsterNameEs`](/reference/monster-name-es/), [`MonsterNameFr`](/reference/monster-name-fr/), [`MonsterNamePt`](/reference/monster-name-pt/), [`MonsterTypeNameDe`](/reference/monster-type-name-de/), [`MonsterTypeNameEn`](/reference/monster-type-name-en/), [`MonsterTypeNameEs`](/reference/monster-type-name-es/), [`MonsterTypeNameFr`](/reference/monster-type-name-fr/), [`MonsterTypeNamePt`](/reference/monster-type-name-pt/), [`QuestTemplateId`](/reference/quest-template-id/), [`QuestTypeNameDe`](/reference/quest-type-name-de/), [`QuestTypeNameEn`](/reference/quest-type-name-en/), [`QuestTypeNameEs`](/reference/quest-type-name-es/), [`QuestTypeNameFr`](/reference/quest-type-name-fr/), [`QuestTypeNamePt`](/reference/quest-type-name-pt/), [`QuestTypeSlug`](/reference/quest-type-slug/), [`ServerName`](/reference/server-name/), [`SubzoneNameDe`](/reference/subzone-name-de/), [`SubzoneNameEn`](/reference/subzone-name-en/), [`SubzoneNameEs`](/reference/subzone-name-es/), [`SubzoneNameFr`](/reference/subzone-name-fr/), [`SubzoneNamePt`](/reference/subzone-name-pt/), [`ZoneNameDe`](/reference/zone-name-de/), [`ZoneNameEn`](/reference/zone-name-en/), [`ZoneNameEs`](/reference/zone-name-es/), [`ZoneNameFr`](/reference/zone-name-fr/), [`ZoneNamePt`](/reference/zone-name-pt/) | Los nombres que conoce el paquete, un tipo por idioma: monstruos, zonas, subzonas, tipos de monstruo y de misión, servidores, versiones del juego. |
 <!-- exports:end -->

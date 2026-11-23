@@ -40,7 +40,7 @@ Sans `apiKey`, le client lit la variable d'environnement `METAMOB_API_KEY`. [Con
 | | |
 | --- | --- |
 | Les types | Chaque réponse de l'API est typée : voir la [référence](/reference/) |
-| Les noms | Monstres, zones et serveurs par leur nom, en français, anglais ou espagnol : [Noms et identifiants](/basics/names-and-ids/) |
+| Les noms | Monstres, zones et serveurs par leur nom, dans les cinq langues du site : [Noms et identifiants](/basics/names-and-ids/) |
 | Les listes | Pagination par décalage ou par curseur, parcourue avec `for await` : [Listes](/basics/lists/) |
 | La limite de requêtes | 60 requêtes par minute et par clé, les appels en trop attendent leur tour : [La limite de requêtes](/basics/rate-limit/) |
 | Les erreurs | Un `code` stable par cas, et des nouvelles tentatives pour les erreurs passagères : [Erreurs](/basics/errors/) |

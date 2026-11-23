@@ -1,16 +1,20 @@
 import { ListRequest, topLevel } from "../core/pagination.js";
-import { type Context, type PageParams, searchTerm } from "../core/resource.js";
+import { type Context, count, type PageParams, searchTerm } from "../core/resource.js";
 import type { RequestOptions } from "../core/rest.js";
-import type { MonsterHint, MonsterLike, MonsterTypeLike } from "../data/dataset.js";
+import type { GameVersionLike, MonsterHint, MonsterLike, MonsterTypeLike } from "../data/dataset.js";
 import { METHODS } from "../generated/methods.js";
 import type { Monster, MonsterDetail } from "../types.js";
 
 /** Filters of {@link Monsters.list}. */
 export interface MonsterListParams extends PageParams {
-  /** Search by name, in French, English or Spanish. At least 3 characters. */
+  /** Search by name, in any language of the site. At least 3 characters. */
   query?: string | undefined;
   /** Only this kind of monster: `"monstre"`, `"boss"`, `"archimonstre"`, or its id. */
   type?: MonsterTypeLike | undefined;
+  /** Only the monsters of this version of the game: each version has its own. */
+  gameVersion?: GameVersionLike | undefined;
+  /** The monster with this identifier in the game client. Unique within a version of the game only: pass `gameVersion` too. */
+  officialId?: number | undefined;
 }
 
 /** The monsters of the game. */
@@ -44,6 +48,8 @@ export class Monsters {
         query: {
           q: params.query === undefined ? undefined : searchTerm(params.query),
           type: params.type === undefined ? undefined : await resolve.monsterType(params.type, options),
+          game_version: params.gameVersion === undefined ? undefined : await resolve.gameVersion(params.gameVersion, options),
+          official_id: params.officialId === undefined ? undefined : count(params.officialId, "officialId"),
           limit: params.limit,
           offset: params.offset,
         },
@@ -54,7 +60,7 @@ export class Monsters {
   }
 
   /**
-   * One monster, from its id or its name in French, English or Spanish, with
+   * One monster, from its id or its name in any language of the site, with
    * the zones where it can be found and, for an archmonster, its base monster.
    * When versions of the game share the name, pass `gameVersion` or `template`.
    *

@@ -21,7 +21,7 @@ for (const zone of monster.zones) {
 }
 ```
 
-Algunos archimonstruos tienen el mismo nombre en dos versiones del juego. Indica cuál con una versión del juego, o con una plantilla de misión con `{ template }`:
+Cada versión del juego tiene sus propios monstruos, y la mayoría lleva el mismo nombre de una versión a otra. Sin más, es el de Dofus (Unity). Indica otra versión, o una plantilla de misión con `{ template }`:
 
 ```ts
 await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" });
@@ -40,13 +40,17 @@ page.total;
 for await (const monster of metamob.monsters.list({ type: "archimonstre" })) {
   console.log(monster.name.fr, monster.reference?.name.fr);
 }
+
+// Los monstruos de Dofus Retro, y un monstruo por su identificador en el juego.
+const retro = metamob.monsters.list({ gameVersion: "Dofus Retro (1.29)" });
+const [tofu] = await metamob.monsters.list({ gameVersion: "Dofus (Unity)", officialId: 98 }).take(1);
 ```
 
-`type` vale `"monstre"`, `"boss"` o `"archimonstre"`, sus nombres en inglés o en español, o también 1, 2 o 3.
+`type` vale `"monstre"`, `"boss"` o `"archimonstre"`, sus traducciones, o también 1, 2 o 3. `gameVersion` conserva los monstruos de una versión del juego. `officialId` busca un monstruo por su identificador en el cliente del juego, el mismo que DofusDB para Dofus (Unity): solo es único dentro de una versión, de ahí `gameVersion` al lado. Cada monstruo lleva los dos, `game_version` y `official_id`.
 
 ## Buscar por nombre
 
-`monsters.search()` busca una parte del nombre, en francés, en inglés o en español, a partir de 3 caracteres:
+`monsters.search()` busca una parte del nombre, en todos los idiomas del sitio, a partir de 3 caracteres:
 
 ```ts
 const found = await metamob.monsters.search("bouf").all();
@@ -89,10 +93,12 @@ Cada export tiene su página en la [referencia](/reference/):
 | --- | --- |
 | [`Monsters`](/reference/monsters/) | Los monstruos del juego. |
 | [`urls`](/reference/urls/) | Direcciones en metamob.fr, construidas a partir de lo que devuelve la API. |
-| [`Monster`](/reference/monster/) | Un monstruo. |
+| [`Monster`](/reference/monster/) | Un monstruo, con su versión del juego. |
+| [`MonsterBase`](/reference/monster-base/) | Un monstruo, dondequiera que aparezca dentro de otra cosa: una misión, una etapa. |
 | [`MonsterDetail`](/reference/monster-detail/) | Un monstruo con los lugares donde vive. |
 | [`MonsterListParams`](/reference/monster-list-params/) | Filtros de [`Monsters.list`](/reference/monsters/). |
 | [`MonsterReference`](/reference/monster-reference/) | El monstruo de base de un archimonstruo. |
 | [`MonsterType`](/reference/monster-type/) | Un tipo de monstruo: 1 es un monstruo, 2 un jefe, 3 un archimonstruo. |
+| [`MonsterZone`](/reference/monster-zone/) | Una zona donde vive un monstruo, con las subzonas correspondientes. |
 | [`TemplateMonster`](/reference/template-monster/) | Un monstruo de una plantilla de misión, con la etapa a la que pertenece. |
 <!-- exports:end -->

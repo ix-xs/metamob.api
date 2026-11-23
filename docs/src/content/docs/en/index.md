@@ -40,7 +40,7 @@ Without `apiKey`, the client reads the environment variable `METAMOB_API_KEY`. [
 | | |
 | --- | --- |
 | Types | Every answer of the API is typed: see the [reference](/reference/) |
-| Names | Monsters, zones and servers by their name, in French, English or Spanish: [Names and ids](/basics/names-and-ids/) |
+| Names | Monsters, zones and servers by their name, in the five languages of the site: [Names and ids](/basics/names-and-ids/) |
 | Lists | Offset or cursor pagination, walked with `for await`: [Lists](/basics/lists/) |
 | The rate limit | 60 requests a minute per key, calls over it wait their turn: [The rate limit](/basics/rate-limit/) |
 | Errors | One stable `code` per case, and retries for passing errors: [Errors](/basics/errors/) |

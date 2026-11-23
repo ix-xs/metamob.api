@@ -19,7 +19,7 @@ const amakna = await metamob.zones.get("Amakna");
 amakna.subzones.map((subzone) => subzone.name.fr);
 ```
 
-A zone is a name, an id or an object, see [Names and ids](/basics/names-and-ids/). Names work in French, English and Spanish: `"Sufokia Bay"` designates `"Baie de Sufokia"`.
+A zone is a name, an id or an object, see [Names and ids](/basics/names-and-ids/). Names work in the five languages of the site: `"Sufokia Bay"` designates `"Baie de Sufokia"`. Each version of the game has its own zones, with their `game_version`: a name designates the one of Dofus (Unity). For another version, filter with `zones.list({ gameVersion })` and pass the id.
 
 ## Subzones
 
@@ -97,7 +97,9 @@ Each export has its page in the [reference](/reference/):
 | [`Zones`](/reference/zones/) | The zones and subzones of the game, and the monsters that live there. |
 | [`Subzone`](/reference/subzone/) | A subzone with the zone it belongs to. |
 | [`SubzoneParams`](/reference/subzone-params/) | Says which zone a subzone belongs to, for a subzone newer than the package. |
-| [`SubzoneRef`](/reference/subzone-ref/) | A subzone as it appears in a list: its id and name. |
+| [`SubzoneRef`](/reference/subzone-ref/) | A subzone as a monster or a quest names it: its id and name. |
 | [`Zone`](/reference/zone/) | A zone of the game. |
 | [`ZoneDetail`](/reference/zone-detail/) | A zone with its subzones. |
+| [`ZoneListParams`](/reference/zone-list-params/) | Filters of [`Zones.list`](/reference/zones/). |
+| [`ZoneSubzone`](/reference/zone-subzone/) | A subzone as a zone lists it. |
 <!-- exports:end -->

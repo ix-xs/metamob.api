@@ -22,8 +22,8 @@ const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>;
   "zones.list": { run: (m) => m.zones.list({ query: "ama" }), path: "/zones", query: "?q=ama" },
   "zones.get": { run: (m) => m.zones.get("Amakna"), path: "/zones/1" },
   "zones.subzones": { run: (m) => m.zones.subzones("Amakna", { query: "plaine" }), path: "/zones/1/subzones", query: "?q=plaine" },
-  "zones.subzone": { run: (m) => m.zones.subzone("Akadémie des Gobs"), path: "/zones/1/subzones/48" },
-  "zones.monsters": { run: (m) => m.zones.monsters(48), path: "/zones/1/subzones/48/monsters" },
+  "zones.subzone": { run: (m) => m.zones.subzone("Champ des Ingalsse"), path: "/zones/1/subzones/31" },
+  "zones.monsters": { run: (m) => m.zones.monsters(31), path: "/zones/1/subzones/31/monsters" },
   "kralove.list": { run: (m) => m.kralove.list({ server: "Draconiros", from: new Date("2026-01-27T23:30:00Z") }), path: "/kralove", query: "?server=12&from=2026-01-27" },
   "kralove.get": { run: (m) => m.kralove.get(42), path: "/kralove/42" },
   "users.search": { run: (m) => m.users.search("player", { server: 12, activeWithinDays: 30, limit: 10 }), path: "/users/search", query: "?q=player&server_id=12&active_within_days=30&limit=10" },
@@ -41,7 +41,7 @@ const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>;
   },
   "tradeProposals.get": { run: (m) => m.tradeProposals.get(57), path: "/trade-proposals/57" },
   "tradeProposals.create": {
-    run: (m) => m.tradeProposals.create({ recipient: "Ix-xs", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: { Tofu: 2 }, monsters_received: [{ monster: 472, quantity: 1 }] }),
+    run: (m) => m.tradeProposals.create({ recipient: "Ix-xs", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: { "20": 2 }, monsters_received: [{ monster: 472, quantity: 1 }] }),
     path: "/trade-proposals",
     body: { recipient: "Ix-xs", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: [{ monster_id: 20, quantity: 2 }], monsters_received: [{ monster_id: 472, quantity: 1 }] },
   },
@@ -56,11 +56,11 @@ const CASES: Record<MethodId, { run: (metamob: Metamob) => PromiseLike<unknown>;
     body: { current_step: 12, show_trades: true, never_want_arch: 1, never_offer_boss: 0, trade_want_threshold: null },
   },
   "quests.monsters": { run: (m) => m.quests.monsters(SLUG, { type: "archimonstre", status: "needed", trade: "manual", step: 4 }), path: `/quests/${SLUG}/monsters`, query: "?monster_type=3&status=needed&trade=manual&step=4" },
-  "quests.setMonster": { run: (m) => m.quests.setMonster(SLUG, "Tofu", 5), path: `/quests/${SLUG}/monsters/20`, body: { quantity: 5 } },
-  "quests.setMonsters": { run: (m) => m.quests.setMonsters(SLUG, { Tofu: 3, "472": 0 }), path: `/quests/${SLUG}/monsters`, body: { monsters: [{ monster_id: 472, quantity: 0 }, { monster_id: 20, quantity: 3 }] } },
+  "quests.setMonster": { run: (m) => m.quests.setMonster(SLUG, 20, 5), path: `/quests/${SLUG}/monsters/20`, body: { quantity: 5 } },
+  "quests.setMonsters": { run: (m) => m.quests.setMonsters(SLUG, { "472": 0, "20": 3 }), path: `/quests/${SLUG}/monsters`, body: { monsters: [{ monster_id: 20, quantity: 3 }, { monster_id: 472, quantity: 0 }] } },
   "quests.setTrade": { run: (m) => m.quests.setTrade(SLUG, { id: 20 }, { trade_offer: 1, trade_want: null }), path: `/quests/${SLUG}/monsters/20/trade`, body: { trade_offer: 1, trade_want: null } },
   "quests.matches": { run: (m) => m.quests.matches(SLUG, { minParallelQuests: 3, onlyPossibleTrades: true, limit: 10 }), path: `/quests/${SLUG}/matches`, query: "?min_parallel_quests=3&only_possible_trades=1&limit=10" },
-  "quests.zones": { run: (m) => m.quests.zones(SLUG, { zone: "Amakna", subzone: "Gob Akademy", type: "monstre" }), path: `/quests/${SLUG}/zones`, query: "?zone_id=1&subzone_id=48&monster_type_id=1" },
+  "quests.zones": { run: (m) => m.quests.zones(SLUG, { zone: "Amakna", subzone: "Ingalsses' Fields", type: "monstre" }), path: `/quests/${SLUG}/zones`, query: "?zone_id=1&subzone_id=31&monster_type_id=1" },
 };
 
 const ANSWER = { data: { slug: SLUG, monsters: [], pagination: { total: 0, limit: 50, offset: 0 } }, pagination: { total: 0, limit: 50, offset: 0 } };
@@ -158,10 +158,10 @@ describe("names and ids", () => {
 
   it("finds the zone of a subzone, and takes it from the caller for a subzone it does not know", async () => {
     const { metamob, calls } = client((call) => (call.url.search ? { data: [{ id: 900, name: { fr: "Nouvelle Zone", en: "New Area", es: "Zona Nueva" } }] } : { data: {} }));
-    await metamob.zones.subzone("Gob Akademy");
+    await metamob.zones.subzone("Ingalsses' Fields");
     await metamob.zones.subzone(900, { zone: "Amakna" });
     await metamob.zones.monsters("New Area", { zone: 1 });
-    expect(calls.map((call) => call.path + call.url.search)).toEqual(["/zones/1/subzones/48", "/zones/1/subzones/900", "/zones/1/subzones?q=New%20Area", "/zones/1/subzones/900/monsters"]);
+    expect(calls.map((call) => call.path + call.url.search)).toEqual(["/zones/1/subzones/31", "/zones/1/subzones/900", "/zones/1/subzones?q=New%20Area", "/zones/1/subzones/900/monsters"]);
     await expect(metamob.zones.subzone(900)).rejects.toThrow(/Pass the zone/);
     await expect(metamob.zones.subzone("Nowhere at all")).rejects.toMatchObject({ code: "UNKNOWN_NAME" });
   });
@@ -305,9 +305,11 @@ describe("sending messages and proposals", () => {
   it("builds a proposal from names, and refuses what the API would before sending it", async () => {
     const proposal = { id: 58, sender: "Ix-xs", recipient: "Other", status: "pending" };
     const viewer = { role: "sender", applied: false, clamped: null, removed: [{ monster_id: 20, quantity: 1, owned: 3 }], added: [] };
-    const { metamob, calls } = client({ data: proposal, viewer });
+    const { metamob, calls } = client((call) => (call.method === "GET" ? { data: { slug: SLUG, quest_template: { id: 1 } } } : { data: proposal, viewer }));
     expect(await metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: new Map([["Tofu", 1]]) })).toEqual({ ...proposal, viewer });
-    expect(calls[0]!.body).toEqual({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: [{ monster_id: 20, quantity: 1 }], monsters_received: [] });
+    // "Tofu" is a monster in each version: the quest says which one.
+    expect(calls[0]!.path).toBe(`/quests/${SLUG}`);
+    expect(calls[1]!.body).toEqual({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: [{ monster_id: 20, quantity: 1 }], monsters_received: [] });
 
     const base = { recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8" };
     await expect(metamob.tradeProposals.create(base)).rejects.toThrow(/at least one monster/);
@@ -319,13 +321,31 @@ describe("sending messages and proposals", () => {
     await expect(metamob.tradeProposals.create({ ...base, sender_quest: " " , monsters_given: { Tofu: 1 } })).rejects.toThrow(/sender_quest/);
     await expect(metamob.tradeProposals.create({ ...base, recipient: "", monsters_given: { Tofu: 1 } })).rejects.toThrow(/recipient/);
     await expect(metamob.tradeProposals.create({ ...base, recipient_quest: undefined as never, monsters_given: { Tofu: 1 } })).rejects.toThrow(/recipient_quest/);
-    expect(calls).toHaveLength(1);
+    expect(calls.filter((call) => call.method === "POST")).toHaveLength(1);
   });
 
   it("never sends a proposal twice", async () => {
-    const { metamob, calls } = client([apiError(504, "timeout"), { data: {} }]);
+    const { metamob, calls } = client((call) => (call.method === "GET" ? { data: { slug: SLUG, quest_template: { id: 1 } } } : apiError(504, "timeout")));
     await expect(metamob.tradeProposals.create({ recipient: "Other", sender_quest: SLUG, recipient_quest: "e5f6a7b8", monsters_given: { Tofu: 1 } })).rejects.toMatchObject({ status: 504 });
-    expect(calls).toHaveLength(1);
+    expect(calls.filter((call) => call.method === "POST")).toHaveLength(1);
+  });
+});
+
+describe("one bestiary per version of the game", () => {
+  it("filters monsters and zones by version and by their id in the game client", async () => {
+    const { metamob, calls } = client((call) => (call.path === "/zones" ? { data: [] } : page([])));
+    await metamob.monsters.list({ gameVersion: "Dofus Retro (1.29)", officialId: 98 });
+    await metamob.zones.list({ gameVersion: "Dofus Touch", officialId: 0 });
+    expect(calls.map((call) => call.path + call.url.search)).toEqual(["/monsters?game_version=2&official_id=98", "/zones?game_version=3&official_id=0"]);
+    expect(() => metamob.monsters.list({ officialId: -1 })).not.toThrow();
+    await expect(metamob.monsters.list({ officialId: -1 })).rejects.toThrow(/officialId/);
+  });
+
+  it("asks a quest for the monsters you own none of, or not enough of", async () => {
+    const { metamob, calls } = client(ANSWER);
+    await metamob.quests.monsters(SLUG, { status: "unowned" });
+    await metamob.quests.monsters(SLUG, { status: "insufficient" });
+    expect(calls.map((call) => call.url.search)).toEqual(["?status=unowned", "?status=insufficient"]);
   });
 });
 
@@ -407,9 +427,9 @@ describe("quests", () => {
         [472, 1],
       ]),
     ]) {
-      const { metamob, calls } = client(answer);
+      const { metamob, calls } = client((call) => (call.method === "GET" ? { data: { slug: SLUG, quest_template: { id: 1 } } } : answer));
       await metamob.quests.setMonsters(SLUG, quantities);
-      expect(calls[0]!.body).toEqual(expected);
+      expect(calls.find((call) => call.method === "PATCH")!.body).toEqual(expected);
     }
   });
 
@@ -435,7 +455,8 @@ describe("quests", () => {
     await metamob.quests.setTrade(SLUG, "Crognan le Barbare", { trade_offer: 0 });
     await metamob.quests.setMonster(SLUG, "Tofu", 1);
     await metamob.quests.setMonster(SLUG, 416, 1);
-    expect(calls.slice(2).map((call) => `${call.method} ${call.path}`)).toEqual([`PATCH /quests/${SLUG}/monsters/725/trade`, `PATCH /quests/${SLUG}/monsters/20`, `PATCH /quests/${SLUG}/monsters/416`]);
+    // Each version has its own Tofu: the one of Dofus Touch is #1887.
+    expect(calls.slice(2).map((call) => `${call.method} ${call.path}`)).toEqual([`PATCH /quests/${SLUG}/monsters/725/trade`, `PATCH /quests/${SLUG}/monsters/1887`, `PATCH /quests/${SLUG}/monsters/416`]);
 
     await metamob.quests.setMonster("other", "Crognan le Barbare", 1, { apiKey: "their-key" });
     expect(calls[calls.length - 2]!.headers.get("authorization")).toBe("Bearer their-key");
@@ -454,11 +475,11 @@ describe("quests", () => {
   });
 
   it("hands both trade values back to the calculation with resetTrade", async () => {
-    const { metamob, calls } = client({ data: {} });
+    const { metamob, calls } = client((call) => (call.method === "GET" ? { data: { slug: SLUG, quest_template: { id: 1 } } } : { data: {} }));
     await metamob.quests.resetTrade(SLUG, "Tofu");
-    expect(calls[0]!.body).toEqual({ trade_offer: null, trade_want: null });
+    expect(calls[1]!.body).toEqual({ trade_offer: null, trade_want: null });
     await metamob.quests.setTrade(SLUG, "Tofu", { trade_want: 0 });
-    expect(calls[1]!.body).toEqual({ trade_want: 0 });
+    expect(calls[2]!.body).toEqual({ trade_want: 0 });
   });
 
   it("writes onlyPossibleTrades as 1 or 0 and leaves it out when unset", async () => {

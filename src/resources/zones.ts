@@ -1,8 +1,18 @@
-import { type Context, searchTerm } from "../core/resource.js";
+import { type Context, count, searchTerm } from "../core/resource.js";
 import type { RequestOptions } from "../core/rest.js";
-import type { SubzoneLike, ZoneLike } from "../data/dataset.js";
+import type { GameVersionLike, SubzoneLike, ZoneLike } from "../data/dataset.js";
 import { METHODS } from "../generated/methods.js";
 import type { Monster, Subzone, SubzoneRef, Zone, ZoneDetail } from "../types.js";
+
+/** Filters of {@link Zones.list}. */
+export interface ZoneListParams {
+  /** Search by name, in any language of the site. At least 3 characters. */
+  query?: string | undefined;
+  /** Only the zones of this version of the game: each version has its own, there are three Amakna. */
+  gameVersion?: GameVersionLike | undefined;
+  /** The zone with this identifier in the game client. Unique within a version of the game only: pass `gameVersion` too. */
+  officialId?: number | undefined;
+}
 
 /** Says which zone a subzone belongs to, for a subzone newer than the package. */
 export interface SubzoneParams {
@@ -20,14 +30,20 @@ export class Zones {
   }
 
   /**
-   * The zones, optionally searched by name in French, English or Spanish.
+   * The zones, optionally searched by name in any language of the site. Each
+   * version of the game has its own zones: filter with `gameVersion`.
    *
    * @example
-   * const zones = await metamob.zones.list();
+   * const zones = await metamob.zones.list({ gameVersion: "Dofus (Unity)" });
    * const found = await metamob.zones.list({ query: "ama" });
    */
-  async list(params: { query?: string | undefined } = {}, options?: RequestOptions): Promise<Zone[]> {
-    const query = { q: params.query === undefined ? undefined : searchTerm(params.query) };
+  async list(params: ZoneListParams = {}, options?: RequestOptions): Promise<Zone[]> {
+    const { resolve } = this.#context;
+    const query = {
+      q: params.query === undefined ? undefined : searchTerm(params.query),
+      game_version: params.gameVersion === undefined ? undefined : await resolve.gameVersion(params.gameVersion, options),
+      official_id: params.officialId === undefined ? undefined : count(params.officialId, "officialId"),
+    };
     return (await this.#context.rest.request<{ data: Zone[] }>(METHODS["zones.list"], { query }, options)).data;
   }
 

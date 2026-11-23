@@ -89,7 +89,7 @@ export class MonsterTypes {
   }
 
   /**
-   * One kind of monster, from its id or its name in French, English or Spanish.
+   * One kind of monster, from its id or its name in any language of the site.
    *
    * @example
    * const archmonster = await metamob.monsterTypes.get("archimonstre");

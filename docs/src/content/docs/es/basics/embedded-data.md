@@ -19,7 +19,7 @@ data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 
 ## Lo que contiene
 
-Los datos de referencia de la API en el momento de la publicación del paquete: monstruos, zonas, subzonas, servidores, versiones del juego, tipos de monstruo, tipos y plantillas de misión. Con los vínculos entre ellos: los monstruos de cada subzona, y los que pide cada plantilla de misión.
+Los datos de referencia de la API en el momento de la publicación del paquete: monstruos, zonas, subzonas, servidores, versiones del juego, tipos de monstruo, tipos y plantillas de misión. Con los vínculos entre ellos: los monstruos de cada subzona, y los que pide cada plantilla de misión. Cada versión del juego tiene ahí sus propios monstruos, zonas y subzonas, cada uno con su `game_version` y su `official_id`.
 
 `data.fetchedAt` es la fecha de la copia. Los registros tienen la forma que les da la API: lo que lees en `data` tiene la misma forma que la respuesta de una llamada.
 

@@ -40,7 +40,7 @@ Sin `apiKey`, el cliente lee la variable de entorno `METAMOB_API_KEY`. [Configur
 | | |
 | --- | --- |
 | Los tipos | Cada respuesta de la API está tipada: consulta la [referencia](/reference/) |
-| Los nombres | Monstruos, zonas y servidores por su nombre, en francés, inglés o español: [Nombres e identificadores](/basics/names-and-ids/) |
+| Los nombres | Monstruos, zonas y servidores por su nombre, en los cinco idiomas del sitio: [Nombres e identificadores](/basics/names-and-ids/) |
 | Las listas | Paginación por desplazamiento o por cursor, recorrida con `for await`: [Listas](/basics/lists/) |
 | El límite de solicitudes | 60 solicitudes por minuto y por clave, las llamadas de más esperan su turno: [El límite de solicitudes](/basics/rate-limit/) |
 | Los errores | Un `code` estable por caso, y reintentos para los errores pasajeros: [Errores](/basics/errors/) |

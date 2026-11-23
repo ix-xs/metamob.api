@@ -1,44 +1,54 @@
 import { DATASET_DATE, DATASET_JSON } from "../generated/dataset.js";
 import type {
   GameVersionName,
+  MonsterNameDe,
   MonsterNameEn,
   MonsterNameEs,
   MonsterNameFr,
+  MonsterNamePt,
+  MonsterTypeNameDe,
   MonsterTypeNameEn,
   MonsterTypeNameEs,
   MonsterTypeNameFr,
+  MonsterTypeNamePt,
   QuestTemplateId,
+  QuestTypeNameDe,
   QuestTypeNameEn,
   QuestTypeNameEs,
   QuestTypeNameFr,
+  QuestTypeNamePt,
   QuestTypeSlug,
   ServerName,
+  SubzoneNameDe,
   SubzoneNameEn,
   SubzoneNameEs,
   SubzoneNameFr,
+  SubzoneNamePt,
+  ZoneNameDe,
   ZoneNameEn,
   ZoneNameEs,
   ZoneNameFr,
+  ZoneNamePt,
 } from "../generated/names.js";
 import type { GameVersion, LocalizedName, Monster, MonsterType, QuestTemplate, QuestType, Server, Subzone, TemplateMonster, Zone, ZoneDetail } from "../types.js";
 import { closest, normalizeName } from "./text.js";
 
 type Like<Name extends string> = number | Name | (string & {}) | { readonly id: number };
 
-/** A monster: its id, its name in French, English or Spanish, or an object with its `id`. */
-export type MonsterLike = Like<MonsterNameFr | MonsterNameEn | MonsterNameEs>;
-/** A zone: its id, its name in French, English or Spanish, or an object with its `id`. */
-export type ZoneLike = Like<ZoneNameFr | ZoneNameEn | ZoneNameEs>;
-/** A subzone: its id, its name in French, English or Spanish, or an object with its `id`. */
-export type SubzoneLike = Like<SubzoneNameFr | SubzoneNameEn | SubzoneNameEs>;
+/** A monster: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`. */
+export type MonsterLike = Like<MonsterNameFr | MonsterNameEn | MonsterNameEs | MonsterNamePt | MonsterNameDe>;
+/** A zone: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`. */
+export type ZoneLike = Like<ZoneNameFr | ZoneNameEn | ZoneNameEs | ZoneNamePt | ZoneNameDe>;
+/** A subzone: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`. */
+export type SubzoneLike = Like<SubzoneNameFr | SubzoneNameEn | SubzoneNameEs | SubzoneNamePt | SubzoneNameDe>;
 /** A server: its id, its name, or an object with its `id`. */
 export type ServerLike = Like<ServerName>;
 /** A version of the game: its id, its name, or an object with its `id`. */
 export type GameVersionLike = Like<GameVersionName>;
-/** A kind of monster: its id (1, 2, 3), its name in French, English or Spanish, or an object with its `id`. */
-export type MonsterTypeLike = Like<MonsterTypeNameFr | MonsterTypeNameEn | MonsterTypeNameEs>;
+/** A kind of monster: its id (1, 2, 3), its name in any language of the site, or an object with its `id`. */
+export type MonsterTypeLike = Like<MonsterTypeNameFr | MonsterTypeNameEn | MonsterTypeNameEs | MonsterTypeNamePt | MonsterTypeNameDe>;
 /** A kind of quest: its id, its slug (`ocre`, `dokille`), its name, or an object with its `id`. */
-export type QuestTypeLike = Like<QuestTypeSlug | QuestTypeNameFr | QuestTypeNameEn | QuestTypeNameEs>;
+export type QuestTypeLike = Like<QuestTypeSlug | QuestTypeNameFr | QuestTypeNameEn | QuestTypeNameEs | QuestTypeNamePt | QuestTypeNameDe>;
 /** A quest template: its id, an object with its `id`, or the kind of quest and the version of the game it is for. */
 export type QuestTemplateLike = QuestTemplateId | (number & {}) | { readonly id: number } | { readonly questType: QuestTypeLike; readonly gameVersion: GameVersionLike };
 
@@ -59,21 +69,23 @@ export interface MonsterSearchOptions extends MonsterHint {
 }
 
 type Translation = string | 0;
+type Names = [fr: string, en: Translation, es: Translation, pt: Translation, de: Translation];
 
 interface Raw {
   d: string;
   gv: [id: number, name: string][];
-  mt: [id: number, fr: string, en: Translation, es: Translation][];
-  qt: [id: number, slug: string, fr: string, en: Translation, es: Translation, image: string][];
+  mt: [id: number, ...Names][];
+  qt: [id: number, slug: string, ...Names, image: string][];
   sv: [id: number, name: string, community: string, gameVersion: number][];
   tp: [id: number, questType: number, gameVersion: number, steps: number, monsters: number[], monsterSteps: number[]][];
-  z: [id: number, fr: string, en: Translation, es: Translation][];
-  sz: [id: number, fr: string, en: Translation, es: Translation, zone: number, monsters: number[]][];
-  m: [id: number, fr: string, en: Translation, es: Translation, image: string, min: number, max: number, type: number, reference: number][];
+  z: [id: number, ...Names, officialId: number, gameVersion: number][];
+  sz: [id: number, ...Names, zone: number, monsters: number[], officialId: number, gameVersion: number][];
+  m: [id: number, ...Names, image: string, min: number, max: number, type: number, reference: number, officialId: number, gameVersion: number][];
 }
 
-const localized = (fr: string, en: Translation, es: Translation): LocalizedName => ({ fr, en: en || fr, es: es || fr });
-const names = (record: { name: LocalizedName }): string[] => [record.name.fr, record.name.en, record.name.es];
+const localized = ([fr, en, es, pt, de]: Names): LocalizedName => ({ fr, en: en || fr, es: es || fr, pt: pt || fr, de: de || fr });
+const names = (record: { name: LocalizedName }): string[] => [record.name.fr, record.name.en, record.name.es, record.name.pt, record.name.de];
+const officialId = (value: number): number | null => (value < 0 ? null : value);
 const isId = (value: string): boolean => /^\d+$/.test(value);
 
 class Collection<T extends { readonly id: number }> {
@@ -166,11 +178,11 @@ export class Dataset {
       (version) => [version.name],
     );
     const monsterTypes = new Collection<MonsterType>(
-      raw.mt.map(([id, fr, en, es]) => ({ id, name: localized(fr, en, es) })),
+      raw.mt.map(([id, fr, en, es, pt, de]) => ({ id, name: localized([fr, en, es, pt, de]) })),
       names,
     );
     const questTypes = new Collection<QuestType>(
-      raw.qt.map(([id, slug, fr, en, es, image]) => ({ id, slug, name: localized(fr, en, es), image })),
+      raw.qt.map(([id, slug, fr, en, es, pt, de, image]) => ({ id, slug, name: localized([fr, en, es, pt, de]), image })),
       (type) => [type.slug, ...names(type)],
     );
     const servers = new Collection<Server>(
@@ -191,16 +203,22 @@ export class Dataset {
       () => [],
     );
 
-    const zoneRows = raw.z.map(([id, fr, en, es]): ZoneDetail => ({ id, name: localized(fr, en, es), subzones: [] }));
+    const version = (id: number): GameVersion => gameVersions.byId(id) ?? { id, name: "" };
+    const zoneRows = raw.z.map(
+      ([id, fr, en, es, pt, de, official, versionId]): ZoneDetail => ({ id, official_id: officialId(official), name: localized([fr, en, es, pt, de]), game_version: version(versionId), subzones: [] }),
+    );
     const zones = new Collection<ZoneDetail>(zoneRows, names);
     const subzoneMonsters = new Map<number, readonly number[]>();
     const subzones = new Collection<Subzone>(
-      raw.sz.map(([id, fr, en, es, zoneId, monsters]) => {
-        const name = localized(fr, en, es);
+      raw.sz.map(([id, fr, en, es, pt, de, zoneId, monsters, official, versionId]) => {
+        const entry = { id, official_id: officialId(official), name: localized([fr, en, es, pt, de]), game_version: version(versionId) };
         const zone = zones.byId(zoneId);
-        zone?.subzones.push({ id, name });
+        zone?.subzones.push(entry);
         subzoneMonsters.set(id, monsters);
-        return { id, name, zone: zone ? { id: zone.id, name: zone.name } : { id: zoneId, name: { fr: "", en: "", es: "" } } };
+        const parent = zone
+          ? { id: zone.id, official_id: zone.official_id, name: zone.name, game_version: zone.game_version }
+          : { id: zoneId, official_id: null, name: localized(["", 0, 0, 0, 0]), game_version: entry.game_version };
+        return { ...entry, zone: parent };
       }),
       names,
     );
@@ -216,11 +234,22 @@ export class Dataset {
       }
     }
 
-    const monsterRows = raw.m.map(([id, fr, en, es, image, min, max, type]): Monster => ({ id, name: localized(fr, en, es), image, level_min: min, level_max: max, type: monsterTypes.byId(type) ?? null }));
+    const monsterRows = raw.m.map(
+      ([id, fr, en, es, pt, de, image, min, max, type, , official, versionId]): Monster => ({
+        id,
+        official_id: officialId(official),
+        name: localized([fr, en, es, pt, de]),
+        image,
+        level_min: min,
+        level_max: max,
+        type: monsterTypes.byId(type) ?? null,
+        game_version: version(versionId),
+      }),
+    );
     const monsters = new Collection<Monster>(monsterRows, names);
-    raw.m.forEach(([, , , , , , , , reference], index) => {
-      const base = reference ? monsters.byId(reference) : undefined;
-      if (base) monsterRows[index]!.reference = { id: base.id, name: base.name };
+    raw.m.forEach((row, index) => {
+      const base = row[10] ? monsters.byId(row[10]) : undefined;
+      if (base) monsterRows[index]!.reference = { id: base.id, official_id: base.official_id, name: base.name };
     });
 
     this.#loaded = { gameVersions, monsterTypes, questTypes, servers, questTemplates, zones, subzones, monsters, subzoneMonsters, templateRows, monsterTemplates };
@@ -287,12 +316,12 @@ export class Dataset {
     return this.#load().servers.find(ref);
   }
 
-  /** A zone with its subzones, from its id or its name. */
+  /** A zone with its subzones, from its id or its name. Each version of the game has its own zones: a name gives the one of Dofus (Unity). */
   zone(ref: ZoneLike): ZoneDetail | undefined {
     return this.#load().zones.find(ref);
   }
 
-  /** A subzone with its zone, from its id or its name. */
+  /** A subzone with its zone, from its id or its name. A name shared by versions of the game gives the one of Dofus (Unity). */
   subzone(ref: SubzoneLike): Subzone | undefined {
     return this.#load().subzones.find(ref);
   }
@@ -316,7 +345,7 @@ export class Dataset {
   }
 
   /**
-   * A monster, from its id or its name in French, English or Spanish, ignoring
+   * A monster, from its id or its name in any language of the site, ignoring
    * accents and capitals. When versions of the game share the name, pass
    * `template` or `gameVersion` to pick one; otherwise Dofus (Unity) comes first.
    *
@@ -339,7 +368,7 @@ export class Dataset {
     if (candidates.length < 2) return [...candidates];
     const { monsterTemplates } = this.#load();
     const first = (monster: Monster) => monsterTemplates.get(monster.id)?.[0] ?? Number.MAX_SAFE_INTEGER;
-    return [...candidates].sort((a, b) => first(a) - first(b) || a.id - b.id);
+    return [...candidates].sort((a, b) => a.game_version.id - b.game_version.id || first(a) - first(b) || a.id - b.id);
   }
 
   #pick(candidates: readonly Monster[], hint: MonsterHint | undefined): Monster | undefined {
@@ -352,7 +381,7 @@ export class Dataset {
     }
     if (hint?.gameVersion !== undefined) {
       const version = this.gameVersion(hint.gameVersion);
-      const match = version && candidates.find((monster) => monsterTemplates.get(monster.id)?.some((id) => questTemplates.byId(id)?.game_version?.id === version.id));
+      const match = version && candidates.find((monster) => monster.game_version.id === version.id);
       if (match) return match;
     }
     return this.#rank(candidates)[0];
@@ -389,7 +418,7 @@ export class Dataset {
       if (template || version) {
         const templates = monsterTemplates.get(monster.id) ?? [];
         if (template && !templates.includes(template.id)) continue;
-        if (version && !templates.some((id) => questTemplates.byId(id)?.game_version?.id === version.id)) continue;
+        if (version && monster.game_version.id !== version.id) continue;
       }
       scored.push({ monster, score });
     }

@@ -23,11 +23,12 @@ export interface OwnQuestMonstersParams extends PageParams {
   /** Only this kind of monster. */
   type?: MonsterTypeLike | undefined;
   /**
-   * Progress, what you own against the number of parallel quests: `needed`,
-   * `ok`, `excess`. Trade, what the quest puts on the market after your trade
-   * settings: `wanted`, `offered`.
+   * Progress, what you own against the number of parallel quests: `needed`
+   * (all that is missing), `unowned` (not a single copy), `insufficient` (at
+   * least one copy, but fewer than needed), `ok`, `excess`. Trade, what the
+   * quest puts on the market after your trade settings: `wanted`, `offered`.
    */
-  status?: "needed" | "ok" | "excess" | "wanted" | "offered" | undefined;
+  status?: "needed" | "unowned" | "insufficient" | "ok" | "excess" | "wanted" | "offered" | undefined;
   /** `manual`: monsters with a manual trade override. `auto`: the others. */
   trade?: "manual" | "auto" | undefined;
   /** Only the monsters of this step. */
@@ -196,7 +197,7 @@ export class Quests {
 
   /**
    * Sets how many of a monster you own in a quest, from 0 to 99. The monster
-   * is an id or a name in French, English or Spanish.
+   * is an id or a name in any language of the site.
    *
    * @example
    * const result = await metamob.quests.setMonster("21b0a742", "Tofu Maléfique", 2);

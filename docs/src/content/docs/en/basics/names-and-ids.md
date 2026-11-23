@@ -5,7 +5,7 @@ sidebar:
   order: 1
 ---
 
-A monster can be given by its id or by its name, in any of the three languages of the site:
+A monster can be given by its id or by its name, in any of the five languages of the site:
 
 ```ts
 await metamob.monsters.get(21);
@@ -19,9 +19,9 @@ await metamob.monsters.get("Tofu maléfico"); // Spanish
 
 | What | Accepted | Where |
 | --- | --- | --- |
-| A monster | id, name in French, English or Spanish, `{ id }` | `monsters.get`, `quests.setMonster`, `quests.setMonsters`, `quests.setTrade` |
-| A zone | id, name in the three languages, `{ id }` | `zones.get`, `zones.subzones`, `quests.zones({ zone })` |
-| A subzone | id, name in the three languages, `{ id }` | `zones.subzone`, `zones.monsters`, `quests.zones({ subzone })` |
+| A monster | id, name in French, English, Spanish, Portuguese or German, `{ id }` | `monsters.get`, `quests.setMonster`, `quests.setMonsters`, `quests.setTrade` |
+| A zone | id, name in the five languages, `{ id }` | `zones.get`, `zones.subzones`, `quests.zones({ zone })` |
+| A subzone | id, name in the five languages, `{ id }` | `zones.subzone`, `zones.monsters`, `quests.zones({ subzone })` |
 | A server | id, name, `{ id }` | `servers.get`, `kralove.list({ server })`, `users.search(query, { server })` |
 | A kind of monster | 1, 2, 3, or `monstre`, `boss`, `archimonstre` and their translations | every `type` filter |
 | A version of the game | id, name, `{ id }` | `gameVersions.get`, the `gameVersion` hint |
@@ -80,7 +80,7 @@ data.searchMonsters("tofu", { limit: 5 }); // the monsters whose name contains "
 
 ## Monsters that share a name
 
-Six pairs of monsters, mostly archmonsters, share a name in at least one language, across two versions of the game, with two different ids. "Crognan le Barbare" is one monster on Dofus (Unity) and another on Dofus Retro and Dofus Touch.
+Each version of the game has its own monsters: the Tofu of Dofus Retro is not the one of Dofus (Unity), it has its own id. Most names therefore designate one monster per version. The same goes for zones and subzones: there are three Amakna.
 
 When you write to a quest, the quest decides. The library reads once the template the quest follows, and takes the monster of that template.
 
@@ -102,7 +102,7 @@ const ochreOnRetro = { questType: "ocre", gameVersion: "Dofus Retro (1.29)" } as
 const retro = await metamob.monsters.get(name, { template: ochreOnRetro });
 ```
 
-Without a hint, the monster of the quest template with the lowest id is returned. `data.monstersNamed(name)` lists every monster that answers to a name.
+Without a hint, the one of Dofus (Unity) is returned, and the same for a zone or a subzone. `data.monstersNamed(name)` lists every monster that answers to a name.
 
 ## Subzones and their zone
 
@@ -128,12 +128,12 @@ Each export has its page in the [reference](/reference/):
 | --- | --- |
 | [`normalizeName`](/reference/normalize-name/) | The form names are compared in: no accents, lower case, one kind of apostrophe and of dash, single spaces. |
 | [`GameVersionLike`](/reference/game-version-like/) | A version of the game: its id, its name, or an object with its `id`. |
-| [`MonsterLike`](/reference/monster-like/) | A monster: its id, its name in French, English or Spanish, or an object with its `id`. |
-| [`MonsterTypeLike`](/reference/monster-type-like/) | A kind of monster: its id (1, 2, 3), its name in French, English or Spanish, or an object with its `id`. |
+| [`MonsterLike`](/reference/monster-like/) | A monster: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`. |
+| [`MonsterTypeLike`](/reference/monster-type-like/) | A kind of monster: its id (1, 2, 3), its name in any language of the site, or an object with its `id`. |
 | [`QuestTemplateLike`](/reference/quest-template-like/) | A quest template: its id, an object with its `id`, or the kind of quest and the version of the game it is for. |
 | [`QuestTypeLike`](/reference/quest-type-like/) | A kind of quest: its id, its slug (`ocre`, `dokille`), its name, or an object with its `id`. |
 | [`ServerLike`](/reference/server-like/) | A server: its id, its name, or an object with its `id`. |
-| [`SubzoneLike`](/reference/subzone-like/) | A subzone: its id, its name in French, English or Spanish, or an object with its `id`. |
-| [`ZoneLike`](/reference/zone-like/) | A zone: its id, its name in French, English or Spanish, or an object with its `id`. |
-| [`GameVersionName`](/reference/game-version-name/), [`MonsterNameEn`](/reference/monster-name-en/), [`MonsterNameEs`](/reference/monster-name-es/), [`MonsterNameFr`](/reference/monster-name-fr/), [`MonsterTypeNameEn`](/reference/monster-type-name-en/), [`MonsterTypeNameEs`](/reference/monster-type-name-es/), [`MonsterTypeNameFr`](/reference/monster-type-name-fr/), [`QuestTemplateId`](/reference/quest-template-id/), [`QuestTypeNameEn`](/reference/quest-type-name-en/), [`QuestTypeNameEs`](/reference/quest-type-name-es/), [`QuestTypeNameFr`](/reference/quest-type-name-fr/), [`QuestTypeSlug`](/reference/quest-type-slug/), [`ServerName`](/reference/server-name/), [`SubzoneNameEn`](/reference/subzone-name-en/), [`SubzoneNameEs`](/reference/subzone-name-es/), [`SubzoneNameFr`](/reference/subzone-name-fr/), [`ZoneNameEn`](/reference/zone-name-en/), [`ZoneNameEs`](/reference/zone-name-es/), [`ZoneNameFr`](/reference/zone-name-fr/) | The names the package knows, one type per language: monsters, zones, subzones, kinds of monster and of quest, servers, game versions. |
+| [`SubzoneLike`](/reference/subzone-like/) | A subzone: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`. |
+| [`ZoneLike`](/reference/zone-like/) | A zone: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`. |
+| [`GameVersionName`](/reference/game-version-name/), [`MonsterNameDe`](/reference/monster-name-de/), [`MonsterNameEn`](/reference/monster-name-en/), [`MonsterNameEs`](/reference/monster-name-es/), [`MonsterNameFr`](/reference/monster-name-fr/), [`MonsterNamePt`](/reference/monster-name-pt/), [`MonsterTypeNameDe`](/reference/monster-type-name-de/), [`MonsterTypeNameEn`](/reference/monster-type-name-en/), [`MonsterTypeNameEs`](/reference/monster-type-name-es/), [`MonsterTypeNameFr`](/reference/monster-type-name-fr/), [`MonsterTypeNamePt`](/reference/monster-type-name-pt/), [`QuestTemplateId`](/reference/quest-template-id/), [`QuestTypeNameDe`](/reference/quest-type-name-de/), [`QuestTypeNameEn`](/reference/quest-type-name-en/), [`QuestTypeNameEs`](/reference/quest-type-name-es/), [`QuestTypeNameFr`](/reference/quest-type-name-fr/), [`QuestTypeNamePt`](/reference/quest-type-name-pt/), [`QuestTypeSlug`](/reference/quest-type-slug/), [`ServerName`](/reference/server-name/), [`SubzoneNameDe`](/reference/subzone-name-de/), [`SubzoneNameEn`](/reference/subzone-name-en/), [`SubzoneNameEs`](/reference/subzone-name-es/), [`SubzoneNameFr`](/reference/subzone-name-fr/), [`SubzoneNamePt`](/reference/subzone-name-pt/), [`ZoneNameDe`](/reference/zone-name-de/), [`ZoneNameEn`](/reference/zone-name-en/), [`ZoneNameEs`](/reference/zone-name-es/), [`ZoneNameFr`](/reference/zone-name-fr/), [`ZoneNamePt`](/reference/zone-name-pt/) | The names the package knows, one type per language: monsters, zones, subzones, kinds of monster and of quest, servers, game versions. |
 <!-- exports:end -->

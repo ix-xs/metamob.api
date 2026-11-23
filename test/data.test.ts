@@ -18,21 +18,29 @@ describe("the embedded data", () => {
   it("gives records the shape the API gives them", () => {
     expect(data.monster(472)).toEqual({
       id: 472,
-      name: { fr: "Aboudbra le Porteur", en: "Abounteous the Generous", es: "Abubanero el Naranja" },
-      image: expect.stringMatching(/\.png$/),
+      official_id: 2384,
+      name: { fr: "Aboudbra le Porteur", en: "Abounteous the Generous", es: "Abubanero el Naranja", pt: expect.any(String), de: expect.any(String) },
+      image: "472.png",
       level_min: expect.any(Number),
       level_max: expect.any(Number),
-      type: { id: 3, name: { fr: "archimonstre", en: "archmonster", es: "archimonstruo" } },
-      reference: { id: 121, name: { fr: "Aboub", en: "Aboub", es: "Abub" } },
+      type: { id: 3, name: { fr: "archimonstre", en: "archmonster", es: "archimonstruo", pt: "arquimonstro", de: "Archimonster" } },
+      game_version: { id: 1, name: "Dofus (Unity)" },
+      reference: { id: 121, official_id: 384, name: { fr: "Aboub", en: "Aboub", es: "Abub", pt: "Abub", de: "Aboub" } },
     });
     expect(data.monster("Aboub")?.reference).toBeUndefined();
     expect(data.server("Draconiros")).toEqual({ id: 12, name: "Draconiros", community: "World", game_version: { id: 1, name: "Dofus (Unity)" } });
-    expect(data.questType("ocre")).toEqual({ id: 1, slug: "ocre", name: { fr: "Ocre", en: "Ochre", es: "Ocre" }, image: "ocre.png" });
-    expect(data.subzone(48)).toEqual({ id: 48, name: { fr: "Akadémie des Gobs", en: "Gob Akademy", es: "Akademia de los Goblins" }, zone: { id: 1, name: { fr: "Amakna", en: "Amakna", es: "Amakna" } } });
+    expect(data.questType("ocre")).toEqual({ id: 1, slug: "ocre", name: { fr: "Ocre", en: "Ochre", es: "Ocre", pt: "Ocre", de: "Ocker" }, image: "ocre.png" });
+    expect(data.subzone(31)).toMatchObject({
+      id: 31,
+      name: { fr: "Champ des Ingalsse", en: "Ingalsses' Fields" },
+      game_version: { id: 1 },
+      zone: { id: 1, official_id: 0, name: { fr: "Amakna" }, game_version: { id: 1 } },
+    });
+    expect(data.zone(1)).toMatchObject({ official_id: 0, game_version: { id: 1, name: "Dofus (Unity)" } });
     expect(() => JSON.stringify([data.zones, data.subzones, data.monsters, data.questTemplates])).not.toThrow();
   });
 
-  it("finds by id, by name in three languages, by numeric string and by object", () => {
+  it("finds by id, by name in five languages, by numeric string and by object", () => {
     const tofu = data.monster("Tofu");
     expect(tofu?.id).toBe(20);
     expect(data.monster("  tofu  ")).toBe(tofu);
@@ -44,12 +52,15 @@ describe("the embedded data", () => {
     expect(data.monster("Evil Tofu")?.id).toBe(data.monster("Tofu Maléfique")?.id);
     expect(data.monster("Abounteous the Generous")?.id).toBe(472);
     expect(data.monster("Abubanero el Naranja")?.id).toBe(472);
+    expect(data.monster("Schattentofu")?.id).toBe(21);
+    expect(data.monster(data.monster(472)!.name.pt)?.id).toBe(472);
     expect(data.monster("no such monster")).toBeUndefined();
     expect(data.monster(999_999)).toBeUndefined();
 
     expect(data.zone("amakna")?.id).toBe(1);
     expect(data.zone(1)?.subzones.length).toBeGreaterThan(5);
-    expect(data.subzone("Gob Akademy")?.id).toBe(48);
+    expect(data.zone("amakna")?.game_version.id).toBe(1);
+    expect(data.subzone("Ingalsses' Fields")?.id).toBe(31);
     expect(data.gameVersion("dofus touch")?.id).toBe(3);
     expect(data.monsterType("boss")?.id).toBe(2);
     expect(data.monsterType("Archmonster")?.id).toBe(3);
@@ -57,16 +68,18 @@ describe("the embedded data", () => {
     expect(data.questType("Dosaurio")?.id).toBe(2);
   });
 
-  it("tells apart the archmonsters that share a name across versions of the game", () => {
+  it("tells apart the monsters that share a name across versions of the game", () => {
     const named = data.monstersNamed("Crognan le Barbare");
-    expect(named.map((monster) => monster.id)).toEqual([416, 725]);
+    expect(named.map((monster) => monster.id)).toEqual([416, 1433, 725]);
     expect(data.monster("Crognan le Barbare")?.id).toBe(416);
-    expect(data.monster("Crognan le Barbare", { gameVersion: "Dofus Retro (1.29)" })?.id).toBe(725);
+    expect(data.monster("Crognan le Barbare", { gameVersion: "Dofus Retro (1.29)" })?.id).toBe(1433);
     expect(data.monster("Crognan le Barbare", { gameVersion: "Dofus Touch" })?.id).toBe(725);
     expect(data.monster("Crognan le Barbare", { template: 1 })?.id).toBe(416);
     expect(data.monster("Crognan le Barbare", { template: { questType: "ocre", gameVersion: "Dofus Touch" } })?.id).toBe(725);
     expect(data.monster("Crognan le Barbare", { template: 4 })?.id).toBe(416);
-    expect(data.monstersNamed("Tofu")).toHaveLength(1);
+    // Each version has its own bestiary: Dofus (Unity) comes first.
+    expect(data.monstersNamed("Tofu").map((monster) => monster.game_version.id)).toEqual([1, 2, 3]);
+    expect(data.monster("Tofu", { gameVersion: "Dofus Retro (1.29)" })?.id).toBe(869);
     expect(data.monstersNamed("nope")).toEqual([]);
   });
 
@@ -84,9 +97,9 @@ describe("the embedded data", () => {
   });
 
   it("links monsters, subzones, zones and quest templates", () => {
-    expect(data.monstersInSubzone(48).map((monster) => monster.name.fr).sort()).toEqual(["Gob-trotteur", "Gobet"]);
+    expect(data.monstersInSubzone(31).map((monster) => monster.name.fr).sort()).toEqual(["Tofu", "Tofuldebeu l'Explosif"]);
     expect(data.monstersInSubzone("nowhere")).toEqual([]);
-    expect(data.subzonesOf("Gobet").map((subzone) => subzone.id)).toContain(48);
+    expect(data.subzonesOf("Gobet").map((subzone) => subzone.id)).toContain(47);
     expect(data.zonesOf("Gobet").map((zone) => zone.name.fr)).toContain("Amakna");
     expect(data.monstersInZone("Amakna").some((monster) => monster.name.fr === "Gobet")).toBe(true);
     expect(data.monstersInZone("nowhere")).toEqual([]);
@@ -97,7 +110,8 @@ describe("the embedded data", () => {
     expect(data.archmonstersOf("nobody")).toEqual([]);
 
     expect(data.templatesOf(416).map((template) => template.id)).toEqual([1]);
-    expect(data.templatesOf(725).map((template) => template.id)).toEqual([2, 3]);
+    expect(data.templatesOf(725).map((template) => template.id)).toEqual([3]);
+    expect(data.templatesOf(1433).map((template) => template.id)).toEqual([2]);
     expect(data.templatesOf("nobody")).toEqual([]);
 
     const touch = data.questTemplate({ questType: "ocre", gameVersion: "Dofus Touch" });
@@ -138,8 +152,7 @@ describe("normalizeName", () => {
     // As it is pasted from some pages: a non-breaking space, then an en dash.
     const pasted = `Expedition${String.fromCharCode(0xa0, 0x2013)} Scaraleaf Dungeon`;
     expect(normalizeName(pasted)).toBe("expedition - scaraleaf dungeon");
-    expect(data.subzone(201)?.name.en).toBe("Expedition - Scaraleaf Dungeon");
-    expect(data.subzone(pasted)?.id).toBe(201);
+    expect(normalizeName(pasted)).toBe(normalizeName("Expedition - Scaraleaf Dungeon"));
   });
 });
 

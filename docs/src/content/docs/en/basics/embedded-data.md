@@ -19,7 +19,7 @@ data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 
 ## What is in it
 
-The reference data of the API at the time the package was published: monsters, zones, subzones, servers, versions of the game, kinds of monsters, kinds of quests and quest templates. With the links between them: the monsters of each subzone, and those each quest template asks for.
+The reference data of the API at the time the package was published: monsters, zones, subzones, servers, versions of the game, kinds of monsters, kinds of quests and quest templates. With the links between them: the monsters of each subzone, and those each quest template asks for. Each version of the game has its own monsters, zones and subzones there, each with its `game_version` and its `official_id`.
 
 `data.fetchedAt` is the date of the copy. The records have the shape the API gives them: what you read from `data` has the same shape as the answer of a call.
 

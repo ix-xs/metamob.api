@@ -50,7 +50,7 @@ The API key is created on metamob.fr, in **Settings > API key**.
 ## What the package covers
 
 - **The 43 endpoints of the API**, typed: account, quests, trade partners, trade proposals, private messages, monsters, zones, players, Kralamoure events and reference data.
-- **Names**: a monster, a zone, a server or a kind of monster is given by its id or by its name, in French, English or Spanish. An unknown name throws an error that suggests the closest names.
+- **Names**: a monster, a zone, a server or a kind of monster is given by its id or by its name, in French, English, Spanish, Portuguese or German. An unknown name throws an error that suggests the closest names.
 - **Lists**: a paginated method is awaited for one page, or walked with `for await`.
 - **The rate limit**: the client counts the 60 requests a minute per key, and makes the next calls wait.
 - **Retries** after a 429, a server error or a network failure. Sending a message or a proposal is never retried.

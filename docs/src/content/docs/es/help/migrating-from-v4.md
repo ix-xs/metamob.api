@@ -140,7 +140,7 @@ La versión 4 incluía 50 de las 192 subzonas. La versión 5 las incluye todas, 
 
 - Un nombre que la biblioteca no encuentra lanza `UNKNOWN_NAME` con sugerencias. La versión 4 devolvía `{ ok: false }`.
 - Una búsqueda de menos de 3 caracteres lanza `INVALID_ARGUMENT` antes de gastar una solicitud. La API la rechaza de todos modos.
-- Seis pares de monstruos, sobre todo archimonstruos, comparten un nombre entre dos versiones del juego. La versión 4 tomaba el primero. La versión 5 elige el de la misión en la que escribes, consulta [Nombres e identificadores](/basics/names-and-ids/#monsters-that-share-a-name).
+- Cada versión del juego tiene sus propios monstruos, y la mayoría comparten su nombre de una versión a otra. La versión 4 tomaba el primero. La versión 5 elige el de la misión en la que escribes, consulta [Nombres e identificadores](/basics/names-and-ids/#monsters-that-share-a-name).
 
 
 El [registro de cambios](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md) lista todos los cambios, versión por versión.

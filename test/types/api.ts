@@ -9,7 +9,9 @@ import {
   METHODS,
   Metamob,
   type Monster,
+  type GameVersion,
   type MonsterDetail,
+  type MonsterZone,
   type MonsterLike,
   type MonsterNameFr,
   type MarkAsReadResult,
@@ -49,6 +51,18 @@ void wrong;
 export async function results() {
   expect<Equal<Awaited<ReturnType<typeof metamob.me>>, Account>>();
   expect<Equal<Awaited<ReturnType<typeof metamob.monsters.get>>, MonsterDetail>>();
+  // Each version of the game has its own monsters and zones, named in five languages.
+  const detail = await metamob.monsters.get("Tofu", { gameVersion: "Dofus Retro (1.29)" });
+  expect<Equal<typeof detail.official_id, number | null>>();
+  expect<Equal<typeof detail.game_version, GameVersion>>();
+  expect<Equal<keyof typeof detail.name, "fr" | "en" | "es" | "pt" | "de">>();
+  expect<Equal<(typeof detail.zones)[number], MonsterZone>>();
+  const zones = await metamob.zones.list({ gameVersion: "Dofus Touch", officialId: 0 });
+  expect<Equal<(typeof zones)[number]["game_version"], GameVersion>>();
+  metamob.quests.monsters("a1b2c3d4", { status: "unowned" });
+  const ownMonsters = await metamob.quests.monsters("a1b2c3d4");
+  // @ts-expect-error a monster inside a quest belongs to the version of the quest
+  void ownMonsters.items[0]?.game_version;
 
   // A list awaits to a page and iterates over items.
   const request = metamob.monsters.list();

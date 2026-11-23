@@ -1,14 +1,16 @@
 // The shapes the API answers with, under the API's own field names. Dates are ISO 8601 strings in UTC.
 
-/** A name in the three languages of the site. */
+/** A name in the languages of the site. */
 export interface LocalizedName {
   fr: string;
   en: string;
   es: string;
+  pt: string;
+  de: string;
 }
 
 /** A language the site is translated in. */
-export type Language = "fr" | "en" | "es";
+export type Language = "fr" | "en" | "es" | "pt" | "de";
 
 /** A version of the game: Dofus (Unity), Dofus Retro (1.29) or Dofus Touch. */
 export interface GameVersion {
@@ -68,12 +70,20 @@ export interface QuestTemplateRef {
 /** The base monster of an archmonster. */
 export interface MonsterReference {
   id: number;
+  /** Identifier of the monster in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
   name: LocalizedName;
 }
 
-/** A monster. */
-export interface Monster {
+/** A monster, wherever it appears inside something else: a quest, a step. */
+export interface MonsterBase {
   id: number;
+  /**
+   * Identifier of the monster in the game client: the DofusDB id for Dofus
+   * (Unity), the one of the game data for Retro and Touch. Unique within a
+   * version of the game only. `null` when unknown.
+   */
+  official_id: number | null;
   name: LocalizedName;
   /** File name of the image. `urls.monsterImage()` turns it into a URL. */
   image: string;
@@ -84,32 +94,59 @@ export interface Monster {
   reference?: MonsterReference | undefined;
 }
 
-/** A zone of the game. */
-export interface Zone {
+/**
+ * A monster, with its version of the game. Each version has its own monsters:
+ * the Tofu of Dofus Retro is not the Tofu of Dofus (Unity), it has its own id.
+ */
+export interface Monster extends MonsterBase {
+  game_version: GameVersion;
+}
+
+/** A subzone as a monster or a quest names it: its id and name. */
+export interface SubzoneRef {
   id: number;
+  /** Identifier of the subzone in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
   name: LocalizedName;
 }
 
-/** A subzone as it appears in a list: its id and name. */
-export interface SubzoneRef {
+/** A zone of the game. Each version of the game has its own: there are three Amakna. */
+export interface Zone {
   id: number;
+  /** Identifier of the zone in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
   name: LocalizedName;
+  game_version: GameVersion;
+}
+
+/** A subzone as a zone lists it. */
+export interface ZoneSubzone extends SubzoneRef {
+  game_version: GameVersion;
 }
 
 /** A zone with its subzones. */
 export interface ZoneDetail extends Zone {
-  subzones: SubzoneRef[];
+  subzones: ZoneSubzone[];
 }
 
 /** A subzone with the zone it belongs to. */
-export interface Subzone extends SubzoneRef {
+export interface Subzone extends ZoneSubzone {
   zone: Zone;
+}
+
+/** A zone where a monster lives, with the subzones concerned. It belongs to the version of the monster. */
+export interface MonsterZone {
+  id: number;
+  /** Identifier of the zone in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
+  name: LocalizedName;
+  subzones: SubzoneRef[];
 }
 
 /** A monster with the places it lives in. */
 export interface MonsterDetail extends Monster {
   /** Zones where the monster can be found, each with the subzones concerned. */
-  zones: ZoneDetail[];
+  zones: MonsterZone[];
 }
 
 /** A monster of a quest template, with the step it belongs to. */
@@ -167,6 +204,8 @@ export interface KraloveEventDetail {
 /** The monster a user picked as their avatar. */
 export interface Avatar {
   id: number;
+  /** Identifier in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
   name: LocalizedName;
   image: string;
 }
@@ -228,7 +267,7 @@ export interface UserProfile extends Account {
 }
 
 /** A monster of a quest, as anyone can see it. */
-export interface QuestMonster extends Monster {
+export interface QuestMonster extends MonsterBase {
   /** Step of the quest the monster belongs to. */
   step: number;
   /** How many the player owns. */
@@ -369,6 +408,8 @@ export interface TradeOverrideResult {
 /** A monster one side of a match can give the other. */
 export interface MatchMonster {
   id: number;
+  /** Identifier in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
   name: LocalizedName;
   /** Quantity available for the trade. */
   available: number;
@@ -395,6 +436,8 @@ export interface TradeMatch {
 /** A monster in the progress of a quest by zone. */
 export interface ZoneProgressMonster {
   id: number;
+  /** Identifier in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
   name: LocalizedName;
   image: string;
   type: MonsterType | null;
@@ -413,6 +456,8 @@ export interface ZoneProgressMonster {
 /** The progress of a quest in one subzone. */
 export interface SubzoneProgress {
   id: number;
+  /** Identifier in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
   name: LocalizedName;
   completed: number;
   total: number;
@@ -422,6 +467,8 @@ export interface SubzoneProgress {
 /** The progress of a quest in one zone. */
 export interface ZoneProgress {
   id: number;
+  /** Identifier in the game client, unique within its version of the game. `null` when unknown. */
+  official_id: number | null;
   name: LocalizedName;
   completed: number;
   total: number;

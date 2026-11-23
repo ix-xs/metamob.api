@@ -3,8 +3,8 @@
 //   node scripts/update-data.mjs            # fetch, write the snapshot, list what changed
 //   node scripts/update-data.mjs --check    # fetch and fail when the snapshot is out of date
 //
-// Needs METAMOB_API_KEY, from the environment or `.env`. About 240 requests at
-// 44 a minute, so five to six minutes. Run `npm run generate` afterwards.
+// Needs METAMOB_API_KEY, from the environment or `.env`. About 650 requests at
+// 44 a minute, so about fifteen minutes. Run `npm run generate` afterwards.
 
 import { existsSync } from "node:fs";
 import { sleep } from "@ix-xs/node-comfort/async";
@@ -76,6 +76,8 @@ const templateList = (await get("/quest-templates")).data;
 step("monsters");
 const monsters = (await all("/monsters")).map((monster) => ({
   id: monster.id,
+  official_id: monster.official_id ?? null,
+  game_version: monster.game_version?.id ?? null,
   name: monster.name,
   image: monster.image,
   level_min: monster.level_min,
@@ -100,13 +102,13 @@ for (const template of templateList) {
 
 step("zones and subzones");
 const zoneList = (await get("/zones")).data;
-const zones = zoneList.map((zone) => ({ id: zone.id, name: zone.name }));
+const zones = zoneList.map((zone) => ({ id: zone.id, official_id: zone.official_id ?? null, game_version: zone.game_version?.id ?? null, name: zone.name }));
 const subzones = [];
 for (const zone of zoneList) {
   const detail = (await get(`/zones/${zone.id}`)).data;
   for (const subzone of detail.subzones ?? []) {
     const found = (await get(`/zones/${zone.id}/subzones/${subzone.id}/monsters`)).data;
-    subzones.push({ id: subzone.id, name: subzone.name, zone: zone.id, monsters: found.map((monster) => monster.id) });
+    subzones.push({ id: subzone.id, official_id: subzone.official_id ?? null, game_version: subzone.game_version?.id ?? null, name: subzone.name, zone: zone.id, monsters: found.map((monster) => monster.id) });
   }
   step(`  ${zone.name.fr}: ${detail.subzones?.length ?? 0} subzones`);
 }

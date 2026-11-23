@@ -140,7 +140,7 @@ La version 4 livrait 50 des 192 sous-zones. La version 5 les livre toutes, donc 
 
 - Un nom que la bibliothèque ne trouve pas lève `UNKNOWN_NAME` avec des suggestions. La version 4 renvoyait `{ ok: false }`.
 - Une recherche de moins de 3 caractères lève `INVALID_ARGUMENT` avant qu'une requête soit dépensée. L'API la refuse de toute façon.
-- Six paires de monstres, surtout des archimonstres, partagent un nom entre deux versions du jeu. La version 4 prenait le premier. La version 5 choisit celui de la quête dans laquelle vous écrivez, voir [Noms et identifiants](/basics/names-and-ids/#monsters-that-share-a-name).
+- Chaque version du jeu a ses propres monstres, et la plupart partagent leur nom d'une version à l'autre. La version 4 prenait le premier. La version 5 choisit celui de la quête dans laquelle vous écrivez, voir [Noms et identifiants](/basics/names-and-ids/#monsters-that-share-a-name).
 
 
 Le [journal des modifications](https://github.com/ix-xs/metamob.api/blob/main/CHANGELOG.md) liste tous les changements, version par version.

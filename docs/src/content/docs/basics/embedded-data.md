@@ -19,7 +19,7 @@ data.zonesOf("Tofu Maléfique").map((zone) => zone.name.fr); // ["Amakna"]
 
 ## Ce qu'il y a dedans
 
-Les données de référence de l'API au moment de la publication du paquet : monstres, zones, sous-zones, serveurs, versions du jeu, types de monstres, types et modèles de quête. Avec les liens entre eux : les monstres de chaque sous-zone, et ceux que demande chaque modèle de quête.
+Les données de référence de l'API au moment de la publication du paquet : monstres, zones, sous-zones, serveurs, versions du jeu, types de monstres, types et modèles de quête. Avec les liens entre eux : les monstres de chaque sous-zone, et ceux que demande chaque modèle de quête. Chaque version du jeu y a ses propres monstres, zones et sous-zones, chacun avec sa `game_version` et son `official_id`.
 
 `data.fetchedAt` est la date de la copie. Les enregistrements ont la forme que l'API leur donne : ce que vous lisez dans `data` a la même forme que la réponse d'un appel.
 

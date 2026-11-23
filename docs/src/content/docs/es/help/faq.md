@@ -41,7 +41,7 @@ Sí, con cuidado con la clave: consulta [Entornos de ejecución](/help/runtimes/
 
 ## ¿En qué idioma están los nombres?
 
-En francés, en inglés y en español. Cada monstruo, zona y subzona tiene un `name` con `fr`, `en` y `es`, y los tres se aceptan en cualquier sitio donde se acepta un nombre: consulta [Nombres e identificadores](/basics/names-and-ids/).
+En francés, inglés, español, portugués y alemán. Cada monstruo, zona y subzona tiene un `name` con `fr`, `en`, `es`, `pt` y `de`, y los cinco se aceptan en cualquier sitio donde se acepta un nombre: consulta [Nombres e identificadores](/basics/names-and-ids/).
 
 ## ¿Están al día los datos del paquete?
 

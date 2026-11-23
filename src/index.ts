@@ -34,7 +34,7 @@ export type { MatchesParams, MonsterQuantities, OwnQuestMonstersParams, Quests, 
 export type { GameVersions, MonsterTypes, QuestTemplates, QuestTypes, Servers, TemplateHeader, TemplateMonstersParams } from "./resources/reference.js";
 export type { PublicQuestParams, UserSearchParams, Users } from "./resources/users.js";
 export type { ApplyProposalOptions, NewTradeProposal, TradeProposalListParams, TradeProposals } from "./resources/trade-proposals.js";
-export type { SubzoneParams, Zones } from "./resources/zones.js";
+export type { SubzoneParams, ZoneListParams, Zones } from "./resources/zones.js";
 
 export type * from "./types.js";
 

@@ -41,7 +41,7 @@ Yes, with care for the key: see [Runtimes](/help/runtimes/#browsers). The `data`
 
 ## In which language are the names?
 
-French, English and Spanish. Every monster, zone and subzone has a `name` with `fr`, `en` and `es`, and all three are accepted wherever a name is: see [Names and ids](/basics/names-and-ids/).
+French, English, Spanish, Portuguese and German. Every monster, zone and subzone has a `name` with `fr`, `en`, `es`, `pt` and `de`, and all five are accepted wherever a name is: see [Names and ids](/basics/names-and-ids/).
 
 ## How current is the data in the package?
 

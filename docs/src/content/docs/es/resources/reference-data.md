@@ -119,7 +119,7 @@ Cada export tiene su página en la [referencia](/reference/):
 | [`QuestTypes`](/reference/quest-types/) | Los tipos de misión. |
 | [`Servers`](/reference/servers/) | Los servidores de juego. |
 | [`GameVersion`](/reference/game-version/) | Una versión del juego: Dofus (Unity), Dofus Retro (1.29) o Dofus Touch. |
-| [`LocalizedName`](/reference/localized-name/) | Un nombre en los tres idiomas del sitio. |
+| [`LocalizedName`](/reference/localized-name/) | Un nombre en los idiomas del sitio. |
 | [`QuestTemplate`](/reference/quest-template/) | Una plantilla de misión: los monstruos que capturar para un tipo de misión en una versión del juego. |
 | [`QuestTemplateRef`](/reference/quest-template-ref/) | La plantilla que sigue una misión, tal como aparece dentro de una misión. |
 | [`QuestType`](/reference/quest-type/) | Un tipo de misión tal como lo devuelve `questTypes`, con su imagen. |

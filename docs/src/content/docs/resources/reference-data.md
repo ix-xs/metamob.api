@@ -119,7 +119,7 @@ Chaque export a sa page dans la [référence](/reference/) :
 | [`QuestTypes`](/reference/quest-types/) | Les types de quêtes. |
 | [`Servers`](/reference/servers/) | Les serveurs de jeu. |
 | [`GameVersion`](/reference/game-version/) | Une version du jeu : Dofus (Unity), Dofus Retro (1.29) ou Dofus Touch. |
-| [`LocalizedName`](/reference/localized-name/) | Un nom dans les trois langues du site. |
+| [`LocalizedName`](/reference/localized-name/) | Un nom dans les langues du site. |
 | [`QuestTemplate`](/reference/quest-template/) | Un modèle de quête : les monstres à capturer pour un type de quête dans une version du jeu. |
 | [`QuestTemplateRef`](/reference/quest-template-ref/) | Le modèle que suit une quête, tel qu'il apparaît dans une quête. |
 | [`QuestType`](/reference/quest-type/) | Un type de quête tel que le renvoie `questTypes`, avec son image. |

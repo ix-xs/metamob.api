@@ -3,7 +3,37 @@
 All notable changes to `@ix-xs/metamob.api` are documented here. This project
 adheres to [Semantic Versioning](https://semver.org).
 
-## Unreleased
+## 5.6.0
+
+Follows the updates of the Metamob API of 20 and 22 November 2026.
+
+### Added
+
+- Names in Portuguese and German: `name` carries `pt` and `de` next to
+  `fr`, `en` and `es`, and a monster, a zone, a subzone or a kind of monster
+  is found by its name in any of the five languages. Types `MonsterNamePt`,
+  `MonsterNameDe` and the same for zones, subzones, kinds of monster and of
+  quest.
+- `official_id` on every monster, zone and subzone: its id in the game client,
+  the same as DofusDB for Dofus (Unity), unique within a version of the game.
+- `game_version` on a monster, a zone and a subzone read on their own.
+- `gameVersion` and `officialId` filters in `monsters.list()` and
+  `zones.list()`. Type `ZoneListParams`.
+- `status: "unowned"` and `status: "insufficient"` in `quests.monsters()`:
+  the monsters you own none of, and the ones you own some of but not enough.
+- Types `MonsterBase`, `MonsterZone` and `ZoneSubzone`.
+
+### Changed
+
+- Each version of the game has its own monsters, zones and subzones in the API,
+  and so in the embedded data: 1886 monsters instead of 844. A name shared by
+  several versions gives the one of Dofus (Unity) unless you say otherwise;
+  writing to a quest still picks the monster of that quest.
+- A monster inside a quest (`QuestMonster`) has no `game_version`: it
+  belongs to the version of the quest.
+- The images of the monsters are named after their id.
+
+### Documentation
 
 - The documentation site is a plain documentation for developers: it opens on
   the installation, then the API key and the configuration, the basics, one

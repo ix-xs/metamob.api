@@ -41,7 +41,7 @@ Oui, en faisant attention à la clé : voir [Environnements d'exécution](/help/
 
 ## Dans quelle langue sont les noms ?
 
-En français, en anglais et en espagnol. Chaque monstre, zone et sous-zone a un `name` avec `fr`, `en` et `es`, et les trois sont acceptés partout où un nom l'est : voir [Noms et identifiants](/basics/names-and-ids/).
+En français, anglais, espagnol, portugais et allemand. Chaque monstre, zone et sous-zone a un `name` avec `fr`, `en`, `es`, `pt` et `de`, et les cinq sont acceptés partout où un nom l'est : voir [Noms et identifiants](/basics/names-and-ids/).
 
 ## Les données du paquet sont-elles à jour ?
 

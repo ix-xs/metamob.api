@@ -8,6 +8,8 @@ export interface FinderLabels {
   fr: string;
   en: string;
   es: string;
+  pt: string;
+  de: string;
   loose: string;
   exact: string;
   ambiguous: string;
@@ -90,6 +92,9 @@ function card(data: Dataset, monster: Monster, matched: string): string {
       row("monster.name.fr", s(monster.name.fr)),
       row("monster.name.en", s(monster.name.en)),
       row("monster.name.es", s(monster.name.es)),
+      row("monster.name.pt", s(monster.name.pt)),
+      row("monster.name.de", s(monster.name.de)),
+      row("monster.game_version.name", s(monster.game_version.name)),
       monster.type ? row("monster.type.name.fr", s(monster.type.name.fr)) : "",
       row("monster.level_min", n(monster.level_min)),
       row("monster.level_max", n(monster.level_max)),
@@ -102,7 +107,7 @@ function card(data: Dataset, monster: Monster, matched: string): string {
 
 function matched(monster: Monster, text: string, labels: FinderLabels): string {
   const wanted = text.trim();
-  const language = (["fr", "en", "es"] as const).find((code) => normalizeName(monster.name[code]) === normalizeName(wanted)) ?? "fr";
+  const language = (["fr", "en", "es", "pt", "de"] as const).find((code) => normalizeName(monster.name[code]) === normalizeName(wanted)) ?? "fr";
   return `${labels[language]}, ${monster.name[language] === wanted ? labels.exact : labels.loose}`;
 }
 

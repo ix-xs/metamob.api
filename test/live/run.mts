@@ -55,7 +55,9 @@ async function step<T>(name: string, run: () => Promise<T>): Promise<T | undefin
   }
 }
 
-const MONSTER = ["id", "name", "image", "level_min", "level_max", "type"];
+const MONSTER_BASE = ["id", "official_id", "name", "image", "level_min", "level_max", "type"];
+const MONSTER = [...MONSTER_BASE, "game_version"];
+const NAME = ["fr", "en", "es", "pt", "de"];
 const QUEST = ["slug", "character_name", "current_step", "parallel_quests", "server", "quest_template"];
 
 const me = await step("me()", async () => {
@@ -89,6 +91,8 @@ await step("reference data matches the embedded copy", async () => {
   drift("game versions", versions, data.gameVersions);
   drift("quest types", questTypes, data.questTypes);
   drift("quest templates", templates, data.questTemplates);
+  const zones = await metamob.zones.list();
+  drift("zones", zones, data.zones);
   const communities = [...new Set(servers.map((server) => server.community))].filter((community) => community !== "World" && community !== "France");
   if (communities.length) problems.push(`servers: communities the types do not list: ${communities.join(", ")}`);
 });
@@ -96,6 +100,7 @@ await step("reference data matches the embedded copy", async () => {
 await step("monsters.list() and count()", async () => {
   const page = await metamob.monsters.list({ limit: 3 });
   shape("Monster", page.items[0], MONSTER, ["reference"]);
+  shape("LocalizedName", page.items[0]?.name, NAME);
   if (page.total !== data.monsters.length) problems.push(`monsters: the API has ${page.total}, the embedded data ${data.monsters.length}. Run \`npm run data:update\`.`);
   const archmonsters = await metamob.monsters.list({ type: "archimonstre" }).count();
   console.log(`      ${page.total} monsters, ${archmonsters} archmonsters`);
@@ -107,17 +112,25 @@ await step('monsters.get("Tofu") and search', async () => {
   if (tofu.id !== data.monster("Tofu")?.id) problems.push("monsters.get: the API and the embedded data disagree on the id of Tofu");
   const found = await metamob.monsters.search("tofu").take(3);
   if (!found.length) problems.push("monsters.search: nothing found for tofu");
+  if (tofu.zones[0]) shape("MonsterZone", tofu.zones[0], ["id", "official_id", "name", "subzones"]);
+  // One monster per version of the game, and one by its id in the game client.
+  const retro = await metamob.monsters.list({ gameVersion: "Dofus Retro (1.29)", limit: 5 });
+  for (const monster of retro.items) if (monster.game_version.id !== 2) problems.push(`monsters gameVersion filter let through version ${monster.game_version.id}`);
+  if (tofu.official_id !== null) {
+    const same = await metamob.monsters.list({ gameVersion: tofu.game_version, officialId: tofu.official_id }).take(1);
+    if (same[0]?.id !== tofu.id) problems.push("monsters officialId filter: Tofu not found by its id in the game client");
+  }
 });
 
 await step("zones: list, get, subzone, monsters", async () => {
   const zones = await metamob.zones.list();
-  shape("Zone", zones[0], ["id", "name"]);
+  shape("Zone", zones[0], ["id", "official_id", "name", "game_version"]);
   if (zones.length !== data.zones.length) problems.push(`zones: the API lists ${zones.length}, the embedded data ${data.zones.length}. Run \`npm run data:update\`.`);
   const zone = await metamob.zones.get(zones[0]!);
-  shape("ZoneDetail", zone, ["id", "name", "subzones"]);
+  shape("ZoneDetail", zone, ["id", "official_id", "name", "game_version", "subzones"]);
   const first = zone.subzones[0];
   if (first) {
-    shape("Subzone", await metamob.zones.subzone(first, { zone }), ["id", "name", "zone"]);
+    shape("Subzone", await metamob.zones.subzone(first, { zone }), ["id", "official_id", "name", "game_version", "zone"]);
     const monsters = await metamob.zones.monsters(first, { zone });
     if (monsters[0]) shape("Monster of a subzone", monsters[0], MONSTER, ["reference"]);
   }
@@ -154,7 +167,7 @@ const slugs = await step("users: search, get, quests, quest", async () => {
   shape("QuestTemplateRef", quests[0].quest_template, ["id", "quest_type", "monster_count", "step_count"]);
   const monsters = await metamob.users.quest(me.username, quests[0].slug, { limit: 2 });
   shape("PublicQuest", monsters.quest, QUEST);
-  shape("QuestMonster", monsters.items[0], [...MONSTER, "step", "quantity", "want", "offer"], ["reference"]);
+  shape("QuestMonster", monsters.items[0], [...MONSTER_BASE, "step", "quantity", "want", "offer"], ["reference"]);
 });
 void slugs;
 
@@ -265,15 +278,18 @@ const own = await step("quests: list, get, monsters, matches, zones", async () =
   const slug = quests[0].slug;
   shape("QuestSettings", await metamob.quests.get(slug), [...QUEST, "show_trades", "is_favorite", "trade_mode", "trade_offer_threshold", "trade_want_threshold", "type_filters"]);
   const page = await metamob.quests.monsters(slug, { limit: 2 });
-  shape("OwnQuestMonster", page.items[0], [...MONSTER, "step", "quantity", "want", "offer", "trade_offer", "trade_want"], ["reference"]);
+  shape("OwnQuestMonster", page.items[0], [...MONSTER_BASE, "step", "quantity", "want", "offer", "trade_offer", "trade_want"], ["reference"]);
   const needed = await metamob.quests.monsters(slug, { status: "needed" }).count();
+  const unowned = await metamob.quests.monsters(slug, { status: "unowned" }).count();
+  const insufficient = await metamob.quests.monsters(slug, { status: "insufficient" }).count();
+  if ((unowned ?? 0) + (insufficient ?? 0) !== needed) problems.push(`quests.monsters: unowned (${unowned}) and insufficient (${insufficient}) do not add up to needed (${needed})`);
   const matches = await metamob.quests.matches(slug, { limit: 2 });
   if (matches.items[0]) shape("TradeMatch", matches.items[0], ["user", "quest", "matches", "match_score"]);
   const zones = await metamob.quests.zones(slug, { zone: 1 });
   if (zones[0]) {
-    shape("ZoneProgress", zones[0], ["id", "name", "completed", "total", "subzones"]);
+    shape("ZoneProgress", zones[0], ["id", "official_id", "name", "completed", "total", "subzones"]);
     const monster = zones[0].subzones[0]?.monsters[0];
-    if (monster) shape("ZoneProgressMonster", monster, ["id", "name", "image", "type", "step", "owned", "required", "status", "offer", "want"]);
+    if (monster) shape("ZoneProgressMonster", monster, ["id", "official_id", "name", "image", "type", "step", "owned", "required", "status", "offer", "want"]);
   }
   console.log(`      ${quests.length} quests; ${needed} of ${page.total} monsters still needed in ${slug}`);
   return quests.map((quest) => quest.slug);

@@ -540,20 +540,20 @@
   "es": "Un servidor, por su identificador o su nombre."
  },
  "Dataset.zone": {
-  "en": "A zone with its subzones, from its id or its name.",
-  "es": "Una zona con sus subzonas, por su identificador o su nombre."
+  "en": "A zone with its subzones, from its id or its name. Each version of the game has its own zones: a name gives the one of Dofus (Unity).",
+  "es": "Una zona con sus subzonas, a partir de su identificador o de su nombre. Cada versión del juego tiene sus propias zonas: un nombre da la de Dofus (Unity)."
  },
  "Dataset.subzone": {
-  "en": "A subzone with its zone, from its id or its name.",
-  "es": "Una subzona con su zona, por su identificador o su nombre."
+  "en": "A subzone with its zone, from its id or its name. A name shared by versions of the game gives the one of Dofus (Unity).",
+  "es": "Una subzona con su zona, a partir de su identificador o de su nombre. Un nombre compartido por varias versiones del juego da la de Dofus (Unity)."
  },
  "Dataset.questTemplate": {
   "en": "A quest template, from its id or from the kind of quest and the version\nof the game it is for.",
   "es": "Una plantilla de misión, por su identificador o por el tipo de misión y la versión\ndel juego a la que corresponde."
  },
  "Dataset.monster": {
-  "en": "A monster, from its id or its name in French, English or Spanish, ignoring\naccents and capitals. When versions of the game share the name, pass\n`template` or `gameVersion` to pick one; otherwise Dofus (Unity) comes first.",
-  "es": "Un monstruo, por su identificador o su nombre en francés, inglés o español, sin tener en cuenta\nacentos ni mayúsculas. Cuando varias versiones del juego comparten el nombre, pasa\n`template` o `gameVersion` para elegir uno; si no, Dofus (Unity) va primero."
+  "en": "A monster, from its id or its name in any language of the site, ignoring\naccents and capitals. When versions of the game share the name, pass\n`template` or `gameVersion` to pick one; otherwise Dofus (Unity) comes first.",
+  "es": "Un monstruo, a partir de su identificador o de su nombre en cualquier idioma del sitio, sin tener en cuenta\nacentos ni mayúsculas. Cuando varias versiones del juego comparten el nombre, pasa\n`template` o `gameVersion` para elegir uno; si no, Dofus (Unity) va primero."
  },
  "Dataset.monstersNamed": {
   "en": "Every monster that answers to a name. Several when versions of the game share it.",
@@ -620,8 +620,8 @@
   "es": "Prefiere el monstruo de esta versión del juego."
  },
  "MonsterLike": {
-  "en": "A monster: its id, its name in French, English or Spanish, or an object with its `id`.",
-  "es": "Un monstruo: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`."
+  "en": "A monster: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`.",
+  "es": "Un monstruo: su identificador, su nombre en francés, inglés, español, portugués o alemán, o un objeto con su `id`."
  },
  "MonsterSearchOptions": {
   "en": "Options of [`Dataset.searchMonsters`](ref:Dataset).",
@@ -636,8 +636,8 @@
   "es": "Resultados que devolver. Por defecto 25."
  },
  "MonsterTypeLike": {
-  "en": "A kind of monster: its id (1, 2, 3), its name in French, English or Spanish, or an object with its `id`.",
-  "es": "Un tipo de monstruo: su identificador (1, 2, 3), su nombre en francés, inglés o español, o un objeto con su `id`."
+  "en": "A kind of monster: its id (1, 2, 3), its name in any language of the site, or an object with its `id`.",
+  "es": "Un tipo de monstruo: su identificador (1, 2, 3), su nombre en cualquier idioma del sitio, o un objeto con su `id`."
  },
  "QuestTemplateLike": {
   "en": "A quest template: its id, an object with its `id`, or the kind of quest and the version of the game it is for.",
@@ -652,12 +652,12 @@
   "es": "Un servidor: su identificador, su nombre, o un objeto con su `id`."
  },
  "SubzoneLike": {
-  "en": "A subzone: its id, its name in French, English or Spanish, or an object with its `id`.",
-  "es": "Una subzona: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`."
+  "en": "A subzone: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`.",
+  "es": "Una subzona: su identificador, su nombre en francés, inglés, español, portugués o alemán, o un objeto con su `id`."
  },
  "ZoneLike": {
-  "en": "A zone: its id, its name in French, English or Spanish, or an object with its `id`.",
-  "es": "Una zona: su identificador, su nombre en francés, inglés o español, o un objeto con su `id`."
+  "en": "A zone: its id, its name in French, English, Spanish, Portuguese or German, or an object with its `id`.",
+  "es": "Una zona: su identificador, su nombre en francés, inglés, español, portugués o alemán, o un objeto con su `id`."
  },
  "normalizeName": {
   "en": "The form names are compared in: no accents, lower case, one kind of\napostrophe and of dash, single spaces. `\"  Tofu MALÉFIQUE \"` gives `\"tofu malefique\"`.",
@@ -744,8 +744,8 @@
   "es": "Filtros de [`Monsters.list`](ref:Monsters)."
  },
  "MonsterListParams.query": {
-  "en": "Search by name, in French, English or Spanish. At least 3 characters.",
-  "es": "Búsqueda por nombre, en francés, inglés o español. Al menos 3 caracteres."
+  "en": "Search by name, in any language of the site. At least 3 characters.",
+  "es": "Búsqueda por nombre, en cualquier idioma del sitio. Al menos 3 caracteres."
  },
  "MonsterListParams.type": {
   "en": "Only this kind of monster: `\"monstre\"`, `\"boss\"`, `\"archimonstre\"`, or its id.",
@@ -760,8 +760,8 @@
   "es": "Los monstruos, opcionalmente buscados por nombre y filtrados por tipo. Espérala\npara obtener una página, o recórrela para obtenerlos todos."
  },
  "Monsters.get": {
-  "en": "One monster, from its id or its name in French, English or Spanish, with\nthe zones where it can be found and, for an archmonster, its base monster.\nWhen versions of the game share the name, pass `gameVersion` or `template`.",
-  "es": "Un monstruo, por su identificador o su nombre en francés, inglés o español, con\nlas zonas donde se encuentra y, si es un archimonstruo, su monstruo de base.\nCuando varias versiones del juego comparten el nombre, pasa `gameVersion` o `template`."
+  "en": "One monster, from its id or its name in any language of the site, with\nthe zones where it can be found and, for an archmonster, its base monster.\nWhen versions of the game share the name, pass `gameVersion` or `template`.",
+  "es": "Un monstruo, a partir de su identificador o de su nombre en cualquier idioma del sitio, con\nlas zonas donde se encuentra y, para un archimonstruo, su monstruo base.\nCuando varias versiones del juego comparten el nombre, pasa `gameVersion` o `template`."
  },
  "Monsters.search": {
   "en": "Shorthand for `list({ query, ...params })`.",
@@ -792,8 +792,8 @@
   "es": "Solo este tipo de monstruo."
  },
  "OwnQuestMonstersParams.status": {
-  "en": "Progress, what you own against the number of parallel quests: `needed`,\n`ok`, `excess`. Trade, what the quest puts on the market after your trade\nsettings: `wanted`, `offered`.",
-  "es": "Progreso, lo que posees frente al número de misiones en paralelo: `needed`,\n`ok`, `excess`. Intercambio, lo que la misión pone en el mercado tras tus ajustes\nde intercambio: `wanted`, `offered`."
+  "en": "Progress, what you own against the number of parallel quests: `needed`\n(all that is missing), `unowned` (not a single copy), `insufficient` (at\nleast one copy, but fewer than needed), `ok`, `excess`. Trade, what the\nquest puts on the market after your trade settings: `wanted`, `offered`.",
+  "es": "Progreso, lo que posees frente al número de misiones en paralelo: `needed`\n(todo lo que falta), `unowned` (ningún ejemplar), `insufficient` (al\nmenos un ejemplar, pero menos de los necesarios), `ok`, `excess`. Intercambio, lo que la\nmisión pone en el mercado tras tus ajustes de intercambio: `wanted`, `offered`."
  },
  "OwnQuestMonstersParams.trade": {
   "en": "`manual`: monsters with a manual trade override. `auto`: the others.",
@@ -824,8 +824,8 @@
   "es": "Los monstruos de una de tus misiones, con lo que posees, lo que la misión\nbusca y ofrece, y tus ajustes manuales de intercambio. También funciona con una misión\noculta. Espérala para obtener una página, o recórrela para obtenerlos todos."
  },
  "Quests.setMonster": {
-  "en": "Sets how many of a monster you own in a quest, from 0 to 99. The monster\nis an id or a name in French, English or Spanish.",
-  "es": "Fija cuántos ejemplares de un monstruo posees en una misión, de 0 a 99. El monstruo\nes un identificador o un nombre en francés, inglés o español."
+  "en": "Sets how many of a monster you own in a quest, from 0 to 99. The monster\nis an id or a name in any language of the site.",
+  "es": "Fija cuántos ejemplares de un monstruo posees en una misión, de 0 a 99. El monstruo\nes un identificador o un nombre en cualquier idioma del sitio."
  },
  "Quests.setMonsters": {
   "en": "Sets the quantities of many monsters at once. Lists of more than 200 are\nsent in several requests, and the answers merged.",
@@ -884,8 +884,8 @@
   "es": "Los tres tipos de monstruo: monstruo (1), jefe (2) y archimonstruo (3)."
  },
  "MonsterTypes.get": {
-  "en": "One kind of monster, from its id or its name in French, English or Spanish.",
-  "es": "Un tipo de monstruo, por su identificador o su nombre en francés, inglés o español."
+  "en": "One kind of monster, from its id or its name in any language of the site.",
+  "es": "Un tipo de monstruo, a partir de su identificador o de su nombre en cualquier idioma del sitio."
  },
  "QuestTemplates": {
   "en": "The quest templates: what each kind of quest asks for in each version of the game.",
@@ -1084,8 +1084,8 @@
   "es": "Las zonas y subzonas del juego, y los monstruos que viven en ellas."
  },
  "Zones.list": {
-  "en": "The zones, optionally searched by name in French, English or Spanish.",
-  "es": "Las zonas, opcionalmente buscadas por nombre en francés, inglés o español."
+  "en": "The zones, optionally searched by name in any language of the site. Each\nversion of the game has its own zones: filter with `gameVersion`.",
+  "es": "Las zonas, opcionalmente buscadas por nombre en cualquier idioma del sitio. Cada\nversión del juego tiene sus propias zonas: filtra con `gameVersion`."
  },
  "Zones.get": {
   "en": "One zone with its subzones, from its id or its name.",
@@ -1200,8 +1200,8 @@
   "es": "Identificador de una plantilla de misión."
  },
  "LocalizedName": {
-  "en": "A name in the three languages of the site.",
-  "es": "Un nombre en los tres idiomas del sitio."
+  "en": "A name in the languages of the site.",
+  "es": "Un nombre en los idiomas del sitio."
  },
  "Language": {
   "en": "A language the site is translated in.",
@@ -1264,24 +1264,24 @@
   "es": "El monstruo de base de un archimonstruo."
  },
  "Monster": {
-  "en": "A monster.",
-  "es": "Un monstruo."
+  "en": "A monster, with its version of the game. Each version has its own monsters:\nthe Tofu of Dofus Retro is not the Tofu of Dofus (Unity), it has its own id.",
+  "es": "Un monstruo, con su versión del juego. Cada versión tiene sus propios monstruos:\nel Tofu de Dofus Retro no es el Tofu de Dofus (Unity), tiene su propio identificador."
  },
- "Monster.image": {
+ "MonsterBase.image": {
   "en": "File name of the image. `urls.monsterImage()` turns it into a URL.",
   "es": "Nombre del archivo de la imagen. `urls.monsterImage()` lo convierte en una URL."
  },
- "Monster.reference": {
+ "MonsterBase.reference": {
   "en": "For an archmonster, the monster it is the rare version of.",
   "es": "Para un archimonstruo, el monstruo del que es la versión rara."
  },
  "Zone": {
-  "en": "A zone of the game.",
-  "es": "Una zona del juego."
+  "en": "A zone of the game. Each version of the game has its own: there are three Amakna.",
+  "es": "Una zona del juego. Cada versión del juego tiene las suyas: hay tres Amakna."
  },
  "SubzoneRef": {
-  "en": "A subzone as it appears in a list: its id and name.",
-  "es": "Una subzona tal como aparece en una lista: su identificador y su nombre."
+  "en": "A subzone as a monster or a quest names it: its id and name.",
+  "es": "Una subzona tal como la nombra un monstruo o una misión: su identificador y su nombre."
  },
  "ZoneDetail": {
   "en": "A zone with its subzones.",
@@ -1826,5 +1826,121 @@
  "ProposalViewer.unapply_until": {
   "en": "Until when you can undo your side with `unapply()`, as an ISO 8601 date in\nUTC: 2 hours after you applied it. `null` when you did not apply it, when\nthe deadline has passed, or when it cannot be undone automatically.",
   "es": "Hasta cuándo puedes deshacer tu lado con `unapply()`, como fecha ISO 8601 en\nUTC: 2 horas después de aplicarlo. `null` cuando no lo aplicaste, cuando\nel límite ha pasado, o cuando no se puede deshacer automáticamente."
+ },
+ "MonsterListParams.gameVersion": {
+  "en": "Only the monsters of this version of the game: each version has its own.",
+  "es": "Solo los monstruos de esta versión del juego: cada versión tiene los suyos."
+ },
+ "MonsterListParams.officialId": {
+  "en": "The monster with this identifier in the game client. Unique within a version of the game only: pass `gameVersion` too.",
+  "es": "El monstruo con este identificador en el cliente del juego. Solo es único dentro de una versión del juego: pasa también `gameVersion`."
+ },
+ "ZoneListParams": {
+  "en": "Filters of [`Zones.list`](ref:Zones).",
+  "es": "Filtros de [`Zones.list`](ref:Zones)."
+ },
+ "ZoneListParams.query": {
+  "en": "Search by name, in any language of the site. At least 3 characters.",
+  "es": "Búsqueda por nombre, en cualquier idioma del sitio. Al menos 3 caracteres."
+ },
+ "ZoneListParams.gameVersion": {
+  "en": "Only the zones of this version of the game: each version has its own, there are three Amakna.",
+  "es": "Solo las zonas de esta versión del juego: cada versión tiene las suyas, hay tres Amakna."
+ },
+ "ZoneListParams.officialId": {
+  "en": "The zone with this identifier in the game client. Unique within a version of the game only: pass `gameVersion` too.",
+  "es": "La zona con este identificador en el cliente del juego. Solo es única dentro de una versión del juego: pasa también `gameVersion`."
+ },
+ "MonsterNamePt": {
+  "en": "Name of a monster, in Portuguese.",
+  "es": "Nombre de un monstruo, en portugués."
+ },
+ "MonsterNameDe": {
+  "en": "Name of a monster, in German.",
+  "es": "Nombre de un monstruo, en alemán."
+ },
+ "ZoneNamePt": {
+  "en": "Name of a zone, in Portuguese.",
+  "es": "Nombre de una zona, en portugués."
+ },
+ "ZoneNameDe": {
+  "en": "Name of a zone, in German.",
+  "es": "Nombre de una zona, en alemán."
+ },
+ "SubzoneNamePt": {
+  "en": "Name of a subzone, in Portuguese.",
+  "es": "Nombre de una subzona, en portugués."
+ },
+ "SubzoneNameDe": {
+  "en": "Name of a subzone, in German.",
+  "es": "Nombre de una subzona, en alemán."
+ },
+ "MonsterTypeNamePt": {
+  "en": "Name of a kind of monster, in Portuguese.",
+  "es": "Nombre de un tipo de monstruo, en portugués."
+ },
+ "MonsterTypeNameDe": {
+  "en": "Name of a kind of monster, in German.",
+  "es": "Nombre de un tipo de monstruo, en alemán."
+ },
+ "QuestTypeNamePt": {
+  "en": "Name of a kind of quest, in Portuguese.",
+  "es": "Nombre de un tipo de misión, en portugués."
+ },
+ "QuestTypeNameDe": {
+  "en": "Name of a kind of quest, in German.",
+  "es": "Nombre de un tipo de misión, en alemán."
+ },
+ "MonsterReference.official_id": {
+  "en": "Identifier of the monster in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador del monstruo en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
+ },
+ "MonsterBase": {
+  "en": "A monster, wherever it appears inside something else: a quest, a step.",
+  "es": "Un monstruo, dondequiera que aparezca dentro de otra cosa: una misión, una etapa."
+ },
+ "MonsterBase.official_id": {
+  "en": "Identifier of the monster in the game client: the DofusDB id for Dofus\n(Unity), the one of the game data for Retro and Touch. Unique within a\nversion of the game only. `null` when unknown.",
+  "es": "Identificador del monstruo en el cliente del juego: el identificador de DofusDB para Dofus\n(Unity), el de los datos del juego para Retro y Touch. Solo es único dentro de una\nversión del juego. `null` cuando se desconoce."
+ },
+ "SubzoneRef.official_id": {
+  "en": "Identifier of the subzone in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador de la subzona en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
+ },
+ "Zone.official_id": {
+  "en": "Identifier of the zone in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador de la zona en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
+ },
+ "ZoneSubzone": {
+  "en": "A subzone as a zone lists it.",
+  "es": "Una subzona tal como la lista una zona."
+ },
+ "MonsterZone": {
+  "en": "A zone where a monster lives, with the subzones concerned. It belongs to the version of the monster.",
+  "es": "Una zona donde vive un monstruo, con las subzonas correspondientes. Pertenece a la versión del monstruo."
+ },
+ "MonsterZone.official_id": {
+  "en": "Identifier of the zone in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador de la zona en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
+ },
+ "Avatar.official_id": {
+  "en": "Identifier in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
+ },
+ "MatchMonster.official_id": {
+  "en": "Identifier in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
+ },
+ "ZoneProgressMonster.official_id": {
+  "en": "Identifier in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
+ },
+ "SubzoneProgress.official_id": {
+  "en": "Identifier in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
+ },
+ "ZoneProgress.official_id": {
+  "en": "Identifier in the game client, unique within its version of the game. `null` when unknown.",
+  "es": "Identificador en el cliente del juego, único dentro de su versión del juego. `null` cuando se desconoce."
  }
 }

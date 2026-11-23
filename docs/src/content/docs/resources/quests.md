@@ -74,6 +74,8 @@ for await (const monster of metamob.quests.monsters(slug, { step: 4 })) {
 | `status` | Question | Signification |
 | --- | --- | --- |
 | `needed` | Progression | Vous en possédez moins que la quête n'en demande |
+| `unowned` | Progression | Vous n'en possédez aucun |
+| `insufficient` | Progression | Vous en possédez au moins un, mais moins que nécessaire. Vide pour une quête faite une seule fois |
 | `ok` | Progression | Vous en possédez exactement assez |
 | `excess` | Progression | Vous possédez des exemplaires en trop |
 | `wanted` | Échange | La quête le recherche, une fois vos réglages d'échange appliqués |

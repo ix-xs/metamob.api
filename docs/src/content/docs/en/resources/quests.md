@@ -74,6 +74,8 @@ for await (const monster of metamob.quests.monsters(slug, { step: 4 })) {
 | `status` | Question | Meaning |
 | --- | --- | --- |
 | `needed` | Progress | You own fewer than the quest asks for |
+| `unowned` | Progress | You own none |
+| `insufficient` | Progress | You own at least one, but fewer than needed. Empty for a quest done once |
 | `ok` | Progress | You own exactly enough |
 | `excess` | Progress | You own spare copies |
 | `wanted` | Trade | The quest looks for it, once your trade settings are applied |

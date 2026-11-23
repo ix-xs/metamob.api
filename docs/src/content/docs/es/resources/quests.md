@@ -74,6 +74,8 @@ for await (const monster of metamob.quests.monsters(slug, { step: 4 })) {
 | `status` | Pregunta | Significado |
 | --- | --- | --- |
 | `needed` | Progreso | Posees menos de los que pide la misión |
+| `unowned` | Progreso | No posees ninguno |
+| `insufficient` | Progreso | Posees al menos uno, pero menos de los necesarios. Vacío para una misión hecha una sola vez |
 | `ok` | Progreso | Posees exactamente los suficientes |
 | `excess` | Progreso | Posees ejemplares de sobra |
 | `wanted` | Intercambio | La misión lo busca, una vez aplicados tus ajustes de intercambio |

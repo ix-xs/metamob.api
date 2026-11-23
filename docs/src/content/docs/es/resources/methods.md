@@ -41,7 +41,7 @@ Ver [Monstruos](/resources/monsters/).
 
 | Método | Lo que hace |
 | --- | --- |
-| `metamob.monsters.list({ query, type })`<br />`monsters.list` | Los monstruos, buscados por nombre en francés, inglés o español y filtrados por tipo.<br />`GET /monsters`, *lista*, 200 por página, *compartido* |
+| `metamob.monsters.list({ query, type, gameVersion, officialId })`<br />`monsters.list` | Los monstruos de todas las versiones del juego, buscados por nombre en todos los idiomas y filtrados por tipo, versión o identificador del juego.<br />`GET /monsters`, *lista*, 200 por página, *compartido* |
 | `metamob.monsters.get(monster)`<br />`monsters.get` | Un monstruo con las zonas y subzonas donde vive, y su monstruo de base si es un archimonstruo.<br />`GET /monsters/{id}`, *compartido* |
 
 ## Zonas
@@ -50,7 +50,7 @@ Ver [Zonas](/resources/zones/).
 
 | Método | Lo que hace |
 | --- | --- |
-| `metamob.zones.list({ query })`<br />`zones.list` | Las zonas del juego, opcionalmente buscadas por nombre.<br />`GET /zones`, *compartido* |
+| `metamob.zones.list({ query, gameVersion, officialId })`<br />`zones.list` | Las zonas de todas las versiones del juego, buscadas por nombre o filtradas por versión o identificador del juego.<br />`GET /zones`, *compartido* |
 | `metamob.zones.get(zone)`<br />`zones.get` | Una zona con la lista de sus subzonas.<br />`GET /zones/{id}`, *compartido* |
 | `metamob.zones.subzones(zone, { query })`<br />`zones.subzones` | Las subzonas de una zona, opcionalmente buscadas por nombre.<br />`GET /zones/{id}/subzones`, *compartido* |
 | `metamob.zones.subzone(subzone)`<br />`zones.subzone` | Una subzona con la zona a la que pertenece.<br />`GET /zones/{id}/subzones/{subzoneId}`, *compartido* |

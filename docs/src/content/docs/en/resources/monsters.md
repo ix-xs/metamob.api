@@ -21,7 +21,7 @@ for (const zone of monster.zones) {
 }
 ```
 
-A few archmonsters have the same name in two versions of the game. Say which one with a version of the game, or a quest template with `{ template }`:
+Each version of the game has its own monsters, and most have the same name from one version to the next. Without more, it is the one of Dofus (Unity). Ask for another version, or a quest template with `{ template }`:
 
 ```ts
 await metamob.monsters.get("Crognan le Barbare", { gameVersion: "Dofus Touch" });
@@ -40,13 +40,17 @@ page.total;
 for await (const monster of metamob.monsters.list({ type: "archimonstre" })) {
   console.log(monster.name.fr, monster.reference?.name.fr);
 }
+
+// The monsters of Dofus Retro, and one monster by its id in the game client.
+const retro = metamob.monsters.list({ gameVersion: "Dofus Retro (1.29)" });
+const [tofu] = await metamob.monsters.list({ gameVersion: "Dofus (Unity)", officialId: 98 }).take(1);
 ```
 
-`type` is `"monstre"`, `"boss"` or `"archimonstre"`, their English or Spanish names, or 1, 2 or 3.
+`type` is `"monstre"`, `"boss"` or `"archimonstre"`, their translations, or 1, 2 or 3. `gameVersion` keeps the monsters of one version of the game. `officialId` looks for a monster by its id in the game client, the same as DofusDB for Dofus (Unity): it is unique within a version only, hence `gameVersion` next to it. Every monster carries both, `game_version` and `official_id`.
 
 ## Searching by name
 
-`monsters.search()` looks for a part of the name, in French, English or Spanish, from 3 characters:
+`monsters.search()` looks for a part of the name, in every language of the site, from 3 characters:
 
 ```ts
 const found = await metamob.monsters.search("bouf").all();
@@ -89,10 +93,12 @@ Each export has its page in the [reference](/reference/):
 | --- | --- |
 | [`Monsters`](/reference/monsters/) | The monsters of the game. |
 | [`urls`](/reference/urls/) | Addresses on metamob.fr, built from what the API returns. |
-| [`Monster`](/reference/monster/) | A monster. |
+| [`Monster`](/reference/monster/) | A monster, with its version of the game. |
+| [`MonsterBase`](/reference/monster-base/) | A monster, wherever it appears inside something else: a quest, a step. |
 | [`MonsterDetail`](/reference/monster-detail/) | A monster with the places it lives in. |
 | [`MonsterListParams`](/reference/monster-list-params/) | Filters of [`Monsters.list`](/reference/monsters/). |
 | [`MonsterReference`](/reference/monster-reference/) | The base monster of an archmonster. |
 | [`MonsterType`](/reference/monster-type/) | A kind of monster: 1 is a monster, 2 a boss, 3 an archmonster. |
+| [`MonsterZone`](/reference/monster-zone/) | A zone where a monster lives, with the subzones concerned. |
 | [`TemplateMonster`](/reference/template-monster/) | A monster of a quest template, with the step it belongs to. |
 <!-- exports:end -->

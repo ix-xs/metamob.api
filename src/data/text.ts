@@ -46,8 +46,6 @@ export function closest(input: string, names: Iterable<readonly [normalized: str
     const known = best.get(record);
     if (!known || score < known.score) best.set(record, { name: written, score });
   }
-  return [...best.values()]
-    .sort((a, b) => a.score - b.score)
-    .slice(0, limit)
-    .map((entry) => entry.name);
+  // A name shared by versions of the game is suggested once.
+  return [...new Set([...best.values()].sort((a, b) => a.score - b.score).map((entry) => entry.name))].slice(0, limit);
 }

@@ -50,7 +50,7 @@ La clé API se crée sur metamob.fr, dans **Paramètres > Clé API**.
 ## Ce que contient le paquet
 
 - **Les 43 points d'accès de l'API**, typés : compte, quêtes, partenaires d'échange, propositions d'échange, messages privés, monstres, zones, joueurs, événements Kralamoure et données de référence.
-- **Les noms** : un monstre, une zone, un serveur ou un type de monstre se donne par son identifiant ou par son nom, en français, en anglais ou en espagnol. Un nom inconnu lève une erreur qui propose les noms les plus proches.
+- **Les noms** : un monstre, une zone, un serveur ou un type de monstre se donne par son identifiant ou par son nom, en français, anglais, espagnol, portugais ou allemand. Un nom inconnu lève une erreur qui propose les noms les plus proches.
 - **Les listes** : une méthode paginée s'attend avec `await` pour une page, ou se parcourt avec `for await`.
 - **La limite de requêtes** : le client compte les 60 requêtes par minute et par clé, et fait attendre les appels suivants.
 - **Les nouvelles tentatives** après un 429, une erreur du serveur ou une coupure réseau. L'envoi d'un message ou d'une proposition n'est jamais retenté.
