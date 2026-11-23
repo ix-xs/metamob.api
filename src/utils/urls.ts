@@ -6,7 +6,7 @@ const SITE = "https://www.metamob.fr";
  * @example
  * import { urls } from "@ix-xs/metamob.api";
  *
- * urls.monsterImage(monster);       // "https://www.metamob.fr/img/monsters/tofu.png"
+ * urls.monsterImage(monster);       // "https://www.metamob.fr/img/monsters/20.png"
  * urls.profile("Ix-xs");            // "https://www.metamob.fr/profile/Ix-xs"
  */
 export const urls = {

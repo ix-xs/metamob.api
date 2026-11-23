@@ -30,7 +30,7 @@ Le client l'a aussi : `metamob.data` est le même objet.
 Chaque type a une méthode qui prend un identifiant, un nom ou un objet avec un identifiant, et renvoie l'enregistrement ou `undefined`. Rien ne lève d'erreur.
 
 ```ts
-data.monster("Bouftou Royal"); // par nom, dans l'une des trois langues
+data.monster("Bouftou Royal"); // par nom, dans l'une des cinq langues du site
 data.monster(305); // par identifiant
 data.zone("Amakna")?.subzones.length;
 data.subzone("Coin des Bouftous")?.zone.name.fr;
@@ -42,7 +42,7 @@ data.questTemplate({ questType: "ocre", gameVersion: "Dofus Touch" })?.monster_c
 
 ## Chercher des monstres
 
-`searchMonsters` trouve les monstres dont le nom contient un texte, dans l'une des trois langues, en commençant par les noms qui commencent par ce texte. Elle est assez rapide pour tourner à chaque frappe.
+`searchMonsters` trouve les monstres dont le nom contient un texte, dans l'une des cinq langues du site, en commençant par les noms qui commencent par ce texte. Elle est assez rapide pour tourner à chaque frappe.
 
 ```ts
 data.searchMonsters("bouf"); // 25 au plus par défaut
@@ -84,7 +84,7 @@ const ochreOnTouch = { questType: "ocre", gameVersion: "Dofus Touch" } as const;
 data.templateMonsters(ochreOnTouch).length; // tous les monstres de la quête, dans l'ordre
 data.templateMonsters(ochreOnTouch, { step: 4 }); // ceux de l'étape 4
 data.stepOf("Tofu Maléfique", ochreOnTouch); // l'étape à laquelle ce monstre appartient
-data.templatesOf("Tofu Maléfique"); // les modèles de quête qui le demandent
+data.templatesOf("Tofu Maléfique", { gameVersion: "Dofus Touch" }); // les modèles de quête qui le demandent
 ```
 
 ## Les listes simples

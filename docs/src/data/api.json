@@ -12122,7 +12122,7 @@
    "guide": "/resources/monsters/",
    "text": "Addresses on metamob.fr, built from what the API returns. Nothing is fetched.",
    "examples": [
-    "import { urls } from \"@ix-xs/metamob.api\";\n\nurls.monsterImage(monster);       // \"https://www.metamob.fr/img/monsters/tofu.png\"\nurls.profile(\"Ix-xs\");            // \"https://www.metamob.fr/profile/Ix-xs\""
+    "import { urls } from \"@ix-xs/metamob.api\";\n\nurls.monsterImage(monster);       // \"https://www.metamob.fr/img/monsters/20.png\"\nurls.profile(\"Ix-xs\");            // \"https://www.metamob.fr/profile/Ix-xs\""
    ],
    "kind": "variable",
    "properties": [

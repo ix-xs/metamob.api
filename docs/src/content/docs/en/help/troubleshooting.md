@@ -39,7 +39,7 @@ The API answers 404 for what is not yours, as for what does not exist.
 
 ## The wrong monster for a shared name
 
-Six pairs of monsters, mostly archmonsters, share a name in at least one language, across two versions of the game. `monsters.get("Crognan le Barbare")` returns the one whose quest template has the lowest id. Add `{ gameVersion }`, or use the id. Writes to a quest are not affected: they take the monster of that quest. See [Names and ids](/basics/names-and-ids/#monsters-that-share-a-name).
+Each version of the game has its own monsters, and most have the same name from one version to the next. `monsters.get("Crognan le Barbare")` returns the one of Dofus (Unity). Add `{ gameVersion }`, or use the id. Writes to a quest are not affected: they take the monster of that quest. See [Names and ids](/basics/names-and-ids/#monsters-that-share-a-name).
 
 ## My script is slow
 

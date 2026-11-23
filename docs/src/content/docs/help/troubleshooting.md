@@ -39,7 +39,7 @@ L'API répond 404 pour ce qui n'est pas à vous, comme pour ce qui n'existe pas.
 
 ## Le mauvais monstre pour un nom partagé
 
-Six paires de monstres, surtout des archimonstres, partagent un nom dans au moins une langue, sur deux versions du jeu. `monsters.get("Crognan le Barbare")` renvoie celui dont le modèle de quête a le plus petit identifiant. Ajoutez `{ gameVersion }`, ou utilisez l'identifiant. Les écritures dans une quête ne sont pas concernées : elles prennent le monstre de cette quête. Voir [Noms et identifiants](/basics/names-and-ids/#monsters-that-share-a-name).
+Chaque version du jeu a ses propres monstres, et la plupart portent le même nom d'une version à l'autre. `monsters.get("Crognan le Barbare")` renvoie celui de Dofus (Unity). Ajoutez `{ gameVersion }`, ou utilisez l'identifiant. Les écritures dans une quête ne sont pas concernées : elles prennent le monstre de cette quête. Voir [Noms et identifiants](/basics/names-and-ids/#monsters-that-share-a-name).
 
 ## Mon script est lent
 

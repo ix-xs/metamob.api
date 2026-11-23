@@ -134,7 +134,7 @@ data.monsters.length;
 data.monster("Tofu Maléfique")?.id;
 ```
 
-La version 4 livrait 50 des 192 sous-zones. La version 5 les livre toutes, donc `zones.subzone("...")` et `zones.monsters("...")` reconnaissent maintenant chaque sous-zone par son nom.
+La version 4 ne livrait qu'une partie des sous-zones. La version 5 les livre toutes, donc `zones.subzone("...")` et `zones.monsters("...")` reconnaissent maintenant chaque sous-zone par son nom.
 
 ## Ce qui est refusé plus tôt
 

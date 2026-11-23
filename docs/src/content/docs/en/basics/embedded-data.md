@@ -30,7 +30,7 @@ The client has it too: `metamob.data` is the same object.
 Each kind has a method that takes an id, a name or an object with an id, and returns the record or `undefined`. Nothing throws an error.
 
 ```ts
-data.monster("Bouftou Royal"); // by name, in any of the three languages
+data.monster("Bouftou Royal"); // by name, in any of the five languages of the site
 data.monster(305); // by id
 data.zone("Amakna")?.subzones.length;
 data.subzone("Coin des Bouftous")?.zone.name.fr;
@@ -42,7 +42,7 @@ data.questTemplate({ questType: "ocre", gameVersion: "Dofus Touch" })?.monster_c
 
 ## Searching monsters
 
-`searchMonsters` finds the monsters whose name contains a text, in any of the three languages, starting with the names that begin with that text. It is fast enough to run on every keystroke.
+`searchMonsters` finds the monsters whose name contains a text, in any of the five languages of the site, starting with the names that begin with that text. It is fast enough to run on every keystroke.
 
 ```ts
 data.searchMonsters("bouf"); // 25 at most by default
@@ -84,7 +84,7 @@ const ochreOnTouch = { questType: "ocre", gameVersion: "Dofus Touch" } as const;
 data.templateMonsters(ochreOnTouch).length; // every monster of the quest, in order
 data.templateMonsters(ochreOnTouch, { step: 4 }); // those of step 4
 data.stepOf("Tofu Maléfique", ochreOnTouch); // the step this monster belongs to
-data.templatesOf("Tofu Maléfique"); // the quest templates that ask for it
+data.templatesOf("Tofu Maléfique", { gameVersion: "Dofus Touch" }); // the quest templates that ask for it
 ```
 
 ## The plain lists
