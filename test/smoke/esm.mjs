@@ -28,6 +28,7 @@ const error = await metamob.quests.setMonster("slug", "Tofu Malefik", 1).catch((
 assert.ok(api.isMetamobError(error, "UNKNOWN_NAME"));
 assert.ok(error.suggestions.includes("Tofu Maléfique"));
 
-assert.equal(api.data.monstersNamed("Crognan le Barbare").length, 2);
+// One per version of the game.
+assert.equal(api.data.monstersNamed("Crognan le Barbare").length, 3);
 assert.equal(api.normalizeName("  Tofu MALÉFIQUE "), "tofu malefique");
 console.log(`esm ok on Node ${process.versions.node} (${Object.keys(api).length} exports)`);
